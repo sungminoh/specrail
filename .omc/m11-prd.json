@@ -1,0 +1,135 @@
+{
+  "$schema": "https://oh-my-claudecode.dev/schemas/prd.json",
+  "title": "v4.1 M11 Spec Doc Update + post-M10 cleanup",
+  "description": "Spec/code 일치 + post-M10 deferred items (ZWS regex, Plausible flush, anti-sycophancy 40 violations cleanup). v4.1 alpha cycle 마지막 polish.",
+  "context": {
+    "fromState": "v0.0.7-alpha (M8 ship-ready) — npm publish workflow + Plausible config + marketplace docs. 단 anti-sycophancy 40, ZWS bug, emoji-prefix bug, no flush API.",
+    "toState": "v0.0.8-alpha — lint:plan PASS state (anti-sycophancy ≤ 5 with explicit evidence). ZWS false-positive fix. Plausible adapter.flush() API. Spec/code 100% reconcile.",
+    "evidence": "V4-1-PLAN.md §M11 (T11.1~T11.5). M10 architect post-approval rec R1."
+  },
+  "stories": [
+    {
+      "id": "US-11.1",
+      "title": "Phase 8 ARCH-8·9·10·11·12 spec 추가",
+      "rationale": "V4-1-PLAN T11.1: state·subagent·cli·lint·markdown container 정식 등재. 코드는 존재하나 spec ARCH 누락.",
+      "acceptanceCriteria": [
+        "docs/spec/examples/08-architecture.md에 ARCH-8 (state machine container) ARCH-9 (subagent dispatch) ARCH-10 (cli commands) ARCH-11 (lint module) ARCH-12 (markdown utilities) 5개 ARCH 정식 등재",
+        "각 ARCH에 responsibility + interfaces + dependencies 명시",
+        "INV-7 lint 통과 유지 (ADR 변경 없음)",
+        "graph builder가 신규 ARCH 인식 — buildGraph().definedIds.has('ARCH-12') = true (test 추가)"
+      ],
+      "filesAffected": [
+        "docs/spec/examples/08-architecture.md",
+        "tests/spec-arch-coverage.test.ts"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-11.2",
+      "title": "graph.json cache 명시 제거 (ADR-9 옵션 D 반영)",
+      "rationale": "T11.2: spec에 graph.json cache 흔적이 있을 경우 제거. ADR-9 옵션 D 채택 (in-memory only) 반영.",
+      "acceptanceCriteria": [
+        "docs/spec/examples/04-domain-model.md 또는 08-architecture.md에서 graph.json cache 언급 검색 + 제거 또는 'option D 채택, on-disk cache 없음' 명시",
+        "ADR-9 본문에도 동일 명시 (이미 존재 시 skip)",
+        "lint:plan 통과 유지"
+      ],
+      "filesAffected": [
+        "docs/spec/examples/04-domain-model.md",
+        "docs/spec/examples/08-architecture.md",
+        "docs/spec/examples/12-adr-risks.md"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-11.3",
+      "title": "S2 DELTA 후반부 sequence diagram 추가",
+      "rationale": "T11.3: M7 구현된 chain (draftChange → invokeDeltaChain → mergeChange → archiveChange) 반영.",
+      "acceptanceCriteria": [
+        "docs/spec/examples/05-user-flow.md 또는 06-flow-tasks.md에 mermaid sequence diagram 추가",
+        "actors: User, /plan-pipeline change CLI, draftChange, graph.extractDownstream, invokeDeltaChain, user (검수), mergeChange, archiveChange",
+        "Idempotent loop 표시 (각 단계 replay = no-op)"
+      ],
+      "filesAffected": [
+        "docs/spec/examples/05-user-flow.md"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-11.4",
+      "title": "Phase 13 plan section update — T2.1b·T5·T6·T7·T9·T10 task 반영",
+      "rationale": "T11.4: M3·M5·M6·M7·M9·M10에서 추가된 implementation tasks를 phase 13 spec에 반영.",
+      "acceptanceCriteria": [
+        "docs/spec/examples/13-implementation-plan.md에 T2.1b (graph filter), T5.1~T5.6 (M5 wire-up), T6.1~T6.5 (M6 silent fix), T7.1~T7.5 (M7 orchestrator + DELTA), T9.1~T9.6 (M9 self-check), T10.1~T10.8 (M10 EDGE + conditions) 추가",
+        "AC labels 갱신 — ac-traceability check 22 → 25+ (실제 spec AC 추가에 따라)",
+        "AC traceability lint 100% 유지"
+      ],
+      "filesAffected": [
+        "docs/spec/examples/13-implementation-plan.md"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-11.5",
+      "title": "Anti-sycophancy 40 violations cleanup (architect M9 C1 close)",
+      "rationale": "M9 architect C1 + M10 V4-1-PLAN T11.5 lock-in. 40 violations에 evidence 추가 또는 키워드 수정으로 lint:plan PASS state 달성.",
+      "acceptanceCriteria": [
+        "lint:plan 본 repo: anti-sycophancy bare violations ≤ 5 (가능하면 0)",
+        "현재 41 → 40 (M10 cleanup) → ≤5 (M11 cleanup)",
+        "Cleanup 방식: 각 violation site에 (1) evidence 첨부 (e.g. '(403 tests PASS)') 또는 (2) 키워드 제거/대체. 의미 손실 금지",
+        "Historical 문서 (docs/V4-1-PLAN.md, REVIEW-FINDINGS.md)는 'historical context' 컨텍스트로 evidence 첨부 가능 — 가짜 evidence 금지",
+        "lint:plan overall: PASS state 달성 (anti-sycophancy 0 violations OR ≤ 5 with explicit doc note)"
+      ],
+      "filesAffected": [
+        "docs/V4-1-PLAN.md",
+        "docs/REVIEW-FINDINGS.md",
+        "README.md",
+        "docs/spec/examples/00-common-principles.md"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-11.6",
+      "title": "ZWS U+200B regex fix (CITATION_RE)",
+      "rationale": "M10 EDGE-i18n에서 documented bug — JS \\b는 ASCII-only, R<ZWS>1이 R1 매칭. False-positive citation.",
+      "acceptanceCriteria": [
+        "src/spec/patterns.ts CITATION_RE에 ZWS exclusion — negative lookbehind/lookahead 또는 \\u200B-\\u200D\\uFEFF 제외",
+        "tests/edge-i18n.test.ts ZWS test 결과 flip — expect(edge).toBeUndefined() (현재는 toBeDefined)",
+        "기존 graph-builder + edge-i18n + 모든 tests 회귀 없음 — 정상 R1 매칭은 보존",
+        "INV-2 dangling check 정확도 유지"
+      ],
+      "filesAffected": [
+        "src/spec/patterns.ts",
+        "tests/edge-i18n.test.ts"
+      ],
+      "passes": false
+    },
+    {
+      "id": "US-11.7",
+      "title": "Plausible adapter.flush() API",
+      "rationale": "M10 EDGE-22 skipped — adapter has no flush. Pre-exit drain용.",
+      "acceptanceCriteria": [
+        "src/telemetry/plausible-adapter.ts에 flush(): Promise<void> export — pending fetch 모두 await",
+        "TelemetryClient.flushQueue와 통합 (best-effort)",
+        "tests/edge-external.test.ts EDGE-22 skip 제거 → flush() 동작 검증",
+        "기존 telemetry tests 회귀 없음"
+      ],
+      "filesAffected": [
+        "src/telemetry/plausible-adapter.ts",
+        "tests/edge-external.test.ts"
+      ],
+      "passes": false
+    }
+  ],
+  "globalAcceptance": [
+    "모든 7 story passes: true",
+    "npm test 405+ → 410+ PASS (목표 ~5-10 new)",
+    "npm run typecheck 0 errors",
+    "npm run build 0 errors",
+    "lint:plan overall PASS (anti-sycophancy ≤ 5)",
+    "spec ↔ code 100% (ARCH 5 신규 + Phase 13 plan 갱신 + sequence diagram)",
+    "M5·M6·M7·M9·M10 regression 없음"
+  ],
+  "completionReviewer": "architect",
+  "estimatedHours": "3-5h AI 보조",
+  "previousCycle": "M5·M6·M7·M9·M10 archive + M8 in-flight"
+}
