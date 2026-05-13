@@ -684,6 +684,85 @@ docs/spec/
 
 ---
 
+### ADR-11: Phase N+1 invoke 정책 — Manual trigger (with optional auto-chain)
+
+**Status:** Accepted
+**Date:** 2026-05-13
+**Trigger:** v4.1 M7 (V4-1-PLAN.md), 4차 reviewer architect D8
+**Innovation token:** No (boring choice — manual default + optional continue 명령)
+
+#### Context
+
+Phase 8 §8 S1 sequence diagram이 'Phase N+1 자동 invoke' 명시. 그러나 4차 architect 리뷰어 (D8) 발견 — 자동 invoke logic 코드 부재. `canInvokePhase`는 gate check만 수행. 사용자는 다음 phase trigger를 명시 호출 필요.
+
+자동 invoke의 trade-off:
+- 자동: KPI-1 (완주율 80%) ↑ — 사용자가 phase 사이 잊지 않음
+- 자동: User Sovereignty ↓ — 사용자가 phase 사이 review·휴식 기회 없음
+- 자동: Auto-mode가 BLOCKED escalation pattern과 충돌 가능 (자동 진행 vs 명시 결정)
+
+수동의 trade-off:
+- 수동: 사용자 통제 + BLOCKED escalation 충돌 X
+- 수동: 사용자가 next phase 잊을 risk — '다음 단계 명시 안내' UX가 보강
+
+관련 NFR: NFR-AVAIL-3, NFR-SEC-2
+관련 Spec: R5 (Phase 진행 강제), F5.1 (13 skill orchestration), ADR-8 (explicit state machine)
+
+#### Decision
+
+**Manual trigger with optional auto-chain via `/plan-pipeline continue`.**
+
+- Phase N approve 후 plugin은 "Phase N+1 진행 권장" 안내만 반환
+- 사용자가 `/plan-pipeline continue` 명령 시 next phase orchestrator invoke
+- 사용자가 `/plan-pipeline phase N+1` 직접 호출도 동등
+- Auto mode flag (v4.2+ 후보) — `.plan-pipeline-cache/auto-chain.json`으로 사용자 opt-in
+
+#### Alternatives Considered
+
+##### 옵션 A (선택됨): Manual trigger with optional auto-chain
+- **장점:** User Sovereignty preserve, BLOCKED escalation pattern 충돌 X, 사용자가 review·휴식 가능
+- **단점:** 사용자가 next phase 잊을 risk — status command + approve 후 명시 안내로 완화
+- **Reversibility:** Two-way — v4.2에서 auto-chain opt-in 추가 가능
+
+##### 옵션 B (거절됨): Full auto-chain (approve → 즉시 N+1 invoke)
+- **장점:** KPI-1 ↑, 사용자 friction ↓
+- **단점:** User Sovereignty 위반, BLOCKED escalation 시 자동 진행 vs 사용자 결정 충돌, review·휴식 기회 0
+- **거절 이유:** User Sovereignty가 ETHOS 핵심 (00-common §3). 자동이 KPI-1을 올리더라도 사용자 결정 우회는 받아들이지 않음.
+
+##### 옵션 C (거절됨): No chain — phase별 독립 호출 강제
+- **장점:** 가장 단순, 구현 부담 최소
+- **단점:** 13 phase trigger 13회 명시 호출 — 마찰 ↑, KPI-1 (완주율) 큰 영향, 사용자 잊음
+- **거절 이유:** 명시 호출만 강제하면 잊음 risk → continue 명령 또는 status 안내로 균형. 옵션 A가 동일 단순성에 UX 개선.
+
+#### Consequences
+
+##### 긍정
+- User Sovereignty (00-common §3) 보장 — 사용자가 phase 사이 검토·휴식 선택 가능
+- BLOCKED escalation pattern과 충돌 X (사용자가 명시 결정 후 continue)
+- v4.2+ auto-chain opt-in 경로 확보
+
+##### 부정 (수용 가능)
+- 사용자가 next phase 잊음 risk — approve 후 "Phase N+1 진행 권장" 안내 + `/plan-pipeline status` 명령으로 완화
+- KPI-1 sub-metric 필요 (manual vs auto 구분)
+
+##### 영향받는 phase·ARCH
+- ARCH-2 (Skills): orchestrator `nextPhase()` 함수가 suggestion만 반환 (invoke X)
+- M7 T7.2: `nextPhase()` orchestrator 구현
+- Phase 13: `/plan-pipeline continue` 명령 task
+
+#### Trigger to Re-evaluate
+
+- KPI-1 (완주율) 측정 결과 manual trigger가 이탈 주 원인으로 식별 (v4.0 출시 후 1개월)
+- 사용자 5건 이상이 "자동 진행" 요구 + User Sovereignty 우려 없음 확인
+
+#### References
+
+- Phase 8 §8 S1 (sequence diagram — 자동 invoke 표현은 high-level only)
+- 4차 reviewer architect Gap D8
+- ADR-8 (explicit state machine)
+- M7 T7.1·T7.2
+
+---
+
 ## Part B — Risk Register
 
 ### Risk Matrix

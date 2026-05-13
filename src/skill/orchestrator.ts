@@ -1,5 +1,7 @@
 // US-T5.3 — IdCounter wire-up (M5)
 // IdCounter.next() 호출하는 공용 entry point. Skill body·CLI·hook 모두 이 함수 호출.
+// ADR-11: Phase N+1 invoke 정책 — Manual trigger (with optional auto-chain via /plan-pipeline continue).
+// nextPhase() 함수는 suggestion만 반환. 자동 invoke 없음. 사용자 명시 호출 필요.
 
 import { IdCounter } from '../spec/counter.js';
 import type { SpecTier } from '../spec/id.js';
