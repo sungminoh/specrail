@@ -99,6 +99,24 @@ describe('Anti-Sycophancy lint (US-9.1)', () => {
     expect(v!.hasEvidence).toBe(false);
   });
 
+  // TC-9 regression: scanProject finds docs/*.md when root passed as nested
+  // sub-path (e.g. './subdir'). Bug: collectFiles checked `fullPath.includes('/docs/')`
+  // which failed when fullPath had no leading slash. Fixed via path.resolve in
+  // scanProject + sep-based segment check in collectFiles.
+  // (Cannot test relative '.' directly — vitest workers reject process.chdir.)
+  it('scanProject with nested docs subdir finds .md files (regression)', async () => {
+    const sub = join(dir, 'project');
+    await mkdir(join(sub, 'docs'), { recursive: true });
+    await writeFile(join(sub, 'docs', 'guide.md'), 'This is ship-ready output.\n');
+    await writeFile(join(sub, 'docs', 'no-trigger.md'), 'innocent content.\n');
+    const violations = await scanProject(sub);
+    const bare = violations.filter((v) => !v.hasEvidence);
+    expect(bare.length).toBeGreaterThan(0);
+    expect(
+      bare.some((v) => v.filePath.includes('docs') && v.keyword === 'ship-ready'),
+    ).toBe(true);
+  });
+
   // TC-8: context excerpt contains ±2 lines around match
   it('context field contains surrounding lines', async () => {
     const file = join(dir, 'test.md');

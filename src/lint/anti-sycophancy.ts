@@ -1,5 +1,5 @@
 import { readFile, readdir } from 'node:fs/promises';
-import { join, extname } from 'node:path';
+import { join, extname, resolve, sep } from 'node:path';
 
 export interface SycophancyViolation {
   filePath: string;
@@ -123,7 +123,7 @@ async function collectFiles(rootDir: string): Promise<string[]> {
     } else if (entry.isFile()) {
       const ext = extname(entry.name);
       const isReadme = /^README/i.test(entry.name) && ext === '.md';
-      const isInDocs = fullPath.includes('/docs/');
+      const isInDocs = fullPath.split(sep).includes('docs');
       if (ext === '.md' && (isReadme || isInDocs)) {
         results.push(fullPath);
       }
@@ -134,7 +134,7 @@ async function collectFiles(rootDir: string): Promise<string[]> {
 }
 
 export async function scanProject(rootDir: string): Promise<SycophancyViolation[]> {
-  const files = await collectFiles(rootDir);
+  const files = await collectFiles(resolve(rootDir));
   const allViolations: SycophancyViolation[] = [];
 
   for (const file of files) {
