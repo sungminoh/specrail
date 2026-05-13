@@ -60,6 +60,25 @@ export function toPlausiblePayload(
   };
 }
 
+export interface PlausibleConfig {
+  domain: string;
+  endpoint: string;
+  token: string;
+}
+
+/**
+ * Load Plausible config from environment variables.
+ * Returns null (telemetry disabled) if any of the 3 required vars is missing.
+ * Accepts an explicit env map to avoid mutating process.env in tests.
+ */
+export function loadConfigFromEnv(env: NodeJS.ProcessEnv = process.env): PlausibleConfig | null {
+  const domain = env.PLAUSIBLE_DOMAIN;
+  const endpoint = env.PLAUSIBLE_ENDPOINT;
+  const token = env.PLAUSIBLE_API_TOKEN;
+  if (!domain || !endpoint || !token) return null;
+  return { domain, endpoint, token };
+}
+
 /**
  * Create a `send` function compatible with `TelemetryClient` (`ClientConfig.send`).
  * Internally converts to Plausible format and POSTs to /api/event.
