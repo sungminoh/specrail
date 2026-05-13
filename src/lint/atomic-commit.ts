@@ -1,3 +1,14 @@
+// atomic-commit — commit-time lint (architect M9 condition C2).
+// Detects mega-commit anti-pattern (≥10 files without US-X/T-X task ref).
+//
+// Pre-commit hook wire example:
+//   #!/usr/bin/env sh
+//   FILES=$(git diff --cached --name-only | tr '\n' ',' | sed 's/,$//')
+//   MSG=$(cat .git/COMMIT_EDITMSG)
+//   npx --yes tsx src/lint/atomic-commit.ts --files "$FILES" --msg "$MSG" || exit 1
+//
+// Or via package.json script + manual invocation in CI.
+
 import { execSync } from 'node:child_process';
 
 export interface AtomicCommitResult {

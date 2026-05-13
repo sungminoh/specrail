@@ -1,3 +1,15 @@
+// Anti-Sycophancy lint (architect M9 condition C3 — known limitation).
+//
+// EVIDENCE_RE is a SIMPLE keyword-proximity check: keyword + (test|tests|
+// measurement|passed|verified|evidence|PASS) within ±3 lines = hasEvidence:true.
+//
+// This does NOT distinguish real evidence from claimed evidence.
+// False-negative example:
+//   "ship-ready (we ran the tests but they all failed — ignoring for now)"
+//   → hasEvidence: true (because 'tests' appears nearby) — INCORRECT pass.
+//
+// Use lint as guardrail, not proof. Quality of evidence requires human review.
+
 import { readFile, readdir } from 'node:fs/promises';
 import { join, extname, resolve, sep } from 'node:path';
 
@@ -23,6 +35,7 @@ const KEYWORDS = [
 ];
 
 const EVIDENCE_RE = /\b(test|tests|measurement|passed|verified|evidence|PASS)\b/i;
+// ↑ simple keyword proximity; subject to false-negatives — see module docstring.
 
 function buildKeywordRegex(): RegExp {
   const escaped = KEYWORDS.map((k) =>

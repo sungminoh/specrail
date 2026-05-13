@@ -1,3 +1,9 @@
+// lint:plan — project-time orchestrator (architect M9 condition C2).
+// Runs 4 static checks: anti-sycophancy, INV-7, AC traceability, INV-5.
+// atomic-commit is NOT bundled here — it is a commit-time check requiring
+// git staged-files context. Invoke separately: see src/lint/atomic-commit.ts
+// for pre-commit hook wiring instructions.
+
 import { readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { scanProject } from './anti-sycophancy.js';
