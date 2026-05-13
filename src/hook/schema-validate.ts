@@ -13,9 +13,14 @@ const schemasDir = join(here, '..', '..', 'schemas');
 export interface SchemaCheckResult {
   ok: boolean;
   errors: { file: string; messages: string[] }[];
+  warnings: { file: string; messages: string[] }[]; // US-T6.2
 }
 
-export async function checkSchemas(projectRoot: string): Promise<SchemaCheckResult> {
+export interface SchemaCheckOptions {
+  strict?: boolean; // strict mode: warnings also make ok: false
+}
+
+export async function checkSchemas(projectRoot: string, options?: SchemaCheckOptions): Promise<SchemaCheckResult> {
   const specDir = join(projectRoot, 'docs', 'spec');
   let files: string[];
   try {
@@ -23,10 +28,11 @@ export async function checkSchemas(projectRoot: string): Promise<SchemaCheckResu
       .filter((f) => /^\d{2}-.*\.md$/.test(f))
       .sort();
   } catch {
-    return { ok: true, errors: [] };
+    return { ok: true, errors: [], warnings: [] };
   }
 
   const errors: { file: string; messages: string[] }[] = [];
+  const warnings: { file: string; messages: string[] }[] = [];
 
   for (const file of files) {
     const phase = file.slice(0, 2);
@@ -59,29 +65,45 @@ export async function checkSchemas(projectRoot: string): Promise<SchemaCheckResu
           messages: result.errors.map((e) => `${e.instancePath || '/'}: ${e.message ?? 'invalid'}`),
         });
       }
-    } catch (e) {
-      // Schema 파일 미존재 시 skip (M0 partial state)
-      void e;
+    } catch {
+      // US-T6.2: silent skip → warning push
+      warnings.push({
+        file,
+        messages: [`schema file not found at ${schemaPath} — validation skipped`],
+      });
     }
   }
 
-  return { ok: errors.length === 0, errors };
+  const ok = errors.length === 0 && (!options?.strict || warnings.length === 0);
+  return { ok, errors, warnings };
 }
 
-export async function runHook(projectRoot: string): Promise<{
+export async function runHook(projectRoot: string, options?: SchemaCheckOptions): Promise<{
   ok: boolean;
   message: string;
 }> {
-  const r = await checkSchemas(projectRoot);
-  if (r.ok) {
+  const r = await checkSchemas(projectRoot, options);
+  if (r.ok && r.warnings.length === 0) {
     return { ok: true, message: 'F2.4 schema validation OK' };
   }
-  const lines = ['F2.4 schema validation FAILED:'];
-  for (const e of r.errors) {
-    lines.push(`  ${e.file}:`);
-    for (const m of e.messages) {
-      lines.push(`    - ${m}`);
+  const lines: string[] = [];
+  if (!r.ok) {
+    lines.push('F2.4 schema validation FAILED:');
+    for (const e of r.errors) {
+      lines.push(`  ${e.file}:`);
+      for (const m of e.messages) {
+        lines.push(`    - ${m}`);
+      }
     }
   }
-  return { ok: false, message: lines.join('\n') };
+  if (r.warnings.length > 0) {
+    lines.push('F2.4 schema validation warnings:');
+    for (const w of r.warnings) {
+      lines.push(`  ${w.file}:`);
+      for (const m of w.messages) {
+        lines.push(`    - ${m}`);
+      }
+    }
+  }
+  return { ok: r.ok, message: lines.join('\n') };
 }
