@@ -2,6 +2,7 @@
 // 00-common Phase 0 Reframing 패턴
 
 import type { Question } from './ask.js';
+export type { Question };
 
 export const Q1_DEMAND_REALITY: Question = {
   id: 'q1-demand-reality',
