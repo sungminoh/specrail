@@ -150,4 +150,95 @@ describe('mergeChange (US-T7.4)', () => {
     expect(r.merged).toBe(false);
     expect(r.message).toMatch(/No deltas to merge/);
   });
+
+  it('multi-phase partial fail → all restore: phase 03 and 05 both unchanged after INV-2 fail', async () => {
+    // Seed phase 03 with a dangling citation that fails INV-2 — both phases have deltas
+    // but the hook failure prevents any write, so both originals must be preserved
+    await writeFile(
+      join(dir, 'docs/spec/03-features.md'),
+      '---\nphase: 3\nstatus: Approved\n---\n## R1: payment\nCites S999.99.99.\n',
+    );
+
+    // Create deltas for BOTH phase 03 and phase 05
+    await invokeDeltaChain(
+      dir,
+      changeDir,
+      { affectedPhases: ['03', '05'], affectedIds: ['R1', 'ENT-Foo'] },
+      ['R1'],
+    );
+
+    const delta03File = join(changeDir, 'deltas', '03-features-delta.md');
+    const raw03 = await readFile(delta03File, 'utf8');
+    await writeFile(
+      delta03File,
+      raw03.replace('## MODIFIED\n- (작성 필요)', '## MODIFIED\n- R1: updated payment flow'),
+    );
+
+    const delta05File = join(changeDir, 'deltas', '05-user-flow-delta.md');
+    const raw05 = await readFile(delta05File, 'utf8');
+    await writeFile(
+      delta05File,
+      raw05.replace('## MODIFIED\n- (작성 필요)', '## MODIFIED\n- ENT-Foo: cite R1.v2'),
+    );
+
+    // mergeChange must throw because INV-2 fails (S999.99.99 is dangling)
+    await expect(mergeChange(dir, changeDir)).rejects.toThrow(/INV-2 fail before merge/);
+
+    // Phase 03 current: must NOT contain DELTA section (no write occurred)
+    const cur03 = await readFile(join(dir, 'docs/spec/03-features.md'), 'utf8');
+    expect(cur03).not.toContain('## DELTA');
+    expect(cur03).toContain('## R1: payment');
+
+    // Phase 05 current: must NOT contain DELTA section
+    const cur05 = await readFile(join(dir, 'docs/spec/05-user-flow.md'), 'utf8');
+    expect(cur05).not.toContain('## DELTA');
+    expect(cur05).toContain('## ENT-Foo: e');
+
+    // Proposal must still be 'proposed' (not flipped to applied)
+    const proposal = await readFile(join(changeDir, 'proposal.md'), 'utf8');
+    expect(proposal).toMatch(/^status: proposed$/m);
+  });
+
+  it('success path — 2-phase merge: both currents have DELTA section and proposal is applied', async () => {
+    // Both phase 03 and phase 05 have valid content (no dangling citations)
+    // Deltas for both phases merge cleanly
+    await invokeDeltaChain(
+      dir,
+      changeDir,
+      { affectedPhases: ['03', '05'], affectedIds: ['R1', 'ENT-Foo'] },
+      ['R1'],
+    );
+
+    const delta03File = join(changeDir, 'deltas', '03-features-delta.md');
+    const raw03 = await readFile(delta03File, 'utf8');
+    await writeFile(
+      delta03File,
+      raw03.replace('## MODIFIED\n- (작성 필요)', '## MODIFIED\n- R1: updated payment flow'),
+    );
+
+    const delta05File = join(changeDir, 'deltas', '05-user-flow-delta.md');
+    const raw05 = await readFile(delta05File, 'utf8');
+    await writeFile(
+      delta05File,
+      raw05.replace('## MODIFIED\n- (작성 필요)', '## MODIFIED\n- ENT-Foo: cite R1.v2'),
+    );
+
+    const r = await mergeChange(dir, changeDir);
+    expect(r.merged).toBe(true);
+    expect(r.phases).toContain('03');
+    expect(r.phases).toContain('05');
+
+    // Both phase currents have DELTA section appended
+    const cur03 = await readFile(join(dir, 'docs/spec/03-features.md'), 'utf8');
+    expect(cur03).toContain('## DELTA — 2026-05-13-add-feature');
+    expect(cur03).toContain('R1: updated payment flow');
+
+    const cur05 = await readFile(join(dir, 'docs/spec/05-user-flow.md'), 'utf8');
+    expect(cur05).toContain('## DELTA — 2026-05-13-add-feature');
+    expect(cur05).toContain('ENT-Foo: cite R1.v2');
+
+    // Proposal flipped to applied
+    const proposal = await readFile(join(changeDir, 'proposal.md'), 'utf8');
+    expect(proposal).toMatch(/^status: applied$/m);
+  });
 });

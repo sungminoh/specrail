@@ -318,39 +318,67 @@ export async function mergeChange(
     return { merged: false, phases: [], message: 'No deltas to merge' };
   }
 
+  // Transaction: backup before write, restore on failure (architect M7 risk #4 close)
+  const backups = new Map<string, string>(); // currentPath → original content
   const phases: string[] = [];
-  for (const deltaFile of deltaFiles) {
-    const phaseStr = deltaFile.slice(0, 2);
-    const phaseN = parseInt(phaseStr, 10);
-    if (Number.isNaN(phaseN)) continue;
-
-    const phaseFile = await findPhaseFile(projectRoot, phaseN);
-    if (!phaseFile) {
-      throw new Error(
-        `Cannot merge delta ${deltaFile}: Phase ${phaseN} spec not found in docs/spec/`,
-      );
+  try {
+    // Phase A: backup all current files that will be touched
+    for (const deltaFile of deltaFiles) {
+      const phaseStr = deltaFile.slice(0, 2);
+      const phaseN = parseInt(phaseStr, 10);
+      if (Number.isNaN(phaseN)) continue;
+      const phaseFile = await findPhaseFile(projectRoot, phaseN);
+      if (!phaseFile) {
+        throw new Error(
+          `Cannot merge delta ${deltaFile}: Phase ${phaseN} spec not found in docs/spec/`,
+        );
+      }
+      const currentPath = join(projectRoot, 'docs', 'spec', phaseFile);
+      if (!backups.has(currentPath)) {
+        backups.set(currentPath, await readFile(currentPath, 'utf8'));
+      }
     }
-    const currentPath = join(projectRoot, 'docs', 'spec', phaseFile);
 
-    const deltaRaw = await readFile(join(deltaDir, deltaFile), 'utf8');
-    const { body: deltaBody } = parseFrontmatter(deltaRaw);
+    // Phase B: actual merge writes
+    for (const deltaFile of deltaFiles) {
+      const phaseStr = deltaFile.slice(0, 2);
+      const phaseN = parseInt(phaseStr, 10);
+      if (Number.isNaN(phaseN)) continue;
 
-    const currentRaw = await readFile(currentPath, 'utf8');
-    const merged =
-      currentRaw.replace(/\s+$/, '') +
-      '\n\n## DELTA — ' +
-      basename(changeDir) +
-      '\n' +
-      deltaBody.replace(/^\s+/, '');
-    await writeFile(currentPath, merged);
-    phases.push(phaseStr);
+      const phaseFile = await findPhaseFile(projectRoot, phaseN);
+      if (!phaseFile) {
+        throw new Error(
+          `Cannot merge delta ${deltaFile}: Phase ${phaseN} spec not found in docs/spec/`,
+        );
+      }
+      const currentPath = join(projectRoot, 'docs', 'spec', phaseFile);
+
+      const deltaRaw = await readFile(join(deltaDir, deltaFile), 'utf8');
+      const { body: deltaBody } = parseFrontmatter(deltaRaw);
+
+      const currentRaw = backups.get(currentPath)!;
+      const merged =
+        currentRaw.replace(/\s+$/, '') +
+        '\n\n## DELTA — ' +
+        basename(changeDir) +
+        '\n' +
+        deltaBody.replace(/^\s+/, '');
+      await writeFile(currentPath, merged);
+      phases.push(phaseStr);
+    }
+
+    // Phase C: success → update proposal.md status: applied
+    const newProposal = /^status:.*$/m.test(proposalRaw)
+      ? proposalRaw.replace(/^status:.*$/m, 'status: applied')
+      : proposalRaw;
+    await writeFile(proposalPath, newProposal);
+  } catch (err) {
+    // Restore all backed-up files to original content
+    for (const [path, content] of backups) {
+      await writeFile(path, content);
+    }
+    throw err;
   }
-
-  // 4. Update proposal status: applied
-  const newProposal = /^status:.*$/m.test(proposalRaw)
-    ? proposalRaw.replace(/^status:.*$/m, 'status: applied')
-    : proposalRaw;
-  await writeFile(proposalPath, newProposal);
 
   return {
     merged: true,
