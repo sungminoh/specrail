@@ -70,14 +70,14 @@
     },
     {
       "id": "US-11.5",
-      "title": "Anti-sycophancy 40 violations cleanup (architect M9 C1 close)",
-      "rationale": "M9 architect C1 + M10 V4-1-PLAN T11.5 lock-in. 40 violations에 evidence 추가 또는 키워드 수정으로 lint:plan PASS state 달성.",
+      "title": "Anti-sycophancy 38 violations cleanup (architect M9 C1 close + M8 calibration)",
+      "rationale": "M9 architect C1 + M10 V4-1-PLAN T11.5 lock-in + M8 architect C4 (target relax). 38 violations에 evidence 추가 또는 키워드 수정. ≤ 10 primary target, ≤ 5 stretch. Architect M8 verdict: 38 → 5 in 3-5h aggressive given no-fake-evidence rule.",
       "acceptanceCriteria": [
-        "lint:plan 본 repo: anti-sycophancy bare violations ≤ 5 (가능하면 0)",
-        "현재 41 → 40 (M10 cleanup) → ≤5 (M11 cleanup)",
-        "Cleanup 방식: 각 violation site에 (1) evidence 첨부 (e.g. '(403 tests PASS)') 또는 (2) 키워드 제거/대체. 의미 손실 금지",
+        "lint:plan 본 repo: anti-sycophancy bare violations ≤ 10 (primary), ≤ 5 (stretch)",
+        "현재 41 → 38 (M8 README cleanup) → ≤10 (M11 cleanup)",
+        "Cleanup 방식: 각 violation site에 (1) evidence 첨부 (e.g. '(408 tests PASS)') 또는 (2) 키워드 제거/대체. 의미 손실 금지",
         "Historical 문서 (docs/V4-1-PLAN.md, REVIEW-FINDINGS.md)는 'historical context' 컨텍스트로 evidence 첨부 가능 — 가짜 evidence 금지",
-        "lint:plan overall: PASS state 달성 (anti-sycophancy 0 violations OR ≤ 5 with explicit doc note)"
+        "Escape hatch (architect M9 C1 line-80 + M8 C4): primary target ≤10 OR ≤5 with explicit doc note in REVIEW-FINDINGS.md residuals section. M12 candidates for remaining > 5"
       ],
       "filesAffected": [
         "docs/V4-1-PLAN.md",
@@ -105,13 +105,16 @@
     },
     {
       "id": "US-11.7",
-      "title": "Plausible adapter.flush() API",
-      "rationale": "M10 EDGE-22 skipped — adapter has no flush. Pre-exit drain용.",
+      "title": "Plausible adapter.flush() API + loadConfigFromEnv production wire-up (architect M8 C3)",
+      "rationale": "M10 EDGE-22 skipped — adapter has no flush. Pre-exit drain용. + architect M8 C3: loadConfigFromEnv (M8에 추가)이 createPlausibleSender boot path와 wire 안 됨 — production 사용 시 telemetry 영구 dead. M11에서 wire-up 필수.",
       "acceptanceCriteria": [
         "src/telemetry/plausible-adapter.ts에 flush(): Promise<void> export — pending fetch 모두 await",
         "TelemetryClient.flushQueue와 통합 (best-effort)",
         "tests/edge-external.test.ts EDGE-22 skip 제거 → flush() 동작 검증",
-        "기존 telemetry tests 회귀 없음"
+        "loadConfigFromEnv → createPlausibleSender wire-up: TelemetryClient (또는 동등 boot 모듈)에서 process.env 읽어 config 있으면 sender 생성, 없으면 no-op",
+        "tests/telemetry-wire.test.ts 신규 또는 telemetry-config 확장 — env 3 vars 설정 시 sender active, 미설정 시 sender null + warn 1회",
+        "기존 telemetry tests 회귀 없음",
+        "docs/USER-ACTIONS.md + docs/TELEMETRY.md의 'wiring scheduled for M11' note 제거 (M11 완료 시점)"
       ],
       "filesAffected": [
         "src/telemetry/plausible-adapter.ts",

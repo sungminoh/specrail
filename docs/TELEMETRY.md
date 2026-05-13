@@ -2,6 +2,8 @@
 
 Telemetry is **opt-in**. The plugin runs without telemetry if env vars are unset.
 
+> Note: endpoint wiring is scheduled for M11 (US-11.7). The config loader and adapter exist, but `loadConfigFromEnv` is not yet invoked from the production boot path. Setting these env vars today documents intent but does not yet transmit events.
+
 ## Setup
 
 1. Create a Plausible account: https://plausible.io
