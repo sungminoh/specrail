@@ -1,9 +1,34 @@
 // T2.4 Change skill — DELTA proposal auto-draft (F4.3, AC-R4-1, TC-7)
+// US-T7.3/T7.4/T7.5 (M7): S2 DELTA full chain — invokeDeltaChain → mergeChange → archiveChange
 // `/plan-pipeline change "<topic>"` 명령 simulator
 
-import { mkdir, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
-import { extractDownstream } from '../graph/downstream.js';
+import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { basename, join } from 'node:path';
+import { extractDownstream, type DownstreamResult } from '../graph/downstream.js';
+import { parseFrontmatter } from '../markdown/frontmatter.js';
+import { formatInputBlock } from '../skill/inject.js';
+
+async function exists(p: string): Promise<boolean> {
+  try {
+    await stat(p);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function findPhaseFile(projectRoot: string, phaseN: number): Promise<string | null> {
+  const specDir = join(projectRoot, 'docs', 'spec');
+  const prefix = String(phaseN).padStart(2, '0') + '-';
+  let files: string[];
+  try {
+    files = await readdir(specDir);
+  } catch {
+    return null;
+  }
+  const f = files.find((x) => x.startsWith(prefix) && x.endsWith('.md'));
+  return f ?? null;
+}
 
 export interface ChangeProposal {
   topic: string;
@@ -114,3 +139,131 @@ ${args.affectedIds.length > 20 ? `  ... and ${args.affectedIds.length - 20} more
 | (작성 필요) | ... | ... | Y/N |
 `;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// US-T7.3 — S2 DELTA delta skill invoke chain
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface InvokeDeltaPhaseResult {
+  deltaPath: string;
+  created: boolean;
+}
+
+export async function invokeDeltaPhase(
+  projectRoot: string,
+  changeDir: string,
+  phaseN: number,
+  changedIds: string[],
+  affectedIds: string[],
+): Promise<InvokeDeltaPhaseResult> {
+  const phaseFile = await findPhaseFile(projectRoot, phaseN);
+  if (!phaseFile) {
+    throw new Error(
+      `Phase ${phaseN} spec file not found in docs/spec/ (expected ${String(phaseN).padStart(2, '0')}-*.md)`,
+    );
+  }
+  const phaseName = phaseFile.slice(3).replace(/\.md$/, '');
+  const deltaDir = join(changeDir, 'deltas');
+  await mkdir(deltaDir, { recursive: true });
+  const deltaFileName = `${String(phaseN).padStart(2, '0')}-${phaseName}-delta.md`;
+  const deltaPath = join(deltaDir, deltaFileName);
+
+  // Idempotent — already exists, skip
+  if (await exists(deltaPath)) {
+    return { deltaPath, created: false };
+  }
+
+  // Read current phase frontmatter for read-only context block
+  const currentPath = join(projectRoot, 'docs', 'spec', phaseFile);
+  const raw = await readFile(currentPath, 'utf8');
+  const { frontmatter } = parseFrontmatter(raw);
+
+  const skeleton = renderDeltaSkeleton({
+    phaseN,
+    changeName: basename(changeDir),
+    frontmatter,
+    changedIds,
+    affectedIds,
+  });
+
+  await writeFile(deltaPath, skeleton);
+  return { deltaPath, created: true };
+}
+
+function renderDeltaSkeleton(args: {
+  phaseN: number;
+  changeName: string;
+  frontmatter: Record<string, unknown>;
+  changedIds: string[];
+  affectedIds: string[];
+}): string {
+  const changedBlock =
+    args.changedIds.length === 0
+      ? '- (변경 trigger ID 없음)'
+      : args.changedIds.map((id) => `- ${id}`).join('\n');
+  const head = args.affectedIds.slice(0, 30);
+  const affectedBlock =
+    head.length === 0
+      ? '- (transitive affected IDs 없음)'
+      : head.map((id) => `- ${id}`).join('\n');
+  const overflow =
+    args.affectedIds.length > 30 ? `\n... and ${args.affectedIds.length - 30} more` : '';
+
+  return `---
+phase: ${args.phaseN}
+deltaOf: ${args.phaseN}
+changeId: ${args.changeName}
+status: Draft
+---
+
+# Phase ${args.phaseN} delta — ${args.changeName}
+
+## Current frontmatter (read-only context)
+${formatInputBlock(args.frontmatter, args.phaseN)}
+
+## Changed IDs (trigger)
+${changedBlock}
+
+## Affected IDs (transitive — auto-extracted)
+${affectedBlock}${overflow}
+
+## ADDED
+- (작성 필요)
+
+## MODIFIED
+- (작성 필요)
+
+## REMOVED
+- (작성 필요)
+`;
+}
+
+export interface InvokeDeltaChainResult {
+  deltas: string[];
+  created: number;
+}
+
+export async function invokeDeltaChain(
+  projectRoot: string,
+  changeDir: string,
+  downstream: Pick<DownstreamResult, 'affectedPhases' | 'affectedIds'>,
+  changedIds: string[],
+): Promise<InvokeDeltaChainResult> {
+  const deltas: string[] = [];
+  let created = 0;
+  for (const phaseStr of downstream.affectedPhases) {
+    const phaseN = parseInt(phaseStr, 10);
+    if (Number.isNaN(phaseN)) continue;
+    const r = await invokeDeltaPhase(
+      projectRoot,
+      changeDir,
+      phaseN,
+      changedIds,
+      downstream.affectedIds,
+    );
+    deltas.push(r.deltaPath);
+    if (r.created) created++;
+  }
+  return { deltas, created };
+}
+
