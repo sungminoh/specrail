@@ -5,6 +5,7 @@
 
 import { IdCounter } from '../spec/counter.js';
 import type { SpecTier } from '../spec/id.js';
+import { status } from '../cli/status.js';
 
 // Cache per projectRoot — IdCounter mutex가 instance-level이므로 같은 instance 공유 필수
 const counterCache = new Map<string, Promise<IdCounter>>();
@@ -31,4 +32,64 @@ export async function issueId(
 /** Test-only — reset cache (for tmpdir test isolation) */
 export function _resetCounterCache(): void {
   counterCache.clear();
+}
+
+// ADR-11: nextPhase() — Phase N+1 suggestion only. No auto-invoke.
+// /plan-pipeline continue 명령이 이 결과를 읽어 phase N+1 skill invoke.
+
+export interface NextPhaseResult {
+  hasNext: boolean;
+  nextPhase: number | null;
+  reason: string;
+  blocked?: boolean; // current phase status가 Approved 아닐 때
+}
+
+/**
+ * 현재 상태 기준으로 다음 invoke 해야 할 phase를 식별 (ADR-11).
+ * Phase N+1 자동 invoke 없음 — suggestion만 반환.
+ */
+export async function nextPhase(projectRoot: string): Promise<NextPhaseResult> {
+  const s = await status(projectRoot);
+
+  if (!s.initialized) {
+    return {
+      hasNext: false,
+      nextPhase: null,
+      reason: 'Project not initialized. Run /plan-pipeline init first.',
+    };
+  }
+
+  if (s.complete) {
+    return {
+      hasNext: false,
+      nextPhase: null,
+      reason: 'All 13 phases complete. Phase 13 implementation handoff time.',
+    };
+  }
+
+  if (s.currentPhase === null) {
+    return {
+      hasNext: false,
+      nextPhase: null,
+      reason: 'Invalid state — no current phase identified.',
+    };
+  }
+
+  // currentPhase가 Draft이면 approve 필요 (blocked)
+  const cur = s.phases[s.currentPhase - 1];
+  if (cur && cur.status === 'Draft') {
+    return {
+      hasNext: false,
+      nextPhase: null,
+      reason: `Phase ${s.currentPhase} status=Draft. Approve first via /plan-pipeline approve ${s.currentPhase}.`,
+      blocked: true,
+    };
+  }
+
+  // Empty 또는 missing — 사용자가 phase 아직 진행 안 함
+  return {
+    hasNext: true,
+    nextPhase: s.currentPhase,
+    reason: `Next: /plan-pipeline phase ${s.currentPhase}`,
+  };
 }
