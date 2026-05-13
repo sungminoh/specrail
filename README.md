@@ -2,15 +2,19 @@
 
 > 13-phase spec discipline harness for Claude Code — structured I/O + hook validation + 도구로 강제
 
-**Status: v0.0.1-alpha (in-process production code 완성, 외부 통합 0건).**
+## Status
 
-249 unit/integration tests PASS. TypeScript strict 0 errors. 단:
+- v0.0.1-alpha (in-process)
+- 403 tests passing, 17/22 EDGE coverage
+- npm publish: workflow ready, awaiting NPM_TOKEN secret
+- Plausible telemetry: adapter ready, opt-in via .env
+- CC marketplace: registration docs in [docs/MARKETPLACE.md](docs/MARKETPLACE.md)
+
+단:
 - Claude Code marketplace 실 install 미검증 (A1 spike PASSED-PARTIAL — `inputs-from` field 작동 확인 필요)
 - Plausible endpoint 실 연결 0 (client logic만 — `send` mock injection)
 - 실 사용자 사용 사례 0 (본인 dogfood만 — KPI-1·KPI-2·KPI-6 측정 0)
 - npm publish 0 / marketplace 등록 0
-
-본 alpha의 의미: code-side spec compliance 완료 + 외부 통합 가능 상태. 실 사용 가능까지 ~12-20h 추가 작업 (alpha 사용자 1-2명·external endpoint·marketplace registry).
 
 v3 markdown 사용 중 "사용자 양심·기억 의존" 약점을 hook + state machine으로 자동 강제하는 Claude Code plugin.
 
@@ -24,17 +28,15 @@ v3 markdown 사용 중 "사용자 양심·기억 의존" 약점을 hook + state 
 
 ## Install
 
-### Claude Code 사용자 (권장)
+**Requirements:** Node 20+
 
-```bash
-claude code skill install @plan-pipeline/v4
-# 또는 GitHub: claude code skill install <repo-url>
+```sh
+npm install @plan-pipeline/v4
 ```
 
-설치 후 첫 trigger:
-```
-/plan-pipeline init
-```
+**Claude Code plugin install:** see [docs/MARKETPLACE.md](docs/MARKETPLACE.md).
+
+**Telemetry config (optional):** see [docs/TELEMETRY.md](docs/TELEMETRY.md).
 
 ### Non-Claude Code 사용자 (fallback)
 
@@ -48,6 +50,12 @@ git checkout v3-archive
 ```
 
 v3 markdown은 사용자가 직접 self-check grep 실행 + HARD-GATE 수동 확인 필요 (v4는 자동).
+
+## Quickstart
+
+(CLI entry forthcoming — see src/cli/)
+
+현재 `/plan-pipeline init` 명령은 Claude Code skill로만 실행됩니다. npm으로 설치 후 CC plugin entry가 확정되면 여기에 반영 예정.
 
 ## Requirements
 
@@ -85,7 +93,7 @@ Opt-out anytime: `/plan-pipeline opt-out`
 
 - **Windows hook 실행 안 됨:** Git for Windows의 Git Bash 사용 권장. WSL 사용자는 plugin이 Linux로 동작.
 - **Node 미설치:** [nodejs.org](https://nodejs.org) 또는 nvm·fnm으로 Node 20+ install. plugin install 명령 안내 따름.
-- **한국어 spec 깨짐:** 보고해주세요 (issue tracker). NFR-I18N-1 한국어 우선 검증 완료 (T0.9 spike).
+- **한국어 spec 깨짐:** 보고해주세요 (issue tracker). NFR-I18N-1 한국어 우선 검증 PASS (T0.9 spike).
 
 ## v3 → v4 migration (OQ-13-4)
 
