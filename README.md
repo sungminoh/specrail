@@ -2,6 +2,16 @@
 
 > 13-phase spec discipline harness for Claude Code — structured I/O + hook validation + 도구로 강제
 
+**Status: v0.0.1-alpha (in-process production code 완성, 외부 통합 0건).**
+
+249 unit/integration tests PASS. TypeScript strict 0 errors. 단:
+- Claude Code marketplace 실 install 미검증 (A1 spike PASSED-PARTIAL — `inputs-from` field 작동 확인 필요)
+- Plausible endpoint 실 연결 0 (client logic만 — `send` mock injection)
+- 실 사용자 사용 사례 0 (본인 dogfood만 — KPI-1·KPI-2·KPI-6 측정 0)
+- npm publish 0 / marketplace 등록 0
+
+본 alpha의 의미: code-side spec compliance 완료 + 외부 통합 가능 상태. 실 사용 가능까지 ~12-20h 추가 작업 (alpha 사용자 1-2명·external endpoint·marketplace registry).
+
 v3 markdown 사용 중 "사용자 양심·기억 의존" 약점을 hook + state machine으로 자동 강제하는 Claude Code plugin.
 
 ## What it does
@@ -94,7 +104,7 @@ Opt-out anytime: `/plan-pipeline opt-out`
 
 ## License
 
-(TBD — OSS, likely MIT)
+MIT — see [LICENSE](./LICENSE).
 
 ## Contributing
 

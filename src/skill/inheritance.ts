@@ -1,5 +1,15 @@
 // T2.6 00-common-principles 자동 상속 (F5.4, AC-R5-3, TC-11)
 // SKILL.md content + 00-common content prepend mechanism
+//
+// Content source (analyst Ambiguity #1 resolved 2026-05-13):
+//   `docs/spec/00-common-principles.md` (v3 차용, T2.5c refinement 적용)
+//   - ETHOS (Boil the Lake / Search Before Building / User Sovereignty)
+//   - 4 Modes (SCOPE_EXPANSION / SELECTIVE / HOLD / REDUCTION)
+//   - Anti-Sycophancy (5 pushback patterns)
+//   - HARD-GATE (state machine으로 자동 강제)
+//   - AskUserQuestion ONE-AT-A-TIME (F5.3 wrapper)
+//   - No Placeholders / Confidence Calibration / Diagrams Mandatory
+// v3 원본 (refinement 전): git tag v3-archive 참조.
 
 import { readFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
