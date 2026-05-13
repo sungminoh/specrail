@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plan-pipeline.dev/schemas/phase-13.json",
+  "title": "Phase 13 frontmatter",
+  "type": "object",
+  "required": ["phase", "status"],
+  "properties": {
+    "phase": { "const": 13 },
+    "status": { "type": "string", "enum": ["Empty", "Draft", "Approved"] },
+    "mode": {
+      "type": "string",
+      "enum": ["SCOPE_EXPANSION", "SELECTIVE_EXPANSION", "HOLD_SCOPE", "SCOPE_REDUCTION"]
+    },
+    "refs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^([RFS]\\d+(\\.\\d+){0,2}|ENT-[A-Za-z0-9_]+|INV-\\d+|NFR-[A-Z]+-\\d+|ARCH-\\d+|EXT-\\d+|OPS-\\d+|ADR-\\d+|RISK-\\d+|TC-\\d+|EDGE-\\d+)$" }
+    },
+    "approvedAt": { "type": "string" }
+  },
+  "additionalProperties": true
+}

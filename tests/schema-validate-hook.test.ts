@@ -1,0 +1,70 @@
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { mkdtemp, writeFile, mkdir, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { runHook } from '../src/hook/schema-validate.js';
+
+let dir: string;
+
+beforeEach(async () => {
+  dir = await mkdtemp(join(tmpdir(), 'schema-hook-'));
+  await mkdir(join(dir, 'docs', 'spec'), { recursive: true });
+});
+
+afterEach(async () => {
+  await rm(dir, { recursive: true, force: true });
+});
+
+describe('schema validation hook (F2.4, AC-R2-3, TC-6·34)', () => {
+  it('passes valid frontmatter (phase 1)', async () => {
+    await writeFile(
+      join(dir, 'docs/spec/01-prd.md'),
+      '---\nphase: 1\nstatus: Draft\n---\n# PRD\n',
+    );
+    const r = await runHook(dir);
+    expect(r.ok).toBe(true);
+  });
+
+  it('fails on missing required status', async () => {
+    await writeFile(
+      join(dir, 'docs/spec/01-prd.md'),
+      '---\nphase: 1\n---\n# PRD\n',
+    );
+    const r = await runHook(dir);
+    expect(r.ok).toBe(false);
+    expect(r.message).toContain('01-prd.md');
+  });
+
+  it('fails on wrong phase number for file', async () => {
+    await writeFile(
+      join(dir, 'docs/spec/01-prd.md'),
+      '---\nphase: 5\nstatus: Draft\n---\n',
+    );
+    const r = await runHook(dir);
+    expect(r.ok).toBe(false);
+  });
+
+  it('fails on invalid status enum', async () => {
+    await writeFile(
+      join(dir, 'docs/spec/02-personas.md'),
+      '---\nphase: 2\nstatus: InProgress\n---\n',
+    );
+    const r = await runHook(dir);
+    expect(r.ok).toBe(false);
+  });
+
+  it('fails on missing frontmatter', async () => {
+    await writeFile(
+      join(dir, 'docs/spec/03-features.md'),
+      '# Just heading, no frontmatter',
+    );
+    const r = await runHook(dir);
+    expect(r.ok).toBe(false);
+    expect(r.message).toContain('missing frontmatter');
+  });
+
+  it('empty docs/spec → ok', async () => {
+    const r = await runHook(dir);
+    expect(r.ok).toBe(true);
+  });
+});
