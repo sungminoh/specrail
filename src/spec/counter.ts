@@ -19,6 +19,10 @@ interface CounterState {
 const EMPTY_STATE: CounterState = { R: {}, F: {}, S: {} };
 
 export class IdCounter {
+  // H9 fix (3차 reviewer code-reviewer): in-process mutex for concurrent next() calls.
+  // INV-1 (unique IDs) guarantee — two concurrent await counter.next()이 같은 ID 발급하지 않게.
+  private mutex: Promise<unknown> = Promise.resolve();
+
   private constructor(
     private state: CounterState,
     private readonly path: string,
@@ -43,6 +47,13 @@ export class IdCounter {
   }
 
   async next(tier: SpecTier, phaseId: number, parents: number[] = []): Promise<string> {
+    // H9: serialize via mutex chain
+    const result = this.mutex.then(() => this.nextInternal(tier, phaseId, parents));
+    this.mutex = result.catch(() => undefined);
+    return result;
+  }
+
+  private async nextInternal(tier: SpecTier, phaseId: number, parents: number[]): Promise<string> {
     const key = this.makeKey(tier, phaseId, parents);
     const map = this.state[tier];
     const last = map[key] ?? 0;

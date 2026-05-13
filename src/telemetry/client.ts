@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { readFile, appendFile, writeFile } from 'node:fs/promises';
+import { readFile, appendFile, writeFile, rename } from 'node:fs/promises';
 import { ConsentStatus } from './consent.js';
 
 export type TelemetryEventType =
@@ -101,15 +101,28 @@ export function createTelemetryClient(cfg: ClientConfig): TelemetryClient {
     const remaining: string[] = [];
     for (const line of lines) {
       try {
-        const payload = JSON.parse(line) as object;
-        await send(payload);
+        // D6 fix (4차 reviewer security): re-filter on replay
+        // INV-8 enforcement: queue file 변조 시에도 ALLOWED_FIELDS 외 field strip
+        const rawPayload = JSON.parse(line) as Record<string, unknown>;
+        const filtered: Record<string, unknown> = {};
+        for (const key of ALLOWED_FIELDS) {
+          if (rawPayload[key] !== undefined) filtered[key] = rawPayload[key];
+        }
+        // Preserve standard metadata only
+        if (typeof rawPayload.timestamp === 'string') filtered.timestamp = rawPayload.timestamp;
+        if (typeof rawPayload.anonProjectHash === 'string') filtered.anonProjectHash = rawPayload.anonProjectHash;
+        if (typeof rawPayload.pluginVersion === 'string') filtered.pluginVersion = rawPayload.pluginVersion;
+        await send(filtered);
       } catch {
         remaining.push(line);
       }
     }
 
-    // Rewrite queue with only the still-failed entries
-    await writeFile(queuePath, remaining.join('\n') + (remaining.length > 0 ? '\n' : ''), 'utf8');
+    // H8 fix (3차 reviewer code-reviewer): atomic rename pattern
+    // 두 concurrent flushQueue가 중간에 같이 read해도 마지막 rename만 winner
+    const tmpPath = queuePath + '.tmp';
+    await writeFile(tmpPath, remaining.join('\n') + (remaining.length > 0 ? '\n' : ''), 'utf8');
+    await rename(tmpPath, queuePath);
   }
 
   return { emit, flushQueue };

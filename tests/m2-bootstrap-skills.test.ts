@@ -16,7 +16,7 @@ afterEach(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
-describe('T2.11 install bootstrap (F6.2, AC-R6-2, TC-13)', () => {
+describe('T2.11 install bootstrap (F6.2, F6.1, AC-R6-2, AC-R6-1, TC-12, TC-13)', () => {
   it('creates docs/spec + Phase 1 placeholder', async () => {
     const r = await bootstrap(dir);
     expect(r.created).toBe(true);

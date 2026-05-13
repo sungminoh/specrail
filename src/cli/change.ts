@@ -34,6 +34,15 @@ export async function draftChange(
 
   const downstream = await extractDownstream(projectRoot, changedIds);
 
+  // INV-6 enforce (3차 verifier 발견): Change.affectedPhases ≥ 1
+  // 변경이 spec에 영향 0이면 명시적 reject — silent proposal 차단
+  if (downstream.affectedPhases.length === 0 && changedIds.length > 0) {
+    throw new Error(
+      `INV-6 violation: changed IDs (${changedIds.join(', ')}) have no downstream phase impact. ` +
+        `Either spec graph 누락 or changedIds invalid. Verify graph build + ID validity first.`,
+    );
+  }
+
   const content = renderProposal({
     topic,
     date,

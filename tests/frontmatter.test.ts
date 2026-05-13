@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { parseFrontmatter } from '../src/markdown/frontmatter.js';
 
-describe('parseFrontmatter (F1.1, F1.2, ADR-4, TC-1)', () => {
+describe('parseFrontmatter (F1.1, F1.2, AC-R1-1, ADR-4, TC-1)', () => {
   it('extracts frontmatter object', () => {
     const raw = `---
 phase: 1

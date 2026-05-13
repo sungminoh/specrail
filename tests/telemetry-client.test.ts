@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { createTelemetryClient, hashProjectRoot } from '../src/telemetry/client.js';
 import { ConsentStatus } from '../src/telemetry/consent.js';
 
-describe('T3.8 Telemetry client (F13.2, INV-8·9, ADR-7, TC-22·37·45·59)', () => {
+describe('T3.8 Telemetry client (F13.2, AC-R13-2, INV-8·9, ADR-7, TC-22·37·45·59)', () => {
   it('TC-22: sends event when OptedIn', async () => {
     const mockSend = vi.fn().mockResolvedValue({ ok: true });
     const c = createTelemetryClient({

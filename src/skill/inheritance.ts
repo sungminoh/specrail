@@ -12,15 +12,26 @@
 // v3 원본 (refinement 전): git tag v3-archive 참조.
 
 import { readFile } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
+const PROJECT_ROOT = resolve(join(here, '..', '..'));
 const DEFAULT_COMMON_PATH = join(here, '..', '..', 'docs', 'spec', '00-common-principles.md');
 
+/**
+ * D5 fix (4차 reviewer security): path traversal defense.
+ * commonPath must resolve within project boundary.
+ */
 export async function loadCommon(commonPath: string = DEFAULT_COMMON_PATH): Promise<string> {
+  const resolved = resolve(commonPath);
+  if (!resolved.startsWith(PROJECT_ROOT)) {
+    throw new Error(
+      `D5: commonPath escapes project boundary (${resolved} not under ${PROJECT_ROOT})`,
+    );
+  }
   try {
-    return await readFile(commonPath, 'utf8');
+    return await readFile(resolved, 'utf8');
   } catch {
     return '';
   }

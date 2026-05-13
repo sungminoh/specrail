@@ -14,7 +14,7 @@ afterEach(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
-describe('Pre-commit hook installer (T1.7, AC-R6-3, F2.1, F6.4, RISK-3, INV-10)', () => {
+describe('Pre-commit hook installer (T1.7, AC-R6-3, AC-R2-1, F2.1, F6.4, RISK-3, INV-10, TC-4)', () => {
   it('detects none when no hook exists', async () => {
     const r = await detectExisting(dir);
     expect(r.type).toBe('none');

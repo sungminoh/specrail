@@ -1,11 +1,18 @@
 // Minimal YAML parser for frontmatter
 // 단순한 v3 frontmatter 형식만 지원: key: value, key: [v1, v2], nested 1-level
 // Phase 13 dependency 줄이기 위해 자체 구현 (js-yaml 의존성 회피)
+//
+// Security (D1 fix — 4차 reviewer security):
+//   - Object.create(null) → prototype pollution 차단
+//   - __proto__·constructor·prototype key reject
+
+const DANGEROUS_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
 export function parse(yaml: string): Record<string, unknown> {
-  const result: Record<string, unknown> = {};
+  // D1: null prototype object — Object.prototype 오염 차단
+  const result: Record<string, unknown> = Object.create(null) as Record<string, unknown>;
+  // D16 fix (4차 reviewer simplifier): dead variable currentKey removed
   const lines = yaml.split(/\r?\n/);
-  let currentKey: string | null = null;
   let currentArray: string[] | null = null;
 
   for (const rawLine of lines) {
@@ -23,7 +30,8 @@ export function parse(yaml: string): Record<string, unknown> {
     const kvMatch = line.match(/^([A-Za-z_][\w-]*)\s*:\s*(.*)$/);
     if (kvMatch) {
       const [, key, val] = kvMatch;
-      currentKey = key;
+      // D1: reject dangerous keys (prototype pollution defense)
+      if (DANGEROUS_KEYS.has(key)) continue;
       const trimmed = val.trim();
 
       if (trimmed === '') {

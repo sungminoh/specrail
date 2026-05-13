@@ -3,12 +3,16 @@
 // F2.4 schema validation hook 차용
 
 import Ajv2020 from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
 import type { ErrorObject, ValidateFunction } from 'ajv';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
+// D3 fix (4차 reviewer document-specialist): register format validators
+// `format: "date-time"`·"uri"·"email" 등이 silent bypass 안 되게 함
+addFormats(ajv);
 
 export interface ValidationResult {
   valid: boolean;

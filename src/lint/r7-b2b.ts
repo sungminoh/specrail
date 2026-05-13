@@ -88,8 +88,12 @@ const PATTERNS: PatternDef[] = [
  */
 const ID_PATTERN = /\b(?:[A-Z]+-\d+(?:\.\d+)*|[A-Z]+(?:\.\d+)+|[A-Z]+-[A-Za-z]+)\b/g;
 
+/**
+ * H1 fix (3차 reviewer code-reviewer): length-preserving strip
+ * so match indices stay aligned between stripped and raw line.
+ */
 function stripIds(text: string): string {
-  return text.replace(ID_PATTERN, '__ID__');
+  return text.replace(ID_PATTERN, (match) => ' '.repeat(match.length));
 }
 
 /**

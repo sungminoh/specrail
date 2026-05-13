@@ -1,4 +1,5 @@
-import { invokeSubagent, type AgentTool, type SubagentTask, type SubagentStatus } from './invoke.js';
+// D17 fix (4차 reviewer simplifier): unused SubagentStatus import removed
+import { invokeSubagent, type AgentTool, type SubagentTask } from './invoke.js';
 
 /**
  * SpecReview prompt template (C6 / analyst ambiguity #6 resolved).

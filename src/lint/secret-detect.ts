@@ -47,6 +47,27 @@ const PATTERNS: PatternDef[] = [
     regex: /sk-[A-Za-z0-9]{20,}/g,
     suggestion: SUGGESTION,
   },
+  // D4 additions (4차 reviewer security):
+  {
+    id: 'anthropic-key',
+    regex: /\bsk-ant-[A-Za-z0-9_-]{20,}\b/g,
+    suggestion: SUGGESTION,
+  },
+  {
+    id: 'private-key-block',
+    regex: /-----BEGIN\s+(RSA|EC|DSA|OPENSSH)?\s*PRIVATE\s+KEY-----/g,
+    suggestion: SUGGESTION,
+  },
+  {
+    id: 'bearer-token',
+    regex: /\bBearer\s+[A-Za-z0-9_\-.]{20,}\b/g,
+    suggestion: SUGGESTION,
+  },
+  {
+    id: 'gcp-service-account',
+    regex: /"type":\s*"service_account"/g,
+    suggestion: SUGGESTION,
+  },
   {
     id: 'aws-access-key',
     regex: /\bAKIA[A-Z0-9]{16}\b/g,
@@ -82,9 +103,13 @@ const PATTERNS: PatternDef[] = [
 const ID_PATTERN =
   /\b(?:[A-Z]+-[A-Z]+-\d+(?:\.\d+)*|[A-Z]+-\d+(?:\.\d+)*|[A-Z]+(?:\.\d+)+|[A-Z]+-[A-Za-z]+)\b/g;
 
-/** Strip spec ID tokens from text to avoid false positives. */
+/**
+ * Strip spec ID tokens from text to avoid false positives.
+ * C2 fix (3차 reviewer code-reviewer): length-preserving replacement
+ * so that match.index from sanitized string aligns with original text.
+ */
 function stripIds(text: string): string {
-  return text.replace(ID_PATTERN, '__ID__');
+  return text.replace(ID_PATTERN, (match) => ' '.repeat(match.length));
 }
 
 /**
