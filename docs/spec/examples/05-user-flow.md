@@ -206,6 +206,58 @@ graph LR
     class N032,N033,N035,N037,N039 page
 ```
 
+## S2 DELTA Chain Sequence (M7 implementation)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant CLI as /plan-pipeline change
+    participant Draft as draftChange
+    participant Graph as graph.extractDownstream
+    participant Chain as invokeDeltaChain
+    participant Reviewer as User (review)
+    participant Merge as mergeChange
+    participant Archive as archiveChange
+
+    User->>CLI: change "<topic>" --ids R1,F1.1
+    CLI->>Draft: draftChange(root, topic, changedIds)
+    Draft->>Graph: extractDownstream(root, changedIds)
+    Graph-->>Draft: { affectedPhases, affectedIds }
+    Draft-->>CLI: proposal.md (status: proposed)
+
+    CLI->>Chain: invokeDeltaChain(root, changeDir, downstream, changedIds)
+    loop for each affected phase
+        Chain->>Chain: invokeDeltaPhase → deltas/{NN-*}-delta.md
+    end
+    Chain-->>CLI: { deltas[], created }
+
+    CLI-->>Reviewer: User edits each delta (ADDED/MODIFIED/REMOVED)
+    Reviewer-->>CLI: deltas filled
+
+    CLI->>Merge: mergeChange(root, changeDir)
+    Merge->>Merge: backup current files (transaction)
+    Merge->>Merge: schema + INV-2 hook gate
+    alt hooks fail
+        Merge->>Merge: restore all backups
+        Merge-->>CLI: throw
+    else hooks pass
+        Merge->>Merge: apply deltas to current/{NN-*}.md
+        Merge->>Merge: proposal.md status: applied
+        Merge-->>CLI: { merged: true, phases }
+    end
+
+    CLI->>Archive: archiveChange(root, changeDir)
+    Archive->>Archive: proposal.md status: archived
+    Archive->>Archive: rename → changes/archive/{date-topic}/
+    Archive-->>CLI: { archived: true, archivePath }
+
+    CLI-->>User: chain done
+
+    Note over Draft,Archive: All 4 stages idempotent — replay = no-op
+```
+
+The diagram captures the M7 implementation: idempotent loop on each stage, transaction in merge, frontmatter status flips.
+
 ### SEC-4 Implementation (Superpowers 패턴)
 
 ```mermaid
