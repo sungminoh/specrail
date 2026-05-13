@@ -14,6 +14,7 @@
 import { readFile } from 'node:fs/promises';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getInputFromPhase, formatInputBlock } from './inject.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = resolve(join(here, '..', '..'));
@@ -38,26 +39,41 @@ export async function loadCommon(commonPath: string = DEFAULT_COMMON_PATH): Prom
 }
 
 /**
- * Compose final skill prompt = common preamble + skill body.
+ * Compose final skill prompt = common preamble + optional phase frontmatter + skill body.
  * F5.4 enforcement — every skill auto-inherits 00-common.
+ * US-T5.4 — inputFrom prepends Phase N frontmatter before skill body.
  */
 export async function composeSkillPrompt(
   skillBody: string,
-  options: { commonPath?: string; includeCommon?: boolean } = {},
+  options: {
+    commonPath?: string;
+    includeCommon?: boolean;
+    inputFrom?: { projectRoot: string; phase: number };
+  } = {},
 ): Promise<string> {
   const include = options.includeCommon !== false;
-  if (!include) return skillBody;
 
-  const common = await loadCommon(options.commonPath);
-  if (!common) return skillBody;
+  const parts: string[] = [];
 
-  return [
-    '<!-- F5.4 auto-inject: 00-common-principles -->',
-    common,
-    '',
-    '<!-- skill body below -->',
-    skillBody,
-  ].join('\n');
+  if (include) {
+    const common = await loadCommon(options.commonPath);
+    if (common) {
+      parts.push('<!-- F5.4 auto-inject: 00-common-principles -->');
+      parts.push(common);
+      parts.push('');
+      parts.push('<!-- skill body below -->');
+    }
+  }
+
+  if (options.inputFrom) {
+    const fm = await getInputFromPhase(options.inputFrom.projectRoot, options.inputFrom.phase);
+    if (Object.keys(fm).length > 0) {
+      parts.push(formatInputBlock(fm, options.inputFrom.phase));
+    }
+  }
+
+  parts.push(skillBody);
+  return parts.join('\n');
 }
 
 /**
