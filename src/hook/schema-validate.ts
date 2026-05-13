@@ -45,6 +45,12 @@ export async function checkSchemas(projectRoot: string): Promise<SchemaCheckResu
       continue;
     }
 
+    // Skip template guide files — they lack the 'phase' field which is only
+    // present in filled user spec outputs. Template files define 'name' instead.
+    if (!Object.prototype.hasOwnProperty.call(frontmatter, 'phase')) {
+      continue;
+    }
+
     try {
       const result = await validateFrontmatter(frontmatter, schemaPath);
       if (!result.valid) {

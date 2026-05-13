@@ -12,7 +12,8 @@ export interface DetectionResult {
   path?: string;
 }
 
-const V4_MARKER = '# plan-pipeline v4 hook chain (INV-10 보존)';
+// JS-comment marker (not shell #) so it's valid in #!/usr/bin/env node scripts
+const V4_MARKER = '// plan-pipeline v4 hook chain (INV-10 보존)';
 
 export async function detectExisting(projectRoot: string): Promise<DetectionResult> {
   // husky v9: .husky/pre-commit (no underscore)
@@ -62,6 +63,11 @@ ${V4_MARKER}
 // Chain order:
 //   1. Run user-original hook if exists (backup file)
 //   2. Run v4 checks (schema + id consistency)
+//
+// Dist resolution (D11 fix):
+//   - Try npm-installed package: @plan-pipeline/v4/dist/...
+//   - Fallback to local repo: ./dist/hook/... (self-dogfood / dev)
+//   - If neither found: stderr + exit 1 (no silent pass)
 import { execFile as ef } from 'node:child_process';
 import { promisify } from 'node:util';
 import { stat as st } from 'node:fs/promises';
@@ -72,6 +78,25 @@ const projectRoot = process.cwd();
 const userOrig = joinPath(projectRoot, '.git', 'hooks', 'pre-commit.user-original');
 
 async function existsP(p) { try { await st(p); return true; } catch { return false; } }
+
+async function loadHooks() {
+  // Try npm-installed package first
+  try {
+    const { runHook: idHook } = await import('@plan-pipeline/v4/dist/hook/id-consistency.js');
+    const { runHook: schemaHook } = await import('@plan-pipeline/v4/dist/hook/schema-validate.js');
+    return { idHook, schemaHook };
+  } catch {
+    // not installed as package — try local dist (self-dogfood / dev)
+  }
+  try {
+    const { runHook: idHook } = await import(joinPath(projectRoot, 'dist/hook/id-consistency.js'));
+    const { runHook: schemaHook } = await import(joinPath(projectRoot, 'dist/hook/schema-validate.js'));
+    return { idHook, schemaHook };
+  } catch {
+    // neither found
+  }
+  return null;
+}
 
 (async () => {
   // 1. User original
@@ -85,17 +110,18 @@ async function existsP(p) { try { await st(p); return true; } catch { return fal
     }
   }
 
-  // 2. v4 checks (dynamic import to avoid hard failure if plugin not installed)
-  try {
-    const { runHook: idHook } = await import('@plan-pipeline/v4/dist/hook/id-consistency.js');
-    const { runHook: schemaHook } = await import('@plan-pipeline/v4/dist/hook/schema-validate.js');
-    const ic = await idHook(projectRoot);
-    if (!ic.ok) { process.stderr.write(ic.message + '\\n'); process.exit(1); }
-    const sc = await schemaHook(projectRoot);
-    if (!sc.ok) { process.stderr.write(sc.message + '\\n'); process.exit(1); }
-  } catch (e) {
-    process.stderr.write('[plan-pipeline v4 hook unavailable — skipping checks]\\n');
+  // 2. v4 checks
+  const hooks = await loadHooks();
+  if (!hooks) {
+    process.stderr.write('[plan-pipeline v4 hook: dist not found, run npm run build]\\n');
+    process.exit(1);
   }
+
+  const ic = await hooks.idHook(projectRoot);
+  if (!ic.ok) { process.stderr.write(ic.message + '\\n'); process.exit(1); }
+
+  const sc = await hooks.schemaHook(projectRoot);
+  if (!sc.ok) { process.stderr.write(sc.message + '\\n'); process.exit(1); }
 
   process.exit(0);
 })();
@@ -129,6 +155,9 @@ export async function installHook(
     };
   }
 
+  // Sentinel to detect any version of our hook (old # marker or new // marker)
+  const V4_SENTINEL = 'plan-pipeline v4 hook chain';
+
   let backupPath: string | undefined;
   if (detection.type === 'plain' && detection.path) {
     const existing = await readFile(detection.path, 'utf8').catch(() => '');
@@ -140,7 +169,8 @@ export async function installHook(
         guidance: 'v4 hook already installed (force=true to reinstall)',
       };
     }
-    if (existing.trim().length > 0 && !existing.includes(V4_MARKER)) {
+    // Do NOT back up our own hook (any version) — only back up external user hooks
+    if (existing.trim().length > 0 && !existing.includes(V4_SENTINEL)) {
       backupPath = join(projectRoot, '.git', 'hooks', 'pre-commit.user-original');
       await copyFile(detection.path, backupPath);
       const hash = createHash('sha256').update(existing).digest('hex');

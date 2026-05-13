@@ -14,8 +14,25 @@ export interface ParsedMarkdown {
 
 const processor = unified().use(remarkParse).use(remarkFrontmatter, ['yaml']);
 
+/**
+ * Strip leading HTML block comments (<!-- ... -->) that appear before the YAML
+ * frontmatter. Some spec files use an HTML comment on line 1 as a metadata
+ * annotation; remark-frontmatter only recognises YAML when '---' is the first
+ * line, so we pre-strip these comments before parsing.
+ */
+function stripLeadingHtmlComments(raw: string): string {
+  let s = raw;
+  while (s.startsWith('<!--')) {
+    const end = s.indexOf('-->');
+    if (end === -1) break;
+    s = s.slice(end + 3).replace(/^[\r\n]+/, '');
+  }
+  return s;
+}
+
 export function parseFrontmatter(raw: string): ParsedMarkdown {
-  const tree = processor.parse(raw);
+  const stripped = stripLeadingHtmlComments(raw);
+  const tree = processor.parse(stripped);
   const yamlNode = (tree as { children: Array<{ type: string; value?: string }> }).children.find(
     (c) => c.type === 'yaml',
   );
@@ -31,6 +48,8 @@ export function parseFrontmatter(raw: string): ParsedMarkdown {
 }
 
 function stripFrontmatter(raw: string): string {
-  const match = raw.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/);
-  return match ? raw.slice(match[0].length) : raw;
+  // Strip optional leading HTML comments then the YAML block
+  const stripped = stripLeadingHtmlComments(raw);
+  const match = stripped.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/);
+  return match ? stripped.slice(match[0].length) : raw;
 }
