@@ -156,33 +156,30 @@ describe('EDGE-7·8·9·10 i18n + scale boundary (US-10.3, M10)', () => {
     expect(elapsed).toBeLessThan(2000);
   });
 
-  // Boundary: zero-width space inside ID string — documents actual behaviour
-  it('Boundary: R​1 (zero-width space U+200B inside) — documents ZWS false-positive bug (NFR-I18N-1)', async () => {
+  // Boundary: zero-width space adjacent to ID — FIXED in M11 US-11.6
+  it('Boundary: ​R1 (U+200B adjacent) — ZWS false-positive fixed (NFR-I18N-1, US-11.6)', async () => {
     await writeFile(
       join(dir, 'docs/spec/03-features.md'),
       '---\nphase: 3\n---\n## R1: real id\n',
     );
-    // Body uses R + ZERO WIDTH SPACE (U+200B) + 1 — intended NOT to cite R1.
-    // U+200B is a Unicode non-ASCII character that JavaScript \b word-boundary
-    // does NOT treat as a word break (only ASCII \W triggers \b).
-    // As a result the regex still extracts "R1" from "R​1", producing a
-    // false-positive edge. This is a KNOWN BUG (NFR-I18N-1 violation).
-    // Do NOT fix in this cycle (M10) — log the finding; patch in a future cycle.
+    // Body uses ZERO WIDTH SPACE (U+200B) immediately before R1.
+    // JS \b does not recognise U+200B as a word break, so without the
+    // ZWS lookaround fix, CITATION_RE would still match "R1" here even
+    // though the token is only present as a ZWS-prefixed decoration, not
+    // a genuine spec citation.  US-11.6 (M11) adds negative lookarounds
+    // for ZWS chars to CITATION_RE so this is no longer a false positive.
     await writeFile(
       join(dir, 'docs/spec/05-flow.md'),
-      '---\nphase: 5\n---\n# Flow\nThis text has R​1 (ZWS inside) but NOT real R1.\n',
+      '---\nphase: 5\n---\n# Flow\nThis text has ​R1 (ZWS before) — not a real citation.\n',
     );
 
     const g = await buildGraph(dir);
 
     expect(g.definedIds.has('R1')).toBe(true);
 
-    // BUG: \b in JS RegExp is ASCII-only; U+200B is treated as non-breaking,
-    // so "R​1" is still matched as "R1" by CITATION_RE.
-    // Expected (correct) behaviour: edge should be undefined.
-    // Actual (current) behaviour: edge is defined — false positive.
-    // When this bug is fixed, flip to toBeUndefined() and remove this comment.
+    // FIXED (US-11.6, M11): CITATION_RE now has a negative lookbehind for
+    // ZWS chars, so ​R1 is no longer extracted as a citation edge.
     const edge = g.edges.find((e) => e.from === '05' && e.to === 'R1');
-    expect(edge).toBeDefined(); // false-positive — see bug note above
+    expect(edge).toBeUndefined();
   });
 });

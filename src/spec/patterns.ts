@@ -72,9 +72,19 @@ export function isReservedId(id: string): boolean {
   return RESERVED_ID_PREFIXES.has(id.slice(0, dash));
 }
 
-/** Citation regex (word-boundary, captured group, global flag). */
+/**
+ * Zero-width / format characters that JS \b does not treat as word breaks.
+ * Used in CITATION_RE lookarounds to suppress false-positive matches when
+ * an ID token is immediately adjacent to one of these chars (US-11.6, M11).
+ */
+const ZWS_CHARS = '\\u200B\\u200C\\u200D\\uFEFF';
+
+/** Citation regex (word-boundary, captured group, global flag).
+ * Negative lookarounds for ZWS_CHARS prevent false-positive matches when
+ * an ID is adjacent to a zero-width character (US-11.6, M11).
+ */
 export const CITATION_RE = new RegExp(
-  `\\b(${ID_PATTERN_SOURCE}|${USER_NAMESPACE_PATTERN})\\b`,
+  `(?<![${ZWS_CHARS}])\\b(${ID_PATTERN_SOURCE}|${USER_NAMESPACE_PATTERN})\\b(?![${ZWS_CHARS}])`,
   'g',
 );
 
