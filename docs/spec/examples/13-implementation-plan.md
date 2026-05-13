@@ -1045,4 +1045,69 @@ README → M2? ✅ (T2.13, M2 ship-able 최소 조건)
 
 이 5개 발견사항은 v4.1 또는 v4.5 cycle에서 prompt 개선 후보 — Phase 12 Trigger to Re-evaluate 패턴으로 archive.
 
+---
+
+## v4.1 cycle implementation tasks (M3-M11)
+
+다음 task들이 v4.1 alpha cycle 진행 중 구현되었다. 본 phase 13 plan의 보완.
+
+### M3 graph foundation (post-M0/M1/M2 mega cycle)
+- T2.1b graph filter dash-relax — `^\d{2}-.*\.md$` → `^\d{2}.*\.md$` (resolver test fix)
+
+### M5 wire-up integration (~4-6h)
+- T5.1 hook install entry point — `src/cli/hook-install.ts`
+- T5.2 V4_HOOK_TEMPLATE chain detection — husky/lefthook/plain
+- T5.3 orchestrator status entry — `src/skill/orchestrator.ts`
+- T5.4 inject helpers — F1.2 auto-inject (`getInputFromPhase` + `formatInputBlock`)
+- T5.5 approve CLI — Draft → Approved with INV-3 + ISO timestamp
+- T5.6 subagent dispatch wrapper — `dispatchTaskWithReview` + `dispatchWithRetry`
+
+### M6 silent fix (~2-3h)
+- T6.2 schema-validate strict mode — silent skip → warnings
+- T6.3 graph builder initialized flag — explicit project state
+- T6.4 ID_RE expansion — user-defined namespace + reserved blocklist
+- T6.5 heading line self-edge fix — INV-6 bypass close
+
+### M7 orchestrator + S2 DELTA chain (~6-8h)
+- T7.1 ADR-11 — Phase N+1 manual trigger + optional /plan-pipeline continue
+- T7.2 nextPhase() function — phase chain logic per ADR-11
+- T7.3 invokeDeltaChain — delta skeleton per affected phase
+- T7.4 mergeChange — deltas → current/ + status: applied
+- T7.5 archiveChange — applied → archived rename
+
+### M9 plan self-check enhancement (~3-4h)
+- T9.1 Anti-Sycophancy lint — keyword + evidence proximity
+- T9.2 Atomic commit lint — mega-commit detection
+- T9.3 AC traceability auto-grep — spec ↔ tests gap
+- T9.4 INV-7 lint enforce — file-aware wrapper + CLI
+- T9.5 mergeChange transaction — backup + restore
+- T9.6 lint:plan orchestrator — single CLI entry
+
+### M10 EDGE coverage + 3 conditions (~6-8h)
+- T10.1 EDGE-1·2·3 timestamp/TZ tests
+- T10.2 EDGE-4·5·6 concurrency tests
+- T10.3 EDGE-7·8·9·10 i18n tests (2 real bugs documented)
+- T10.4 EDGE-11·12·13 hook bypass tests
+- T10.5 EDGE-19·20·21·22 network/external tests
+- T10.6 architect C2 — lint:plan semantics doc
+- T10.7 architect C3 — EVIDENCE_RE limitation doc
+- T10.8 architect C1 — V4-1-PLAN T11.5 lock-in
+
+### M8 external integration (~3-4h + user action)
+- T8.1 npm publish workflow + tag/version guard
+- T8.2 marketplace research doc
+- T8.3 Plausible config loader (.env + adapter)
+- T8.4 README install guide cleanup
+- T8.5 USER-ACTIONS checklist
+- T8.6 M11 PRD shell
+
+### M11 spec doc update + post-M10 cleanup (this cycle)
+- T11.1 ARCH-8~12 spec
+- T11.2 graph.json cache 명시 제거 (ADR-9 옵션 D)
+- T11.3 S2 DELTA sequence diagram
+- T11.4 Phase 13 plan section update (this section)
+- T11.5 anti-sycophancy 38 → ≤10 cleanup
+- T11.6 ZWS regex fix (CITATION_RE)
+- T11.7 Plausible flush + loadConfigFromEnv wire-up
+
 5번째는 특히 흥미: v4 plugin 자체가 spec→task coverage check를 자동으로 하면 Phase 13 self-check가 단순해짐. 즉 v4 plugin이 자신을 더 빨리 작성 가능하게 만듦 — 재귀 효율 향상.
