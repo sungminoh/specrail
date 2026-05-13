@@ -113,3 +113,30 @@ export function checkInv7(text: string, filePath = ''): InvViolation[] {
 export function checkAllInvariants(text: string, filePath = ''): InvViolation[] {
   return [...checkInv5(text, filePath), ...checkInv7(text, filePath)];
 }
+
+/**
+ * INV-7 check against a real file on disk.
+ */
+export async function checkInv7File(filePath: string): Promise<InvViolation[]> {
+  const { readFile } = await import('node:fs/promises');
+  const text = await readFile(filePath, 'utf8');
+  return checkInv7(text, filePath);
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const filePath = process.argv[2];
+  if (!filePath) {
+    console.error('Usage: inv-enforce <ADR-file.md>');
+    process.exit(2);
+  }
+  checkInv7File(filePath).then((violations) => {
+    if (violations.length === 0) {
+      console.log(`✓ INV-7 PASS for ${filePath}`);
+      process.exit(0);
+    }
+    for (const v of violations) {
+      console.error(`${v.location} — ${v.reason}`);
+    }
+    process.exit(1);
+  });
+}
