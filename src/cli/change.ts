@@ -2,7 +2,7 @@
 // US-T7.3/T7.4/T7.5 (M7): S2 DELTA full chain — invokeDeltaChain → mergeChange → archiveChange
 // `/plan-pipeline change "<topic>"` 명령 simulator
 
-import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import { extractDownstream, type DownstreamResult } from '../graph/downstream.js';
 import { parseFrontmatter } from '../markdown/frontmatter.js';
@@ -356,5 +356,56 @@ export async function mergeChange(
     merged: true,
     phases,
     message: `Merged ${phases.length} delta(s) into current/. Run archiveChange next.`,
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// US-T7.5 — S2 DELTA archive 이동
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface ArchiveChangeResult {
+  archived: boolean;
+  archivePath: string;
+  message: string;
+}
+
+export async function archiveChange(
+  projectRoot: string,
+  changeDir: string,
+): Promise<ArchiveChangeResult> {
+  const changeName = basename(changeDir);
+  const archiveDir = join(projectRoot, 'docs', 'spec', 'changes', 'archive');
+  const archivePath = join(archiveDir, changeName);
+
+  // Idempotent — already archived
+  if (await exists(archivePath)) {
+    return {
+      archived: false,
+      archivePath,
+      message: `Already archived at ${archivePath}`,
+    };
+  }
+  if (!(await exists(changeDir))) {
+    throw new Error(`Change directory not found: ${changeDir}`);
+  }
+
+  await mkdir(archiveDir, { recursive: true });
+
+  // Update proposal status: archived BEFORE rename (proposal still in changeDir)
+  const proposalPath = join(changeDir, 'proposal.md');
+  if (await exists(proposalPath)) {
+    const raw = await readFile(proposalPath, 'utf8');
+    const updated = /^status:.*$/m.test(raw)
+      ? raw.replace(/^status:.*$/m, 'status: archived')
+      : raw;
+    await writeFile(proposalPath, updated);
+  }
+
+  await rename(changeDir, archivePath);
+
+  return {
+    archived: true,
+    archivePath,
+    message: `Archived to ${archivePath}`,
   };
 }
