@@ -1,3 +1,5 @@
+<!-- v4-plugin-refinement (T2.5c, architect 옵션 B): self-check bash blocks → ARCH-5 schema validator + ARCH-3 hooks 자동 강제. HARD-GATE 수동 승인 step → ADR-8 state machine 자동 enforce. 상대 경로 file 참조 → plugin runtime의 docs/spec/ resolver. v3 원본 prompt는 git tag v3-archive 참조. -->
+
 ---
 name: phase-9-non-functional-requirements
 description: 7 domains - Performance, Scalability, Availability, Security (STRIDE), Privacy, Accessibility (WCAG), i18n. 모두 측정가능.

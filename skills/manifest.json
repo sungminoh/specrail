@@ -1,0 +1,27 @@
+{
+  "$schema": "https://plan-pipeline.dev/schemas/manifest.json",
+  "name": "@plan-pipeline/v4",
+  "version": "0.0.1",
+  "description": "Planning Pipeline v4 — 13-phase spec discipline for Claude Code",
+  "skills": [
+    { "name": "plan-pipeline-orchestrator", "path": "orchestrator/SKILL.md", "trigger-words": ["plan-pipeline", "/plan-pipeline"] },
+    { "name": "phase-1-prd", "path": "phase-01-prd/SKILL.md", "trigger-words": ["PRD", "vision", "product spec"] },
+    { "name": "phase-2-personas-journey", "path": "phase-02-personas-journey/SKILL.md", "trigger-words": ["persona", "journey"] },
+    { "name": "phase-3-features", "path": "phase-03-features/SKILL.md", "trigger-words": ["features", "requirements"] },
+    { "name": "phase-4-domain-model", "path": "phase-04-domain-model/SKILL.md", "trigger-words": ["domain model", "entity", "state machine"] },
+    { "name": "phase-5-user-flow", "path": "phase-05-user-flow/SKILL.md", "trigger-words": ["user flow", "section", "node"] },
+    { "name": "phase-6-information-architecture", "path": "phase-06-information-architecture/SKILL.md", "trigger-words": ["IA", "information architecture", "navigation"] },
+    { "name": "phase-7-wireframe", "path": "phase-07-wireframe/SKILL.md", "trigger-words": ["wireframe", "UI layout"] },
+    { "name": "phase-8-system-architecture", "path": "phase-08-system-architecture/SKILL.md", "trigger-words": ["architecture", "C4", "container"] },
+    { "name": "phase-9-non-functional-requirements", "path": "phase-09-non-functional-requirements/SKILL.md", "trigger-words": ["NFR", "non-functional"] },
+    { "name": "phase-10-test-strategy", "path": "phase-10-test-strategy/SKILL.md", "trigger-words": ["test strategy", "test pyramid"] },
+    { "name": "phase-11-operations", "path": "phase-11-operations/SKILL.md", "trigger-words": ["operations", "deploy", "monitoring"] },
+    { "name": "phase-12-adr-risks", "path": "phase-12-adr-risks/SKILL.md", "trigger-words": ["ADR", "risk", "decision record"] },
+    { "name": "phase-13-implementation-plan", "path": "phase-13-implementation-plan/SKILL.md", "trigger-words": ["implementation plan", "atomic task", "milestone"] }
+  ],
+  "common": "common-principles.md",
+  "stateMachine": {
+    "primary": "frontmatter.status",
+    "cache": ".plan-pipeline-cache/state.json"
+  }
+}
