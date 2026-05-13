@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plan-pipeline.dev/schemas/common-frontmatter.json",
+  "title": "Common frontmatter (모든 phase 공통)",
+  "type": "object",
+  "required": ["phase", "status"],
+  "properties": {
+    "phase": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 13,
+      "description": "Phase 번호 (1-13)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["Empty", "Draft", "Approved"],
+      "description": "ENT-Phase.status — frontmatter primary source-of-truth (ADR-8)"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["SCOPE_EXPANSION", "SELECTIVE_EXPANSION", "HOLD_SCOPE", "SCOPE_REDUCTION"],
+      "description": "PRD §10에서 선택, 후속 phase 상속"
+    },
+    "refs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^([RFS]\\d+(\\.\\d+){0,2}|ENT-[A-Za-z0-9]+|INV-\\d+|NFR-[A-Z]+-\\d+|ARCH-\\d+|EXT-\\d+|OPS-\\d+|ADR-\\d+|RISK-\\d+|TC-\\d+|EDGE-\\d+)$" },
+      "description": "이전 phase ID 인용 list"
+    },
+    "approvedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "AC-R5-3 명시 승인 timestamp"
+    }
+  },
+  "additionalProperties": true
+}
