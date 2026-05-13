@@ -9,6 +9,7 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkFrontmatter from 'remark-frontmatter';
 import { visit } from 'unist-util-visit';
+import { CITATION_RE, isReservedId } from '../spec/patterns.js';
 
 const HEADING_DEF = /^([A-Z][A-Za-z0-9.\-_]+):\s/;
 
@@ -16,8 +17,9 @@ const HEADING_DEF = /^([A-Z][A-Za-z0-9.\-_]+):\s/;
 // from citation scan so 'ID: title' doesn't self-cite (INV-6 bypass fix).
 const MARKDOWN_HEADING_LINE = /^#+\s+[A-Z][A-Za-z0-9.\-_]+:\s/;
 
-const ID_RE =
-  /\b([RFS]\d+(?:\.\d+){0,2}|ENT-[A-Za-z0-9_]+|INV-\d+|NFR-[A-Z]+-\d+|ARCH-\d+|EXT-\d+|OPS-\d+|ADR-\d+|RISK-\d+|TC-\d+|EDGE-\d+|AC-R\d+-\d+|T\d+\.\d+)\b/g;
+// US-T6.4 (M6): Shared CITATION_RE includes user-defined namespaces
+// (e.g. PAY-12, AUTH-3). Reserved HTTP-style tokens filtered post-match.
+const ID_RE = CITATION_RE;
 
 export interface GraphNode {
   readonly specId: string;
@@ -154,9 +156,11 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
       // US-T6.5 (M6): Heading definition lines define the ID, not cite it.
       // Skip them to prevent self-edges that bypass INV-6 (downstream != 0).
       if (MARKDOWN_HEADING_LINE.test(line)) return;
-      const re = new RegExp(ID_RE);
+      const re = new RegExp(ID_RE.source, ID_RE.flags);
       let m: RegExpExecArray | null;
       while ((m = re.exec(line)) !== null) {
+        // US-T6.4 (M6): drop HTTP-style false positives (HTTP-200, GET-401)
+        if (isReservedId(m[1])) continue;
         edgesAll.push({
           from: phaseId,
           to: m[1],

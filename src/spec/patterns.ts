@@ -35,8 +35,48 @@ export const ID_PATTERN_SOURCE =
   '|AC-R\\d+-\\d+' +
   '|T\\d+\\.\\d+';
 
+/**
+ * US-T6.4 (M6): User-defined namespace pattern.
+ * Matches custom spec IDs (e.g. PAY-12, AUTH-3, GHOST-999) that don't fit
+ * the canonical taxonomy above. Without this, arbitrary namespaces silently
+ * pass dangling-citation checks.
+ *
+ * Shape: leading uppercase letter, 1+ uppercase/digit chars, '-', digits,
+ * optional '.NN' tails (T-style nested tasks).
+ */
+export const USER_NAMESPACE_PATTERN = '[A-Z][A-Z0-9]+-\\d+(?:\\.\\d+)*';
+
+/**
+ * US-T6.4 (M6): Reserved-word blocklist.
+ * HTTP method / status-line tokens (HTTP-200, GET-401) match the user
+ * namespace shape but are not spec IDs. After regex match, filter these out.
+ */
+export const RESERVED_ID_PREFIXES: ReadonlySet<string> = new Set([
+  'HTTP',
+  'HTTPS',
+  'GET',
+  'POST',
+  'PUT',
+  'DELETE',
+  'HEAD',
+  'OPTIONS',
+  'PATCH',
+  'CONNECT',
+  'TRACE',
+]);
+
+/** Returns true if a matched ID starts with a reserved (non-spec) prefix. */
+export function isReservedId(id: string): boolean {
+  const dash = id.indexOf('-');
+  if (dash < 0) return false;
+  return RESERVED_ID_PREFIXES.has(id.slice(0, dash));
+}
+
 /** Citation regex (word-boundary, captured group, global flag). */
-export const CITATION_RE = new RegExp(`\\b(${ID_PATTERN_SOURCE})\\b`, 'g');
+export const CITATION_RE = new RegExp(
+  `\\b(${ID_PATTERN_SOURCE}|${USER_NAMESPACE_PATTERN})\\b`,
+  'g',
+);
 
 /** Definition pattern — heading text starting with "ID: ..." */
 export const HEADING_DEF = new RegExp(`^([A-Z][A-Za-z0-9.\\-_]+):\\s`);

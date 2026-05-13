@@ -109,6 +109,54 @@ describe('buildGraph (F4.1, INV-1·2, ADR-4·9, TC-7·8·31)', () => {
     expect(f2Edges).toEqual([]);
   });
 
+  it('detects dangling user-defined namespace IDs (US-T6.4, M6)', async () => {
+    // GHOST-999 fits the user namespace shape but is never defined.
+    // Pre-fix: silently passed as 'not an ID'. Post-fix: flagged dangling.
+    await writeFile(
+      join(dir, 'docs/spec/03-features.md'),
+      '---\nphase: 3\n---\n## R1: foo\n',
+    );
+    await writeFile(
+      join(dir, 'docs/spec/05-user-flow.md'),
+      '---\nphase: 5\n---\n# Flow\nRefs GHOST-999 and R1.\n',
+    );
+    const g = await buildGraph(dir);
+    expect(g.danglingCitations).toContainEqual({ from: '05', to: 'GHOST-999' });
+  });
+
+  it('matches user-defined namespace when defined (US-T6.4, M6)', async () => {
+    await writeFile(
+      join(dir, 'docs/spec/03-features.md'),
+      '---\nphase: 3\n---\n## PAY-12: payment capability\n',
+    );
+    await writeFile(
+      join(dir, 'docs/spec/05.md'),
+      '---\nphase: 5\n---\n# Flow\nCites PAY-12.\n',
+    );
+    const g = await buildGraph(dir);
+    expect(g.definedIds.has('PAY-12')).toBe(true);
+    expect(g.edges.find((e) => e.from === '05' && e.to === 'PAY-12')).toBeDefined();
+    expect(g.danglingCitations.find((d) => d.to === 'PAY-12')).toBeUndefined();
+  });
+
+  it('ignores HTTP-style reserved words — no false dangling (US-T6.4, M6)', async () => {
+    // HTTP-200, GET-401, POST-500 all match user namespace shape but
+    // must not register as spec citations.
+    await writeFile(
+      join(dir, 'docs/spec/03.md'),
+      '---\nphase: 3\n---\n## R1: foo\n',
+    );
+    await writeFile(
+      join(dir, 'docs/spec/05.md'),
+      '---\nphase: 5\n---\n# Flow\nReturns HTTP-200, GET-401, POST-500, DELETE-204, PUT-200, HEAD-404, OPTIONS-200, PATCH-204, HTTPS-301.\n',
+    );
+    const g = await buildGraph(dir);
+    const reservedHits = g.danglingCitations.filter((d) =>
+      /^(HTTP|HTTPS|GET|POST|PUT|DELETE|HEAD|OPTIONS|PATCH|CONNECT|TRACE)-/.test(d.to),
+    );
+    expect(reservedHits).toEqual([]);
+  });
+
   it('handles 한국어 mixed body (NFR-I18N-1)', async () => {
     await writeFile(
       join(dir, 'docs/spec/03-features.md'),
