@@ -62,4 +62,13 @@ describe('ID consistency hook (F2.3, INV-2, TC-31)', () => {
     const r = await runHook(dir);
     expect(r.ok).toBe(true);
   });
+
+  it('uninitialized docs/spec → ok with explicit skip message (US-T6.3, M6)', async () => {
+    const uninit = await mkdtemp(join(tmpdir(), 'idc-uninit-'));
+    // no docs/spec dir created
+    const r = await runHook(uninit);
+    expect(r.ok).toBe(true);
+    expect(r.message).toContain('not initialized');
+    await rm(uninit, { recursive: true, force: true });
+  });
 });

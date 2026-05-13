@@ -32,6 +32,12 @@ export interface DependencyGraph {
   readonly edges: GraphEdge[];
   readonly danglingCitations: { from: string; to: string }[];
   readonly definedIds: Set<string>;
+  /**
+   * True when docs/spec/ exists and was successfully read (even if empty).
+   * False when docs/spec/ is missing — distinguishes 'project not initialized'
+   * from 'initialized but empty' (US-T6.3, M6 silent failure fix).
+   */
+  readonly initialized: boolean;
 }
 
 interface HeadingNode {
@@ -105,7 +111,9 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
       .filter((f) => /^\d{2}.*\.md$/.test(f))
       .sort();
   } catch {
-    return { nodes: [], edges: [], danglingCitations: [], definedIds: new Set() };
+    // docs/spec not initialized — return explicit signal so consumers can
+    // distinguish 'not initialized' from 'initialized but empty' (vacuous truth)
+    return { nodes: [], edges: [], danglingCitations: [], definedIds: new Set(), initialized: false };
   }
 
   const processor = unified().use(remarkParse).use(remarkFrontmatter, ['yaml']);
@@ -168,5 +176,5 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
     }
   }
 
-  return { nodes, edges, danglingCitations, definedIds };
+  return { nodes, edges, danglingCitations, definedIds, initialized: true };
 }

@@ -25,6 +25,12 @@ export async function checkIdConsistency(projectRoot: string): Promise<Consisten
 }
 
 export async function runHook(projectRoot: string): Promise<{ ok: boolean; message: string }> {
+  // US-T6.3 (M6): Distinguish 'docs/spec not initialized' from 'initialized + clean'.
+  // Without this, missing docs/spec silently returns 0 dangling — vacuous INV-2 OK.
+  const graph = await buildGraph(projectRoot);
+  if (!graph.initialized) {
+    return { ok: true, message: 'INV-2 skipped: docs/spec not initialized' };
+  }
   const r = await checkIdConsistency(projectRoot);
   if (r.dangling.length === 0) {
     return { ok: true, message: 'INV-2 OK: ' + r.defined.size + ' defined, ' + r.cited.size + ' cited, 0 dangling' };

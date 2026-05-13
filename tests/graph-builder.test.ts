@@ -79,6 +79,21 @@ describe('buildGraph (F4.1, INV-1·2, ADR-4·9, TC-7·8·31)', () => {
     expect(r1?.definedAt.line).toBeGreaterThan(0);
   });
 
+  it('returns initialized=false when docs/spec missing (US-T6.3, M6)', async () => {
+    const empty = await mkdtemp(join(tmpdir(), 'graph-uninit-'));
+    const g = await buildGraph(empty);
+    expect(g.initialized).toBe(false);
+    expect(g.nodes).toEqual([]);
+    await rm(empty, { recursive: true, force: true });
+  });
+
+  it('returns initialized=true when docs/spec exists but empty (US-T6.3, M6)', async () => {
+    // beforeEach already created docs/spec dir — no files
+    const g = await buildGraph(dir);
+    expect(g.initialized).toBe(true);
+    expect(g.nodes).toEqual([]);
+  });
+
   it('handles 한국어 mixed body (NFR-I18N-1)', async () => {
     await writeFile(
       join(dir, 'docs/spec/03-features.md'),
