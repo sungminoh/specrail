@@ -1,0 +1,61 @@
+name: KPI-3 사양화 시간 보고 (Survey)
+description: v4 plugin으로 13 phase spec 완주하셨다면 시간 보고해주세요 (PRD §7 KPI-3)
+title: "[KPI-3 Survey] <간단 product 명 — 도메인>"
+labels: ["kpi-3", "survey", "telemetry"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## v4 plugin survey
+
+        Phase 1~13 완주 시간 측정 — KPI-3 (<6h AI 보조) 검증용.
+        익명 가능. 사용 product 도메인은 자유 (단일 도메인 명사 inline 피해주세요 — R7).
+
+  - type: input
+    id: duration_hours
+    attributes:
+      label: 누적 사양화 시간 (시간)
+      description: Phase 1 시작 → Phase 13 Approved 까지 (휴식·식사 제외, 실 작업 시간)
+      placeholder: "예: 4.5"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ai_assist_level
+    attributes:
+      label: AI 보조 수준
+      options:
+        - "Phase별 LLM에 paste, 산출물 검수 (v3 markdown 패턴)"
+        - "Claude Code plugin (v4) 일부 사용"
+        - "Claude Code plugin (v4) 전체 사용"
+    validations:
+      required: true
+
+  - type: input
+    id: total_ids
+    attributes:
+      label: 누적 ID 수 (R+F+S+ENT+INV+NFR+...)
+      description: graph builder가 출력하는 node count (NFR-SCAL-2 측정)
+      placeholder: "예: 250"
+
+  - type: textarea
+    id: pain_points
+    attributes:
+      label: 가장 어려웠던 phase / 막힌 부분
+      description: v3 prompt 약점 또는 v4 plugin 개선 후보 발견 사항
+
+  - type: textarea
+    id: time_per_phase
+    attributes:
+      label: Phase 별 시간 분포 (대략, 시간)
+      placeholder: |
+        Phase 1: 0.5h
+        Phase 2: 0.3h
+        ...
+
+  - type: checkboxes
+    id: telemetry_consent
+    attributes:
+      label: Telemetry consent
+      options:
+        - label: 본 survey 답변을 KPI-3 aggregate dashboard에 익명 포함 동의
