@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFile, appendFile, writeFile, rename } from 'node:fs/promises';
 import { ConsentStatus } from './consent.js';
+import { loadConfigFromEnv, createPlausibleSender, PlausibleSender } from './plausible-adapter.js';
 
 export type TelemetryEventType =
   | 'PhaseStarted'
@@ -44,6 +45,25 @@ const ALLOWED_FIELDS: ReadonlySet<string> = new Set([
  */
 export function hashProjectRoot(rootPath: string): string {
   return createHash('sha256').update(rootPath, 'utf8').digest('hex');
+}
+
+let _warnedOnce = false;
+
+/**
+ * Boot helper: reads PLAUSIBLE_* env vars and returns a ready sender.
+ * Returns null (telemetry disabled) when any required var is unset.
+ * Warns once to stderr so operators know telemetry is off.
+ */
+export function createSenderFromEnv(): PlausibleSender | null {
+  const cfg = loadConfigFromEnv();
+  if (!cfg) {
+    if (!_warnedOnce) {
+      console.warn('[telemetry] PLAUSIBLE_* env vars not set — telemetry disabled (opt-in)');
+      _warnedOnce = true;
+    }
+    return null;
+  }
+  return createPlausibleSender({ domain: cfg.domain, endpoint: cfg.endpoint });
 }
 
 export function createTelemetryClient(cfg: ClientConfig): TelemetryClient {

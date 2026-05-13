@@ -2,7 +2,7 @@
 
 Telemetry is **opt-in**. The plugin runs without telemetry if env vars are unset.
 
-> Note: endpoint wiring is scheduled for M11 (US-11.7). The config loader and adapter exist, but `loadConfigFromEnv` is not yet invoked from the production boot path. Setting these env vars today documents intent but does not yet transmit events.
+> Note: with all 3 env vars set, the adapter sends events. Without them, telemetry is fully disabled (no-op).
 
 ## Setup
 

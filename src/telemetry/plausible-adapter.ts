@@ -67,6 +67,15 @@ export interface PlausibleConfig {
 }
 
 /**
+ * Sender returned by createPlausibleSender.
+ * emit() sends one event; flush() waits for all in-flight emits to settle.
+ */
+export interface PlausibleSender {
+  emit: (payload: object) => Promise<{ ok: boolean }>;
+  flush: () => Promise<void>;
+}
+
+/**
  * Load Plausible config from environment variables.
  * Returns null (telemetry disabled) if any of the 3 required vars is missing.
  * Accepts an explicit env map to avoid mutating process.env in tests.
@@ -80,15 +89,15 @@ export function loadConfigFromEnv(env: NodeJS.ProcessEnv = process.env): Plausib
 }
 
 /**
- * Create a `send` function compatible with `TelemetryClient` (`ClientConfig.send`).
- * Internally converts to Plausible format and POSTs to /api/event.
+ * Create a PlausibleSender with emit() and flush() APIs.
+ * emit() converts to Plausible format and POSTs to /api/event.
+ * flush() awaits all in-flight emit promises before returning.
  */
-export function createPlausibleSender(
-  cfg: PlausibleAdapterConfig,
-): (payload: object) => Promise<{ ok: boolean }> {
+export function createPlausibleSender(cfg: PlausibleAdapterConfig): PlausibleSender {
   const endpoint = cfg.endpoint ?? PLAUSIBLE_ENDPOINT_DEFAULT;
+  const pending = new Set<Promise<unknown>>();
 
-  return async (payload: object): Promise<{ ok: boolean }> => {
+  function emit(payload: object): Promise<{ ok: boolean }> {
     const plausible = toPlausiblePayload(payload as PluginPayload, cfg.domain);
 
     const headers: Record<string, string> = {
@@ -96,15 +105,24 @@ export function createPlausibleSender(
     };
     if (cfg.userAgent) headers['User-Agent'] = cfg.userAgent;
 
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(plausible),
+    const p: Promise<{ ok: boolean }> = fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(plausible),
+    })
+      .then((response) => ({ ok: response.ok }))
+      .catch(() => ({ ok: false }))
+      .finally(() => {
+        pending.delete(p);
       });
-      return { ok: response.ok };
-    } catch {
-      return { ok: false };
-    }
-  };
+
+    pending.add(p);
+    return p;
+  }
+
+  async function flush(): Promise<void> {
+    await Promise.allSettled([...pending]);
+  }
+
+  return { emit, flush };
 }

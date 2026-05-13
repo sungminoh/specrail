@@ -17,7 +17,7 @@ These steps require user credentials, external accounts, or service interactions
 
 **Action by user — AI cannot do this**
 
-> Note: endpoint wiring (`loadConfigFromEnv` → `createPlausibleSender`) is scheduled for M11 (US-11.7). Setting these env vars today will not yet transmit events.
+> Note: telemetry is opt-in. With env vars unset, the adapter is no-op (no events sent).
 
 Only if you want telemetry enabled. See `docs/TELEMETRY.md` for full setup.
 

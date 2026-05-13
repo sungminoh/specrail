@@ -83,8 +83,8 @@ describe('EDGE-12: telemetry bad/empty config → silent no-op (US-10.4)', () =>
     const mockFetch = vi.fn().mockRejectedValue(new Error('network error'));
     vi.stubGlobal('fetch', mockFetch);
 
-    const send = createPlausibleSender({ domain: '' });
-    const result = await send({ eventType: 'PhaseApproved', phaseId: 1 });
+    const sender = createPlausibleSender({ domain: '' });
+    const result = await sender.emit({ eventType: 'PhaseApproved', phaseId: 1 });
 
     // Adapter silently returns { ok: false } — no throw propagated to caller
     expect(result.ok).toBe(false);
@@ -94,12 +94,12 @@ describe('EDGE-12: telemetry bad/empty config → silent no-op (US-10.4)', () =>
     const mockFetch = vi.fn().mockRejectedValue(new TypeError('Failed to fetch'));
     vi.stubGlobal('fetch', mockFetch);
 
-    const send = createPlausibleSender({
+    const sender = createPlausibleSender({
       domain: 'plan-pipeline.dev',
       endpoint: 'https://wrong-host.invalid/api/event',
     });
 
-    const result = await send({ eventType: 'HookBlock', hookReason: 'schema' });
+    const result = await sender.emit({ eventType: 'HookBlock', hookReason: 'schema' });
     expect(result.ok).toBe(false);
     // fetch was called exactly once — adapter did not retry or throw
     expect(mockFetch).toHaveBeenCalledOnce();
@@ -109,8 +109,8 @@ describe('EDGE-12: telemetry bad/empty config → silent no-op (US-10.4)', () =>
     const mockFetch = vi.fn().mockResolvedValue({ ok: false, status: 401 });
     vi.stubGlobal('fetch', mockFetch);
 
-    const send = createPlausibleSender({ domain: 'plan-pipeline.dev' });
-    const result = await send({ eventType: 'PhaseApproved' });
+    const sender = createPlausibleSender({ domain: 'plan-pipeline.dev' });
+    const result = await sender.emit({ eventType: 'PhaseApproved' });
 
     expect(result.ok).toBe(false);
     expect(mockFetch).toHaveBeenCalledOnce();
