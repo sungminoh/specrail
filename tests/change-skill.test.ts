@@ -21,6 +21,11 @@ describe('change skill (T2.4, F4.3, AC-R4-1, TC-7)', () => {
       join(dir, 'docs/spec/03-features.md'),
       '---\nphase: 3\n---\n## R1: payment\n',
     );
+    // US-T6.5 (M6): real downstream citer required after self-edge fix
+    await writeFile(
+      join(dir, 'docs/spec/05.md'),
+      '---\nphase: 5\n---\n# Flow\nRefs R1.\n',
+    );
 
     const r = await draftChange(dir, 'Add payment', ['R1']);
 
@@ -44,10 +49,26 @@ describe('change skill (T2.4, F4.3, AC-R4-1, TC-7)', () => {
     expect(r.affectedPhases).toContain('05');
   });
 
+  it('INV-6 throws when changed ID has zero real downstream (US-T6.5, M6)', async () => {
+    // Pre-fix: heading-line self-edge spuriously satisfied INV-6.
+    // Post-fix: no self-edge, so isolated ID correctly throws.
+    await writeFile(
+      join(dir, 'docs/spec/03.md'),
+      '---\nphase: 3\n---\n## F2: Isolated\n본문 — 다른 ID 참조 없음.\n',
+    );
+    await expect(draftChange(dir, 'isolated change', ['F2'])).rejects.toThrow(/INV-6/);
+  });
+
   it('handles 한국어 topic (NFR-I18N-1)', async () => {
     await writeFile(
       join(dir, 'docs/spec/03.md'),
       '---\nphase: 3\n---\n## R1: foo\n',
+    );
+    // US-T6.5 (M6): real downstream citer required — self-edge no longer
+    // satisfies INV-6 after heading-line citation-scan exclusion.
+    await writeFile(
+      join(dir, 'docs/spec/05.md'),
+      '---\nphase: 5\n---\n# Flow\nRefs R1.\n',
     );
 
     const r = await draftChange(dir, '결제 추가', ['R1']);

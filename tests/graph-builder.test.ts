@@ -94,6 +94,21 @@ describe('buildGraph (F4.1, INV-1·2, ADR-4·9, TC-7·8·31)', () => {
     expect(g.nodes).toEqual([]);
   });
 
+  it('excludes heading line from citation scan — no self-edge (US-T6.5, M6)', async () => {
+    // 'F2: Isolated' heading defines F2; body contains no other F2 references.
+    // Without the fix, the heading line itself contributed a self-edge,
+    // letting INV-6 incorrectly count downstream impact.
+    await writeFile(
+      join(dir, 'docs/spec/03-features.md'),
+      '---\nphase: 3\n---\n## F2: Isolated\n본문 — 다른 ID 참조 없음.\n',
+    );
+    const g = await buildGraph(dir);
+    expect(g.definedIds.has('F2')).toBe(true);
+    // No edge should reference F2 (heading line excluded, body has no F2)
+    const f2Edges = g.edges.filter((e) => e.to === 'F2');
+    expect(f2Edges).toEqual([]);
+  });
+
   it('handles 한국어 mixed body (NFR-I18N-1)', async () => {
     await writeFile(
       join(dir, 'docs/spec/03-features.md'),
