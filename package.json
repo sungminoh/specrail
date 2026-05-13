@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "lint:sycophancy": "tsx src/lint/anti-sycophancy.ts .",
-    "check:ac": "tsx src/lint/ac-traceability.ts ."
+    "check:ac": "tsx src/lint/ac-traceability.ts .",
+    "lint:plan": "tsx src/lint/run-all.ts ."
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
