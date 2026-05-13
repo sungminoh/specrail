@@ -1,0 +1,11 @@
+src/
+tests/
+docs/
+.omc/
+.github/
+node_modules/
+.git/
+*.test.ts
+tsconfig*.json
+vitest.config*
+.env*
