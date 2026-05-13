@@ -7,6 +7,8 @@ import { basename, join } from 'node:path';
 import { extractDownstream, type DownstreamResult } from '../graph/downstream.js';
 import { parseFrontmatter } from '../markdown/frontmatter.js';
 import { formatInputBlock } from '../skill/inject.js';
+import { runHook as runSchemaHook } from '../hook/schema-validate.js';
+import { runHook as runIdHook } from '../hook/id-consistency.js';
 
 async function exists(p: string): Promise<boolean> {
   try {
@@ -267,3 +269,92 @@ export async function invokeDeltaChain(
   return { deltas, created };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// US-T7.4 — S2 DELTA current/ merge
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface MergeChangeResult {
+  merged: boolean;
+  phases: string[];
+  message: string;
+}
+
+export async function mergeChange(
+  projectRoot: string,
+  changeDir: string,
+): Promise<MergeChangeResult> {
+  // 1. Read proposal.md status — idempotent guard
+  const proposalPath = join(changeDir, 'proposal.md');
+  if (!(await exists(proposalPath))) {
+    throw new Error(`proposal.md not found in ${changeDir}`);
+  }
+  const proposalRaw = await readFile(proposalPath, 'utf8');
+  const { frontmatter: pf } = parseFrontmatter(proposalRaw);
+  if (pf.status === 'applied' || pf.status === 'archived') {
+    return {
+      merged: false,
+      phases: [],
+      message: `Already ${String(pf.status)} (idempotent)`,
+    };
+  }
+
+  // 2. Run hook chain (schema + INV-2)
+  const sc = await runSchemaHook(projectRoot);
+  if (!sc.ok) throw new Error('Schema fail before merge: ' + sc.message);
+  const ic = await runIdHook(projectRoot);
+  if (!ic.ok) throw new Error('INV-2 fail before merge: ' + ic.message);
+
+  // 3. For each delta, append delta body to current phase
+  const deltaDir = join(changeDir, 'deltas');
+  let files: string[];
+  try {
+    files = await readdir(deltaDir);
+  } catch {
+    return { merged: false, phases: [], message: 'No deltas to merge' };
+  }
+
+  const deltaFiles = files.filter((f) => f.endsWith('-delta.md')).sort();
+  if (deltaFiles.length === 0) {
+    return { merged: false, phases: [], message: 'No deltas to merge' };
+  }
+
+  const phases: string[] = [];
+  for (const deltaFile of deltaFiles) {
+    const phaseStr = deltaFile.slice(0, 2);
+    const phaseN = parseInt(phaseStr, 10);
+    if (Number.isNaN(phaseN)) continue;
+
+    const phaseFile = await findPhaseFile(projectRoot, phaseN);
+    if (!phaseFile) {
+      throw new Error(
+        `Cannot merge delta ${deltaFile}: Phase ${phaseN} spec not found in docs/spec/`,
+      );
+    }
+    const currentPath = join(projectRoot, 'docs', 'spec', phaseFile);
+
+    const deltaRaw = await readFile(join(deltaDir, deltaFile), 'utf8');
+    const { body: deltaBody } = parseFrontmatter(deltaRaw);
+
+    const currentRaw = await readFile(currentPath, 'utf8');
+    const merged =
+      currentRaw.replace(/\s+$/, '') +
+      '\n\n## DELTA — ' +
+      basename(changeDir) +
+      '\n' +
+      deltaBody.replace(/^\s+/, '');
+    await writeFile(currentPath, merged);
+    phases.push(phaseStr);
+  }
+
+  // 4. Update proposal status: applied
+  const newProposal = /^status:.*$/m.test(proposalRaw)
+    ? proposalRaw.replace(/^status:.*$/m, 'status: applied')
+    : proposalRaw;
+  await writeFile(proposalPath, newProposal);
+
+  return {
+    merged: true,
+    phases,
+    message: `Merged ${phases.length} delta(s) into current/. Run archiveChange next.`,
+  };
+}
