@@ -43,7 +43,11 @@ const PHASE_NAMES: Record<number, string> = {
 
 const TOTAL_PHASES = 13;
 
-export async function status(projectRoot: string): Promise<StatusResult> {
+export interface StatusOptions {
+  includeGraph?: boolean; // default true for backward compat
+}
+
+export async function status(projectRoot: string, options: StatusOptions = {}): Promise<StatusResult> {
   const specDir = join(projectRoot, 'docs', 'spec');
 
   // Check if docs/spec exists
@@ -104,9 +108,13 @@ export async function status(projectRoot: string): Promise<StatusResult> {
   const firstNonApproved = phases.find((p) => p.status !== 'Approved');
   const currentPhase = firstNonApproved?.phase ?? null;
 
-  // totalIds from graph
-  const graph = await buildGraph(projectRoot);
-  const totalIds = graph.nodes.length;
+  // totalIds from graph (skipped when includeGraph: false for fast status)
+  const includeGraph = options.includeGraph ?? true;
+  let totalIds = 0;
+  if (includeGraph) {
+    const graph = await buildGraph(projectRoot);
+    totalIds = graph.nodes.length;
+  }
 
   const complete = phasesApproved === TOTAL_PHASES;
 

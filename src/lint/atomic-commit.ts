@@ -35,7 +35,9 @@ export function checkCommit(
     };
   }
 
-  const hasAtomicRef = /\b(US-[A-Z0-9]+(?:\.[0-9]+)*|T\d+(?:\.\d+)*)\b/.test(commitMsg);
+  const hasAtomicRef =
+    /\bUS-[A-Z0-9]+(?:\.[0-9]+)*\b/.test(commitMsg) ||
+    /(?<![\w-])T\d+(?:\.\d+)*\b/.test(commitMsg);
 
   if (fileCount >= 10 && !hasAtomicRef) {
     return {

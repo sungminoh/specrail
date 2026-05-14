@@ -128,4 +128,16 @@ describe('approve (US-T5.5)', () => {
     const ts = new Date(result.approvedAt!);
     expect(ts.toISOString()).toBe(result.approvedAt);
   });
+
+  it('approve appends approvedAt without extra blank line (R7 M1)', async () => {
+    // Setup: phase file with trailing newline in frontmatter body
+    await writeFile(
+      join(dir, 'docs/spec/01-prd.md'),
+      '---\nphase: 1\nstatus: Draft\n\n---\n# PRD\n',
+    );
+    await approve(dir, 1);
+    const result = await readFile(join(dir, 'docs/spec/01-prd.md'), 'utf8');
+    // No double blank line before closing ---
+    expect(result).not.toMatch(/approvedAt:[^\n]*\n\n+---/);
+  });
 });

@@ -131,22 +131,29 @@ export async function tryEmit(projectRoot: string, event: TelemetryEvent): Promi
 export function createTelemetryClient(cfg: ClientConfig): TelemetryClient {
   const { consent, send, anonProjectHash, pluginVersion, queuePath } = cfg;
 
+  // L-R7-7: in-process mutex prevents concurrent appendToQueue + rotation races
+  let _queueMutex: Promise<unknown> = Promise.resolve();
+
   async function appendToQueue(payload: object): Promise<void> {
     if (!queuePath) return;
-    await appendFile(queuePath, JSON.stringify(payload) + '\n', 'utf8');
-    // R3 H3: cap queue size — drop oldest if exceeded
-    try {
-      const raw = await readFile(queuePath, 'utf8');
-      const lines = raw.split('\n').filter((l) => l.trim() !== '');
-      if (lines.length > QUEUE_MAX_LINES) {
-        const trimmed = lines.slice(-QUEUE_MAX_LINES); // keep newest
-        const tmp = queuePath + '.tmp';
-        await writeFile(tmp, trimmed.join('\n') + '\n');
-        await rename(tmp, queuePath);
+    const op = _queueMutex.then(async () => {
+      await appendFile(queuePath!, JSON.stringify(payload) + '\n', 'utf8');
+      // R3 H3: cap queue size — drop oldest if exceeded
+      try {
+        const raw = await readFile(queuePath!, 'utf8');
+        const lines = raw.split('\n').filter((l) => l.trim() !== '');
+        if (lines.length > QUEUE_MAX_LINES) {
+          const trimmed = lines.slice(-QUEUE_MAX_LINES); // keep newest
+          const tmp = queuePath! + '.tmp';
+          await writeFile(tmp, trimmed.join('\n') + '\n');
+          await rename(tmp, queuePath!);
+        }
+      } catch {
+        // best-effort — don't break emit if rotation fails
       }
-    } catch {
-      // best-effort — don't break emit if rotation fails
-    }
+    });
+    _queueMutex = op.catch(() => undefined);
+    return op;
   }
 
   async function trySend(payload: object): Promise<void> {

@@ -77,7 +77,8 @@ function updateFrontmatter(raw: string, updates: Record<string, string>): string
     if (lineRe.test(body)) {
       body = body.replace(lineRe, `${key}: ${value}`);
     } else {
-      body = body + `\n${key}: ${value}`;
+      // R7 M1: trim trailing newlines before append, exactly 1 separator
+      body = body.replace(/\n+$/, '') + '\n' + key + ': ' + value;
     }
   }
   return match[1] + body + match[3] + raw.slice(match[0].length);

@@ -177,8 +177,11 @@ export async function installHook(
     };
   }
 
-  // Sentinel to detect any version of our hook (old # marker or new // marker)
-  const V4_SENTINEL = 'plan-pipeline v4 hook chain';
+  // Sentinel derived from V4_MARKER to detect any version of our hook (DRY, L-R7-6)
+  const V4_SENTINEL = V4_MARKER.match(/plan-pipeline v4 hook chain/)?.[0] ?? '';
+  if (!V4_MARKER.includes(V4_SENTINEL) || V4_SENTINEL === '') {
+    throw new Error('V4_SENTINEL must be a non-empty substring of V4_MARKER');
+  }
 
   let backupPath: string | undefined;
   if (detection.type === 'plain' && detection.path) {

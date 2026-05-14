@@ -109,12 +109,17 @@ export async function checkAcCoverage(
   const testFilePattern =
     options.testFilePattern ?? (await loadConfig(projectRoot)).testFilePattern;
 
-  // 4. Collect AC labels from all test files
+  // 4. Collect AC labels from all test files (per-file to reduce peak memory)
   const testsDir = join(projectRoot, 'tests');
   const testFiles = await collectTestFiles(testsDir, testFilePattern);
-  const testTexts = await Promise.all(testFiles.map((f) => readFile(f, 'utf8')));
-  const allTestText = testTexts.join('\n');
-  const testedAc = new Set(extractAcLabels(allTestText));
+  const acsInTests = new Set<string>();
+  for (const file of testFiles) {
+    const text = await readFile(file, 'utf8');
+    for (const m of text.matchAll(AC_PATTERN)) {
+      acsInTests.add(m[0]);
+    }
+  }
+  const testedAc = acsInTests;
 
   // 4. Compute coverage
   const coveredAc = specAc.filter((ac) => testedAc.has(ac));

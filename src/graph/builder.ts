@@ -98,7 +98,8 @@ function buildSkipMask(lines: string[]): boolean[] {
         fenceChar = null;
         fenceLen = 0;
       } else {
-        // Inner fence of different length/char — skip content
+        // Same char w/ shorter len OR different fence char inside outer fence —
+        // content line, mark as in-fence (skip).
         skip[i] = true;
       }
       continue;

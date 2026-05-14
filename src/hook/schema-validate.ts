@@ -2,7 +2,7 @@
 // 모든 docs/spec/{NN-name}.md frontmatter를 schemas/phase-{NN}.json으로 validate
 
 import { readFile, readdir } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
+import { join, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseFrontmatter } from '../markdown/frontmatter.js';
 import { validateFrontmatter } from '../schema/validator.js';
@@ -54,6 +54,10 @@ export async function checkSchemas(projectRoot: string, options?: SchemaCheckOpt
     // Skip template guide files — they lack the 'phase' field which is only
     // present in filled user spec outputs. Template files define 'name' instead.
     if (!Object.prototype.hasOwnProperty.call(frontmatter, 'phase')) {
+      // Heuristic: template files have no phase prefix in name. User spec files do.
+      if (/^\d{2}-/.test(basename(file))) {
+        process.stderr.write(`[schema-validate] WARN: ${file} matches phase pattern but lacks 'phase' field — skipped silently\n`);
+      }
       continue;
     }
 

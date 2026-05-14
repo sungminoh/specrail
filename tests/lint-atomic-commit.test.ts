@@ -53,4 +53,21 @@ describe('US-9.2 Atomic commit lint — mega-commit detection', () => {
     expect(result.bypassReason).toBe('BREAKING/INITIAL bypass');
     expect(result.fileCount).toBe(30);
   });
+
+  // R7 M4: tightened T regex — digit-prefixed context must not match
+  it('does NOT count "2024-T1" as atomic ref (R7 M4)', () => {
+    const r = checkCommit(files(12), 'release: 2024-T1 retrospective');
+    expect(r.status).toBe('FAIL');
+    expect(r.hasAtomicRef).toBe(false);
+  });
+
+  it('still counts standalone T9.6 as atomic ref (regression)', () => {
+    const r = checkCommit(files(12), 'feat: T9.6 implementation done');
+    expect(r.hasAtomicRef).toBe(true);
+  });
+
+  it('still counts "#T1.1" prefix as atomic ref', () => {
+    const r = checkCommit(files(12), 'fix: address #T1.1 comments');
+    expect(r.hasAtomicRef).toBe(true);
+  });
 });

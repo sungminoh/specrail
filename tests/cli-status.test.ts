@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtemp, writeFile, mkdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { status } from '../src/cli/status.js';
+import { status, type StatusOptions } from '../src/cli/status.js';
 import { bootstrap } from '../src/cli/install.js';
 
 let dir: string;
@@ -111,6 +111,19 @@ More text.
     const s = await status(dir);
     expect(s.initialized).toBe(true);
     expect(s.totalIds).toBe(2);
+  });
+});
+
+describe('R7 L1: status includeGraph option', () => {
+  it('status with includeGraph:false skips graph build (R7 L1)', async () => {
+    await mkdir(join(dir, 'docs', 'spec'), { recursive: true });
+    const start = Date.now();
+    const opts: StatusOptions = { includeGraph: false };
+    const s = await status(dir, opts);
+    const elapsed = Date.now() - start;
+    expect(s.totalIds).toBe(0);
+    // Should be very fast — no graph parse
+    expect(elapsed).toBeLessThan(100);
   });
 });
 
