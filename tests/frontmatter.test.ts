@@ -73,12 +73,12 @@ body`;
 
   it('strips quotes from values', () => {
     const raw = `---
-title: "v4 plugin"
+title: "sample plugin"
 mode: 'HOLD_SCOPE'
 ---
 body`;
     const r = parseFrontmatter(raw);
-    expect(r.frontmatter.title).toBe('v4 plugin');
+    expect(r.frontmatter.title).toBe('sample plugin');
     expect(r.frontmatter.mode).toBe('HOLD_SCOPE');
   });
 

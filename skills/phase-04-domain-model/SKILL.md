@@ -10,11 +10,11 @@ applies-to: 00-common (auto-inject)
 
 # Phase 04: Domain Model
 
-이 skill의 본문은 v4 plugin이 `docs/spec/04-domain-model.md`를 reference link로 inject.
+이 skill의 본문은 plugin이 `docs/spec/04-domain-model.md`를 reference link로 inject.
 
-(Architect 옵션 B: T2.5b reference link 방식. v3 수동 instruction은 T2.5c에서 v4 plugin 자동 강제와 정합하도록 주석화됨.)
+(Architect 옵션 B: T2.5b reference link 방식. 수동 instruction은 T2.5c에서 plugin 자동 강제와 정합하도록 주석화됨.)
 
-Output 산출물 경로: `docs/spec/examples/04-domain-model.md` (실 사용 시 `docs/spec/04-domain-model.md`로 작성, examples/는 v4 self-application 참고만)
+Output 산출물 경로: `docs/spec/examples/04-domain-model.md` (실 사용 시 `docs/spec/04-domain-model.md`로 작성, examples/는 self-application 참고만)
 
 ## State preconditions
 

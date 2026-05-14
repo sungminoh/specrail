@@ -4,12 +4,12 @@ import { loadConfigFromEnv, createPlausibleSender } from '../src/telemetry/plaus
 describe('US-8.3 loadConfigFromEnv', () => {
   it('domain + endpoint + token present → returns full config with token', () => {
     const result = loadConfigFromEnv({
-      PLAUSIBLE_DOMAIN: 'specrail-v4.example',
+      PLAUSIBLE_DOMAIN: 'specrail.example',
       PLAUSIBLE_ENDPOINT: 'https://plausible.io/api/event',
       PLAUSIBLE_API_TOKEN: 'tok-abc123',
     });
     expect(result).not.toBeNull();
-    expect(result!.domain).toBe('specrail-v4.example');
+    expect(result!.domain).toBe('specrail.example');
     expect(result!.endpoint).toBe('https://plausible.io/api/event');
     expect(result!.token).toBe('tok-abc123');
   });
@@ -24,7 +24,7 @@ describe('US-8.3 loadConfigFromEnv', () => {
 
   it('missing PLAUSIBLE_ENDPOINT → returns null', () => {
     const result = loadConfigFromEnv({
-      PLAUSIBLE_DOMAIN: 'specrail-v4.example',
+      PLAUSIBLE_DOMAIN: 'specrail.example',
       PLAUSIBLE_API_TOKEN: 'tok-abc123',
     });
     expect(result).toBeNull();
@@ -37,11 +37,11 @@ describe('US-8.3 loadConfigFromEnv', () => {
 
   it('token missing but domain + endpoint present → returns config WITHOUT token', () => {
     const result = loadConfigFromEnv({
-      PLAUSIBLE_DOMAIN: 'specrail-v4.example',
+      PLAUSIBLE_DOMAIN: 'specrail.example',
       PLAUSIBLE_ENDPOINT: 'https://plausible.io/api/event',
     });
     expect(result).not.toBeNull();
-    expect(result!.domain).toBe('specrail-v4.example');
+    expect(result!.domain).toBe('specrail.example');
     expect(result!.endpoint).toBe('https://plausible.io/api/event');
     expect(result!.token).toBeUndefined();
   });

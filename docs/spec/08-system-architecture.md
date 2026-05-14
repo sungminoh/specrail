@@ -1,4 +1,4 @@
-<!-- v4-plugin-refinement (T2.5c, architect 옵션 B): self-check bash blocks → ARCH-5 schema validator + ARCH-3 hooks 자동 강제. HARD-GATE 수동 승인 step → ADR-8 state machine 자동 enforce. 상대 경로 file 참조 → plugin runtime의 docs/spec/ resolver. v3 원본 prompt는 git tag v3-archive 참조. -->
+<!-- plugin-refinement (T2.5c, architect 옵션 B): self-check bash blocks → ARCH-5 schema validator + ARCH-3 hooks 자동 강제. HARD-GATE 수동 승인 step → ADR-8 state machine 자동 enforce. 상대 경로 file 참조 → plugin runtime의 docs/spec/ resolver. -->
 
 ---
 name: phase-8-system-architecture
@@ -369,7 +369,7 @@ Self-check 통과 + 사용자 승인. Phase 9 진행.
 **Interfaces**:
 - `src/cli/change.ts` — draftChange, invokeDeltaChain, mergeChange, archiveChange
 - `src/cli/approve.ts` — Draft → Approved transition
-- `src/cli/hook-install.ts` — V4_HOOK_TEMPLATE chain detection + install
+- `src/cli/hook-install.ts` — HOOK_TEMPLATE chain detection + install
 - `src/skill/orchestrator.ts` — status, nextPhase
 
 **Dependencies**: Plugin Skills container (hooks), Hook Scripts container (graph builder), State Machine container

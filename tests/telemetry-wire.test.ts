@@ -16,7 +16,7 @@ describe('createSenderFromEnv — env-based sender boot (US-11.7)', () => {
     vi.stubGlobal('process', {
       ...process,
       env: {
-        PLAUSIBLE_DOMAIN: 'specrail-v4.example',
+        PLAUSIBLE_DOMAIN: 'specrail.example',
         PLAUSIBLE_ENDPOINT: 'https://plausible.io/api/event',
         PLAUSIBLE_API_TOKEN: 'tok-abc123',
       },
@@ -34,7 +34,7 @@ describe('createSenderFromEnv — env-based sender boot (US-11.7)', () => {
     vi.stubGlobal('process', {
       ...process,
       env: {
-        PLAUSIBLE_DOMAIN: 'specrail-v4.example',
+        PLAUSIBLE_DOMAIN: 'specrail.example',
         PLAUSIBLE_ENDPOINT: 'https://plausible.io/api/event',
         // PLAUSIBLE_API_TOKEN intentionally absent — token is optional per C1 fix
       },

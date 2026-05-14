@@ -8,7 +8,7 @@ Telemetry is **opt-in**. The plugin runs without telemetry if env vars are unset
 
 1. Create a Plausible account: https://plausible.io
 2. Choose **EU region** (data residency).
-3. Add a site for this plugin (e.g., `specrail-v4.example`).
+3. Add a site for this plugin (e.g., `specrail.example`).
 4. (Optional) Generate an API token (Account → API Keys). Plausible /api/event is unauthenticated by default; you only need this for self-hosted setups that require Bearer.
 5. Copy `.env.example` to `.env` and fill in:
    ```

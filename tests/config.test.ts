@@ -8,7 +8,7 @@ import {
   loadConfig,
   getPreset,
   DEFAULT_CONFIG,
-  type PlanPipelineConfig,
+  type SpecrailConfig,
 } from '../src/config/index.js';
 
 async function setup(configJson: string | null): Promise<string> {
@@ -164,9 +164,9 @@ describe('getPreset', () => {
   });
 });
 
-describe('PlanPipelineConfig type contract', () => {
+describe('SpecrailConfig type contract', () => {
   it('DEFAULT_CONFIG conforms to interface', () => {
-    const cfg: PlanPipelineConfig = DEFAULT_CONFIG;
+    const cfg: SpecrailConfig = DEFAULT_CONFIG;
     expect(cfg.testFilePattern).toBeDefined();
     expect(Array.isArray(cfg.qualityChecklist)).toBe(true);
   });

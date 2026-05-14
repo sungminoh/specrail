@@ -6,9 +6,9 @@ applies-to: all phases
 state-machine: explicit (ADR-8)
 ---
 
-# Plan Pipeline Orchestrator
+# specrail Orchestrator
 
-Single entry point for v4 plugin. State machine (ADR-8) enforces phase transitions.
+Single entry point for the plugin. State machine (ADR-8) enforces phase transitions.
 
 ## Commands
 

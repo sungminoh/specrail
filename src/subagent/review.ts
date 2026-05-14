@@ -1,6 +1,6 @@
 // D17 fix (4차 reviewer simplifier): unused SubagentStatus import removed
 import { invokeSubagent, type AgentTool, type SubagentTask } from './invoke.js';
-import { DEFAULT_CONFIG, loadConfig, type PlanPipelineConfig } from '../config/index.js';
+import { DEFAULT_CONFIG, loadConfig, type SpecrailConfig } from '../config/index.js';
 
 /**
  * SpecReview prompt template (C6 / analyst ambiguity #6 resolved).
@@ -77,7 +77,7 @@ export interface ReviewResult {
 
 export interface RunWithReviewOptions {
   /** Resolved config — when omitted, DEFAULT_CONFIG (TS preset) is used. */
-  readonly config?: PlanPipelineConfig;
+  readonly config?: SpecrailConfig;
 }
 
 export async function runWithReview(

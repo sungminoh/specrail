@@ -10,14 +10,14 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-export interface PlanPipelineConfig {
+export interface SpecrailConfig {
   readonly testFilePattern: string;
   readonly qualityChecklist: readonly string[];
 }
 
 export type PresetName = 'typescript' | 'python' | 'go' | 'rust' | 'none';
 
-const PRESETS: Record<PresetName, PlanPipelineConfig> = {
+const PRESETS: Record<PresetName, SpecrailConfig> = {
   typescript: Object.freeze({
     testFilePattern: '.test.ts',
     qualityChecklist: Object.freeze([
@@ -27,7 +27,7 @@ const PRESETS: Record<PresetName, PlanPipelineConfig> = {
       'no TODO/FIXME/placeholder comments',
       'ESM .js suffix on imports',
     ]),
-  }) as PlanPipelineConfig,
+  }) as SpecrailConfig,
 
   python: Object.freeze({
     testFilePattern: '_test.py',
@@ -38,7 +38,7 @@ const PRESETS: Record<PresetName, PlanPipelineConfig> = {
       'no TODO/FIXME/placeholder comments',
       'imports sorted (ruff check --select I)',
     ]),
-  }) as PlanPipelineConfig,
+  }) as SpecrailConfig,
 
   go: Object.freeze({
     testFilePattern: '_test.go',
@@ -49,7 +49,7 @@ const PRESETS: Record<PresetName, PlanPipelineConfig> = {
       'no TODO/FIXME/placeholder comments',
       'gofmt clean (gofmt -l . returns empty)',
     ]),
-  }) as PlanPipelineConfig,
+  }) as SpecrailConfig,
 
   rust: Object.freeze({
     testFilePattern: '.rs',
@@ -60,17 +60,17 @@ const PRESETS: Record<PresetName, PlanPipelineConfig> = {
       'no TODO/FIXME/placeholder comments',
       'clippy clean: cargo clippy -- -D warnings',
     ]),
-  }) as PlanPipelineConfig,
+  }) as SpecrailConfig,
 
   none: Object.freeze({
     testFilePattern: '.test',
     qualityChecklist: Object.freeze([]),
-  }) as PlanPipelineConfig,
+  }) as SpecrailConfig,
 };
 
-export const DEFAULT_CONFIG: PlanPipelineConfig = PRESETS.typescript;
+export const DEFAULT_CONFIG: SpecrailConfig = PRESETS.typescript;
 
-export function getPreset(name: PresetName): PlanPipelineConfig {
+export function getPreset(name: PresetName): SpecrailConfig {
   const p = PRESETS[name];
   if (!p) throw new Error(`unknown preset "${name}"`);
   return p;
@@ -86,7 +86,7 @@ function isPresetName(v: unknown): v is PresetName {
   return v === 'typescript' || v === 'python' || v === 'go' || v === 'rust' || v === 'none';
 }
 
-function freezeConfig(cfg: PlanPipelineConfig): PlanPipelineConfig {
+function freezeConfig(cfg: SpecrailConfig): SpecrailConfig {
   return Object.freeze({
     testFilePattern: cfg.testFilePattern,
     qualityChecklist: Object.freeze([...cfg.qualityChecklist]),
@@ -98,7 +98,7 @@ function freezeConfig(cfg: PlanPipelineConfig): PlanPipelineConfig {
  * Returns DEFAULT_CONFIG (typescript preset) when file is missing.
  * Throws Error with clear message on malformed JSON or invalid fields.
  */
-export async function loadConfig(projectRoot: string): Promise<PlanPipelineConfig> {
+export async function loadConfig(projectRoot: string): Promise<SpecrailConfig> {
   const path = join(projectRoot, '.specrail.config.json');
 
   let raw: string;
@@ -116,7 +116,7 @@ export async function loadConfig(projectRoot: string): Promise<PlanPipelineConfi
   }
 
   // Resolve base preset
-  let base: PlanPipelineConfig;
+  let base: SpecrailConfig;
   if (parsed.extends === undefined) {
     base = DEFAULT_CONFIG;
   } else if (isPresetName(parsed.extends)) {
