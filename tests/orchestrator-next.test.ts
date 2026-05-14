@@ -46,11 +46,13 @@ describe('nextPhase() — ADR-11 Phase N+1 suggestion (US-T7.2, M7)', () => {
     expect(result.blocked).toBeUndefined();
   });
 
-  it('Phase 1 Draft → blocked: true (approve 먼저)', async () => {
+  it('Phase 1 Draft → hasNext:true + blocked:true + nextPhase:1 (R2 M8)', async () => {
     await setupSpec([{ file: '01-prd.md', status: 'Draft' }]);
     const result = await nextPhase(dir);
-    expect(result.hasNext).toBe(false);
-    expect(result.nextPhase).toBeNull();
+    // R2 M8: Draft branch returns hasNext:true so caller knows next phase number,
+    // and blocked:true to signal approve required.
+    expect(result.hasNext).toBe(true);
+    expect(result.nextPhase).toBe(1);
     expect(result.blocked).toBe(true);
     expect(result.reason).toContain('approve');
     expect(result.reason).toContain('1');
@@ -70,7 +72,7 @@ describe('nextPhase() — ADR-11 Phase N+1 suggestion (US-T7.2, M7)', () => {
     expect(result.blocked).toBeUndefined();
   });
 
-  it('Phase 1-3 Approved + Phase 4 Draft → blocked: true (approve phase 4)', async () => {
+  it('Phase 1-3 Approved + Phase 4 Draft → hasNext:true + blocked:true + nextPhase:4 (R2 M8)', async () => {
     await setupSpec([
       { file: '01-prd.md', status: 'Approved' },
       { file: '02-goals.md', status: 'Approved' },
@@ -78,8 +80,9 @@ describe('nextPhase() — ADR-11 Phase N+1 suggestion (US-T7.2, M7)', () => {
       { file: '04-ia.md', status: 'Draft' },
     ]);
     const result = await nextPhase(dir);
-    expect(result.hasNext).toBe(false);
-    expect(result.nextPhase).toBeNull();
+    // R2 M8: Draft = blocked but next phase number IS known
+    expect(result.hasNext).toBe(true);
+    expect(result.nextPhase).toBe(4);
     expect(result.blocked).toBe(true);
     expect(result.reason).toContain('4');
     expect(result.reason).toContain('approve');

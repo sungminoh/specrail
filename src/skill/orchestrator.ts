@@ -7,15 +7,23 @@ import { IdCounter } from '../spec/counter.js';
 import type { SpecTier } from '../spec/id.js';
 import { status } from '../cli/status.js';
 
-// Cache per projectRoot — IdCounter mutex가 instance-level이므로 같은 instance 공유 필수
+// Cache per projectRoot — IdCounter mutex가 instance-level이므로 같은 instance 공유 필수.
+// R2 H7: LRU bound + reject auto-evict prevent unbounded growth + poison cache.
+const COUNTER_CACHE_MAX = 100;
 const counterCache = new Map<string, Promise<IdCounter>>();
 
 async function getCounter(projectRoot: string): Promise<IdCounter> {
   let p = counterCache.get(projectRoot);
-  if (!p) {
-    p = IdCounter.load(projectRoot);
-    counterCache.set(projectRoot, p);
+  if (p) return p;
+
+  if (counterCache.size >= COUNTER_CACHE_MAX) {
+    const oldest = counterCache.keys().next().value;
+    if (oldest !== undefined) counterCache.delete(oldest);
   }
+
+  p = IdCounter.load(projectRoot);
+  counterCache.set(projectRoot, p);
+  p.catch(() => counterCache.delete(projectRoot));
   return p;
 }
 
@@ -75,12 +83,13 @@ export async function nextPhase(projectRoot: string): Promise<NextPhaseResult> {
     };
   }
 
-  // currentPhase가 Draft이면 approve 필요 (blocked)
+  // currentPhase가 Draft이면 approve 필요 (blocked) — but next phase IS known (R2 M8).
+  // Caller distinguishes "no work" (hasNext:false) from "blocked work needing approve".
   const cur = s.phases[s.currentPhase - 1];
   if (cur && cur.status === 'Draft') {
     return {
-      hasNext: false,
-      nextPhase: null,
+      hasNext: true,
+      nextPhase: s.currentPhase,
       reason: `Phase ${s.currentPhase} status=Draft. Approve first via /plan-pipeline approve ${s.currentPhase}.`,
       blocked: true,
     };
