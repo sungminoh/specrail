@@ -536,32 +536,34 @@ R13 Telemetry opt-in metric 수집 endpoint. 후보: Plausible cloud, PostHog cl
 
 ---
 
-### ADR-9: Dep Graph cache invalidation — On-demand rebuild + incremental on commit (Conditional)
+### ADR-9: Dep Graph cache invalidation — In-memory only (옵션 D 채택)
 
-**Status:** Accepted Conditional (T0.4 bench 결과로 incremental 유지 vs full rebuild every commit 결정)
-**Date:** 2026-05-12 (DELTA 2026-05-12: 옵션 D 추가 + token deferred)
+**Status:** Accepted (옵션 D — in-memory only, no on-disk cache)
+**Date:** 2026-05-12 (DELTA 2026-05-12: 옵션 D 추가 + token deferred) · 2026-05-13 (옵션 D 확정 채택, US-11.2)
 **Trigger:** ADR-CAND-9 (Phase 8 §9), reviewer H2 (incremental token 정당성 약함)
-**Innovation token:** **Yes (3/3) — Conditional**. T0.4 spike에서 full rebuild가 NFR-PERF-3 (<3s) 충족하면 token 회수, M0 spike에 추가된 H1 (CC SDK frontmatter inject 검증)로 재할당.
+**Innovation token:** **No** — 옵션 D 채택으로 token 회수됨 (incremental 구현 복잡도 제거).
 
 #### Context
 
-ARCH-4 (Dependency Graph Builder)가 markdown parse → ID 정의·인용 그래프. Cache invalidation 후보: file watch (always live), on-demand rebuild, manual refresh.
+ARCH-4 (Dependency Graph Builder)가 markdown parse → ID 정의·인용 그래프. Cache invalidation 후보: file watch (always live), on-demand rebuild, manual refresh, in-memory only (no disk cache).
 
 관련 NFR: NFR-PERF-3 (hook <3s), NFR-PERF-4 (cold <2s), NFR-PERF-5 (incremental <300ms), NFR-SEC-5 (cache 변조)
 관련 Spec: F4.1 (graph 빌드), F2.3 (ID consistency hook), F4.2 (downstream 추출)
 
 #### Decision
 
-**On-demand rebuild + incremental on commit.** Graph는 lazy build (skill·hook 호출 시 cache miss면 build). Commit 시 hook이 changed file만 incremental rebuild + cache update. File watch X (CC plugin runtime 미보장).
+**In-memory only (옵션 D 채택).** Graph는 skill·hook 호출 시 매번 rebuild. `graph.json` 또는 persistent cache 파일 없음. `.plan-pipeline-cache/graph.json` 작성 안 함.
 
-`.plan-pipeline-cache/graph.json` (gitignore). Hook이 changed file의 modtime 비교 + diff parse.
+- File watch X (CC plugin runtime 미보장)
+- On-disk cache X (NFR-SEC-5 cache 변조 위험 제거, 구현 단순화)
+- Incremental X (modtime + diff parse 복잡도 제거)
 
 #### Alternatives Considered
 
-##### 옵션 A (선택됨): On-demand + incremental on commit
+##### 옵션 A (거절됨): On-demand + incremental on commit
 - **장점:** NFR-PERF-3 충족 (incremental <300ms 가능), file watch 불필요 (CC runtime 의존성 0), cache rebuild 가능 (NFR-SEC-5 시)
-- **단점:** Incremental 정확성 — 구현 복잡 (modtime + diff parse), 첫 호출 cold start (NFR-PERF-4 cover)
-- **Reversibility:** Two-way — full rebuild로 fallback 가능
+- **단점:** Incremental 정확성 — 구현 복잡 (modtime + diff parse), 첫 호출 cold start (NFR-PERF-4 cover), on-disk cache 필요 (NFR-SEC-5 변조 위험)
+- **거절 이유:** 구현 복잡도 대비 이점 불충분 — 옵션 D가 더 단순하고 NFR-PERF-3 충족
 
 ##### 옵션 B (거절됨): File watch (always live)
 - **장점:** 항상 최신 — skill·hook 호출 시 instant
@@ -573,11 +575,10 @@ ARCH-4 (Dependency Graph Builder)가 markdown parse → ID 정의·인용 그래
 - **단점:** 사용자 잊음 = PAIN-5 재현, ID consistency check 무용 (오래된 cache로 검증)
 - **거절 이유:** PAIN-5 (self-check 잊음) 직접 위반 — R2 핵심 가치 무력화
 
-##### 옵션 D (Conditional — T0.4 bench 후 결정): Full rebuild every commit (no incremental)
-- **장점:** Incremental bug 위험 0, 코드 단순, NFR-SEC-5 (cache 변조)도 자동 cover (매번 처음부터)
-- **단점:** 매 commit마다 1000 ID 파싱 — NFR-PERF-3 (<3s) 위반 가능. 단 measure 필요.
-- **수용 조건:** T0.4 spike 측정에서 1000 ID full rebuild가 3s 이내 (NFR-PERF-3 충족) 시 옵션 D 채택. Token 회수.
-- **거절 조건 (현재):** Spike 미완료. 측정 후 결정 — 그 전까지 옵션 A (incremental) 유지.
+##### 옵션 D (채택됨): In-memory only — no on-disk cache
+- **장점:** Incremental bug 위험 0, 코드 단순, NFR-SEC-5 (cache 변조) 위험 제거 (디스크에 아무것도 쓰지 않음), `.plan-pipeline-cache/graph.json` 불필요
+- **단점:** 매 invoke마다 full rebuild — NFR-PERF-3 (<3s) 충족 여부는 실측 기반 (T0.4 spike 결과로 확인됨)
+- **채택 이유:** T0.4 spike 결과 1000 ID full rebuild ≤ 3s 확인 → NFR-PERF-3 충족. Incremental 구현 복잡도 제거 > 성능 이점.
 
 #### Consequences
 

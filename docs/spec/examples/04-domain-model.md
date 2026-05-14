@@ -73,6 +73,8 @@
 **Aggregate root:** Yes (per Project)
 **Source spec:** R4 (DELTA), R2 (hook validation)
 
+> **Note (ADR-9 option D)**: graph state는 in-memory only. `graph.json` 또는 persistent cache 파일은 작성되지 않는다.
+
 | Name | Type | Required | Source | 설명 |
 |---|---|---|---|---|
 | id | GraphId | Y | system | per Project 1개 |

@@ -139,7 +139,7 @@ flowchart TB
 | ENT-Phase | markdown file + YAML frontmatter | docs/spec/{NN-name}.md |
 | ENT-Spec | markdown section + frontmatter ID list | 동일 file |
 | ENT-AcceptanceCriteria | markdown bullet list (R-tier) | 동일 file |
-| ENT-DependencyGraph | derived (cache) | `.plan-pipeline-cache/graph.json` (gitignore) |
+| ENT-DependencyGraph | in-memory only (ADR-9 option D) | 없음 — 프로세스 종료 시 휘발 |
 | ENT-Hook | shell scripts | `.git/hooks/{pre-commit,...}` |
 | ENT-Change | markdown + frontmatter | `docs/spec/changes/{date}-{topic}/` |
 | ENT-Skill | plugin install 디렉토리 | Claude Code skill registry (`~/.claude/skills/` 또는 비슷) |
@@ -156,7 +156,7 @@ flowchart TB
 
 ### `.plan-pipeline-cache/` (gitignore 권장)
 
-- `graph.json` — DependencyGraph 캐시 (lazy rebuild on file watch)
+- ~~`graph.json`~~ — **제거됨 (ADR-9 option D)**: DependencyGraph는 in-memory only. 디스크 cache 파일 없음.
 - `id-counter.json` — auto-gen ID 카운터 (R{n}, F{n}.{m}, S{n}.{m}.{k} 다음 번호)
 
 ## 8. Sequence Diagram
