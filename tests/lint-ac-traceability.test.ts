@@ -114,6 +114,64 @@ describe('AC Traceability (US-9.3)', () => {
     }
   });
 
+  // TC-7 (v4.1): non-TS testFilePattern via options override (Python)
+  it('honors options.testFilePattern override for non-TS tests', async () => {
+    const spec = 'AC-R7-1\nAC-R7-2\n';
+    const root = await mkdtemp(join(tmpdir(), 'ac-trace-'));
+    try {
+      await mkdir(join(root, 'docs', 'spec'), { recursive: true });
+      await writeFile(
+        join(root, 'docs', 'spec', '13-implementation-plan.md'),
+        spec,
+        'utf8',
+      );
+      await mkdir(join(root, 'tests'), { recursive: true });
+      await writeFile(
+        join(root, 'tests', 'feature_test.py'),
+        '# AC-R7-1\n# AC-R7-2\n',
+        'utf8',
+      );
+
+      // Default pattern (.test.ts) finds nothing → 0% coverage
+      const rDefault = await checkAcCoverage(root);
+      expect(rDefault.coveredAc).toBe(0);
+
+      // Python pattern (_test.py) finds both
+      const rPy = await checkAcCoverage(root, { testFilePattern: '_test.py' });
+      expect(rPy.coveredAc).toBe(2);
+      expect(rPy.coverage).toBe(100);
+    } finally {
+      await rm(root, { recursive: true });
+    }
+  });
+
+  // TC-8 (v4.1): testFilePattern loaded from .plan-pipeline.config.json
+  it('loads testFilePattern from .plan-pipeline.config.json (go preset)', async () => {
+    const spec = 'AC-R8-1\n';
+    const root = await mkdtemp(join(tmpdir(), 'ac-trace-'));
+    try {
+      await writeFile(
+        join(root, '.plan-pipeline.config.json'),
+        JSON.stringify({ extends: 'go' }),
+        'utf8',
+      );
+      await mkdir(join(root, 'docs', 'spec'), { recursive: true });
+      await writeFile(
+        join(root, 'docs', 'spec', '13-implementation-plan.md'),
+        spec,
+        'utf8',
+      );
+      await mkdir(join(root, 'tests'), { recursive: true });
+      await writeFile(join(root, 'tests', 'feature_test.go'), '// AC-R8-1\n', 'utf8');
+
+      const r = await checkAcCoverage(root);
+      expect(r.coveredAc).toBe(1);
+      expect(r.coverage).toBe(100);
+    } finally {
+      await rm(root, { recursive: true });
+    }
+  });
+
   // TC-6: examples/ path takes priority over plain docs/spec/
   it('prefers docs/spec/examples/ over docs/spec/', async () => {
     const specExamples = 'AC-R5-1\nAC-R5-2\n';

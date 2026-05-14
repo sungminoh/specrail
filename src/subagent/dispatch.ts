@@ -2,7 +2,7 @@
 // Phase 13 atomic task 완료 후 자동 invoke pattern.
 // runWithReview → handleResult → continue/interrupt.
 
-import { runWithReview, type ReviewResult } from './review.js';
+import { runWithReview, type ReviewResult, type RunWithReviewOptions } from './review.js';
 import { handleResult, formatEscalation, type EscalationDecision, applyDecision } from './escalate.js';
 import type { AgentTool, SubagentTask } from './invoke.js';
 
@@ -13,11 +13,14 @@ export interface DispatchResult {
   escalationMessage?: string;
 }
 
+export type DispatchOptions = RunWithReviewOptions;
+
 export async function dispatchTaskWithReview(
   agent: AgentTool,
   task: SubagentTask,
+  options: DispatchOptions = {},
 ): Promise<DispatchResult> {
-  const reviewResult = await runWithReview(agent, task);
+  const reviewResult = await runWithReview(agent, task, options);
   const handle = handleResult({ taskId: task.taskId, result: reviewResult });
 
   const dispatch: DispatchResult = {
@@ -38,13 +41,14 @@ export async function dispatchWithRetry(
   task: SubagentTask,
   decideOnEscalation: (escalationMessage: string) => Promise<EscalationDecision>,
   maxRetries = 1,
+  options: DispatchOptions = {},
 ): Promise<DispatchResult> {
   let attempt = 0;
   let currentTask = task;
   let result: DispatchResult;
 
   while (true) {
-    result = await dispatchTaskWithReview(agent, currentTask);
+    result = await dispatchTaskWithReview(agent, currentTask, options);
     if (result.action === 'continue') return result;
     if (attempt >= maxRetries) return result;
 

@@ -13,6 +13,7 @@
 
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
+import { loadConfig } from '../config/index.js';
 
 export interface AcCoverageResult {
   totalAc: number;
@@ -22,6 +23,11 @@ export interface AcCoverageResult {
   coverage: number;
   /** path scanned for AC labels, or 'none' */
   specSource: string;
+}
+
+export interface CheckAcCoverageOptions {
+  /** Override test file suffix (default: loaded from .plan-pipeline.config.json or '.test.ts') */
+  readonly testFilePattern?: string;
 }
 
 const AC_PATTERN = /AC-R\d+-\d+/g;
@@ -49,8 +55,8 @@ async function resolveSpecPath(projectRoot: string): Promise<string | null> {
   return null;
 }
 
-/** Recursively collect all .test.ts files under a directory. */
-async function collectTestFiles(dir: string): Promise<string[]> {
+/** Recursively collect all test files matching the configured suffix. */
+async function collectTestFiles(dir: string, suffix: string): Promise<string[]> {
   let entries: string[];
   try {
     entries = await readdir(dir);
@@ -69,9 +75,9 @@ async function collectTestFiles(dir: string): Promise<string[]> {
         return;
       }
       if (s.isDirectory()) {
-        const nested = await collectTestFiles(full);
+        const nested = await collectTestFiles(full, suffix);
         results.push(...nested);
-      } else if (entry.endsWith('.test.ts')) {
+      } else if (entry.endsWith(suffix)) {
         results.push(full);
       }
     }),
@@ -85,7 +91,10 @@ async function collectTestFiles(dir: string): Promise<string[]> {
  * @param projectRoot - Absolute or relative path to the project root
  * @returns AcCoverageResult
  */
-export async function checkAcCoverage(projectRoot: string): Promise<AcCoverageResult> {
+export async function checkAcCoverage(
+  projectRoot: string,
+  options: CheckAcCoverageOptions = {},
+): Promise<AcCoverageResult> {
   // 1. Locate spec
   const specPath = await resolveSpecPath(projectRoot);
   if (specPath === null) {
@@ -96,9 +105,13 @@ export async function checkAcCoverage(projectRoot: string): Promise<AcCoverageRe
   const specText = await readFile(specPath, 'utf8');
   const specAc = extractAcLabels(specText);
 
-  // 3. Collect AC labels from all test files
+  // 3. Resolve test file pattern — explicit option > config file > default
+  const testFilePattern =
+    options.testFilePattern ?? (await loadConfig(projectRoot)).testFilePattern;
+
+  // 4. Collect AC labels from all test files
   const testsDir = join(projectRoot, 'tests');
-  const testFiles = await collectTestFiles(testsDir);
+  const testFiles = await collectTestFiles(testsDir, testFilePattern);
   const testTexts = await Promise.all(testFiles.map((f) => readFile(f, 'utf8')));
   const allTestText = testTexts.join('\n');
   const testedAc = new Set(extractAcLabels(allTestText));

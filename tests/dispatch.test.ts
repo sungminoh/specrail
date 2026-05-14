@@ -145,6 +145,25 @@ describe('US-T5.6 dispatchWithRetry', () => {
     expect(decider).toHaveBeenCalledOnce();
   });
 
+  it('dispatchTaskWithReview forwards options.config to QualityReview prompt (v4.1)', async () => {
+    const seenPrompts: string[] = [];
+    const agent: AgentTool = vi.fn(async ({ prompt }: AgentInput) => {
+      seenPrompts.push(prompt);
+      return { status: 'Passed', output: 'ok' };
+    }) as AgentTool;
+
+    const { getPreset } = await import('../src/config/index.js');
+    const { dispatchTaskWithReview: dispatchFn } = await import('../src/subagent/dispatch.js');
+    const result = await dispatchFn(agent, baseTask, { config: getPreset('python') });
+
+    expect(result.action).toBe('continue');
+    // QualityReview is stage 3 — must carry python checklist, not TS default
+    const qualityPrompt = seenPrompts[2]!;
+    expect(qualityPrompt).toContain('mypy src/');
+    expect(qualityPrompt).toContain('pytest tests/');
+    expect(qualityPrompt).not.toContain('npm run typecheck');
+  });
+
   it('dispatchWithRetry passes real escalationReason to decideOnEscalation (R2-H3)', async () => {
     const agent = makeAgent([
       { status: 'Blocked', output: 'BLOCKED: CONCRETE REASON FROM REVIEWER' },

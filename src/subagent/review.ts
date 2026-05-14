@@ -1,5 +1,6 @@
 // D17 fix (4차 reviewer simplifier): unused SubagentStatus import removed
 import { invokeSubagent, type AgentTool, type SubagentTask } from './invoke.js';
+import { DEFAULT_CONFIG, loadConfig, type PlanPipelineConfig } from '../config/index.js';
 
 /**
  * SpecReview prompt template (C6 / analyst ambiguity #6 resolved).
@@ -28,28 +29,39 @@ export const SPEC_REVIEW_PROMPT = (taskPrompt: string): string =>
 /**
  * QualityReview prompt template (C6).
  *
- * Pass criteria:
- * 1. TypeScript strict — 0 errors (npm run typecheck)
- * 2. All new tests PASS (npx vitest run)
- * 3. Naming consistency with Phase 4 glossary
- * 4. No TODO/FIXME/placeholder comments
- * 5. ESM `.js` import suffix
+ * Default checklist is the v4.0 TypeScript 5-criteria set. For other languages,
+ * use buildQualityReviewPrompt() with a custom checklist (loaded from
+ * .plan-pipeline.config.json via src/config/index.ts).
+ *
+ * Backward compatible: signature unchanged, output identical when checklist
+ * is omitted.
  */
 export const QUALITY_REVIEW_PROMPT = (taskPrompt: string): string =>
-  [
-    `Code quality review of:`,
-    taskPrompt,
-    ``,
-    `Verify (ALL 5 must pass):`,
-    `1. typecheck: npm run typecheck → 0 errors`,
-    `2. tests: npx vitest run [new test files] → all green`,
-    `3. naming consistency with Phase 4 glossary (enum 값 일치)`,
-    `4. no TODO/FIXME/placeholder comments`,
-    `5. ESM .js suffix on imports`,
-    ``,
-    `Return "Passed" with brief summary if all 5 pass.`,
-    `Return "Blocked" with "BLOCKED: <which check + line ref>" otherwise.`,
-  ].join('\n');
+  buildQualityReviewPrompt(taskPrompt, DEFAULT_CONFIG.qualityChecklist);
+
+/**
+ * Build a QualityReview prompt with an arbitrary checklist.
+ * Each checklist item becomes a numbered line in the prompt body.
+ */
+export function buildQualityReviewPrompt(
+  taskPrompt: string,
+  checklist: readonly string[],
+): string {
+  const n = checklist.length;
+  const lines = [`Code quality review of:`, taskPrompt, ``];
+  if (n === 0) {
+    lines.push(`No quality checks configured. Return "Passed".`);
+    return lines.join('\n');
+  }
+  lines.push(`Verify (ALL ${n} must pass):`);
+  for (let i = 0; i < n; i++) {
+    lines.push(`${i + 1}. ${checklist[i]}`);
+  }
+  lines.push(``);
+  lines.push(`Return "Passed" with brief summary if all ${n} pass.`);
+  lines.push(`Return "Blocked" with "BLOCKED: <which check + line ref>" otherwise.`);
+  return lines.join('\n');
+}
 
 export interface StageRecord {
   stage: string;
@@ -63,7 +75,17 @@ export interface ReviewResult {
   escalationReason?: string;
 }
 
-export async function runWithReview(agent: AgentTool, task: SubagentTask): Promise<ReviewResult> {
+export interface RunWithReviewOptions {
+  /** Resolved config — when omitted, DEFAULT_CONFIG (TS preset) is used. */
+  readonly config?: PlanPipelineConfig;
+}
+
+export async function runWithReview(
+  agent: AgentTool,
+  task: SubagentTask,
+  options: RunWithReviewOptions = {},
+): Promise<ReviewResult> {
+  const config = options.config ?? DEFAULT_CONFIG;
   const stages: StageRecord[] = [];
 
   // Stage 1 — Implementation
@@ -78,7 +100,7 @@ export async function runWithReview(agent: AgentTool, task: SubagentTask): Promi
     };
   }
 
-  // Stage 2 — SpecReview (C6: 4-criteria prompt template)
+  // Stage 2 — SpecReview (C6: 4-criteria prompt template, language-neutral)
   const specTask: SubagentTask = {
     ...task,
     prompt: SPEC_REVIEW_PROMPT(task.prompt),
@@ -95,10 +117,10 @@ export async function runWithReview(agent: AgentTool, task: SubagentTask): Promi
     };
   }
 
-  // Stage 3 — QualityReview (C6: 5-criteria prompt template)
+  // Stage 3 — QualityReview (config-driven checklist; v4.1 language-agnostic)
   const qualTask: SubagentTask = {
     ...task,
-    prompt: QUALITY_REVIEW_PROMPT(task.prompt),
+    prompt: buildQualityReviewPrompt(task.prompt, config.qualityChecklist),
     stage: 'QualityReview',
   };
   const qualResult = await invokeSubagent(agent, qualTask);
