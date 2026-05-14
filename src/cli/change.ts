@@ -255,7 +255,11 @@ export async function invokeDeltaChain(
   let created = 0;
   for (const phaseStr of downstream.affectedPhases) {
     const phaseN = parseInt(phaseStr, 10);
-    if (Number.isNaN(phaseN)) continue;
+    if (Number.isNaN(phaseN)) {
+      // R2 M2: defensive log — graph builder always emits 2-digit strings
+      process.stderr.write(`[change] skipping invalid phaseStr "${phaseStr}" in invokeDeltaChain\n`);
+      continue;
+    }
     const r = await invokeDeltaPhase(
       projectRoot,
       changeDir,

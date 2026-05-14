@@ -3,7 +3,7 @@
 // Rebuild possible: max(used) + 1 (graceful)
 // INV-1: Project 내 unique 보장
 
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, rename } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { SpecTier, formatSpecId, type SpecId } from './id.js';
 
@@ -73,8 +73,11 @@ export class IdCounter {
   }
 
   async save(): Promise<void> {
+    // R2 M1: atomic write — temp + rename. Cross-process race + SIGKILL-safe.
     await mkdir(dirname(this.path), { recursive: true });
-    await writeFile(this.path, JSON.stringify(this.state, null, 2));
+    const tmp = this.path + '.tmp';
+    await writeFile(tmp, JSON.stringify(this.state, null, 2));
+    await rename(tmp, this.path);
   }
 
   private makeKey(tier: SpecTier, phaseId: number, parents: number[]): string {
