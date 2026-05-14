@@ -275,3 +275,60 @@ Phase 11 (Operations)에:
 
 Phase 12 (ADR)에:
 - 모든 ADR-CAND-1~10
+
+## 12. Phase 8 Container Detail (ARCH-8~12)
+
+### ARCH-8: State Machine Container
+
+**Responsibility**: Phase lifecycle, change lifecycle, consent, subagent state machines (SM-Phase-Lifecycle, SM-Change-Lifecycle, SM-Consent, SM-Subagent).
+
+**Interfaces**:
+- `src/spec/state-machine.ts` — `transitionPhase`, `transitionChange`, `validateTransition`
+- `src/hook/transition-gate.ts` — pre-commit gate that enforces SM rules
+
+**Dependencies**: Hook Scripts container (frontmatter), Frontmatter Schema Validator container (ID counter)
+
+### ARCH-9: Subagent Dispatch Container
+
+**Responsibility**: 2-stage runWithReview pattern, BLOCKED escalation, audit trail preservation.
+
+**Interfaces**:
+- `src/subagent/dispatch.ts` — `dispatchTaskWithReview`, `dispatchWithRetry`
+- `src/subagent/wrapper.ts` — invokeSubagent boundary
+
+**Dependencies**: Claude Code host container (skill), Telemetry Client container
+
+### ARCH-10: CLI Commands Container
+
+**Responsibility**: User-facing CLI entry points — change, approve, hook-install, orchestrator status/nextPhase.
+
+**Interfaces**:
+- `src/cli/change.ts` — draftChange, invokeDeltaChain, mergeChange, archiveChange
+- `src/cli/approve.ts` — Draft → Approved transition
+- `src/cli/hook-install.ts` — V4_HOOK_TEMPLATE chain detection + install
+- `src/skill/orchestrator.ts` — status, nextPhase
+
+**Dependencies**: Plugin Skills container (hooks), Hook Scripts container (graph builder), State Machine container
+
+### ARCH-11: Lint Module Container
+
+**Responsibility**: Plan self-check automation — anti-sycophancy, atomic-commit, ac-traceability, inv-7, inv-5 invariant enforcement.
+
+**Interfaces**:
+- `src/lint/anti-sycophancy.ts` — scanFile, scanProject
+- `src/lint/atomic-commit.ts` — checkCommit
+- `src/lint/ac-traceability.ts` — checkAcCoverage
+- `src/lint/inv-enforce.ts` — checkInv5, checkInv7, checkInv7File
+- `src/lint/run-all.ts` — runAllChecks orchestrator
+
+**Dependencies**: Hook Scripts container (frontmatter), Dependency Graph Builder container (schema validator)
+
+### ARCH-12: Markdown Utilities Container
+
+**Responsibility**: Markdown parsing primitives — frontmatter, YAML safe-load, leading HTML comment strip.
+
+**Interfaces**:
+- `src/markdown/frontmatter.ts` — parseFrontmatter, stripLeadingHtmlComments
+- `src/markdown/yaml.ts` — safeYamlParse with prototype pollution defense
+
+**Dependencies**: unified/remark/remark-frontmatter (external)
