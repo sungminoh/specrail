@@ -37,6 +37,11 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "requirements": {
+      "type": "array",
+      "description": "NFR list (NFR-{DOMAIN}-* IDs) across 7 domains: Performance, Scalability, Availability, Security (STRIDE), Privacy, Accessibility (WCAG), i18n. Each must have measurable target + measurement point.",
+      "items": { "type": "object" }
     }
   },
   "additionalProperties": true

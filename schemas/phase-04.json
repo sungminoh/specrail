@@ -37,6 +37,21 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "entities": {
+      "type": "array",
+      "description": "Domain entities (ENT-* IDs) with attributes, state machines, and AC references",
+      "items": { "type": "object" }
+    },
+    "relationships": {
+      "type": "array",
+      "description": "Entity relationships (1:1, 1:N, N:M) between domain entities",
+      "items": { "type": "object" }
+    },
+    "invariants": {
+      "type": "array",
+      "description": "System invariants (INV-* IDs) — rules that must never be violated",
+      "items": { "type": "object" }
     }
   },
   "additionalProperties": true

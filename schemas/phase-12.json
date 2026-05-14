@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://plan-pipeline.dev/schemas/phase-12.json",
-  "title": "Phase 12 frontmatter",
+  "title": "Phase 12: ADR + Risks frontmatter",
   "type": "object",
   "required": [
     "phase",
@@ -37,6 +37,16 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "decisions": {
+      "type": "array",
+      "description": "Architecture Decision Records (ADR-* IDs) — each has one chosen option, rejected alternatives with reasons, and consequences. Resolves all ADR-CAND from previous phases.",
+      "items": { "type": "object" }
+    },
+    "risks": {
+      "type": "array",
+      "description": "Risk register (RISK-* IDs) — Likelihood × Impact matrix with mitigation plans. Empty array if no identified risks.",
+      "items": { "type": "object" }
     }
   },
   "additionalProperties": true

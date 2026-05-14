@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://plan-pipeline.dev/schemas/phase-13.json",
-  "title": "Phase 13 frontmatter",
+  "title": "Phase 13: Implementation Plan frontmatter",
   "type": "object",
   "required": [
     "phase",
@@ -37,6 +37,21 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "tasks": {
+      "type": "array",
+      "description": "Atomic implementation tasks (T*.* IDs) — each has exact file path, complete code block, exact test command + expected output. No TBD/placeholders.",
+      "items": { "type": "object" }
+    },
+    "acceptanceCriteria": {
+      "type": "array",
+      "description": "Phase-level acceptance criteria linking T-tasks to AC/TC IDs — used to verify MVP is shippable",
+      "items": { "type": "object" }
+    },
+    "milestones": {
+      "type": "array",
+      "description": "Milestone groupings of tasks (M0 = MVP, M1 = polish, etc.) with dependency graph summary",
+      "items": { "type": "object" }
     }
   },
   "additionalProperties": true

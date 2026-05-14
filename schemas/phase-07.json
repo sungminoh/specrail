@@ -37,6 +37,11 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "wireframes": {
+      "type": "array",
+      "description": "Wireframe specs (W-* IDs, 1:1 with P-* from phase 6) — each entry describes layout zones, element specs, and 4 component states (Loading/Empty/Error/Success)",
+      "items": { "type": "object" }
     }
   },
   "additionalProperties": true

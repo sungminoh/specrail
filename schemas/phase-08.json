@@ -37,6 +37,21 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "components": {
+      "type": "array",
+      "description": "Abstract system components (ARCH-* IDs) — C4 L2 containers: services, datastores, clients. No concrete vendor names.",
+      "items": { "type": "object" }
+    },
+    "decisions": {
+      "type": "array",
+      "description": "ADR-CAND-* deferred decisions identified during architecture design (resolved in phase 12)",
+      "items": { "type": "object" }
+    },
+    "integrations": {
+      "type": "array",
+      "description": "External integrations (EXT-* IDs) — third-party systems, APIs, and services the system depends on",
+      "items": { "type": "object" }
     }
   },
   "additionalProperties": true

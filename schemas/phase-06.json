@@ -37,6 +37,15 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "screens": {
+      "type": "array",
+      "description": "Page/screen catalog (P-* IDs) — 1:1 mapping to Phase 5 page nodes, with hierarchy depth and navigation strategy",
+      "items": { "type": "object" }
+    },
+    "navigationStrategy": {
+      "type": "string",
+      "description": "Primary navigation pattern: sidebar / tab / drawer / stack / etc. (justified by Persona environment)"
     }
   },
   "additionalProperties": true

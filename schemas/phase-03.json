@@ -37,6 +37,16 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "features": {
+      "type": "array",
+      "description": "Feature list — R→F→S 3-tier breakdown; each entry is a Requirement with nested Features and Specifications",
+      "items": { "type": "object" }
+    },
+    "requirements": {
+      "type": "array",
+      "description": "Flat Requirement list (R-IDs) for quick reference and cross-phase linking",
+      "items": { "type": "object" }
     }
   },
   "additionalProperties": true

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://plan-pipeline.dev/schemas/phase-02.json",
-  "title": "Phase 2 frontmatter",
+  "title": "Phase 2: Persona & Journey frontmatter",
   "type": "object",
   "required": [
     "phase",
@@ -37,6 +37,21 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "personas": {
+      "type": "array",
+      "description": "Persona cards — each entry is one deeply-specified persona with role, tools, goals, fears (the substance of phase 2)",
+      "items": { "type": "object" }
+    },
+    "journeys": {
+      "type": "array",
+      "description": "Journey maps — one per core scenario, tracking emotion/thought/action per step",
+      "items": { "type": "object" }
+    },
+    "painPriority": {
+      "type": "array",
+      "description": "Pain Priority table — P0/P1/P2 ranked pain points with persona/scenario references",
+      "items": { "type": "object" }
     }
   },
   "additionalProperties": true

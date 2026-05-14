@@ -37,6 +37,16 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "runbooks": {
+      "type": "array",
+      "description": "Operational runbooks (OPS-* IDs) — deploy strategy, DR/backup procedures, on-call playbooks. Abstract tool references only (concrete vendor = ADR-CAND).",
+      "items": { "type": "object" }
+    },
+    "monitoring": {
+      "type": "array",
+      "description": "Observability specs — Logs / Metrics / Traces per ARCH component, with alert policies tied to PRD KPI / NFR",
+      "items": { "type": "object" }
     }
   },
   "additionalProperties": true

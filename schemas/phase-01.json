@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://plan-pipeline.dev/schemas/phase-01.json",
-  "title": "Phase 1 frontmatter",
+  "title": "Phase 1: PRD frontmatter",
   "type": "object",
   "required": [
     "phase",
@@ -37,6 +37,21 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "kpi": {
+      "type": "array",
+      "description": "Key Performance Indicators — success metrics from PRD §4 (e.g. DAU, retention, conversion targets)",
+      "items": { "type": "object" }
+    },
+    "personas": {
+      "type": "array",
+      "description": "Primary persona summaries — who the product is built for (PRD §3.1)",
+      "items": { "type": "object" }
+    },
+    "risks": {
+      "type": "array",
+      "description": "Assumption risks identified during framing (PRD §7 Assumption table)",
+      "items": { "type": "object" }
     }
   },
   "additionalProperties": true

@@ -37,6 +37,16 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "testCases": {
+      "type": "array",
+      "description": "Test cases (TC-* IDs) — each linked to AC / INV / NFR ID; specifies test type (unit/integration/e2e/perf) and pyramid tier",
+      "items": { "type": "object" }
+    },
+    "coverage": {
+      "type": "object",
+      "description": "Test pyramid coverage targets — e.g. { unit: 70, integration: 20, e2e: 10 } (default 70/20/10 split)",
+      "additionalProperties": true
     }
   },
   "additionalProperties": true

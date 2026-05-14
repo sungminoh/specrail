@@ -37,6 +37,11 @@
     },
     "approvedAt": {
       "type": "string"
+    },
+    "flows": {
+      "type": "array",
+      "description": "User flow sections — each section contains nodes (start/page/action/section-top) and edges with conditions",
+      "items": { "type": "object" }
     }
   },
   "additionalProperties": true
