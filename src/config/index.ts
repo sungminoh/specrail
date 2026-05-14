@@ -1,6 +1,6 @@
-// Language-agnostic harness config (v4.1 prep)
-// Loaded from <projectRoot>/.plan-pipeline.config.json — optional.
-// Default: typescript preset (preserves v4.0 behavior).
+// Language-agnostic harness config.
+// Loaded from <projectRoot>/.specrail.config.json — optional.
+// Default: typescript preset.
 //
 // Schema:
 //   extends?: 'typescript' | 'python' | 'go' | 'rust' | 'none'
@@ -94,12 +94,12 @@ function freezeConfig(cfg: PlanPipelineConfig): PlanPipelineConfig {
 }
 
 /**
- * Load .plan-pipeline.config.json from projectRoot.
+ * Load .specrail.config.json from projectRoot.
  * Returns DEFAULT_CONFIG (typescript preset) when file is missing.
  * Throws Error with clear message on malformed JSON or invalid fields.
  */
 export async function loadConfig(projectRoot: string): Promise<PlanPipelineConfig> {
-  const path = join(projectRoot, '.plan-pipeline.config.json');
+  const path = join(projectRoot, '.specrail.config.json');
 
   let raw: string;
   try {
@@ -112,7 +112,7 @@ export async function loadConfig(projectRoot: string): Promise<PlanPipelineConfi
   try {
     parsed = JSON.parse(raw) as UserConfigFile;
   } catch (e) {
-    throw new Error(`.plan-pipeline.config.json: malformed JSON — ${String(e)}`);
+    throw new Error(`.specrail.config.json: malformed JSON — ${String(e)}`);
   }
 
   // Resolve base preset
@@ -123,7 +123,7 @@ export async function loadConfig(projectRoot: string): Promise<PlanPipelineConfi
     base = PRESETS[parsed.extends];
   } else {
     throw new Error(
-      `.plan-pipeline.config.json: unknown preset "${String(parsed.extends)}". ` +
+      `.specrail.config.json: unknown preset "${String(parsed.extends)}". ` +
         `Valid: typescript, python, go, rust, none.`,
     );
   }
@@ -133,7 +133,7 @@ export async function loadConfig(projectRoot: string): Promise<PlanPipelineConfi
   if (parsed.testFilePattern !== undefined) {
     if (typeof parsed.testFilePattern !== 'string' || parsed.testFilePattern.length === 0) {
       throw new Error(
-        `.plan-pipeline.config.json: testFilePattern must be a non-empty string.`,
+        `.specrail.config.json: testFilePattern must be a non-empty string.`,
       );
     }
     testFilePattern = parsed.testFilePattern;
@@ -146,7 +146,7 @@ export async function loadConfig(projectRoot: string): Promise<PlanPipelineConfi
       !parsed.qualityChecklist.every((l) => typeof l === 'string')
     ) {
       throw new Error(
-        `.plan-pipeline.config.json: qualityChecklist must be an array of strings.`,
+        `.specrail.config.json: qualityChecklist must be an array of strings.`,
       );
     }
     qualityChecklist = parsed.qualityChecklist;

@@ -8,14 +8,14 @@ async function main() {
     case 'init': {
       const { bootstrap } = await import('../cli/install.js');
       await bootstrap(process.cwd());
-      console.log('✓ Initialized plan-pipeline at ' + process.cwd());
+      console.log('✓ Initialized specrail at ' + process.cwd());
       console.log('Edit docs/spec/01-prd.md to begin.');
       break;
     }
     case 'approve': {
       const phaseN = parseInt(args[0] ?? '', 10);
       if (Number.isNaN(phaseN) || phaseN < 1 || phaseN > 13) {
-        console.error('Usage: plan-pipeline approve <1-13>');
+        console.error('Usage: specrail approve <1-13>');
         exit(2);
       }
       const { approve } = await import('../cli/approve.js');
@@ -42,7 +42,7 @@ async function main() {
       const idsArg = args.find((a) => a.startsWith('--ids=')) ?? '';
       const ids = idsArg.replace('--ids=', '').split(',').filter(Boolean);
       if (!topic) {
-        console.error('Usage: plan-pipeline change "<topic>" --ids=R1,F1.1');
+        console.error('Usage: specrail change "<topic>" --ids=R1,F1.1');
         exit(2);
       }
       const { draftChange } = await import('../cli/change.js');
@@ -70,7 +70,7 @@ async function main() {
     default: {
       // Usage: stdout if user asked (no command); stderr if command was unknown
       const out = command ? console.error : console.log;
-      out('plan-pipeline — Spec discipline harness');
+      out('specrail — Spec discipline harness');
       out('');
       out('Commands:');
       out('  init                          Initialize spec scaffold');

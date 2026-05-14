@@ -13,9 +13,9 @@
 1. Bump version: `npm version <patch|minor|major>` (creates tag `v<version>`)
 2. Push tag: `git push --follow-tags`
 3. GitHub Actions auto-runs `.github/workflows/release.yml`
-4. Verify: `npm view @plan-pipeline/v4`
+4. Verify: `npm view specrail`
 
 ## Rollback (if needed)
 
-- Within 24h: `npm unpublish @plan-pipeline/v4@<version>`
-- After 24h: publish a deprecation: `npm deprecate @plan-pipeline/v4@<version> "reason"`
+- Within 24h: `npm unpublish specrail@<version>`
+- After 24h: publish a deprecation: `npm deprecate specrail@<version> "reason"`

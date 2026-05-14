@@ -1,5 +1,5 @@
 // US-10.1 — EDGE-1·2·3 timestamp/TZ boundary tests (M10)
-// Verifies v4 frontmatter ISO 8601 UTC behavior: approve() writes Z-suffix,
+// Verifies frontmatter ISO 8601 UTC behavior: approve() writes Z-suffix,
 // lexicographic sort = chronological, date roll-over, midnight, same-second tiebreak.
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';

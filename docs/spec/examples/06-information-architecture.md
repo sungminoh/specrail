@@ -17,11 +17,11 @@
 |---|---|---|---|---|
 | P-CC-1 | README · marketplace landing | N-002 | GitHub URL 또는 Claude Code marketplace | 1 |
 | P-CC-2 | Setup 안내 | N-006 | install 직후 자동 출력 | 1 |
-| P-CC-3 | Phase init 응답 (docs/spec 생성·skill 호출) | N-011 | `/plan-pipeline init` 또는 trigger phrase | 1 |
+| P-CC-3 | Phase init 응답 (docs/spec 생성·skill 호출) | N-011 | `/specrail init` 또는 trigger phrase | 1 |
 | P-CC-4 | Phase 산출물 출력 | N-014 | skill chain 자동 (13 phase 동일 layout) | 2 |
 | P-CC-5 | Hook fail 차단 메시지 | N-019 | git commit 시 자동 | 2 |
 | P-CC-6 | Phase transition 승인·진입 | N-022 | 사용자 "approve" 명령 | 2 |
-| P-CC-7 | Change 명령 응답 (영향 phase + proposal draft) | N-032, N-033 | `/plan-pipeline change "<topic>"` | 1 |
+| P-CC-7 | Change 명령 응답 (영향 phase + proposal draft) | N-032, N-033 | `/specrail change "<topic>"` | 1 |
 | P-CC-8 | Phase delta 작성 | N-035 | DELTA 진행 중 영향 phase 별 | 2 |
 | P-CC-9 | Change 머지·archive 알림 | N-039 | 자동 | 2 |
 | P-CC-10 | Implementation task subagent | N-042 | Phase 13 후 자동 또는 명령 | 2 |
@@ -74,15 +74,15 @@ URL navigation 없음. 사용자 → 명령어 → LLM 응답이 "navigation".
 
 | 명령 / Trigger | 도착 페이지 |
 |---|---|
-| `/plan-pipeline init` (또는 자연어 trigger phrase) | P-CC-3 |
-| `/plan-pipeline change "<topic>"` | P-CC-7 |
-| `/plan-pipeline implement` (또는 Phase 13 후 자동) | P-CC-10 |
-| `/plan-pipeline status` | (CLI 출력 — Page 별 부여 X, raw 응답) |
+| `/specrail init` (또는 자연어 trigger phrase) | P-CC-3 |
+| `/specrail change "<topic>"` | P-CC-7 |
+| `/specrail implement` (또는 Phase 13 후 자동) | P-CC-10 |
+| `/specrail status` | (CLI 출력 — Page 별 부여 X, raw 응답) |
 | 사용자 "approve phase N" | P-CC-6 (transition) |
 | 사용자 "opt out telemetry" | (CLI 응답) |
 | skill chain 자동 | P-CC-4 → P-CC-6 → 다음 P-CC-4 (13회) |
 
-`/plan-pipeline help`로 명령 list 표시.
+`/specrail help`로 명령 list 표시.
 
 ### 산출물 검토 navigation (passive)
 
@@ -134,7 +134,7 @@ URL navigation 없음. 사용자 → 명령어 → LLM 응답이 "navigation".
 
 | 영역 | 패턴 |
 |---|---|
-| Plugin 명령 | `/plan-pipeline {action}` |
+| Plugin 명령 | `/specrail {action}` |
 | Trigger phrase | "13단계로 사양화" · "phase {N} 시작" 등 — Skill의 triggerWords |
 | 자연어 자동 trigger | LLM이 사용자 의도 파악 후 skill 호출 |
 
@@ -154,8 +154,8 @@ URL navigation 없음. 사용자 → 명령어 → LLM 응답이 "navigation".
 ## 8. 검색 가능성
 
 본 v4는 사용자 자기 환경 검색:
-- `/plan-pipeline status` — 현재 phase·진행
-- `/plan-pipeline find <query>` — spec content search (CLI)
+- `/specrail status` — 현재 phase·진행
+- `/specrail find <query>` — spec content search (CLI)
 - 사용자 직접 grep / IDE search (file system level)
 
 (인터랙티브 search bar는 v4.5 dashboard cycle.)
@@ -164,7 +164,7 @@ URL navigation 없음. 사용자 → 명령어 → LLM 응답이 "navigation".
 
 | Q ID | 질문 | 결정자 | Blocking? |
 |---|---|---|---|
-| OQ-6-1 | `/plan-pipeline find` 명령 v4 포함 vs v4.5 (간단 grep wrapper) | maintainer | Phase 8 |
+| OQ-6-1 | `/specrail find` 명령 v4 포함 vs v4.5 (간단 grep wrapper) | maintainer | Phase 8 |
 | OQ-6-2 | Settings page (telemetry consent toggle) — Claude Code 명령으로 충분? 또는 v4.5 dashboard | maintainer | Phase 8 |
 
 ## 10. 다음 phase 인풋

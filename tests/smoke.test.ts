@@ -6,8 +6,8 @@ describe('smoke', () => {
     expect(pkg.version).toMatch(/^\d+\.\d+\.\d+$/);
   });
 
-  it('package name is @plan-pipeline/v4', () => {
-    expect(pkg.name).toBe('@plan-pipeline/v4');
+  it('package name is specrail', () => {
+    expect(pkg.name).toBe('specrail');
   });
 
   it('requires Node 20+', () => {

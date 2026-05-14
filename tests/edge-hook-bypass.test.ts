@@ -13,7 +13,7 @@ import { installHook } from '../src/cli/hook-install.js';
 import { createPlausibleSender } from '../src/telemetry/plausible-adapter.js';
 import { buildGraph } from '../src/graph/builder.js';
 
-const V4_MARKER = '// plan-pipeline v4 hook chain (INV-10 보존)';
+const HOOK_MARKER = '// specrail hook chain (INV-10 보존)';
 
 let dir: string;
 
@@ -29,7 +29,7 @@ afterEach(async () => {
 });
 
 describe('EDGE-11: hook missing recovery (US-10.4)', () => {
-  it('restores V4_MARKER after pre-commit deleted and re-installed', async () => {
+  it('restores HOOK_MARKER after pre-commit deleted and re-installed', async () => {
     // First install
     const r1 = await installHook(dir);
     expect(r1.installed).toBe(true);
@@ -47,20 +47,20 @@ describe('EDGE-11: hook missing recovery (US-10.4)', () => {
     const r2 = await installHook(dir);
     expect(r2.installed).toBe(true);
 
-    // Hook file exists again with V4_MARKER
+    // Hook file exists again with HOOK_MARKER
     const restored = await readFile(hookPath, 'utf8');
-    expect(restored).toContain(V4_MARKER);
+    expect(restored).toContain(HOOK_MARKER);
   });
 
   it('reinstalls with force=true when hook is present but corrupted', async () => {
-    // Install v4 hook
+    // Install specrail hook
     await installHook(dir);
 
     const hookPath = join(dir, '.git', 'hooks', 'pre-commit');
 
     // Corrupt the hook (overwrite with garbage but keep the marker so detectExisting
     // returns 'plain' with our marker — force is required to overwrite)
-    await writeFile(hookPath, V4_MARKER + '\n# corrupted garbage\n');
+    await writeFile(hookPath, HOOK_MARKER + '\n# corrupted garbage\n');
 
     // Without force → guidance only
     const r1 = await installHook(dir);
@@ -72,7 +72,7 @@ describe('EDGE-11: hook missing recovery (US-10.4)', () => {
     expect(r2.installed).toBe(true);
 
     const content = await readFile(hookPath, 'utf8');
-    expect(content).toContain(V4_MARKER);
+    expect(content).toContain(HOOK_MARKER);
     // Restored template contains the chain comment — not the corrupted content
     expect(content).not.toContain('# corrupted garbage');
   });
@@ -95,7 +95,7 @@ describe('EDGE-12: telemetry bad/empty config → silent no-op (US-10.4)', () =>
     vi.stubGlobal('fetch', mockFetch);
 
     const sender = createPlausibleSender({
-      domain: 'plan-pipeline.dev',
+      domain: 'specrail.dev',
       endpoint: 'https://wrong-host.invalid/api/event',
     });
 
@@ -109,7 +109,7 @@ describe('EDGE-12: telemetry bad/empty config → silent no-op (US-10.4)', () =>
     const mockFetch = vi.fn().mockResolvedValue({ ok: false, status: 401 });
     vi.stubGlobal('fetch', mockFetch);
 
-    const sender = createPlausibleSender({ domain: 'plan-pipeline.dev' });
+    const sender = createPlausibleSender({ domain: 'specrail.dev' });
     const result = await sender.emit({ eventType: 'PhaseApproved' });
 
     expect(result.ok).toBe(false);
@@ -161,10 +161,10 @@ describe('EDGE-13: graph cache corruption N/A — ADR-9 option D (US-10.4)', () 
 });
 
 describe('EDGE: hook template + dist missing (extends hook-template-dist-missing pattern)', () => {
-  it('V4_HOOK_TEMPLATE contains exit(1) when dist not found (no silent pass)', async () => {
+  it('HOOK_TEMPLATE contains exit(1) when dist not found (no silent pass)', async () => {
     const { readFile: fsReadFile } = await import('node:fs/promises');
     const src = await fsReadFile(join(process.cwd(), 'src/cli/hook-install.ts'), 'utf8');
-    const templateMatch = src.match(/const V4_HOOK_TEMPLATE = `[\s\S]+?`;/);
+    const templateMatch = src.match(/const HOOK_TEMPLATE = `[\s\S]+?`;/);
     expect(templateMatch).not.toBeNull();
     const template = templateMatch![0];
 
@@ -186,7 +186,7 @@ describe('EDGE: hook template + dist missing (extends hook-template-dist-missing
 
   it('hook template loadHooks returns null (not exit(0)) when both dist paths fail', async () => {
     const src = await readFile(join(process.cwd(), 'src/cli/hook-install.ts'), 'utf8');
-    const templateMatch = src.match(/const V4_HOOK_TEMPLATE = `[\s\S]+?`;/);
+    const templateMatch = src.match(/const HOOK_TEMPLATE = `[\s\S]+?`;/);
     const template = templateMatch![0];
 
     // Pattern: if (!hooks) { ... process.exit(1); } — not silent exit(0)

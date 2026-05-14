@@ -89,7 +89,7 @@
 
 ### AC
 
-- **AC-R4-1:** GIVEN 변경 요청 (예: "add payment"), WHEN `/plan-pipeline change` 명령, THEN plugin이 영향 phase list 출력 + ADDED/MODIFIED/REMOVED proposal 자동 draft.
+- **AC-R4-1:** GIVEN 변경 요청 (예: "add payment"), WHEN `/specrail change` 명령, THEN plugin이 영향 phase list 출력 + ADDED/MODIFIED/REMOVED proposal 자동 draft.
 - **AC-R4-2:** GIVEN 변경된 ID set, WHEN downstream 분석, THEN 그 ID에 직간접 의존하는 phase 모두 식별 (transitively).
 
 ### F4.1: ID dependency graph 빌드

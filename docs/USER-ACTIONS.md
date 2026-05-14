@@ -50,12 +50,12 @@ This pushes a tag like `v0.0.1-alpha.0` and triggers `.github/workflows/release.
 **Action by user — AI cannot do this** (requires npm registry access)
 
 ```sh
-npm view @plan-pipeline/v4
+npm view specrail
 ```
 
 Confirm latest version matches the tag pushed in step 4.
 
 ## Rollback (if needed)
 
-- Within 24h of publish: `npm unpublish @plan-pipeline/v4@<version>`
-- After 24h: `npm deprecate @plan-pipeline/v4@<version> "<reason>"`
+- Within 24h of publish: `npm unpublish specrail@<version>`
+- After 24h: `npm deprecate specrail@<version> "<reason>"`

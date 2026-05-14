@@ -54,7 +54,7 @@
 | Node ID | Type | 이름 | Spec | SM 영향 |
 |---|---|---|---|---|
 | N-030 | 시작 | 사용자 변경 결정 | - | - |
-| N-031 | 행동 | `/plan-pipeline change "<topic>"` | F4.3 (R4.F3) | SM-Change: ∅ → Proposed |
+| N-031 | 행동 | `/specrail change "<topic>"` | F4.3 (R4.F3) | SM-Change: ∅ → Proposed |
 | N-032 | 페이지 | Plugin이 dependency graph 분석 + 영향 phase list 출력 | F4.1, F4.2 (R4.F1·F2) | - |
 | N-033 | 페이지 | ADDED/MODIFIED/REMOVED proposal 자동 draft | F4.3 | - |
 | N-034 | 행동 | 사용자 검수 (proposal.md) | - | SM-Change: Proposed → Reviewed |
@@ -211,7 +211,7 @@ graph LR
 ```mermaid
 sequenceDiagram
     participant User
-    participant CLI as /plan-pipeline change
+    participant CLI as /specrail change
     participant Draft as draftChange
     participant Graph as graph.extractDownstream
     participant Chain as invokeDeltaChain

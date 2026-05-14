@@ -10,7 +10,7 @@
 const PLAUSIBLE_ENDPOINT_DEFAULT = 'https://plausible.io/api/event';
 
 export interface PlausibleAdapterConfig {
-  /** Plausible site domain (예: 'plan-pipeline.dev') */
+  /** Plausible site domain (예: 'specrail.dev') */
   domain: string;
   /** Endpoint URL — self-hosted Plausible 사용 시 override */
   endpoint?: string;

@@ -2,7 +2,7 @@
 // builder.ts, id-consistency.ts, secret-detect.ts, r7-b2b.ts 등이 사용
 
 /**
- * Full ID pattern — covers all v4 spec identifier types.
+ * Full ID pattern — covers all specrail spec identifier types.
  * Used by graph builder, ID consistency hook, lints.
  *
  * Tiers covered:

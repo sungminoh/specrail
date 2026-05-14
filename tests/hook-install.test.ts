@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdtemp, writeFile, mkdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { detectExisting, installHook, V4_HOOK_TEMPLATE } from '../src/cli/hook-install.js';
+import { detectExisting, installHook, HOOK_TEMPLATE } from '../src/cli/hook-install.js';
 
 let dir: string;
 
@@ -47,12 +47,12 @@ describe('Pre-commit hook installer (T1.7, AC-R6-3, AC-R2-1, F2.1, F6.4, RISK-3,
     expect(r.type).toBe('plain');
   });
 
-  it('installs v4 hook when no existing (chain=false)', async () => {
+  it('installs specrail hook when no existing (chain=false)', async () => {
     const r = await installHook(dir);
     expect(r.installed).toBe(true);
     expect(r.chainedExisting).toBe(false);
     const content = await readFile(r.hookPath, 'utf8');
-    expect(content).toContain('plan-pipeline v4 hook chain');
+    expect(content).toContain('specrail hook chain');
   });
 
   it('backs up existing plain hook (INV-10 보존)', async () => {
@@ -80,7 +80,7 @@ describe('Pre-commit hook installer (T1.7, AC-R6-3, AC-R2-1, F2.1, F6.4, RISK-3,
     const r = await installHook(dir);
     expect(r.installed).toBe(false);
     expect(r.guidance).toContain('husky');
-    expect(r.guidance).toContain('plan-pipeline check');
+    expect(r.guidance).toContain('specrail check');
   });
 
   it('returns guidance instead of overwriting lefthook (INV-10)', async () => {
@@ -91,7 +91,7 @@ describe('Pre-commit hook installer (T1.7, AC-R6-3, AC-R2-1, F2.1, F6.4, RISK-3,
     expect(r.guidance).toContain('lefthook');
   });
 
-  it('does not reinstall if v4 already present (without force)', async () => {
+  it('does not reinstall if specrail hook already present (without force)', async () => {
     await installHook(dir);
     const r2 = await installHook(dir);
     expect(r2.installed).toBe(false);
@@ -106,11 +106,11 @@ describe('Pre-commit hook installer (T1.7, AC-R6-3, AC-R2-1, F2.1, F6.4, RISK-3,
 });
 
 describe('R6 M1: detectExisting alreadyChained flag', () => {
-  it('alreadyChained is true when .git/hooks/pre-commit contains V4_MARKER', async () => {
+  it('alreadyChained is true when .git/hooks/pre-commit contains HOOK_MARKER', async () => {
     await mkdir(join(dir, '.git/hooks'), { recursive: true });
     await writeFile(
       join(dir, '.git/hooks/pre-commit'),
-      '#!/usr/bin/env node\n// plan-pipeline v4 hook chain (INV-10 보존)\n',
+      '#!/usr/bin/env node\n// specrail hook chain (INV-10 보존)\n',
     );
     const r = await detectExisting(dir);
     expect(r.type).toBe('plain');
@@ -134,34 +134,34 @@ describe('R6 M1: detectExisting alreadyChained flag', () => {
   });
 });
 
-describe('V4_HOOK_TEMPLATE ESM compatibility (R3 M-Round3-1)', () => {
-  it('V4_HOOK_TEMPLATE does not use require() in ESM context (R3 M-Round3-1)', () => {
+describe('HOOK_TEMPLATE ESM compatibility (R3 M-Round3-1)', () => {
+  it('HOOK_TEMPLATE does not use require() in ESM context (R3 M-Round3-1)', () => {
     // Template should NOT contain bare require( calls (only createRequire is OK)
-    const bareRequireMatches = V4_HOOK_TEMPLATE.match(/(?<!create)require\s*\(/g) ?? [];
+    const bareRequireMatches = HOOK_TEMPLATE.match(/(?<!create)require\s*\(/g) ?? [];
     expect(bareRequireMatches.length).toBe(0);
   });
 });
 
-describe('V4_HOOK_TEMPLATE source string contents', () => {
+describe('HOOK_TEMPLATE source string contents', () => {
   it('R2-H1: IIFE has .catch() after closing paren', () => {
     // The IIFE must end with })().catch( to ensure uncaught rejections are handled
-    expect(V4_HOOK_TEMPLATE).toContain('.catch(');
+    expect(HOOK_TEMPLATE).toContain('.catch(');
     // Verify the catch comes AFTER the closing })() of the IIFE
-    const iifeClose = V4_HOOK_TEMPLATE.indexOf('})()');
-    const catchIdx = V4_HOOK_TEMPLATE.indexOf('.catch(', iifeClose);
+    const iifeClose = HOOK_TEMPLATE.indexOf('})()');
+    const catchIdx = HOOK_TEMPLATE.indexOf('.catch(', iifeClose);
     expect(catchIdx).toBeGreaterThan(iifeClose);
   });
 
   it('R2-H2: template contains npm package loaded message', () => {
-    expect(V4_HOOK_TEMPLATE).toContain('loaded from @plan-pipeline/v4 package');
+    expect(HOOK_TEMPLATE).toContain('loaded from specrail package');
   });
 
   it('R2-H2: template contains local dist loaded message', () => {
-    expect(V4_HOOK_TEMPLATE).toContain('loaded from local dist');
+    expect(HOOK_TEMPLATE).toContain('loaded from local dist');
   });
 
   it('R2-H2: template contains dist-not-found exit message', () => {
-    expect(V4_HOOK_TEMPLATE).toContain('dist not found');
+    expect(HOOK_TEMPLATE).toContain('dist not found');
   });
 });
 

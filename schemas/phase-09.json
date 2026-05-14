@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://plan-pipeline.dev/schemas/phase-09.json",
+  "$id": "https://specrail.dev/schemas/phase-09.json",
   "title": "Phase 9 frontmatter",
   "type": "object",
   "required": [

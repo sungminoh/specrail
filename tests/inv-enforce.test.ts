@@ -21,7 +21,7 @@ describe('INV-5: AC R-tier GIVEN/WHEN/THEN format (3차 verifier 보강)', () =>
   });
 
   it('AC body across multiple lines (lookahead 4 lines)', () => {
-    const text = '- **AC-R3-1:** \n  GIVEN user request\n  WHEN /plan-pipeline init\n  THEN docs/spec created';
+    const text = '- **AC-R3-1:** \n  GIVEN user request\n  WHEN /specrail init\n  THEN docs/spec created';
     expect(checkInv5(text)).toEqual([]);
   });
 

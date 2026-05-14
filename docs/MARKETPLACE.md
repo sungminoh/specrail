@@ -46,7 +46,7 @@ Supported hook events include `SessionStart`, `PreToolUse`, `PostToolUse`, `Stop
 
 ## Required Files in This Plugin
 
-This repo (`@plan-pipeline/v4`) is **not yet structured as a Claude Code plugin**. It uses a custom `skills/manifest.json` format, not the official `.claude-plugin/plugin.json` convention.
+This repo (`specrail`) is **not yet structured as a Claude Code plugin**. It uses a custom `skills/manifest.json` format, not the official `.claude-plugin/plugin.json` convention.
 
 Current state:
 
@@ -121,7 +121,7 @@ The Claude Code plugin system does not use a declarative permissions schema in `
 | `bin/` executables | Added to Bash tool PATH; can run arbitrary code |
 | `skills/`, `agents/` | Read-only access to prompt context; no additional system permissions |
 
-For **this plugin** (`@plan-pipeline/v4`), once converted to the official format:
+For **this plugin** (`specrail`), once converted to the official format:
 - Skills only: no system-level permissions beyond what Claude Code already has.
 - No hooks, MCP servers, or executables are currently defined.
 - If git-based hooks are added in future (e.g., `pre-commit-lint.sh`), those would require file system write access to staged files.
@@ -161,7 +161,7 @@ To wire the marketplace into a project automatically so teammates get prompted o
 ```json
 {
   "extraKnownMarketplaces": {
-    "plan-pipeline": {
+    "specrail": {
       "source": {
         "source": "github",
         "repo": "<owner>/<repo>"
@@ -179,11 +179,11 @@ Before any marketplace step, `.claude-plugin/plugin.json` must exist. Minimum vi
 
 ```json
 {
-  "name": "plan-pipeline",
+  "name": "specrail",
   "description": "13-phase spec discipline for Claude Code",
   "version": "0.0.1",
   "author": {
-    "name": "plan-pipeline contributors"
+    "name": "specrail contributors"
   },
   "repository": "https://github.com/<owner>/myharness"
 }

@@ -114,7 +114,7 @@ describe('AC Traceability (US-9.3)', () => {
     }
   });
 
-  // TC-7 (v4.1): non-TS testFilePattern via options override (Python)
+  // TC-7: non-TS testFilePattern via options override (Python)
   it('honors options.testFilePattern override for non-TS tests', async () => {
     const spec = 'AC-R7-1\nAC-R7-2\n';
     const root = await mkdtemp(join(tmpdir(), 'ac-trace-'));
@@ -145,13 +145,13 @@ describe('AC Traceability (US-9.3)', () => {
     }
   });
 
-  // TC-8 (v4.1): testFilePattern loaded from .plan-pipeline.config.json
-  it('loads testFilePattern from .plan-pipeline.config.json (go preset)', async () => {
+  // TC-8: testFilePattern loaded from .specrail.config.json
+  it('loads testFilePattern from .specrail.config.json (go preset)', async () => {
     const spec = 'AC-R8-1\n';
     const root = await mkdtemp(join(tmpdir(), 'ac-trace-'));
     try {
       await writeFile(
-        join(root, '.plan-pipeline.config.json'),
+        join(root, '.specrail.config.json'),
         JSON.stringify({ extends: 'go' }),
         'utf8',
       );

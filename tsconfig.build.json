@@ -4,5 +4,5 @@
     "outDir": "dist"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", ".plan-pipeline-cache"]
+  "exclude": ["node_modules", "dist", ".specrail-cache"]
 }

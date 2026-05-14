@@ -1,10 +1,10 @@
 {
-  "$schema": "https://plan-pipeline.dev/schemas/manifest.json",
-  "name": "@plan-pipeline/v4",
+  "$schema": "https://specrail.dev/schemas/manifest.json",
+  "name": "specrail",
   "version": "0.0.1",
-  "description": "Planning Pipeline v4 — 13-phase spec discipline for Claude Code",
+  "description": "specrail — 13-phase spec discipline for Claude Code",
   "skills": [
-    { "name": "plan-pipeline-orchestrator", "path": "orchestrator/SKILL.md", "trigger-words": ["plan-pipeline", "/plan-pipeline"] },
+    { "name": "specrail-orchestrator", "path": "orchestrator/SKILL.md", "trigger-words": ["specrail", "/specrail"] },
     { "name": "phase-1-prd", "path": "phase-01-prd/SKILL.md", "trigger-words": ["PRD", "vision", "product spec"] },
     { "name": "phase-2-personas-journey", "path": "phase-02-personas-journey/SKILL.md", "trigger-words": ["persona", "journey"] },
     { "name": "phase-3-features", "path": "phase-03-features/SKILL.md", "trigger-words": ["features", "requirements"] },
@@ -22,6 +22,6 @@
   "common": "common-principles.md",
   "stateMachine": {
     "primary": "frontmatter.status",
-    "cache": ".plan-pipeline-cache/state.json"
+    "cache": ".specrail-cache/state.json"
   }
 }

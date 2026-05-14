@@ -1,4 +1,4 @@
-// v4.1 — config-driven QualityReview prompt
+// config-driven QualityReview prompt
 // Verifies buildQualityReviewPrompt + runWithReview honors config.qualityChecklist.
 import { describe, it, expect, vi } from 'vitest';
 import {

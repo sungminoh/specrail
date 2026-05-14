@@ -42,7 +42,7 @@ describe('nextPhase() — ADR-11 Phase N+1 suggestion (US-T7.2, M7)', () => {
     const result = await nextPhase(dir);
     expect(result.hasNext).toBe(true);
     expect(result.nextPhase).toBe(1);
-    expect(result.reason).toContain('/plan-pipeline phase 1');
+    expect(result.reason).toContain('/specrail phase 1');
     expect(result.blocked).toBeUndefined();
   });
 
@@ -92,7 +92,7 @@ describe('nextPhase() — ADR-11 Phase N+1 suggestion (US-T7.2, M7)', () => {
     const result = await nextPhase(dir);
     expect(result.hasNext).toBe(true);
     expect(result.nextPhase).toBe(4);
-    expect(result.reason).toContain('/plan-pipeline phase 4');
+    expect(result.reason).toContain('/specrail phase 4');
     expect(result.blocked).toBeUndefined();
   });
 
@@ -136,6 +136,6 @@ describe('nextPhase() — ADR-11 Phase N+1 suggestion (US-T7.2, M7)', () => {
     const result = await nextPhase(dir);
     expect(result.hasNext).toBe(true);
     expect(result.nextPhase).toBe(13);
-    expect(result.reason).toContain('/plan-pipeline phase 13');
+    expect(result.reason).toContain('/specrail phase 13');
   });
 });

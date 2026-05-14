@@ -1,6 +1,6 @@
 // US-T5.3 — IdCounter wire-up (M5)
 // IdCounter.next() 호출하는 공용 entry point. Skill body·CLI·hook 모두 이 함수 호출.
-// ADR-11: Phase N+1 invoke 정책 — Manual trigger (with optional auto-chain via /plan-pipeline continue).
+// ADR-11: Phase N+1 invoke 정책 — Manual trigger (with optional auto-chain via /specrail continue).
 // nextPhase() 함수는 suggestion만 반환. 자동 invoke 없음. 사용자 명시 호출 필요.
 
 import { IdCounter } from '../spec/counter.js';
@@ -43,7 +43,7 @@ export function _resetCounterCache(): void {
 }
 
 // ADR-11: nextPhase() — Phase N+1 suggestion only. No auto-invoke.
-// /plan-pipeline continue 명령이 이 결과를 읽어 phase N+1 skill invoke.
+// /specrail continue 명령이 이 결과를 읽어 phase N+1 skill invoke.
 
 export interface NextPhaseResult {
   hasNext: boolean;
@@ -64,7 +64,7 @@ export async function nextPhase(projectRoot: string): Promise<NextPhaseResult> {
     return {
       hasNext: false,
       nextPhase: null,
-      reason: 'Project not initialized. Run /plan-pipeline init first.',
+      reason: 'Project not initialized. Run /specrail init first.',
     };
   }
 
@@ -92,7 +92,7 @@ export async function nextPhase(projectRoot: string): Promise<NextPhaseResult> {
       hasNext: true,
       currentPhase: s.currentPhase, // R6 L7: caller can show "approve this"
       nextPhase: s.currentPhase, // backward compat
-      reason: `Phase ${s.currentPhase} status=Draft. Approve first via /plan-pipeline approve ${s.currentPhase}.`,
+      reason: `Phase ${s.currentPhase} status=Draft. Approve first via /specrail approve ${s.currentPhase}.`,
       blocked: true,
     };
   }
@@ -101,6 +101,6 @@ export async function nextPhase(projectRoot: string): Promise<NextPhaseResult> {
   return {
     hasNext: true,
     nextPhase: s.currentPhase,
-    reason: `Next: /plan-pipeline phase ${s.currentPhase}`,
+    reason: `Next: /specrail phase ${s.currentPhase}`,
   };
 }

@@ -52,7 +52,7 @@ describe('T3.9 opt-out (F13.3, AC-R13-3, TC-23)', () => {
   it('result message contains mailto privacy address', async () => {
     await recordConsent(dir, 'yes');
     const r = await optOut(dir);
-    expect(r.message).toContain('privacy@plan-pipeline.dev');
+    expect(r.message).toContain('privacy@specrail.dev');
   });
 
   it('result message contains revokedAt timestamp', async () => {

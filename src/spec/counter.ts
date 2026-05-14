@@ -1,5 +1,5 @@
 // F1.3 ID auto-generation — ADR-5 sequential counter
-// Storage: .plan-pipeline-cache/id-counter.json (gitignore)
+// Storage: .specrail-cache/id-counter.json (gitignore)
 // Rebuild possible: max(used) + 1 (graceful)
 // INV-1: Project 내 unique 보장
 
@@ -29,7 +29,7 @@ export class IdCounter {
   ) {}
 
   static async load(projectRoot: string): Promise<IdCounter> {
-    const path = join(projectRoot, '.plan-pipeline-cache', 'id-counter.json');
+    const path = join(projectRoot, '.specrail-cache', 'id-counter.json');
     let raw: string | null;
     try {
       raw = await readFile(path, 'utf8');

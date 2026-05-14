@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://plan-pipeline.dev/schemas/change-proposal.json",
+  "$id": "https://specrail.dev/schemas/change-proposal.json",
   "title": "DELTA change proposal frontmatter (Phase 4 ENT-Change)",
   "type": "object",
   "required": ["status", "date", "capability", "affectedPhases"],

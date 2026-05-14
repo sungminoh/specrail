@@ -37,9 +37,9 @@ function buildMessage(revokedAt: string): string {
     `향후 모든 event 전송 중단.`,
     ``,
     `기존 데이터 삭제 요청 (선택):`,
-    `mailto: privacy@plan-pipeline.dev`,
-    `subject: "v4 telemetry data deletion"`,
+    `mailto: privacy@specrail.dev`,
+    `subject: "telemetry data deletion"`,
     ``,
-    `재opt-in: /plan-pipeline init 시 재질문, 또는 ~/.plan-pipeline/consent.json 직접 편집.`,
+    `재opt-in: /specrail init 시 재질문, 또는 ~/.specrail/consent.json 직접 편집.`,
   ].join('\n');
 }

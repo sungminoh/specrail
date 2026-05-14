@@ -356,7 +356,7 @@ stateDiagram-v2
 
 **규칙:** PhaseStatus enum 순서 강제. Empty→Draft→Approved 외 전이 X.
 **예외:** Phase 1은 predecessor 없음 — `canInvokePhase(target=1)`은 항상 allowed (다른 검증 부재).
-**State source-of-truth:** ENT-Phase.status가 frontmatter에 저장된 값이 authoritative. `.plan-pipeline-cache/state.json`은 derived (rebuild 가능). 불일치 시 frontmatter 기준으로 cache 재생성.
+**State source-of-truth:** ENT-Phase.status가 frontmatter에 저장된 값이 authoritative. `.specrail-cache/state.json`은 derived (rebuild 가능). 불일치 시 frontmatter 기준으로 cache 재생성.
 **위반 시:** 사양 안 된 phase 위에 작업 — LLM hallucination 위험.
 **검증:** F2.2 phase transition gate (skill 호출 거부). ENT-Skill.requiresPhaseStatus. Hook이 commit 시 frontmatter vs cache 일치 검증.
 

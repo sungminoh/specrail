@@ -1,5 +1,5 @@
 // R7 chicken-and-egg history check (T3.3, AC-R7-3, TC-17)
-// Best-effort static check: v4 plugin spec 작업 시 v3 example 참조 금지.
+// Best-effort static check: specrail 작업 시 legacy example 참조 금지.
 // git log 결과를 외부에서 주입하거나 execFile로 직접 실행 가능.
 
 import { execFile } from 'node:child_process';
@@ -47,8 +47,8 @@ const PATTERNS: PatternRule[] = [
   },
   {
     name: 'v3-unique-marker',
-    // v3 example의 self-application content 고유 식별자.
-    // "Planning Pipeline Plugin (v4)" 문구가 v3 example 내부에서 사용된 구체적 표현.
+    // legacy example의 self-application content 고유 식별자.
+    // "Planning Pipeline Plugin (v4)" 문구가 legacy example 내부에서 사용된 구체적 표현.
     regex: /Planning Pipeline Plugin \(v4\)/i,
     severity: 'warn',
   },

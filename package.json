@@ -1,7 +1,7 @@
 {
-  "name": "@plan-pipeline/v4",
+  "name": "specrail",
   "version": "0.0.1",
-  "description": "Planning Pipeline v4 — Claude Code plugin for 13-phase spec discipline",
+  "description": "specrail — Claude Code plugin for 13-phase spec discipline",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -21,7 +21,7 @@
     "vitest": "^1.0.0"
   },
   "bin": {
-    "plan-pipeline": "dist/bin/plan-pipeline.js"
+    "specrail": "dist/bin/specrail.js"
   },
   "files": [
     "dist",

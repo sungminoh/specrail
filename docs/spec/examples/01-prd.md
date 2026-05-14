@@ -1,4 +1,4 @@
-# PRD: Planning Pipeline Plugin (v4)
+# PRD: specrail
 
 **Mode:** HOLD SCOPE (retroactive — PRD §10 변경 2026-05-12. 원래 SCOPE EXPANSION이었으나 dashboard 분리 결정으로 변경)
 **Version:** 1.1 (DELTA — Mode 변경)
@@ -49,7 +49,7 @@ v3 Builder Persona의 부분집합 — **Claude Code 사용자.**
 
 ### 3.3 핵심 시나리오
 
-- **S1 (Greenfield):** Claude Code에서 `/plan-pipeline` 명령 → Phase 1 skill 호출 → 13phase 진행 → Phase 13 후 implementation 같은 세션에서.
+- **S1 (Greenfield):** Claude Code에서 `/specrail` 명령 → Phase 1 skill 호출 → 13phase 진행 → Phase 13 후 implementation 같은 세션에서.
 - **S2 (DELTA):** 기존 spec 보유 → 변경 명령 → plugin이 영향 phase 자동 식별 (ID dependency graph) → ADDED/MODIFIED/REMOVED만 진행.
 - **S3 (Refactor — P1):** 기존 codebase + spec 부재 → plugin이 codebase 분석 후 13 phase 역방향 채움. v4 첫 release scope X. v4.1 후보.
 

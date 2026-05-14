@@ -1,4 +1,4 @@
-# Planning Pipeline v4 — Agent Working Notes
+# specrail — Agent Working Notes
 
 이 파일은 이 plugin **자체를 개발·유지보수**할 때 따를 메타 규칙. plugin 사용자가 따를 spec 작성 원칙은 `docs/spec/00-common-principles.md`.
 

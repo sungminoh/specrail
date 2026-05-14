@@ -65,7 +65,7 @@ Cognitive Pattern: **Error budgets** — 99.9% SLO = 0.1% budget. budget을 ship
 |---|---|---|
 | NFR-SEC-3 | Malicious PR로 plugin skill에 jailbreak 삽입 | PR review 강제, signed tag, marketplace verification |
 | NFR-SEC-4 | 사용자 spec 직접 변조 (frontmatter 수동 수정) | hook이 schema 검증 + ID consistency check (INV-1, INV-2) |
-| NFR-SEC-5 | `.plan-pipeline-cache/` 변조 (graph cache 위조) | hook이 cache invalidate + rebuild on commit |
+| NFR-SEC-5 | `.specrail-cache/` 변조 (graph cache 위조) | hook이 cache invalidate + rebuild on commit |
 
 ### Repudiation
 | ID | Threat | 완화 |
@@ -107,7 +107,7 @@ PRD §3 Persona 데이터 + Phase 4 Entity 분류.
 | NFR-PRIV-2 | 사용자가 LLM에 paste한 prompt | 사용자 측 | LLM provider 정책 따름 (Claude Code 측 책임) |
 | NFR-PRIV-3 | Telemetry event metadata | 익명 (anonProjectHash) | INV-8 — spec 내용 0건. project root path SHA256 (irreversible) |
 | NFR-PRIV-4 | TelemetryConsent | 사용자 명시 동의 | INV-9 — default OptedOut. opt-in 명시 후만 전송. |
-| NFR-PRIV-5 | Plugin이 사용자 file system access 범위 | 최소 권한 | docs/spec/, .git/hooks/, .plan-pipeline-cache/, ~/.plan-pipeline/만 — 명시 |
+| NFR-PRIV-5 | Plugin이 사용자 file system access 범위 | 최소 권한 | docs/spec/, .git/hooks/, .specrail-cache/, ~/.specrail/만 — 명시 |
 
 해당 권리:
 - 데이터 export: 사용자 git pull (사용자 책임)

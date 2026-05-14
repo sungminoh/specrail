@@ -12,7 +12,7 @@
 ```mermaid
 flowchart TB
     Builder([Builder<br/>Persona])
-    Plugin[("Planning Pipeline v4 Plugin<br/>(Claude Code skill collection)")]
+    Plugin[("specrail Plugin<br/>(Claude Code skill collection)")]
 
     CC[/Claude Code<br/>EXT-1/]
     LLM[/LLM API<br/>EXT-2<br/>via Claude Code/]
@@ -144,8 +144,8 @@ flowchart TB
 | ENT-Change | markdown + frontmatter | `docs/spec/changes/{date}-{topic}/` |
 | ENT-Skill | plugin install 디렉토리 | Claude Code skill registry (`~/.claude/skills/` 또는 비슷) |
 | ENT-Subagent | ephemeral (in-memory) | 없음 — task 종료 시 휘발 |
-| ENT-TelemetryEvent | local queue (JSON Lines) | `~/.plan-pipeline/telemetry-queue.jsonl` |
-| ENT-TelemetryConsent | local config | `~/.plan-pipeline/consent.json` |
+| ENT-TelemetryEvent | local queue (JSON Lines) | `~/.specrail/telemetry-queue.jsonl` |
+| ENT-TelemetryConsent | local config | `~/.specrail/consent.json` |
 
 ### Backup·DR
 
@@ -154,7 +154,7 @@ flowchart TB
 - Telemetry queue: 일시 (재전송 후 삭제). 다운 시 일부 event 손실 (acceptable for opt-in metric)
 - Consent: 사용자 직접 백업 X (재install 시 재opt-in 질문)
 
-### `.plan-pipeline-cache/` (gitignore 권장)
+### `.specrail-cache/` (gitignore 권장)
 
 - ~~`graph.json`~~ — **제거됨 (ADR-9 option D)**: DependencyGraph는 in-memory only. 디스크 cache 파일 없음.
 - `id-counter.json` — auto-gen ID 카운터 (R{n}, F{n}.{m}, S{n}.{m}.{k} 다음 번호)
@@ -211,7 +211,7 @@ sequenceDiagram
     participant DeltaSk as Phase N Delta Skill
     participant Spec as docs/spec/
 
-    Builder->>CC: /plan-pipeline change "<topic>"
+    Builder->>CC: /specrail change "<topic>"
     CC->>ChangeSk: invoke
     ChangeSk->>Spec: read all current phases
     ChangeSk->>Graph: build full graph

@@ -102,7 +102,7 @@
 |---|---|---|
 | EDGE-11 | 사용자 `--no-verify` commit (hook bypass) — telemetry detection | TC-50 |
 | EDGE-12 | Telemetry token validation (서버 측, plugin 위조 방지) | TC-51 |
-| EDGE-13 | `.plan-pipeline-cache/` 변조 → invalidate + rebuild | TC-52 |
+| EDGE-13 | `.specrail-cache/` 변조 → invalidate + rebuild | TC-52 |
 
 ### Empty / Boundary
 | ID | Edge | 검증 TC |

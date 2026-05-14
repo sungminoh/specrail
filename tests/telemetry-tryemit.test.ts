@@ -29,7 +29,7 @@ describe('tryEmit (architect M11 P1 wire-up)', () => {
     vi.stubEnv('PLAUSIBLE_DOMAIN', 'x.example');
     vi.stubEnv('PLAUSIBLE_ENDPOINT', 'https://x.example/api/event');
     vi.stubEnv('PLAUSIBLE_API_TOKEN', 'tok');
-    const cacheDir = join(dir, '.plan-pipeline-cache');
+    const cacheDir = join(dir, '.specrail-cache');
     await mkdir(cacheDir, { recursive: true });
     await writeFile(
       join(cacheDir, 'consent.json'),
@@ -45,7 +45,7 @@ describe('tryEmit (architect M11 P1 wire-up)', () => {
     vi.stubEnv('PLAUSIBLE_DOMAIN', 'x.example');
     vi.stubEnv('PLAUSIBLE_ENDPOINT', 'https://x.example/api/event');
     vi.stubEnv('PLAUSIBLE_API_TOKEN', 'tok');
-    const cacheDir = join(dir, '.plan-pipeline-cache');
+    const cacheDir = join(dir, '.specrail-cache');
     await mkdir(cacheDir, { recursive: true });
     await writeFile(
       join(cacheDir, 'consent.json'),
@@ -63,7 +63,7 @@ describe('tryEmit (architect M11 P1 wire-up)', () => {
     vi.stubEnv('PLAUSIBLE_DOMAIN', 'x.example');
     vi.stubEnv('PLAUSIBLE_ENDPOINT', 'https://x.example/api/event');
     vi.stubEnv('PLAUSIBLE_API_TOKEN', 'tok');
-    const cacheDir = join(dir, '.plan-pipeline-cache');
+    const cacheDir = join(dir, '.specrail-cache');
     await mkdir(cacheDir, { recursive: true });
     await writeFile(
       join(cacheDir, 'consent.json'),
@@ -79,7 +79,7 @@ describe('tryEmit (architect M11 P1 wire-up)', () => {
     vi.stubEnv('PLAUSIBLE_DOMAIN', 'x.example');
     vi.stubEnv('PLAUSIBLE_ENDPOINT', 'https://x.example/api/event');
     vi.stubEnv('PLAUSIBLE_API_TOKEN', 'secret-tok');
-    const cacheDir = join(dir, '.plan-pipeline-cache');
+    const cacheDir = join(dir, '.specrail-cache');
     await mkdir(cacheDir, { recursive: true });
     await writeFile(
       join(cacheDir, 'consent.json'),
@@ -97,7 +97,7 @@ describe('tryEmit (architect M11 P1 wire-up)', () => {
     vi.stubEnv('PLAUSIBLE_DOMAIN', 'x.example');
     vi.stubEnv('PLAUSIBLE_ENDPOINT', 'https://x.example/api/event');
     // no PLAUSIBLE_API_TOKEN
-    const cacheDir = join(dir, '.plan-pipeline-cache');
+    const cacheDir = join(dir, '.specrail-cache');
     await mkdir(cacheDir, { recursive: true });
     await writeFile(
       join(cacheDir, 'consent.json'),
@@ -114,7 +114,7 @@ describe('tryEmit (architect M11 P1 wire-up)', () => {
   it('includes pluginVersion in emitted payload', async () => {
     vi.stubEnv('PLAUSIBLE_DOMAIN', 'x.example');
     vi.stubEnv('PLAUSIBLE_ENDPOINT', 'https://x.example/api/event');
-    const cacheDir = join(dir, '.plan-pipeline-cache');
+    const cacheDir = join(dir, '.specrail-cache');
     await mkdir(cacheDir, { recursive: true });
     await writeFile(
       join(cacheDir, 'consent.json'),

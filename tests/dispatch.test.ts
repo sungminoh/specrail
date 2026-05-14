@@ -145,7 +145,7 @@ describe('US-T5.6 dispatchWithRetry', () => {
     expect(decider).toHaveBeenCalledOnce();
   });
 
-  it('dispatchTaskWithReview forwards options.config to QualityReview prompt (v4.1)', async () => {
+  it('dispatchTaskWithReview forwards options.config to QualityReview prompt', async () => {
     const seenPrompts: string[] = [];
     const agent: AgentTool = vi.fn(async ({ prompt }: AgentInput) => {
       seenPrompts.push(prompt);

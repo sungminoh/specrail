@@ -1,4 +1,4 @@
-// Config loader tests — language-agnostic harness config (v4.1 prep)
+// Config loader tests — language-agnostic harness config.
 // Covers: presets (typescript/python/go/rust/none), file load, merge, validation.
 import { describe, it, expect } from 'vitest';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
@@ -14,7 +14,7 @@ import {
 async function setup(configJson: string | null): Promise<string> {
   const root = await mkdtemp(join(tmpdir(), 'pp-config-'));
   if (configJson !== null) {
-    await writeFile(join(root, '.plan-pipeline.config.json'), configJson, 'utf8');
+    await writeFile(join(root, '.specrail.config.json'), configJson, 'utf8');
   }
   return root;
 }
@@ -100,7 +100,7 @@ describe('config loader', () => {
   it('throws clear error on malformed JSON', async () => {
     const root = await setup('{ not json');
     try {
-      await expect(loadConfig(root)).rejects.toThrow(/\.plan-pipeline\.config\.json/);
+      await expect(loadConfig(root)).rejects.toThrow(/\.specrail\.config\.json/);
     } finally {
       await rm(root, { recursive: true });
     }

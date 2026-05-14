@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, '..');
-const BIN = resolve(REPO_ROOT, 'src/bin/plan-pipeline.ts');
+const BIN = resolve(REPO_ROOT, 'src/bin/specrail.ts');
 
 let dir: string;
 
@@ -19,7 +19,7 @@ afterEach(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
-describe('plan-pipeline CLI bin (R3 M-Round3-5)', () => {
+describe('specrail CLI bin (R3 M-Round3-5)', () => {
   it('--help / no args prints command list', () => {
     let stdout = '';
     let stderr = '';

@@ -53,7 +53,7 @@ describe('IdCounter (F1.3, AC-R1-3, ADR-5, INV-1, TC-3, TC-30)', () => {
   });
 
   it('throws on corrupt JSON with backup file created (R3 M-Round3-7)', async () => {
-    const cacheDir = join(dir, '.plan-pipeline-cache');
+    const cacheDir = join(dir, '.specrail-cache');
     await mkdir(cacheDir, { recursive: true });
     await writeFile(join(cacheDir, 'id-counter.json'), 'NOT VALID JSON {');
     await expect(IdCounter.load(dir)).rejects.toThrow(/corrupt/i);

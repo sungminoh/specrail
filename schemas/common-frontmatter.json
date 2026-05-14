@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://plan-pipeline.dev/schemas/common-frontmatter.json",
+  "$id": "https://specrail.dev/schemas/common-frontmatter.json",
   "title": "Common frontmatter (모든 phase 공통)",
   "type": "object",
   "required": ["phase", "status"],

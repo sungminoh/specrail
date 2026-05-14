@@ -29,9 +29,9 @@ export const SPEC_REVIEW_PROMPT = (taskPrompt: string): string =>
 /**
  * QualityReview prompt template (C6).
  *
- * Default checklist is the v4.0 TypeScript 5-criteria set. For other languages,
+ * Default checklist is the default TypeScript 5-criteria set. For other languages,
  * use buildQualityReviewPrompt() with a custom checklist (loaded from
- * .plan-pipeline.config.json via src/config/index.ts).
+ * .specrail.config.json via src/config/index.ts).
  *
  * Backward compatible: signature unchanged, output identical when checklist
  * is omitted.
@@ -117,7 +117,7 @@ export async function runWithReview(
     };
   }
 
-  // Stage 3 — QualityReview (config-driven checklist; v4.1 language-agnostic)
+  // Stage 3 — QualityReview (config-driven checklist)
   const qualTask: SubagentTask = {
     ...task,
     prompt: buildQualityReviewPrompt(task.prompt, config.qualityChecklist),

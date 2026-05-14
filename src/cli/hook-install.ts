@@ -11,7 +11,7 @@ export type ExistingHookType = 'husky' | 'lefthook' | 'plain' | 'none';
 export interface DetectionResult {
   type: ExistingHookType;
   path?: string;
-  alreadyChained?: boolean; // R6 M1: signal V4 marker already present
+  alreadyChained?: boolean; // R6 M1: signal specrail marker already present
 }
 
 // JS-comment marker (not shell #) so it's valid in #!/usr/bin/env node scripts
@@ -178,8 +178,8 @@ export async function installHook(
     };
   }
 
-  // L-R8-2: HOOK_SENTINEL is the module-level source; V4_MARKER is built from it (true DRY).
-  // V4_MARKER.includes(HOOK_SENTINEL) is true by construction — non-empty guaranteed statically.
+  // L-R8-2: HOOK_SENTINEL is the module-level source; HOOK_MARKER is built from it (true DRY).
+  // HOOK_MARKER.includes(HOOK_SENTINEL) is true by construction — non-empty guaranteed statically.
 
   let backupPath: string | undefined;
   if (detection.type === 'plain' && detection.path) {

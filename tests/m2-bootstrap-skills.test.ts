@@ -24,15 +24,15 @@ describe('T2.11 install bootstrap (F6.2, F6.1, AC-R6-2, AC-R6-1, TC-12, TC-13)',
     expect(entries).toContain('01-prd.md');
   });
 
-  it('creates .plan-pipeline-cache/state.json', async () => {
+  it('creates .specrail-cache/state.json', async () => {
     await bootstrap(dir);
-    const stats = await stat(join(dir, '.plan-pipeline-cache', 'state.json'));
+    const stats = await stat(join(dir, '.specrail-cache', 'state.json'));
     expect(stats.isFile()).toBe(true);
   });
 
   it('returns Phase 1 trigger string', async () => {
     const r = await bootstrap(dir);
-    expect(r.phase1Trigger).toBe('/plan-pipeline phase 1');
+    expect(r.phase1Trigger).toBe('/specrail phase 1');
   });
 
   it('skips re-init if already initialized', async () => {

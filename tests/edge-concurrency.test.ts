@@ -205,7 +205,7 @@ describe('EDGE: concurrent counter persistence — in-memory matches persisted v
     );
 
     // Read the persisted counter file directly.
-    const counterFilePath = join(root, '.plan-pipeline-cache', 'id-counter.json');
+    const counterFilePath = join(root, '.specrail-cache', 'id-counter.json');
     const raw = await readFile(counterFilePath, 'utf8');
     const persisted = JSON.parse(raw) as { R: Record<string, number> };
 

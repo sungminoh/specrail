@@ -1,4 +1,4 @@
-// C2 /plan-pipeline status command — analyst ambiguity #6 resolved
+// C2 /specrail status command — analyst ambiguity #6 resolved
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtemp, writeFile, mkdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -16,7 +16,7 @@ afterEach(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
-describe('C2 /plan-pipeline status command', () => {
+describe('C2 /specrail status command', () => {
   it('빈 프로젝트 (docs/spec 없음) → initialized: false', async () => {
     const s = await status(dir);
     expect(s.initialized).toBe(false);
@@ -130,7 +130,7 @@ describe('R7 L1: status includeGraph option', () => {
 describe('R2-M7: bootstrap currentPhase sentinel', () => {
   it('bootstrap creates state with null not-started sentinel (R2-M7)', async () => {
     await bootstrap(dir);
-    const raw = await readFile(join(dir, '.plan-pipeline-cache/state.json'), 'utf8');
+    const raw = await readFile(join(dir, '.specrail-cache/state.json'), 'utf8');
     const state = JSON.parse(raw);
     // Must NOT be 0 — null is the correct "not started" sentinel
     expect(state.currentPhase).not.toBe(0);

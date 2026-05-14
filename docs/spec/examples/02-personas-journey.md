@@ -66,7 +66,7 @@
 |---|---|---|---|---|---|
 | 1 | Plugin 발견 | GitHub README · Twitter 보고 install | "v3 markdown 써봤는데 plugin이 더 나을까" | curious | PAIN-base |
 | 2 | Install | Claude Code에 plugin add 명령 | "Claude Code plugin이라 setup 단순한가" | hopeful | - |
-| 3 | 첫 trigger | `/plan-pipeline init` 또는 "13 phase로 새 product 만들고 싶어" | "init이 뭘 만들지" | curious | - |
+| 3 | 첫 trigger | `/specrail init` 또는 "13 phase로 새 product 만들고 싶어" | "init이 뭘 만들지" | curious | - |
 | 4 | docs/spec 자동 생성 | plugin이 디렉토리 + 빈 산출물 골격 생성 + Phase 1 안내 출력 | "어디서 시작" | engaged | - |
 | 5 | Phase 1 skill 호출 | plugin 자동 호출 → 6 forcing questions | "v3와 동일하지만 흐름은 매끄러운가" | challenged | - |
 | 6 | Forcing 압박 | "한 사람을 묘사하라"에서 막힘 | "역시 vague하면 못 넘김" | uncomfortable but engaged | PAIN-fundamental |
@@ -109,7 +109,7 @@
 
 | # | Step | Persona 행동 | 생각 | 감정 | Pain ID |
 |---|---|---|---|---|---|
-| 1 | Plugin DELTA 명령 | `/plan-pipeline change "add payment"` | "영향 phase 직접 식별 부담 안 됨" | hopeful | PAIN-DELTA-scope |
+| 1 | Plugin DELTA 명령 | `/specrail change "add payment"` | "영향 phase 직접 식별 부담 안 됨" | hopeful | PAIN-DELTA-scope |
 | 2 | 영향 phase 자동 식별 | plugin이 ID dependency graph 분석 → "Phase 1, 3, 4, 8, 12, 13 영향" 출력 | "내가 손으로 안 해도" | relieved | - |
 | 3 | proposal.md 자동 draft | plugin이 ADDED/MODIFIED/REMOVED 골격 생성 | "vague한 거 채워야겠지" | engaged | - |
 | 4 | 각 영향 phase delta 진행 | plugin이 phase 별 fresh subagent 호출, 영향 spec만 input | "기존 spec 안 깨지나" | cautious | - |
@@ -133,7 +133,7 @@
 
 | # | Step | Persona 행동 | 감정 |
 |---|---|---|---|
-| 1 | `/plan-pipeline reverse-engineer` | daunted |
+| 1 | `/specrail reverse-engineer` | daunted |
 | 2 | plugin이 codebase 분석 (file tree + 핵심 module) | wary |
 | 3 | Phase 1 PRD 역방향 자동 draft | impressed |
 | 4 | 각 phase 사용자 검수·수정 | cautious |

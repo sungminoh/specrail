@@ -1,6 +1,6 @@
 // T2.4 Change skill — DELTA proposal auto-draft (F4.3, AC-R4-1, TC-7)
 // US-T7.3/T7.4/T7.5 (M7): S2 DELTA full chain — invokeDeltaChain → mergeChange → archiveChange
-// `/plan-pipeline change "<topic>"` 명령 simulator
+// `/specrail change "<topic>"` 명령 simulator
 
 import { mkdir, readdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';

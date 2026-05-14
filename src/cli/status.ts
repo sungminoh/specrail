@@ -1,4 +1,4 @@
-// C2 /plan-pipeline status command — analyst ambiguity #6 resolved
+// C2 /specrail status command — analyst ambiguity #6 resolved
 // ADR-8: frontmatter primary truth. Phase progress 조회.
 
 import { readFile, readdir } from 'node:fs/promises';
@@ -62,7 +62,7 @@ export async function status(projectRoot: string, options: StatusOptions = {}): 
       currentPhase: null,
       totalIds: 0,
       complete: false,
-      message: '초기화되지 않은 프로젝트입니다. /plan-pipeline init 으로 시작하세요.',
+      message: '초기화되지 않은 프로젝트입니다. /specrail init 으로 시작하세요.',
     };
   }
 
@@ -131,7 +131,7 @@ function buildMessage(args: {
   complete: boolean;
   phases: PhaseProgress[];
 }): string {
-  const lines: string[] = ['Plan Pipeline v4 Status', `초기화: 예`];
+  const lines: string[] = ['specrail Status', `초기화: 예`];
 
   if (args.complete) {
     lines.push(`진행: 13/13 phase 완료`);

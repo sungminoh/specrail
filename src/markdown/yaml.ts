@@ -1,5 +1,5 @@
 // Minimal YAML parser for frontmatter
-// 단순한 v3 frontmatter 형식만 지원: key: value, key: [v1, v2], nested 1-level
+// 단순한 frontmatter 형식만 지원: key: value, key: [v1, v2], nested 1-level
 // Phase 13 dependency 줄이기 위해 자체 구현 (js-yaml 의존성 회피)
 //
 // Security (D1 fix — 4차 reviewer security):
