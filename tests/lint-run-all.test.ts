@@ -81,6 +81,42 @@ describe('lint orchestrator runAllChecks (US-9.6)', () => {
     expect(syco!.status).toBe('FAIL');
   });
 
+  it('--strict promotes WARN to FAIL (R2 M6)', async () => {
+    const implPlan = `# Implementation Plan
+
+## Tasks
+
+### T1: Setup
+
+AC-R1-1: GIVEN a project WHEN lint runs THEN all checks pass
+AC-R1-2: GIVEN a spec WHEN coverage checked THEN result returned
+AC-R1-3: GIVEN a file WHEN read THEN content returned
+AC-R1-4: GIVEN no file WHEN checked THEN skip gracefully
+`;
+    const testFile = `import { describe, it, expect } from 'vitest';
+
+// AC-R1-1 AC-R1-2 AC-R1-3
+describe('sample', () => {
+  it('AC-R1-1: passes', () => { expect(true).toBe(true); });
+  it('AC-R1-2: result', () => { expect(true).toBe(true); });
+  it('AC-R1-3: content', () => { expect(true).toBe(true); });
+});
+`;
+    await writeFixture('docs/spec/examples/12-adr-risks.md', CLEAN_ADR);
+    await writeFixture('docs/spec/examples/13-implementation-plan.md', implPlan);
+    await writeFixture('tests/sample.test.ts', testFile);
+
+    // Without --strict: WARN does not fail
+    const nonStrict = await runAllChecks(dir, { strict: false });
+    const acNonStrict = nonStrict.reports.find((r) => r.name === 'ac-traceability');
+    expect(acNonStrict!.status).toBe('WARN');
+    expect(nonStrict.overall).toBe('PASS');
+
+    // With --strict: WARN becomes FAIL
+    const strict = await runAllChecks(dir, { strict: true });
+    expect(strict.overall).toBe('FAIL');
+  });
+
   it('ac-traceability warn at 75% — overall still PASS', async () => {
     const implPlan = `# Implementation Plan
 

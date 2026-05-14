@@ -12,7 +12,7 @@
 // v3 원본 (refinement 전): git tag v3-archive 참조.
 
 import { readFile } from 'node:fs/promises';
-import { join, dirname, resolve } from 'node:path';
+import { join, dirname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getInputFromPhase, formatInputBlock } from './inject.js';
 
@@ -26,7 +26,7 @@ const DEFAULT_COMMON_PATH = join(here, '..', '..', 'docs', 'spec', '00-common-pr
  */
 export async function loadCommon(commonPath: string = DEFAULT_COMMON_PATH): Promise<string> {
   const resolved = resolve(commonPath);
-  if (!resolved.startsWith(PROJECT_ROOT)) {
+  if (resolved !== PROJECT_ROOT && !resolved.startsWith(PROJECT_ROOT + sep)) {
     throw new Error(
       `D5: commonPath escapes project boundary (${resolved} not under ${PROJECT_ROOT})`,
     );

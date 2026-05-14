@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { join, dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { composeSkillPrompt, declaresCommonInheritance, loadCommon } from '../src/skill/inheritance.js';
 import { createAsker, next, answer, isComplete, type Question } from '../src/skill/ask.js';
 import { detectPushback, listPatterns } from '../src/skill/pushback.js';
@@ -101,5 +103,26 @@ describe('Forcing pushback patterns (T2.10, AC-R5-2, TC-10)', () => {
       '김민지, 32, 프리랜서 디자이너, 매주 토요일 오전에 카페에서 spec 작성 시 grep 5번 사용함',
     );
     expect(m).toBeNull();
+  });
+});
+
+describe('R2-M8: loadCommon sibling-prefix traversal defense', () => {
+  it('rejects sibling directory prefix attack (R2-M8)', async () => {
+    // PROJECT_ROOT is resolved from src/skill/inheritance.ts location
+    // src/skill/../../ = project root. Sibling = project root + '2'
+    const here = dirname(fileURLToPath(import.meta.url));
+    const projectRoot = resolve(join(here, '..'));
+    const siblingPath = projectRoot + '2/file.md';
+    await expect(loadCommon(siblingPath)).rejects.toThrow(/D5.*escapes project boundary|traversal/i);
+  });
+
+  it('accepts path within project boundary (R2-M8)', async () => {
+    const here = dirname(fileURLToPath(import.meta.url));
+    const projectRoot = resolve(join(here, '..'));
+    // A path inside the project — may not exist but should not throw traversal error
+    const insidePath = join(projectRoot, 'does-not-exist.md');
+    // Should not throw a traversal error (may return '' if file missing)
+    const result = await loadCommon(insidePath);
+    expect(typeof result).toBe('string');
   });
 });

@@ -29,12 +29,15 @@ export async function getValidIds(
   };
 }
 
-function matchesTier(id: string, tier: IdTier): boolean {
+export function matchesTier(id: string, tier: IdTier): boolean {
   if (tier === 'all') return true;
   if (tier === 'R') return /^R\d+$/.test(id);
   if (tier === 'F') return /^F\d+\.\d+$/.test(id);
   if (tier === 'S') return /^S\d+\.\d+\.\d+$/.test(id);
-  return id.startsWith(tier + '-') || id.startsWith(tier);
+  // Tiers like 'TC', 'ADR', 'NFR' use dash separator
+  if (id.startsWith(tier + '-')) return true;
+  // Single-char R/F/S handled above; for multi-char tiers, dash is required
+  return false;
 }
 
 export async function isDefined(projectRoot: string, id: string): Promise<boolean> {

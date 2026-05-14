@@ -45,7 +45,7 @@ export function checkInv5(text: string, filePath = ''): InvViolation[] {
 
 const ADR_DEF = /^#{1,3}\s+ADR-(\d+):/;
 const ALT_SECTION = /^#{2,4}\s+(?:Alternatives|alternatives|alternative)/i;
-const ALT_ITEM = /(?:^#{2,5}\s+|^\s*[-*]\s+|^\s*\d+[.)]\s+|^\*\*)\s*(?:옵션|option|alternative|alt)\s*[-_]?\s*[A-Z0-9]+/i;
+const ALT_ITEM = /(?:^#{2,5}\s+|^\s*[-*]\s+|^\s*\d+[.)]\s+|^\*\*)\s*(?:옵션|option|alternative|alt)\s+[A-Z0-9](?:\b|[.:_-])/i;
 
 /**
  * INV-7 check: ADR alternatives 섹션이 최소 2개 옵션 + 각 옵션의 rejection reason.

@@ -55,7 +55,7 @@ export async function bootstrap(projectRoot: string): Promise<BootstrapResult> {
 
   await writeFile(
     join(cacheDir, 'state.json'),
-    JSON.stringify({ initialized: new Date().toISOString(), currentPhase: 0 }, null, 2),
+    JSON.stringify({ initialized: new Date().toISOString(), currentPhase: null }, null, 2),
   );
 
   return {

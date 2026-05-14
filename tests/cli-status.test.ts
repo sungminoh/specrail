@@ -1,9 +1,10 @@
 // C2 /plan-pipeline status command — analyst ambiguity #6 resolved
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtemp, writeFile, mkdir, rm } from 'node:fs/promises';
+import { mkdtemp, writeFile, mkdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { status } from '../src/cli/status.js';
+import { bootstrap } from '../src/cli/install.js';
 
 let dir: string;
 
@@ -110,5 +111,16 @@ More text.
     const s = await status(dir);
     expect(s.initialized).toBe(true);
     expect(s.totalIds).toBe(2);
+  });
+});
+
+describe('R2-M7: bootstrap currentPhase sentinel', () => {
+  it('bootstrap creates state with null not-started sentinel (R2-M7)', async () => {
+    await bootstrap(dir);
+    const raw = await readFile(join(dir, '.plan-pipeline-cache/state.json'), 'utf8');
+    const state = JSON.parse(raw);
+    // Must NOT be 0 — null is the correct "not started" sentinel
+    expect(state.currentPhase).not.toBe(0);
+    expect(state.currentPhase).toBeNull();
   });
 });

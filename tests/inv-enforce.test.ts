@@ -218,4 +218,16 @@ describe('INV-7 (extended)', () => {
     // This test is informative — it pins the exact count so regressions are visible.
     expect(violations.length).toBeGreaterThanOrEqual(0);
   });
+
+  it('does NOT count "Optional features" heading as alternative (R2-M3)', () => {
+    const text = `### ADR-99: foo
+## Optional features
+설명
+### 옵션 A: real alternative
+거절 이유: ...
+`;
+    const v = checkInv7(text, 'test.md');
+    // ADR-99 has only 1 real alternative — should fail INV-7 with only 1 alternatives
+    expect(v.some((x) => x.reason.includes('only 1 alternatives'))).toBe(true);
+  });
 });

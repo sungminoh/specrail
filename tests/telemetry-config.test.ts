@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { loadConfigFromEnv } from '../src/telemetry/plausible-adapter.js';
+import { loadConfigFromEnv, createPlausibleSender } from '../src/telemetry/plausible-adapter.js';
 
 describe('US-8.3 loadConfigFromEnv', () => {
   it('domain + endpoint + token present → returns full config with token', () => {
@@ -53,5 +53,23 @@ describe('US-8.3 loadConfigFromEnv', () => {
       PLAUSIBLE_API_TOKEN: 'z',
     });
     expect(result).toEqual({ domain: 'x', endpoint: 'y', token: 'z' });
+  });
+});
+
+describe('R2-M1: createPlausibleSender token format validation', () => {
+  it('rejects token with control chars (R2-M1)', () => {
+    expect(() => createPlausibleSender({
+      domain: 'x',
+      endpoint: 'https://x',
+      token: 'tok\r\nInjected: header',
+    })).toThrow(/Invalid PLAUSIBLE_API_TOKEN/);
+  });
+
+  it('accepts well-formed token (R2-M1)', () => {
+    expect(() => createPlausibleSender({
+      domain: 'x',
+      endpoint: 'https://x',
+      token: 'tok-123_abc.xyz+/=',
+    })).not.toThrow();
   });
 });

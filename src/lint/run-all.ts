@@ -102,7 +102,10 @@ async function runInv5(projectRoot: string): Promise<SingleLintReport> {
   return { name: 'inv-5', status: 'PASS', details: 'no spec file' };
 }
 
-export async function runAllChecks(projectRoot: string): Promise<LintReport> {
+export async function runAllChecks(
+  projectRoot: string,
+  options: { strict?: boolean } = {},
+): Promise<LintReport> {
   const reports: SingleLintReport[] = [];
 
   reports.push(await runAntiSycophancy(projectRoot));
@@ -110,13 +113,17 @@ export async function runAllChecks(projectRoot: string): Promise<LintReport> {
   reports.push(await runAcTraceability(projectRoot));
   reports.push(await runInv5(projectRoot));
 
-  const overall = reports.some((r) => r.status === 'FAIL') ? 'FAIL' : 'PASS';
+  const strict = options.strict ?? false;
+  const overall = reports.some((r) => r.status === 'FAIL' || (strict && r.status === 'WARN'))
+    ? 'FAIL'
+    : 'PASS';
   return { reports, overall };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const root = process.argv[2] ?? '.';
-  runAllChecks(root).then((r) => {
+  const strict = process.argv.includes('--strict');
+  const root = process.argv.find((a) => !a.startsWith('-') && a !== process.argv[0] && a !== process.argv[1]) ?? '.';
+  runAllChecks(root, { strict }).then((r) => {
     for (const sr of r.reports) {
       const icon = sr.status === 'PASS' ? '✓' : sr.status === 'WARN' ? '⚠' : '✗';
       console.log(`${icon} ${sr.name}: ${sr.details}`);

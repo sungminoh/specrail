@@ -97,6 +97,9 @@ export function loadConfigFromEnv(env: NodeJS.ProcessEnv = process.env): Plausib
  * flush() awaits all in-flight emit promises before returning.
  */
 export function createPlausibleSender(cfg: PlausibleAdapterConfig): PlausibleSender {
+  if (cfg.token !== undefined && !/^[A-Za-z0-9._~+\/=-]+$/.test(cfg.token)) {
+    throw new Error('Invalid PLAUSIBLE_API_TOKEN: must contain only [A-Za-z0-9._~+/=-]');
+  }
   const endpoint = cfg.endpoint ?? PLAUSIBLE_ENDPOINT_DEFAULT;
   const pending = new Set<Promise<unknown>>();
 
