@@ -2,8 +2,7 @@
 
 **Mode:** HOLD SCOPE
 **Inputs:** PRD §5, Phase 3 R/F (R1·R2·R4·R5·R6·R7·R8·R13), Phase 4 ENT
-**Reference:** `/reference-v3/08-system-architecture.md`
-**Date:** 2026-05-10 (v4.0 — harness only)
+**Date:** 2026-05-10 (harness only)
 
 > Dashboard scope 제거됨. Plugin은 Claude Code 안에서 작동하는 passive product.
 
@@ -127,7 +126,7 @@ flowchart TB
 | Dependency graph query | skill·hook이 ID 정의·인용 lookup | ARCH-4 |
 | Telemetry event emit | skill·hook이 event 발행 (consent OptedIn 시) | ARCH-7 |
 
-(Dashboard·HTTP API — v4.5 cycle.)
+(Dashboard·HTTP API — 향후 cycle.)
 
 ## 7. Storage Strategy
 
@@ -305,7 +304,7 @@ Phase 12 (ADR)에:
 **Interfaces**:
 - `src/cli/change.ts` — draftChange, invokeDeltaChain, mergeChange, archiveChange
 - `src/cli/approve.ts` — Draft → Approved transition
-- `src/cli/hook-install.ts` — V4_HOOK_TEMPLATE chain detection + install
+- `src/cli/hook-install.ts` — HOOK_TEMPLATE chain detection + install
 - `src/skill/orchestrator.ts` — status, nextPhase
 
 **Dependencies**: Plugin Skills container (hooks), Hook Scripts container (graph builder), State Machine container

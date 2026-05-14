@@ -2,10 +2,9 @@
 
 **Mode:** HOLD SCOPE
 **Inputs:** Phase 5 페이지 Node + 섹션 최상위 페이지
-**Reference:** `/reference-v3/06-information-architecture.md`
-**Date:** 2026-05-10 (v4.0 — dashboard scope 제거 후)
+**Date:** 2026-05-10 (dashboard scope 제거 후)
 
-> 단일 surface — Claude Code session (terminal text). Dashboard surface는 v4.5 cycle.
+> 단일 surface — Claude Code session (terminal text). Dashboard surface는 향후 cycle.
 
 ## 1. Page Catalog
 
@@ -33,7 +32,7 @@
 
 ### 산출물 검토 surface (passive — markdown rendered)
 
-본 v4는 인터랙티브 dashboard 없음. 산출물 검토는 사용자 환경의 markdown rendered:
+현재 인터랙티브 dashboard 없음. 산출물 검토는 사용자 환경의 markdown rendered:
 
 | 검토 surface | 도구 | 가능성 |
 |---|---|---|
@@ -42,7 +41,7 @@
 | Obsidian / Typora 등 | Markdown viewer | 독립 |
 | Claude Code session 자체 | Terminal | 텍스트만 (Mermaid X) |
 
-(인터랙티브 검토 — ID 클릭, dependency graph navigate, timeline view 등은 v4.5 dashboard cycle.)
+(인터랙티브 검토 — ID 클릭, dependency graph navigate, timeline view 등은 향후 dashboard cycle.)
 
 ## 2. Page Tree
 
@@ -91,7 +90,7 @@ URL navigation 없음. 사용자 → 명령어 → LLM 응답이 "navigation".
 - ID cross-reference — grep 또는 IDE search
 - Mermaid graph — GitHub·VS Code preview에서 자동 render
 
-(interactive cross-reference·search·timeline은 v4.5 dashboard.)
+(interactive cross-reference·search·timeline은 향후 dashboard.)
 
 ### 결정 근거 (Persona 환경 인용)
 
@@ -104,7 +103,7 @@ URL navigation 없음. 사용자 → 명령어 → LLM 응답이 "navigation".
 
 ## 4. Deep Link Patterns
 
-본 v4는 deep link 없음 (URL 없는 surface). v4.5 dashboard cycle에서 추가.
+현재 deep link 없음 (URL 없는 surface). 향후 dashboard cycle에서 추가.
 
 다만 markdown file path는 deep link 역할:
 - `<repo>/docs/spec/03-features.md#L67` (line anchor)
@@ -126,7 +125,7 @@ URL navigation 없음. 사용자 → 명령어 → LLM 응답이 "navigation".
 | Plugin install 실패 | Claude Code marketplace error → README troubleshooting |
 | Subagent BLOCKED | P-CC-15 — escalation prompt (사용자 결정) |
 
-(Dashboard 관련 empty/error state — Server down, 404, file watch fail 등 — 모두 v4.5 cycle.)
+(Dashboard 관련 empty/error state — Server down, 404, file watch fail 등 — 모두 향후 cycle.)
 
 ## 7. URL / 경로 Conventions
 
@@ -149,23 +148,23 @@ URL navigation 없음. 사용자 → 명령어 → LLM 응답이 "navigation".
 | ADR | `docs/spec/12-adr-risks/ADR-{n}-{topic}.md` |
 | Wireframe | `docs/spec/07-wireframe/W-{n}-{slug}.md` |
 
-이 file system path는 미래 v4.5 dashboard가 read 호환 (frontmatter standard YAML).
+이 file system path는 미래 dashboard가 read 호환 (frontmatter standard YAML).
 
 ## 8. 검색 가능성
 
-본 v4는 사용자 자기 환경 검색:
+현재 사용자 자기 환경 검색:
 - `/specrail status` — 현재 phase·진행
 - `/specrail find <query>` — spec content search (CLI)
 - 사용자 직접 grep / IDE search (file system level)
 
-(인터랙티브 search bar는 v4.5 dashboard cycle.)
+(인터랙티브 search bar는 향후 dashboard cycle.)
 
 ## 9. Open Questions
 
 | Q ID | 질문 | 결정자 | Blocking? |
 |---|---|---|---|
-| OQ-6-1 | `/specrail find` 명령 v4 포함 vs v4.5 (간단 grep wrapper) | maintainer | Phase 8 |
-| OQ-6-2 | Settings page (telemetry consent toggle) — Claude Code 명령으로 충분? 또는 v4.5 dashboard | maintainer | Phase 8 |
+| OQ-6-1 | `/specrail find` 명령 초기 포함 vs 향후 (간단 grep wrapper) | maintainer | Phase 8 |
+| OQ-6-2 | Settings page (telemetry consent toggle) — Claude Code 명령으로 충분? 또는 향후 dashboard | maintainer | Phase 8 |
 
 ## 10. 다음 phase 인풋
 
@@ -179,7 +178,7 @@ Phase 7 (Wireframe)에:
 Phase 8 (Architecture)에:
 - File system path conventions (storage layout)
 - 명령 entry → skill 매핑
-- Markdown rendered fallback이 사용자 측 책임 (out of v4 scope)
+- Markdown rendered fallback이 사용자 측 책임 (out of scope)
 
 Phase 9 (NFR)에:
 - Markdown rendered a11y (Mermaid alt text, semantic 위계)

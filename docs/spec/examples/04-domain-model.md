@@ -2,7 +2,6 @@
 
 **Mode:** HOLD SCOPE (retroactive — PRD §10 변경 2026-05-12)
 **Inputs:** Phase 3 R/F/S, Spec Description 명사
-**Reference:** `/reference-v3/04-domain-model.md`
 **Date:** 2026-05-10 (DELTA 2026-05-12: INV-3 Phase 1 예외 + ENT-Phase state source 명시)
 
 ## 1. Entity Catalog
@@ -69,7 +68,7 @@
 
 ### ENT-DependencyGraph
 
-**Description:** Phase 간 ID 인용 관계 그래프. R4 영향 phase 자동 식별 + INV-2 환각 ID 검증의 source. (v4.5 dashboard 시각화도 동일 graph 소비.)
+**Description:** Phase 간 ID 인용 관계 그래프. R4 영향 phase 자동 식별 + INV-2 환각 ID 검증의 source. (dashboard 시각화도 동일 graph 소비.)
 **Aggregate root:** Yes (per Project)
 **Source spec:** R4 (DELTA), R2 (hook validation)
 
@@ -456,7 +455,7 @@ Phase 5 (User Flow):
 Phase 8 (Architecture):
 - 모든 Entity → Storage 매핑 후보 (file system vs SQLite vs JSON)
 - ENT-Skill·ENT-Hook → Claude Code plugin SDK 매핑
-- ENT-DependencyGraph → 빌드 component (skill·hook 의존; v4.5 dashboard 추가 소비)
+- ENT-DependencyGraph → 빌드 component (skill·hook 의존; dashboard 추가 소비)
 - ENT-TelemetryEvent → external endpoint (ADR-CAND)
 
 Phase 10 (Test):

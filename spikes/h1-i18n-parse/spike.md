@@ -17,7 +17,7 @@ Reviewer H1 — NFR-I18N-1 (한국어 우선) + EDGE-7 (한국어/영어 mix) + 
 ## Test fixture
 
 `test-fixture.md` — 13줄 사양으로 6 종류 case mix:
-1. YAML frontmatter에 한국어 string ("v4 plugin — 한국어 우선 spec")
+1. YAML frontmatter에 한국어 string ("plugin — 한국어 우선 spec")
 2. 한국어 heading + emoji ("# Phase 1: PRD — 한국어 + 영어 mix 테스트 🚀")
 3. 한국어 본문 + ID 인용 (F1.1, S1.2.3 등)
 4. 한자 heading ("### F1.1: 한자 처리 — 改善·變化·建設")

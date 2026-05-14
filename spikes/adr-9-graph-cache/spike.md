@@ -44,7 +44,7 @@ NFR-PERF-5 target: <300ms (incr)    → 2ms — 150x 여유
 Cascade:
 - **Phase 12 ADR-9 status:** Conditional → **Accepted (옵션 D)**.
 - **Phase 13 T2.2 (Graph incremental rebuild):** **SKIP.** M2에서 제거.
-- **TC-74 (incremental rebuild):** **Deferred to v4.1** (incremental 추가 시 부활).
+- **TC-74 (incremental rebuild):** **Deferred** (incremental 추가 시 부활).
 - **§10 Spec coverage matrix F4.1:** T2.1·2.2 → **T2.1만**.
 - **Innovation token:** ADR-9 자리 **회수**. 3/3 → 2/3. 회수된 token을 ADR-6 (CC subagent) 또는 ADR-8 (state machine)에 추가 보강 가능. 또는 T0.2 H1 (CC SDK frontmatter inject) 검증 결과에 따라 새 ADR에 할당.
 

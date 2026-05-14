@@ -2,7 +2,6 @@
 
 **Mode:** HOLD SCOPE (retroactive — PRD §10 변경 2026-05-12)
 **Inputs:** PRD §3 single-user, Phase 3 R/F/S, Phase 4 ENT/SM
-**Reference:** `/reference-v3/05-user-flow.md`
 **Date:** 2026-05-10 (Mode 갱신 2026-05-12)
 
 ## 1. Section 목록
@@ -15,7 +14,7 @@
 | SEC-4 | Implementation 핸드오프 (Phase 13 후) | S1, S2 |
 | SEC-6 | Telemetry consent lifecycle | All (background) |
 
-(SEC-5 Dashboard 검토 — v4.5 cycle로 이동.)
+(SEC-5 Dashboard 검토 — 향후 cycle로 이동.)
 
 ## 2. Node Catalog
 
@@ -322,7 +321,7 @@ N-001 → N-002 → N-003 → N-004 → N-005 (= N-072) → N-006 → [SEC-2: N-
 
 (검토 동일)
 
-### S3: Refactor (v4.1 — scope 외)
+### S3: Refactor (P1 — scope 외)
 잠정.
 
 ## 7. Dead End / Loop 검증
@@ -351,7 +350,7 @@ Loop 검증:
 |---|---|---|---|
 | OQ-5-2 | N-049 escalate 형식 — Claude Code session interrupt vs queue | maintainer | Phase 8 |
 | OQ-5-3 | N-005 telemetry 질문 timing — install 직후 vs 첫 phase 시작 직전 | maintainer | Phase 7 wireframe |
-| OQ-5-4 | N-074 opt-out 명령 surface — Claude Code 명령 (v4.5에 dashboard UI 추가) | maintainer | Phase 6/7 |
+| OQ-5-4 | N-074 opt-out 명령 surface — Claude Code 명령 (향후 dashboard UI 추가) | maintainer | Phase 6/7 |
 
 ## 9. 다음 phase 인풋
 

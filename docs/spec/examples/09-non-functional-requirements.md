@@ -2,8 +2,7 @@
 
 **Mode:** HOLD SCOPE
 **Inputs:** PRD §4 KPI, Phase 8 ARCH·EXT
-**Reference:** `/reference-v3/09-non-functional-requirements.md`
-**Date:** 2026-05-10 (v4.0 — harness only)
+**Date:** 2026-05-10 (harness only)
 
 > Plugin은 passive 산출물이 아닌 실 작동 code (skills + hooks + builders). 7 domains 모두 적용.
 
@@ -31,7 +30,7 @@ PRD KPI 직접 매핑:
 |---|---|---|---|---|---|
 | NFR-SCAL-1 | 한 phase 산출물 크기 한계 | KB | LLM context 한계 따름 (~50KB body) | LLM 응답 모니터 | LLM 응답 잘림 → 사용자가 phase 분할 |
 | NFR-SCAL-2 | Project 내 누적 ID 수 (Spec·Entity·INV·NFR·OPS·ADR·RISK·TC 등) | count | <5000 | dependency graph node count | graph 빌드 지연 → NFR-PERF-4 위반 |
-| NFR-SCAL-3 | DELTA changes 누적 수 (per project) | count | <500 | file system | timeline navigation 지연 (v4.5 cycle) |
+| NFR-SCAL-3 | DELTA changes 누적 수 (per project) | count | <500 | file system | timeline navigation 지연 (향후 cycle) |
 | NFR-SCAL-4 | 동시 사용자 (서로 다른 머신) | concurrent | 무제한 (각자 환경) | - | 무관 |
 | NFR-SCAL-5 | 한 사용자 동시 multi-project | concurrent | 무제한 (각 docs/spec 분리) | - | ID counter 충돌 X (per-project) |
 
@@ -129,14 +128,14 @@ Plugin 자체는 terminal·markdown surface. WCAG 2.1 AA 적용:
 | NFR-A11Y-6 | Terminal output screen reader 친화 (markdown native) | manual |
 | NFR-A11Y-7 | Keyboard navigation (terminal 자체 + IDE 자체) | 자동 (terminal·IDE 측) |
 
-(Dashboard a11y — color contrast·focus indicator·ARIA 등 — v4.5 cycle.)
+(Dashboard a11y — color contrast·focus indicator·ARIA 등 — 향후 cycle.)
 
 ## 7. Internationalization (i18n)
 
 | ID | NFR | 정책 |
 |---|---|---|
-| NFR-I18N-1 | 기본 언어 (plugin 자체 — skill prompt) | 한국어 우선 (v3 기준 차용) |
-| NFR-I18N-2 | 추가 언어 | 영어 — branch 또는 디렉토리 분리 (ADR-CAND for v3, v4 동일) |
+| NFR-I18N-1 | 기본 언어 (plugin 자체 — skill prompt) | 한국어 우선 |
+| NFR-I18N-2 | 추가 언어 | 영어 — branch 또는 디렉토리 분리  |
 | NFR-I18N-3 | 사용자 spec 언어 | 사용자 자유 — plugin 무관 |
 | NFR-I18N-4 | 시간대 (Telemetry timestamp) | UTC 저장 |
 | NFR-I18N-5 | 날짜 형식 | ISO 8601 (YYYY-MM-DD) |

@@ -3,15 +3,14 @@
 **Mode:** HOLD SCOPE (PRD §10 상속)
 **Date:** 2026-05-12 (DELTA 2026-05-13: 4-reviewer 검토 반영 — M0 spike 2개 추가, task 재배치, ADR-6b fallback, T1.3·T1.8 stub 정책)
 **Inputs:** Phase 3 P0 Spec (R1·R2·R4·R5·R6·R7·R8·R13), Phase 4 ENT 11종 + INV-1~9, Phase 8 ARCH 1~7 + EXT 1~5, Phase 12 ADR-1~10 + RISK-1~10
-**Reference:** `/reference-v3/13-implementation-plan.md`
 
-> **Example convention note (dogfood 발견):** v3 Phase 13 prompt Constraint #4·9는 "모든 task에 complete code + Similar to Task N 금지" 강제. Example로서 가독성 (다른 examples 평균 350줄)과 trade-off — 핵심 8개 task만 complete 5-step, 나머지 36개는 condensed (Files / RED test 참조 / Commit). Spec coverage matrix는 100% 유지. v4 plugin이 실 사용자 산출물에서는 모든 task complete code 강제.
+> **Example convention note (dogfood 발견):** 기존 Phase 13 prompt Constraint #4·9는 "모든 task에 complete code + Similar to Task N 금지" 강제. Example로서 가독성 (다른 examples 평균 350줄)과 trade-off — 핵심 8개 task만 complete 5-step, 나머지 36개는 condensed (Files / RED test 참조 / Commit). Spec coverage matrix는 100% 유지. plugin이 실 사용자 산출물에서는 모든 task complete code 강제.
 
 ---
 
 ## 1. Goal
 
-v4 Plugin v4.0 — Claude Code skill collection (13 phase + orchestrator + telemetry skill) + hook scripts + builders. 사용자가 `/specrail` 한 명령으로 spec 사양화 시작, 13 phase HARD-GATE를 도구로 강제, KPI-2 환각 ID 0 보장 ship.
+specrail — Claude Code skill collection (13 phase + orchestrator + telemetry skill) + hook scripts + builders. 사용자가 `/specrail` 한 명령으로 spec 사양화 시작, 13 phase HARD-GATE를 도구로 강제, KPI-2 환각 ID 0 보장 ship.
 
 ## 2. Architecture
 
@@ -57,8 +56,8 @@ graph LR
     F61[F6.1 install 1 cmd]:::p0
     F62[F6.2 first trigger bootstrap]:::p0
     F64[F6.4 hook auto-install]:::p0
-    F71[F7.1 v3 14 prompt 차용]:::p0
-    F72[F7.2 v4 자체 example]:::p0
+    F71[F7.1 14 prompt]:::p0
+    F72[F7.2 specrail 자체 example]:::p0
     F81[F8.1 Phase 13 chain]:::p0
     F82[F8.2 fresh subagent per task]:::p0
     F83[F8.3 2-stage review]:::p0
@@ -96,7 +95,7 @@ P0 Spec 모음 = MVP. PRD §3.3 시나리오 cover:
 |---|---|---|---|
 | S1 Greenfield (`/specrail` → 13 phase) | R1·R2·R5·R6·R7·R8·R13 | M1+M2+M3 | ✅ |
 | S2 DELTA (변경 → 영향 phase 자동) | R1·R2·R4·R5·R7 | M1+M2 | ✅ |
-| S3 Refactor (codebase → spec 역방향) | (v4.1 후보) | (deferred) | ⛔ Deferred |
+| S3 Refactor (codebase → spec 역방향) | (향후 후보) | (deferred) | ⛔ Deferred |
 
 **INV-4 검증:** M2 끝나면 S1·S2 모두 ship-able. M3은 S1 polish (R7 lint·R8 implementation 핸드오프·R13 telemetry).
 
@@ -110,9 +109,9 @@ P0 Spec 모음 = MVP. PRD §3.3 시나리오 cover:
 | M3 | V1 (R7+R8+R13 polish) | R7 lint, subagent wrapper + 2-stage review + escalation (**A1 PASSED conditional**), telemetry opt-in/out + Plausible client + secret detection | TC-15·16·17·18·19·20·21·22·23·37·38·50·63·64 | 6-10h |
 | M4 | Polish + Release | Marketplace publish workflow (RB-7 fallback), survey template (OQ-11-3), perf bench (NFR-PERF-1~7), E2E **S1·S2** (S2 추가 — reviewer H6) | TC-70·71·72·75·76·77·33·40~49·58~62 | 4-6h |
 
-**Total v4.0 ship:** ~34-51h (AI 보조). M0 +1-2h (spike 2개 추가), M2 +1-1h (README + T2.5 분할 + T1.3·T1.8 교체).
+**Total ship:** ~34-51h (AI 보조). M0 +1-2h (spike 2개 추가), M2 +1-1h (README + T2.5 분할 + T1.3·T1.8 교체).
 
-**A1 spike FAILED-FALLBACK:** ADR-6b (Phase 12 ADR-6 Appendix) — M3 T3.4·3.5·3.6 deferred to v4.1. README에 "Phase 13 task별 새 Claude Code chat 권장" 가이드. M3 누적 6-10h → 4-6h.
+**A1 spike FAILED-FALLBACK:** ADR-6b (Phase 12 ADR-6 Appendix) — M3 T3.4·3.5·3.6 deferred to next cycle. README에 "Phase 13 task별 새 Claude Code chat 권장" 가이드. M3 누적 6-10h → 4-6h.
 
 ## 7. Critical Path
 
@@ -476,10 +475,10 @@ git commit -m "feat(skill): phase transition gate (F2.2, AC-R2-2, INV-3, TC-5·3
 
 **Reviewer C5 — 기존 hook 보존 필수.** T2.12 (hook auto-install on git detect)와 통합 — 한 task로.
 
-Files: `src/hook/install.ts`, `src/hook/pre-commit.js`, `src/cli/hook-install.ts`. RED: 기존 사용자 hook (`.husky/`, `lefthook.yml`, plain `.git/hooks/pre-commit`) 있는 환경에서 v4 install이 덮어쓰지 않는지 검증 부재.
+Files: `src/hook/install.ts`, `src/hook/pre-commit.js`, `src/cli/hook-install.ts`. RED: 기존 사용자 hook (`.husky/`, `lefthook.yml`, plain `.git/hooks/pre-commit`) 있는 환경에서 specrail install이 덮어쓰지 않는지 검증 부재.
 GREEN:
 1. Detect 기존 hook: `.husky/_/pre-commit`, `lefthook.yml`, 또는 plain `.git/hooks/pre-commit` 존재 여부 + content hash 기록
-2. **Chain 방식 install:** v4 hook script가 `pre-commit.v4` 로 먼저 저장 → 기존 `.git/hooks/pre-commit` 있으면 backup `pre-commit.user-original`, 새 `pre-commit`은 (a) backup 실행 → (b) v4 검증 실행
+2. **Chain 방식 install:** specrail hook script가 먼저 저장 → 기존 `.git/hooks/pre-commit` 있으면 backup `pre-commit.user-original`, 새 `pre-commit`은 (a) backup 실행 → (b) specrail 검증 실행
 3. 사용자 confirm 후 적용 (interactive prompt with 기존 hook content preview)
 4. Backup hash record (rollback 가능)
 5. Husky·lefthook 감지 시: 그들의 chain 메커니즘 활용 (자체 hook 추가하지 말고 husky config에 `npx specrail check` 라인 추가 권장)
@@ -572,7 +571,7 @@ Commit: `refactor(spec,hook): T1.3·T1.8 stub → graph 기반 교체 (F1.4·F2.
 
 #### T2.2: Graph incremental rebuild — ADR-9, NFR-PERF-5, TC-74 **(Conditional — 옵션 A 유지 시만 실행)**
 
-**⚠️ T0.4 결과 옵션 D 채택 시 SKIP** (full rebuild every commit이 NFR-PERF-3 충족). 옵션 D 시: 이 task 제거, TC-74 deferred to v4.1 (incremental 추가 시 부활), §10 coverage matrix F4.1 → T2.1만 유지.
+**⚠️ T0.4 결과 옵션 D 채택 시 SKIP (full rebuild every commit이 NFR-PERF-3 충족). 옵션 D 시: 이 task 제거, TC-74 deferred (incremental 추가 시 부활), §10 coverage matrix F4.1 → T2.1만 유지. (incremental 추가 시 부활), §10 coverage matrix F4.1 → T2.1만 유지.
 
 Condensed (옵션 A 시): `src/graph/cache.ts`. RED: cache 없으면 매 hook full rebuild → NFR-PERF-3 위반 위험. GREEN: changed file modtime 비교 + diff parse + cache merge. Commit: `feat(graph): incremental rebuild + specrail-cache (ADR-9 옵션 A, NFR-PERF-5, TC-74)`
 
@@ -590,22 +589,22 @@ Files: `skills/manifest.json`, `skills/orchestrator/SKILL.md`. RED: install 시 
 
 #### T2.5b: 13 phase SKILL.md (reference link 방식, architect 옵션 B) — F5.1, F7.1
 
-**Architect 옵션 B 채택:** SKILL.md body는 `docs/spec/{NN-name}.md`를 **reference link로 참조**. v3 수동 instruction (self-check bash, HARD-GATE 수동 승인, 상대 경로)은 T2.5c에서 주석화되어 plugin 자동 강제와 충돌 X.
+**Architect 옵션 B 채택:** SKILL.md body는 `docs/spec/{NN-name}.md`를 **reference link로 참조**. 기존 수동 instruction (self-check bash, HARD-GATE 수동 승인, 상대 경로)은 T2.5c에서 주석화되어 plugin 자동 강제와 충돌 X.
 
 Files: `skills/phase-{01..13}-{name}/SKILL.md` (13개). RED: phase별 skill 미정의 시 trigger-word 호출 안 됨. GREEN: 각 SKILL.md에 frontmatter (name·description·trigger-words·inputs-from·mode) + body는 `{% include docs/spec/NN-name.md %}` 또는 동등 reference mechanism (CC SDK 표준 따름 — A1 spike 결과 의존). 13 파일 동일 패턴이라 subagent batch 처리 가능. Commit: `feat(skill): 13 phase SKILL.md reference link (F5.1, F7.1, architect 옵션 B, TC-15·16)`
 
-#### T2.5c: docs/spec v4 refinement (architect 옵션 B 신규 task)
+#### T2.5c: docs/spec refinement (architect 옵션 B 신규 task)
 
-**Architect 옵션 B 채택 핵심 task.** 14개 `docs/spec/{00..13}*.md` 파일에서 v3 수동 instruction을 v4 자동 강제와 정합하도록 주석화.
+**Architect 옵션 B 채택 핵심 task.** 14개 `docs/spec/{00..13}*.md` 파일에서 기존 수동 instruction을 plugin 자동 강제와 정합하도록 주석화.
 
 Files: `docs/spec/00-common-principles.md`, `docs/spec/01-prd.md` ~ `docs/spec/13-implementation-plan.md` (14개).
-RED: 현 v3 prompt에 `grep -c`·`wc -l` 등 self-check bash block + "사용자 명시 승인 후" HARD-GATE 수동 지시 + 상대 경로 (`grep ... 01-prd.md`) 잔존. v4 plugin이 자동 강제하는데 prompt에 수동 지시가 남으면 LLM 이중 실행·충돌.
+RED: 현재 prompt에 `grep -c`·`wc -l` 등 self-check bash block + "사용자 명시 승인 후" HARD-GATE 수동 지시 + 상대 경로 (`grep ... 01-prd.md`) 잔존. plugin이 자동 강제하는데 prompt에 수동 지시가 남으면 LLM 이중 실행·충돌.
 GREEN (3 변환 — subagent batch 처리):
-1. Self-check bash block (예: ```` ```bash\ngrep -c "..."\n``` ````) → `<!-- v3 self-check: replaced by ARCH-5 schema validator + ARCH-3 hooks (v4 auto-enforced) -->`
-2. HARD-GATE block (예: `<HARD-GATE>사용자 명시 승인...</HARD-GATE>`) → `<!-- v4: ADR-8 state machine auto-enforced — 사용자 명시 승인 step은 plugin이 enforce -->`
+1. Self-check bash block (예: ```` ```bash\ngrep -c "..."\n``` ````) → `<!-- self-check: replaced by ARCH-5 schema validator + ARCH-3 hooks (auto-enforced) -->`
+2. HARD-GATE block (예: `<HARD-GATE>사용자 명시 승인...</HARD-GATE>`) → `<!-- ADR-8 state machine auto-enforced — 사용자 명시 승인 step은 plugin이 enforce -->`
 3. 상대 경로 (`01-prd.md`, `docs/spec/N.md`) → 절대화 (`{{project_root}}/docs/spec/NN-name.md` 또는 CC SDK path resolver).
 Acceptance: 14 파일에 `grep -c 'grep -c'` = 0 (bash self-check 잔존 0). `grep -c '<HARD-GATE>'` = 0 (수동 HARD-GATE 0).
-Commit: `refactor(spec): v3 manual instructions → v4 auto-enforced annotations (architect 옵션 B, T2.5b 전제)`
+Commit: `refactor(spec): manual instructions → auto-enforced annotations (architect 옵션 B, T2.5b 전제)`
 
 #### T2.6: 00-common 자동 상속 — F5.4, AC-R5-3, TC-11
 
@@ -644,11 +643,11 @@ GREEN:
 1. Install: `claude code skill install specrail` 또는 GitHub install 명령
 2. Usage: `/specrail init` → Phase 1 시작 + 13 phase 진행 flow
 3. State source-of-truth (ADR-8): frontmatter 수동 편집 가능, cache는 derived 명시
-4. Non-CC fallback: v3 markdown 직접 사용 가이드 link
+4. Non-CC fallback: 기존 markdown 직접 사용 가이드 link
 5. Hook chain 방식 (기존 hook 보존) 명시
 6. Telemetry opt-in/out 사용법
 7. Troubleshooting: Windows/Node 미설치/한국어 mixed-lang
-8. **v3 원본 prompt는 git tag `v3-archive` 참조** (T2.5c refinement 전 상태 보존 — non-CC fallback 사용자용)
+8. 원본 prompt는 git tag `v3-archive` 참조 (T2.5c refinement 전 상태 보존 — non-CC fallback 사용자용)
 Commit: `docs(README): install + usage + non-CC fallback + state source (OQ-1-3, ship-able 조건)`
 
 ---
@@ -657,15 +656,15 @@ Commit: `docs(README): install + usage + non-CC fallback + state source (OQ-1-3,
 
 #### T3.1: B2B 표현 lint — AC-R7-1, TC-15
 
-Files: `src/lint/r7-b2b.ts`, `tests/lint-r7-b2b.test.ts`. RED: "직책", "분기 OKR" 같은 B2B 단어 통과. GREEN: keyword regex (v3 §297 회사·승진·해고·KPI 등) → fail. Commit: `feat(lint): R7 B2B expression detector (AC-R7-1, TC-15)`
+Files: `src/lint/r7-b2b.ts`, `tests/lint-r7-b2b.test.ts`. RED: "직책", "분기 OKR" 같은 B2B 단어 통과. GREEN: keyword regex (회사·승진·해고·KPI 등) → fail. Commit: `feat(lint): R7 B2B expression detector (AC-R7-1, TC-15)`
 
 #### T3.2: 단일 도메인 inline lint — AC-R7-2, TC-16
 
 Files: `src/lint/r7-domain.ts`. RED: prompt 안에 "Booking", "Stripe", "PostgreSQL" 같은 구체 entity. GREEN: domain-specific term blocklist + warning. Commit: `feat(lint): R7 domain entity inline detector (AC-R7-2, TC-16)`
 
-#### T3.3: v3 example 참조 history check — AC-R7-3, TC-17
+#### T3.3: legacy example 참조 history check — AC-R7-3, TC-17
 
-Files: `src/lint/r7-history.ts`. RED: git log에 "v3 example 참조" 흔적 있어도 통과. GREEN: 작업 commit이 v3 examples/ 파일 read history 검사 (best-effort static). Commit: `feat(lint): R7 chicken-and-egg history check (AC-R7-3, TC-17)`
+Files: `src/lint/r7-history.ts`. RED: git log에 "legacy example 참조" 흔적 있어도 통과. GREEN: 작업 commit이 legacy examples/ 파일 read history 검사 (best-effort static). Commit: `feat(lint): legacy example reference history check (AC-R7-3, TC-17)`
 
 #### T3.4: Subagent invocation wrapper — F8.1, F8.2, AC-R8-1, TC-18
 
@@ -840,10 +839,10 @@ Commit: `e2e(s1+s2): Greenfield 13-phase + DELTA + INV-4 (TC-12·13·33, S2 revi
 | F6.2 first trigger bootstrap | T2.11 | CLI | TC-13 |
 | F6.4 hook auto-install (chain 방식, 기존 hook 보존) | T1.7 (T2.12 통합) | CLI + Hook | TC-14 |
 | R7 (umbrella) | T3.1·3.2·3.3 | Lint | TC-15·16·17 |
-| F7.1 v3 14 prompt 차용 | T2.5 SKILL.md content | Skill content | TC-15·16 |
-| F7.2 v4 자체 example | (이번 docs/spec/examples 작업) | Static | TC-17 |
+| F7.1 14 prompt | T2.5 SKILL.md content | Skill content | TC-15·16 |
+| F7.2 specrail 자체 example | (이번 docs/spec/examples 작업) | Static | TC-17 |
 | R8 (umbrella) | T3.4·3.5·3.6 | Subagent | TC-18·19·20 |
-| (R8 conditional: A1 FAILED → ADR-6b deferred to v4.1, R8 P0→P1, T3.4·5·6 SKIP) | — | — | — |
+| (R8 conditional: A1 FAILED → ADR-6b deferred to next cycle, R8 P0→P1, T3.4·5·6 SKIP) | — | — | — |
 | F8.1 Phase 13 chain | T3.4 | Subagent | TC-18 |
 | F8.2 fresh subagent per task | T3.4 | Subagent | TC-18 |
 | F8.3 2-stage review | T3.5 | Subagent | TC-19 |
@@ -883,7 +882,7 @@ Commit: `e2e(s1+s2): Greenfield 13-phase + DELTA + INV-4 (TC-12·13·33, S2 revi
 | RISK-7 (Plausible 다운) | T3.8 local queue + retry | NFR-AVAIL-5 |
 | RISK-8 (LLM frontmatter quality) | 이 작업 (dogfood) + T2.1 graph 검증 | RISK-2와 묶음 |
 | RISK-9 (KPI-1 < 60%) | T3.8 PhaseStarted/Approved telemetry | RB-6 분석 |
-| RISK-10 (5000 ID 한계) | T2.2 incremental + T4.4 bench | NFR-SCAL-2, deferred archive v4.5 |
+| RISK-10 (5000 ID 한계) | T2.2 incremental + T4.4 bench | NFR-SCAL-2, deferred archive 향후 |
 
 ## 13. Type Consistency Check
 
@@ -904,10 +903,10 @@ Commit: `e2e(s1+s2): Greenfield 13-phase + DELTA + INV-4 (TC-12·13·33, S2 revi
 
 | Q ID | 질문 | 결정자 | Blocking? | 상태 |
 |---|---|---|---|---|
-| OQ-13-1 | M4 후 P1 cherry-pick (e1·e2·e4·e5 — Phase 3) 결정 시점 | maintainer | N | v4.0 release 후 telemetry 결과 보고 |
+| OQ-13-1 | M4 후 P1 cherry-pick (e1·e2·e4·e5 — Phase 3) 결정 시점 | maintainer | N | 출시 후 telemetry 결과 보고 |
 | OQ-13-2 | NFR-PERF-7 KPI-3 사용자 6h 목표 — survey N=? 수집 후 기준점 측정 | maintainer | N | T4.5 E2E + T4.3 survey로 baseline |
 | OQ-13-3 | M0 spike (T0.2·0.3·0.4·0.5·0.8·0.9) 결과 공개 — README 또는 별 docs/spike-results | maintainer | N | 출시 전 결정 |
-| OQ-13-4 | v3 → v4 migration path (reviewer analyst H5) | maintainer | N | **Resolved 2026-05-13: v4.0 greenfield only. v3 사용자는 v3 markdown 유지. Migration tool은 v4.1 후보 (S3 Refactor와 함께). README T2.13에 명시.** |
+| OQ-13-4 | migration path | maintainer | N | **Resolved 2026-05-13: 현재 greenfield only. 기존 사용자는 기존 markdown 유지. Migration tool은 향후 후보 (S3 Refactor와 함께). README T2.13에 명시.** |
 | OQ-13-5 | TC-9·10 LLM flakiness pass/fail threshold (reviewer analyst) | maintainer | N | 권장: 5회 중 4회 keyword 포함 = pass. T4.4 perf bench와 함께 정식화 |
 
 (Phase 12 Blocking OQ — OQ-9-1 resolved by T3.10 (opt-in F). OQ-9-2·10-1·10-2는 M0 spike 결과 의존 — release 전 답변 확정.)
@@ -931,11 +930,11 @@ docs/spec/examples/13-implementation-plan.md §9 모든 task 순서대로 실행
 M0 spike 결과 분기:
 - A1 PASSED → M1·M2·M3 그대로 진행
 - A1 FAILED-FALLBACK → ADR-6b 적용 (Phase 12 ADR-6 Appendix):
-  · M3 T3.4·3.5·3.6 deferred to v4.1
+  · M3 T3.4·3.5·3.6 deferred to next cycle
   · README (T2.13)에 "Phase 13 task별 새 Claude Code chat 시작 권장" 추가
   · R8 P0 → P1 (Phase 3 Spec status update)
 - ADR-9 spike 결과:
-  · Full rebuild 3s 이내 (NFR-PERF-3 충족) → ADR-9 옵션 D 채택, **T2.2 task SKIP**, **TC-74 deferred to v4.1** (incremental 추가 시 부활), §10 coverage matrix F4.1 → T2.1만, token 회수 (H1 spike에 재할당)
+  · Full rebuild 3s 이내 (NFR-PERF-3 충족) → ADR-9 옵션 D 채택, **T2.2 task SKIP**, **TC-74 deferred to next cycle** (incremental 추가 시 부활), §10 coverage matrix F4.1 → T2.1만, token 회수 (H1 spike에 재할당)
   · Full rebuild 3s 초과 → ADR-9 옵션 A 유지 (incremental T2.2 실행)
 
 각 task 5-step 강제: RED test → 실패 확인 → 최소 구현 → GREEN → commit.
@@ -1013,9 +1012,9 @@ Self-check 통과 + 사용자 승인. 그 후 Claude Code에 던짐.
   → M0 spike 통과 후 5/5 ✅
 State source-of-truth 결정? ✅ (ADR-8 DELTA — frontmatter primary, cache derived)
 기존 hook 보존 정책? ✅ (AC-R6-3 DELTA — chain 방식, T1.7 통합)
-v3 → v4 migration? ✅ (OQ-13-4 Resolved — v4.0 greenfield only)
+migration? ✅ (OQ-13-4 Resolved — 현재 greenfield only)
 S2 DELTA E2E 추가? ✅ (T4.5 S1+S2)
-ADR-6 FAILED-FALLBACK skeleton? ✅ (Phase 12 ADR-6 Appendix — M3 task deferred to v4.1)
+ADR-6 FAILED-FALLBACK skeleton? ✅ (Phase 12 ADR-6 Appendix — M3 task deferred to next cycle)
 M0 spike H1·H2 추가? ✅ (T0.2 확장 + T0.8·T0.9 신규 + T0.4 full-rebuild 비교)
 T1.3·T1.8 stub 정책? ✅ (M1 file-scan, M2 T2.1 후 graph 교체)
 T2.5 분할? ✅ (T2.5a manifest, T2.5b 13 SKILL.md)
@@ -1031,32 +1030,32 @@ README → M2? ✅ (T2.13, M2 ship-able 최소 조건)
 
 ## Phase 13 example 작성 후 dogfood 발견사항
 
-이 작업이 v3 prompt의 self-sufficiency stress test 마지막 phase. v3 Phase 13 prompt 약점 (v4 plugin 가치 증명 노트):
+이 작업이 기존 prompt의 self-sufficiency stress test 마지막 phase. 기존 Phase 13 prompt 약점 (plugin 가치 증명 노트):
 
-1. **Constraint #4 "complete code 강제" vs example 가독성 충돌** — v3 prompt는 모든 task에 complete code 요구. Example로서 너무 큰 산출물 (700~1000줄) 위험. 이 example은 핵심 8 task만 complete + 나머지 condensed 양해. v4 plugin은 실 사용자 산출물에 prompt 그대로 강제, example mode를 별도로 구분 필요.
+1. **Constraint #4 "complete code 강제" vs example 가독성 충돌** — 기존 prompt는 모든 task에 complete code 요구. Example로서 너무 큰 산출물 (700~1000줄) 위험. 이 example은 핵심 8 task만 complete + 나머지 condensed 양해. plugin은 실 사용자 산출물에 prompt 그대로 강제, example mode를 별도로 구분 필요.
 
-2. **Constraint #1 "Atomic task = 2-5분" 측정 부재** — v3 prompt는 시간 기준만 명시, 실 측정 mechanism 없음. v4 plugin이 telemetry로 task별 Implementation duration 측정하면 KPI-3과 직결.
+2. **Constraint #1 "Atomic task = 2-5분" 측정 부재** — 기존 prompt는 시간 기준만 명시, 실 측정 mechanism 없음. plugin이 telemetry로 task별 Implementation duration 측정하면 KPI-3과 직결.
 
 3. **Constraint #11 "Iron Law" + spike task 모순** — spike task (T0.2·0.3·0.4)의 "test"는 prose acceptance criteria. Iron Law의 명시 예외 처리 필요.
 
-4. **Output Format §9 task 구조 — 5-step 일관 vs task type 다양** — v3 prompt 일관 5-step 강제. spike·docs·release workflow에는 awkward. v4 plugin이 task type 분류 (impl / spike / docs / release) → 각 type별 step template.
+4. **Output Format §9 task 구조 — 5-step 일관 vs task type 다양** — 기존 prompt 일관 5-step 강제. spike·docs·release workflow에는 awkward. plugin이 task type 분류 (impl / spike / docs / release) → 각 type별 step template.
 
-5. **Spec coverage matrix 자동화 부재** — Constraint #10 "Spec coverage 100%" 강제하나 manual matrix. v4 plugin이 graph builder (T2.1) + matrix auto-render skill 추가 (P1).
+5. **Spec coverage matrix 자동화 부재** — Constraint #10 "Spec coverage 100%" 강제하나 manual matrix. plugin이 graph builder (T2.1) + matrix auto-render skill 추가 (P1).
 
-이 5개 발견사항은 v4.1 또는 v4.5 cycle에서 prompt 개선 후보 — Phase 12 Trigger to Re-evaluate 패턴으로 archive.
+이 5개 발견사항은 향후 cycle에서 prompt 개선 후보 — Phase 12 Trigger to Re-evaluate 패턴으로 archive.
 
 ---
 
-## v4.1 cycle implementation tasks (M3-M11)
+## 추가 구현 tasks (M3-M11)
 
-다음 task들이 v4.1 alpha cycle 진행 중 구현되었다. 본 phase 13 plan의 보완.
+다음 task들이 alpha cycle 진행 중 구현되었다. 본 phase 13 plan의 보완.
 
 ### M3 graph foundation (post-M0/M1/M2 mega cycle)
 - T2.1b graph filter dash-relax — `^\d{2}-.*\.md$` → `^\d{2}.*\.md$` (resolver test fix)
 
 ### M5 wire-up integration (~4-6h)
 - T5.1 hook install entry point — `src/cli/hook-install.ts`
-- T5.2 V4_HOOK_TEMPLATE chain detection — husky/lefthook/plain
+- T5.2 HOOK_TEMPLATE chain detection — husky/lefthook/plain
 - T5.3 orchestrator status entry — `src/skill/orchestrator.ts`
 - T5.4 inject helpers — F1.2 auto-inject (`getInputFromPhase` + `formatInputBlock`)
 - T5.5 approve CLI — Draft → Approved with INV-3 + ISO timestamp
@@ -1091,7 +1090,7 @@ README → M2? ✅ (T2.13, M2 ship-able 최소 조건)
 - T10.5 EDGE-19·20·21·22 network/external tests
 - T10.6 architect C2 — lint:plan semantics doc
 - T10.7 architect C3 — EVIDENCE_RE limitation doc
-- T10.8 architect C1 — V4-1-PLAN T11.5 lock-in
+- T10.8 architect C1 — roadmap T11.5 lock-in
 
 ### M8 external integration (~3-4h + user action)
 - T8.1 npm publish workflow + tag/version guard
@@ -1110,4 +1109,4 @@ README → M2? ✅ (T2.13, M2 ship-able 최소 조건)
 - T11.6 ZWS regex fix (CITATION_RE)
 - T11.7 Plausible flush + loadConfigFromEnv wire-up
 
-5번째는 특히 흥미: v4 plugin 자체가 spec→task coverage check를 자동으로 하면 Phase 13 self-check가 단순해짐. 즉 v4 plugin이 자신을 더 빨리 작성 가능하게 만듦 — 재귀 효율 향상.
+5번째는 특히 흥미: plugin 자체가 spec→task coverage check를 자동으로 하면 Phase 13 self-check가 단순해짐. 즉 plugin이 자신을 더 빨리 작성 가능하게 만듦 — 재귀 효율 향상.

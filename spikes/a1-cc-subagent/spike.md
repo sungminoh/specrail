@@ -21,11 +21,11 @@ CC SDK가 (a) subagent를 fresh context로 spawn, (b) BLOCKED escalation 가능,
 
 ## Decision impact
 
-- **ADR-6 (CC subagent):** **Accepted (4/6 PASSED, 2/6 deferred).** 핵심 subagent 기능 확인. R8 v4.0 scope 유지.
+- **ADR-6 (CC subagent):** **Accepted (4/6 PASSED, 2/6 deferred).** 핵심 subagent 기능 확인. R8 scope 유지.
 - **ADR-6b (FAILED-FALLBACK):** 발동 안 함 (1-4 PASSED). M3 T3.4·3.5·3.6 그대로 진행.
 - **5-6 deferred 처리:**
   - T2.5a (M2) — manifest 작성 시 CC SDK 문서 확인. `inputs-from` 미지원 시 skill 내부에서 직접 frontmatter parse (fallback).
-  - 5번 미지원도 v4 plugin 작동 가능. Fallback이 plain. Innovation token 추가 소비 없음.
+  - 5번 미지원도 plugin 작동 가능. Fallback이 plain. Innovation token 추가 소비 없음.
 - **OQ-8-2:** **Resolved.** Subagent 구현 = CC built-in Agent tool.
 
 ## Findings (구체)

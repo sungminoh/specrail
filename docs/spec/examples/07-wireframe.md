@@ -2,10 +2,9 @@
 
 **Mode:** HOLD SCOPE
 **Inputs:** Phase 6 Page Catalog (15개 P-CC-*)
-**Reference:** `/reference-v3/07-wireframe.md`
-**Date:** 2026-05-10 (v4.0 — dashboard scope 제거 후)
+**Date:** 2026-05-10 (dashboard scope 제거 후)
 
-> 단일 surface — Claude Code 응답이라 단일 zone 패턴 + variation. (Dashboard wireframe 9개는 v4.5 cycle.)
+> 단일 surface — Claude Code 응답이라 단일 zone 패턴 + variation. (Dashboard wireframe 9개는 향후 cycle.)
 
 ---
 
@@ -56,7 +55,7 @@
 └────────────────────────────────────────────────────────┘
 ```
 
-(이전 EXPANSION 버전의 Z5 "Dashboard Link"는 "Markdown 검토 가이드"로 변경 — file path + GitHub/VS Code preview 안내. v4.5 dashboard cycle에서 Z5에 dashboard URL 추가.)
+(이전 EXPANSION 버전의 Z5 "Dashboard Link"는 "Markdown 검토 가이드"로 변경 — file path + GitHub/VS Code preview 안내. 향후 dashboard cycle에서 Z5에 dashboard URL 추가.)
 
 ## Element Spec
 
@@ -130,7 +129,7 @@ Terminal text — viewport 무관. 모바일 Claude Code app에서도 읽기 가
   - 🔴 ❌ red = Hook fail/Error (경고)
 - **폰트 크기:** terminal 기본 (markdown rendered 시 H1/H2/Body — IDE/GitHub의 default)
 
-(Dashboard 색·폰트 — Tailwind / 디자인 시스템 등 — v4.5 cycle.)
+(Dashboard 색·폰트 — Tailwind / 디자인 시스템 등 — 향후 cycle.)
 
 ---
 

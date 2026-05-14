@@ -2,7 +2,6 @@
 
 **Mode:** HOLD SCOPE
 **Inputs:** Phase 8 ARCH·EXT, Phase 9 AVAIL·SEC·PRIV
-**Reference:** `/reference-v3/11-operations.md`
 **Date:** 2026-05-10
 
 > Plugin은 passive skill·hook 모음 — server 안 돌림. Ops는 두 영역 분리:
@@ -130,7 +129,7 @@ OSS code라 traditional log 없음. 대신:
 | KPI-4 (stars 500) | GitHub stars | GitHub API |
 | KPI-6 (정당 차단 >85%) | HookBlock + 후속 PhaseApproved 비율 (사용자 수정 후 통과) | telemetry |
 
-(KPI-5 dashboard 사용 빈도 — v4.5 cycle.)
+(KPI-5 dashboard 사용 빈도 — 향후 dashboard cycle.)
 
 ## 5. Observability — Traces
 
@@ -175,7 +174,7 @@ OSS 프로젝트라 새벽 3시 pager 없음. 대신 **maintainer attention**:
 
 ## 8. Feature Flags
 
-본 v4는 feature flag 없음 (단순 markdown skill collection). 유사 mechanism:
+현재 feature flag 없음 (단순 markdown skill collection). 유사 mechanism:
 
 | 종류 | 적용 |
 |---|---|
@@ -183,7 +182,7 @@ OSS 프로젝트라 새벽 3시 pager 없음. 대신 **maintainer attention**:
 | Plugin version | 사용자가 pin 가능 (semver) |
 | Hook bypass | `--no-verify` (사용자 측 git 자체 mechanism — plugin 무관) |
 
-(Real feature flag mechanism — A/B 테스트 등 — v4.5+ dashboard cycle.)
+(Real feature flag mechanism — A/B 테스트 등 — 향후 dashboard cycle.)
 
 ## 9. Cost Model
 
@@ -216,7 +215,7 @@ OSS 프로젝트라 새벽 3시 pager 없음. 대신 **maintainer attention**:
 | Q ID | 질문 | 결정자 | Blocking? |
 |---|---|---|---|
 | OQ-11-1 | Telemetry endpoint host (Plausible / PostHog / 자체) — ADR-CAND-7 결정 + Phase 11 운영 결과 | maintainer | ADR Phase 12 |
-| OQ-11-2 | Marketplace 등록 시점 — v4.0 release 동시 vs v4.1 안정 후 | maintainer | OQ-1-1 (PRD) |
+| OQ-11-2 | Marketplace 등록 시점 — 초기 release 동시 vs 안정 후 | maintainer | OQ-1-1 (PRD) |
 | OQ-11-3 | Survey mechanism (KPI-3 self-report) — Google Form / Tally / GitHub issue template | maintainer | 출시 전 |
 | OQ-11-4 | Hot fix release 정책 — patch tag 자동 vs maintainer 명시 | maintainer | 첫 production incident 후 |
 

@@ -2,7 +2,6 @@
 
 **Mode:** HOLD SCOPE
 **Inputs:** Phase 3 AC (R1·R2·R4·R5·R6·R7·R8·R13), Phase 4 INV-1~9, Phase 9 측정가능 NFR
-**Reference:** `/reference-v3/10-test-strategy.md`
 **Date:** 2026-05-10
 
 > **Iron Law:** 모든 production code는 failing test 통과 위해서만 존재. RED → GREEN → REFACTOR.
@@ -49,7 +48,7 @@
 | AC-R6-3 | TC-14 | Plugin 첫 setup 시 git repo 감지 + pre-commit hook 자동 install (사용자 confirm 후) | Integ |
 | AC-R7-1 | TC-15 | Plugin 메인 prompt에 B2B 표현 검색 0건 | Static |
 | AC-R7-2 | TC-16 | Plugin 메인 prompt에 단일 도메인 entity inline 0건 | Static |
-| AC-R7-3 | TC-17 | v4 작업 자체에서 v3 example 참조 0건 (chicken-and-egg 방지) | Static (history check) |
+| AC-R7-3 | TC-17 | specrail 작업 자체에서 legacy example 참조 0건 (chicken-and-egg 방지) | Static (history check) |
 | AC-R8-1 | TC-18 | Phase 13 Approved 시 implementation skill chain — atomic task별 fresh subagent | Integ |
 | AC-R8-2 | TC-19 | Subagent 2-stage review (spec compliance + quality) | Integ |
 | AC-R8-3 | TC-20 | BLOCKED·ambiguity 시 main session에 escalate (자동 진행 X) | Integ |
@@ -158,11 +157,11 @@
 - 모든 사용자 보고 issue → regression TC 추가 (TC-{n}-regression)
 - Hook fail 사례 → 정확히 그 시나리오 TC
 - 환각 ID 발견 시 → 해당 ID 패턴 regression
-- Phase별 산출물 변경 (메인 prompt update) → self-application example regression (v4 작업 자체가 example이라 자기 검증)
+- Phase별 산출물 변경 (메인 prompt update) → self-application example regression (specrail 작업 자체가 example이라 자기 검증)
 
 ## 8. Test Framework Detection
 
-본 v4는 greenfield. 그러나 ADR-CAND-3 (hook script lang) 결정 후:
+현재 greenfield. 그러나 ADR-CAND-3 (hook script lang) 결정 후:
 
 ```bash
 # Hook script lang에 따라:

@@ -1,7 +1,7 @@
 ---
 phase: 1
 status: Draft
-title: "v4 plugin — 한국어 우선 spec"
+title: "plugin — 한국어 우선 spec"
 mode: HOLD_SCOPE
 ---
 
