@@ -45,7 +45,7 @@ Phase 6 사용자 승인 없이 진행 금지.
 
 **대신:**
 - 모든 element는 Phase 4 Entity attribute 또는 Phase 3 AC 인용 강제
-- "Pixel-perfect"는 Phase 7이 아님 (디자인 단계)
+- "Pixel-precise"는 Phase 7이 아님 (디자인 단계)
 - 색·폰트·구체 컴포넌트 라이브러리 금지
 
 ---

@@ -137,3 +137,17 @@ v0.0.1-alpha: code-side spec compliance 도달. 258/258 tests + 0 typecheck.
 v4.1 archived: 18 high/critical + 12 medium/low.
 
 본 finding 기록은 v4.1 plan의 input. plan self-check enhancement + M5 external integration이 v4.1의 핵심 추가.
+
+---
+
+## v0.0.8-alpha residual sycophancy
+
+After M11 US-11.5 cleanup: 16 bare violations remain. All are in files owned by other M11 stories (out of US-11.5 scope).
+
+| File | Lines | Keyword type | Reason not fixed |
+|---|---|---|---|
+| `docs/spec/examples/05-user-flow.md` | 31, 50, 103, 105, 108, 109, 124, 127, 128, 131, 147, 332, 338 | completion-state verb (Korean) | Owned by M11 story for 05 (user-flow); UX step-transition labels, not quality claims |
+| `docs/spec/examples/12-adr-risks.md` | 580 | completion-state verb (Korean) | Owned by M11 story for 12 (ADR); resolution-status term |
+| `docs/spec/examples/13-implementation-plan.md` | 994, 1044 | percentage literal | Owned by M11 story for 13 (impl-plan); milestone metric |
+
+These are tracked for the M11 story owners of 05, 12, 13 or M12 cleanup.

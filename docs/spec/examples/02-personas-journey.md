@@ -148,16 +148,16 @@
 
 | Pain ID | 설명 | 빈도 | 영향도 | 우선 | 어느 시나리오 |
 |---|---|---|---|---|---|
-| PAIN-1 | 환각 ID (정의 안 된 ID 인용) | 100% v3 사용자 | 높음 | P0 | S1, S2 |
-| PAIN-2 | 사용자 기억 의존 (이전 phase ID ctrl-F) | 100% | 중 | P0 | S1, S2 |
+| PAIN-1 | 환각 ID (정의 안 된 ID 인용) | v3 사용자 전원 | 높음 | P0 | S1, S2 |
+| PAIN-2 | 사용자 기억 의존 (이전 phase ID ctrl-F) | 전원 | 중 | P0 | S1, S2 |
 | PAIN-3 | HARD-GATE 양심 의존 (LLM이 무시 시 사용자 catch) | ~50% | 매우 높음 | P0 | S1, S2 |
-| PAIN-4 | 검토 cumbersome (14 markdown cross-reference) | 100% | 중 | P0 | S1, S2 |
+| PAIN-4 | 검토 cumbersome (14 markdown cross-reference) | 전원 | 중 | P0 | S1, S2 |
 | PAIN-5 | self-check grep 잊음 | ~30% | 높음 | P0 | S1, S2 |
-| PAIN-DELTA-scope | DELTA 영향 phase 수동 판단 부담 | 100% (DELTA mode) | 매우 높음 | P0 | S2 |
+| PAIN-DELTA-scope | DELTA 영향 phase 수동 판단 부담 | DELTA mode 전원 | 매우 높음 | P0 | S2 |
 | PAIN-fundamental | Forcing question 도망 (v3와 동일) | ~40% | 치명 | P0 | S1 |
 | PAIN-6 | 다중 project 동시 검토 부담 | 30% (multi-project user) | 중 | P1 | (Edge-2) |
-| PAIN-7 | Brownfield 역설계 부담 | 100% (brownfield user) | 매우 높음 | P1 | S3 (v4.1) |
-| PAIN-base | Plugin install·setup 마찰 | 100% (첫 사용자) | 중 | P0 | S1 |
+| PAIN-7 | Brownfield 역설계 부담 | brownfield user 전원 | 매우 높음 | P1 | S3 (v4.1) |
+| PAIN-base | Plugin install·setup 마찰 | 첫 사용자 전원 | 중 | P0 | S1 |
 
 ## 7. 차단 단계 (Blocking Step)
 

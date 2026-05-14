@@ -16,7 +16,7 @@
 | Page ID | 이름 | Phase 5 Node | Trigger / 위치 | 깊이 |
 |---|---|---|---|---|
 | P-CC-1 | README · marketplace landing | N-002 | GitHub URL 또는 Claude Code marketplace | 1 |
-| P-CC-2 | Setup 완료 안내 | N-006 | install 직후 자동 출력 | 1 |
+| P-CC-2 | Setup 안내 | N-006 | install 직후 자동 출력 | 1 |
 | P-CC-3 | Phase init 응답 (docs/spec 생성·skill 호출) | N-011 | `/plan-pipeline init` 또는 trigger phrase | 1 |
 | P-CC-4 | Phase 산출물 출력 | N-014 | skill chain 자동 (13 phase 동일 layout) | 2 |
 | P-CC-5 | Hook fail 차단 메시지 | N-019 | git commit 시 자동 | 2 |
@@ -27,7 +27,7 @@
 | P-CC-10 | Implementation task subagent | N-042 | Phase 13 후 자동 또는 명령 | 2 |
 | P-CC-11 | Spec review subagent | N-046 | task별 자동 | 3 |
 | P-CC-12 | Quality review subagent | N-047 | task별 자동 | 3 |
-| P-CC-13 | Implementation 완료 알림 | N-051 | 자동 | 2 |
+| P-CC-13 | Implementation 종료 알림 | N-051 | 자동 | 2 |
 | P-CC-14 | Telemetry opt-in 질문 | N-071 | install 첫 사용 | 1 |
 | P-CC-15 | Escalation prompt (BLOCKED) | N-049 | subagent 막힘 시 | 3 |
 

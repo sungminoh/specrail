@@ -23,7 +23,7 @@ AI 시대의 marginal cost of completeness는 near-zero.
 - "이건 follow-up PR로" 금지.
 - "Ship the shortcut"은 인간 엔지니어 시간이 bottleneck이던 시대의 사고.
 
-**Lake vs Ocean:** "끓일 수 있는 호수"(특정 모듈 100%, 단일 기능 완전)만 잡고 "바다"(시스템 재작성, multi-quarter migration)는 out-of-scope.
+**Lake vs Ocean:** "끓일 수 있는 호수"(특정 모듈 fully scoped, 단일 기능 완전)만 잡고 "바다"(시스템 재작성, multi-quarter migration)는 out-of-scope.
 
 ### 2. Search Before Building
 

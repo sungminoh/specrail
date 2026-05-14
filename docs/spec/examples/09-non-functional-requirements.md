@@ -41,7 +41,7 @@ PRD KPI 직접 매핑:
 
 | ID | NFR | 측정 단위 | 목표 | 측정 방법 | 위반 시 |
 |---|---|---|---|---|---|
-| NFR-AVAIL-1 | Plugin install 가용성 | % | 100% (사용자 fork 후) | 사용자 측 | 무관 (passive code) |
+| NFR-AVAIL-1 | Plugin install 가용성 | % | fork 후 사용자 측 책임 | 사용자 측 | 무관 (passive code) |
 | NFR-AVAIL-2 | EXT-1 Claude Code 다운 시 처리 | - | 의존 (필수) | CC 측 | plugin 무용 — Persona가 다른 시간 사용 |
 | NFR-AVAIL-3 | EXT-2 LLM API 다운 시 | - | CC가 fallback 또는 사용자 대기 | CC 측 | phase 진행 일시 정지 |
 | NFR-AVAIL-4 | EXT-3 Git Hosting 다운 시 | - | local git 작동, push만 막힘 | git 측 | hook 작동 가능 (local git) |

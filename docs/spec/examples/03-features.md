@@ -131,7 +131,7 @@
 
 ### AC
 
-- **AC-R6-1:** GIVEN Claude Code 환경, WHEN plugin install 명령, THEN 단일 명령으로 완료 (의존성·setup script 자동).
+- **AC-R6-1:** GIVEN Claude Code 환경, WHEN plugin install 명령, THEN 단일 명령으로 설치 (의존성·setup script 자동).
 - **AC-R6-2:** GIVEN 첫 plugin trigger, WHEN docs/spec 부재, THEN 자동 생성 + Phase 1 skill 호출. (대시보드 spawn은 v4.5)
 - **AC-R6-3:** GIVEN git repo + 기존 pre-commit hook 존재 가능 (husky·lefthook·plain script), WHEN plugin 첫 setup, THEN (a) 기존 hook 감지 (`.husky/`, `lefthook.yml`, `.git/hooks/pre-commit` plain), (b) **chain 방식** install — v4 hook이 기존 hook을 먼저 호출 후 자체 검증 실행, (c) 사용자 명시 confirm 후 적용. 기존 hook 덮어쓰기 절대 금지 — INV 등급 보호.
 
@@ -164,7 +164,7 @@
 
 ## R8: Implementation 핸드오프
 
-**Description:** Phase 13 완료 후 atomic task를 Superpowers 패턴 subagent로 자동 실행. 2-stage review.
+**Description:** Phase 13 승인 후 atomic task를 Superpowers 패턴 subagent로 자동 실행. 2-stage review.
 
 **해결하는 PAIN:** (구현 단계 — Phase 13 후)
 **해결하는 시나리오:** S1, S2
@@ -174,7 +174,7 @@
 ### AC
 
 - **AC-R8-1:** GIVEN Phase 13 status=Approved, WHEN 사용자 implementation 명령, THEN plugin이 atomic task 별 fresh subagent 호출.
-- **AC-R8-2:** GIVEN 각 task 완료, WHEN review, THEN 2-stage (spec compliance + code quality).
+- **AC-R8-2:** GIVEN 각 task 종료, WHEN review, THEN 2-stage (spec compliance + code quality).
 - **AC-R8-3:** GIVEN BLOCKED 또는 ambiguity, WHEN subagent 만남, THEN main session에 escalate (자동 진행 X).
 
 ### F8.1: Phase 13 → Implementation skill chain
@@ -200,7 +200,7 @@
 - **AC-R13-3:** GIVEN 사용자, WHEN opt-out 명령 anytime, THEN 즉시 전송 중단 + 기존 데이터 삭제 요청 가능.
 
 ### F13.1: Install 시 opt-in 질문 (default off)
-### F13.2: 익명 metric 전송 (사용자/spec 정보 제외, 단순 phase 완료 카운트·시간만)
+### F13.2: 익명 metric 전송 (사용자/spec 정보 제외, 단순 phase 실행 카운트·시간만)
 ### F13.3: Opt-out anytime + 데이터 삭제 요청
 
 ---

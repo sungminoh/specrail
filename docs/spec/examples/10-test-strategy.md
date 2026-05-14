@@ -44,7 +44,7 @@
 | AC-R5-1 | TC-9 | Phase 1 진입 시 6 forcing questions ONE-AT-A-TIME (Smart Routing 적용) | Integ (Skill + LLM) |
 | AC-R5-2 | TC-10 | Vague answer 입력 시 forcing pushback 출력 (5 패턴 매칭) | Integ (LLM-dependent) |
 | AC-R5-3 | TC-11 | 모든 phase가 00-common 원칙 자동 상속 (Anti-Sycophancy 등) | Unit (Skill metadata) |
-| AC-R6-1 | TC-12 | 단일 명령으로 plugin install 완료 (의존성·setup 자동) | E2E |
+| AC-R6-1 | TC-12 | 단일 명령으로 plugin install 성공 (의존성·setup 자동) | E2E |
 | AC-R6-2 | TC-13 | 첫 trigger 시 docs/spec 자동 생성 + Phase 1 skill 호출 | E2E |
 | AC-R6-3 | TC-14 | Plugin 첫 setup 시 git repo 감지 + pre-commit hook 자동 install (사용자 confirm 후) | Integ |
 | AC-R7-1 | TC-15 | Plugin 메인 prompt에 B2B 표현 검색 0건 | Static |

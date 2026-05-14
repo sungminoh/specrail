@@ -134,7 +134,7 @@ D) SCOPE REDUCTION     — 최소 가치 단위로 축소.
 
 ## Reasoning Procedure
 
-1. **Reframing 완료 확인** — Phase 0의 6 forcing questions 답변 검증
+1. **Reframing 검증** — Phase 0의 6 forcing questions 답변 검증
 2. **Mode 선택 확인** — A/B/C/D 중 선택됨
 3. **검색 (Search Before Building)** — 비슷한 product·도구·서비스의 현행 방식·실패 사례
 4. **PRD 초안 작성** — 아래 Output Format 따름
@@ -309,7 +309,7 @@ Phase 2가 사용할 것:
 | Q ID | 질문 | 결정자 | Blocking? |
 ````
 
-DELTA mode에서는 `current/01-prd.md` 그대로 두고 proposal만 추가. 사용자 승인 후 구현 완료 시 `current/`에 머지.
+DELTA mode에서는 `current/01-prd.md` 그대로 두고 proposal만 추가. 사용자 승인 후 구현 확정 시 `current/`에 머지.
 
 ---
 
