@@ -25,10 +25,10 @@ describe('T3.10 Secret detection (RISK-5, OQ-9-1)', () => {
     expect(m.some((x: SecretMatch) => x.pattern === 'github-pat')).toBe(true);
   });
 
-  // TC-4: Generic high-entropy hex string (64+ chars)
+  // TC-4: Generic high-entropy hex string (64+ chars) — use assignment context, not hash context
   it('detects high-entropy hex string as maybe-secret', () => {
     const hex64 = 'a'.repeat(32) + 'b'.repeat(32); // 64-char hex
-    const m = detectSecrets(`hash=${hex64}`);
+    const m = detectSecrets(`SECRET=${hex64}`);
     expect(m.length).toBeGreaterThan(0);
     expect(m.some((x: SecretMatch) => x.pattern === 'high-entropy')).toBe(true);
   });
@@ -105,5 +105,32 @@ describe('T3.10 Secret detection (RISK-5, OQ-9-1)', () => {
     const patterns = m.map((x: SecretMatch) => x.pattern);
     expect(patterns).toContain('openai-key');
     expect(patterns).toContain('aws-access-key');
+  });
+
+  // TC-13: SHA-256 commit reference — no false positive (R3 M-Round3-9)
+  it('does NOT flag SHA-256 commit reference (R3 M-Round3-9)', () => {
+    const text = 'parent commit: ' + 'a'.repeat(64);
+    const findings = detectSecrets(text);
+    const matches = findings.filter((f: SecretMatch) => f.pattern === 'high-entropy');
+    expect(matches).toHaveLength(0);
+  });
+
+  // TC-14: SHA context variants — sha:, hash:, digest=
+  it('does NOT flag hash: / sha: / digest= context (R3 M-Round3-9)', () => {
+    const hex64 = 'b'.repeat(64);
+    for (const prefix of ['sha256: ', 'hash: ', 'digest=', 'fingerprint: ', 'ref: ', 'cid: ']) {
+      const text = prefix + hex64;
+      const findings = detectSecrets(text);
+      const matches = findings.filter((f: SecretMatch) => f.pattern === 'high-entropy');
+      expect(matches, `should not flag "${prefix}..." as secret`).toHaveLength(0);
+    }
+  });
+
+  // TC-15: bare 64-hex assignment IS still flagged (regression check, R3 M-Round3-9)
+  it('still flags bare 64-hex assignment as secret (regression check R3 M-Round3-9)', () => {
+    const text = 'API_KEY=' + 'a'.repeat(64);
+    const findings = detectSecrets(text);
+    const matches = findings.filter((f: SecretMatch) => f.pattern === 'high-entropy');
+    expect(matches.length).toBeGreaterThan(0);
   });
 });

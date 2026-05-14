@@ -3,19 +3,41 @@
   "$id": "https://plan-pipeline.dev/schemas/phase-02.json",
   "title": "Phase 2 frontmatter",
   "type": "object",
-  "required": ["phase", "status"],
+  "required": [
+    "phase",
+    "status"
+  ],
   "properties": {
-    "phase": { "const": 2 },
-    "status": { "type": "string", "enum": ["Empty", "Draft", "Approved"] },
+    "phase": {
+      "const": 2
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Empty",
+        "Draft",
+        "Approved"
+      ]
+    },
     "mode": {
       "type": "string",
-      "enum": ["SCOPE_EXPANSION", "SELECTIVE_EXPANSION", "HOLD_SCOPE", "SCOPE_REDUCTION"]
+      "enum": [
+        "SCOPE_EXPANSION",
+        "SELECTIVE_EXPANSION",
+        "HOLD_SCOPE",
+        "SCOPE_REDUCTION"
+      ]
     },
     "refs": {
       "type": "array",
-      "items": { "type": "string", "pattern": "^([RFS]\\d+(\\.\\d+){0,2}|ENT-[A-Za-z0-9_]+|INV-\\d+|NFR-[A-Z]+-\\d+|ARCH-\\d+|EXT-\\d+|OPS-\\d+|ADR-\\d+|RISK-\\d+|TC-\\d+|EDGE-\\d+)$" }
+      "items": {
+        "type": "string",
+        "pattern": "^([RFS]\\d+(\\.\\d+){0,2}|ENT-[A-Za-z0-9_]+|INV-\\d+|NFR-[A-Z]+-\\d+|ARCH-\\d+|EXT-\\d+|OPS-\\d+|ADR-\\d+|RISK-\\d+|TC-\\d+|EDGE-\\d+|AC-R\\d+-\\d+|T\\d+\\.\\d+)$"
+      }
     },
-    "approvedAt": { "type": "string" }
+    "approvedAt": {
+      "type": "string"
+    }
   },
   "additionalProperties": true
 }

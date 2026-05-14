@@ -143,6 +143,14 @@ export function detectSecrets(text: string, options?: DetectOptions): SecretMatc
     const re = new RegExp(regex.source, regex.flags);
     let m: RegExpExecArray | null;
     while ((m = re.exec(sanitized)) !== null) {
+      // Context-aware filter for high-entropy hex: skip SHA-256/hash references
+      if (id === 'high-entropy') {
+        const lineStart = sanitized.lastIndexOf('\n', m.index) + 1;
+        const lineUpToMatch = sanitized.slice(lineStart, m.index);
+        const isHashContext =
+          /(?:commit|sha\d*|hash|digest|ref|cid|fingerprint)\s*[:=]\s*$/i.test(lineUpToMatch);
+        if (isHashContext) continue;
+      }
       const trigger = text.slice(m.index, m.index + m[0].length);
       results.push({ pattern: id, trigger, severity, suggestion });
     }

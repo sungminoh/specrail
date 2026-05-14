@@ -105,6 +105,14 @@ describe('Pre-commit hook installer (T1.7, AC-R6-3, AC-R2-1, F2.1, F6.4, RISK-3,
   });
 });
 
+describe('V4_HOOK_TEMPLATE ESM compatibility (R3 M-Round3-1)', () => {
+  it('V4_HOOK_TEMPLATE does not use require() in ESM context (R3 M-Round3-1)', () => {
+    // Template should NOT contain bare require( calls (only createRequire is OK)
+    const bareRequireMatches = V4_HOOK_TEMPLATE.match(/(?<!create)require\s*\(/g) ?? [];
+    expect(bareRequireMatches.length).toBe(0);
+  });
+});
+
 describe('V4_HOOK_TEMPLATE source string contents', () => {
   it('R2-H1: IIFE has .catch() after closing paren', () => {
     // The IIFE must end with })().catch( to ensure uncaught rejections are handled

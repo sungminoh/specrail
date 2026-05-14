@@ -72,7 +72,8 @@ ${V4_MARKER}
 import { execFile as ef } from 'node:child_process';
 import { promisify } from 'node:util';
 import { stat as st } from 'node:fs/promises';
-import { join as joinPath } from 'node:path';
+import { dirname, resolve as resolvePath, join as joinPath } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const execFile = promisify(ef);
 const projectRoot = process.cwd();
@@ -95,9 +96,9 @@ async function loadHooks() {
   }
   // ERR_MODULE_NOT_FOUND — try local dist (self-dogfood / dev)
   try {
-    const localDir = require('node:path').dirname(require('node:url').fileURLToPath(import.meta.url));
-    const distSchemaPath = require('node:path').resolve(localDir, '../dist/hook/schema-validate.js');
-    const distIdPath = require('node:path').resolve(localDir, '../dist/hook/id-consistency.js');
+    const localDir = dirname(fileURLToPath(import.meta.url));
+    const distSchemaPath = resolvePath(localDir, '../dist/hook/schema-validate.js');
+    const distIdPath = resolvePath(localDir, '../dist/hook/id-consistency.js');
     const pkg = await import(distSchemaPath);
     const ic = await import(distIdPath);
     process.stderr.write('[v4-hook] loaded from local dist (development mode)\\n');
