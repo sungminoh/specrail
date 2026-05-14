@@ -53,31 +53,34 @@ interface HeadingNode {
 }
 
 /**
+ * Replace <!--…--> spans in raw text with equal-length spaces (preserving
+ * newlines) so that line/column offsets remain valid.
+ * M7 fix: content AFTER a same-line closing '-->' is still scanned for IDs.
+ */
+function stripHtmlComments(text: string): string {
+  return text.replace(/<!--[\s\S]*?-->/g, (match) =>
+    match.replace(/[^\n]/g, ' '),
+  );
+}
+
+/**
  * Strips lines that are inside fenced code blocks or HTML comments.
  * Returns an array of booleans: true = line should be skipped for citation scan.
  *
  * Fence tracking: uses the opening fence character and length so that nested
  * fences of different lengths (e.g. 4-backtick outer + 3-backtick inner) do
  * not incorrectly toggle the state.
+ *
+ * HTML comments are pre-stripped by the caller via stripHtmlComments() before
+ * lines are passed here, so this function only needs to handle fenced code blocks.
  */
 function buildSkipMask(lines: string[]): boolean[] {
   const skip: boolean[] = new Array(lines.length).fill(false);
   let fenceChar: string | null = null;
   let fenceLen = 0;
-  let inHtmlComment = false;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-
-    // HTML block comment tracking (single-line or multi-line)
-    if (!inHtmlComment && line.includes('<!--')) {
-      inHtmlComment = true;
-    }
-    if (inHtmlComment) {
-      skip[i] = true;
-      if (line.includes('-->')) inHtmlComment = false;
-      continue;
-    }
 
     // Fenced code block tracking
     const fenceMatch = line.match(/^(`{3,}|~{3,})/);
@@ -149,7 +152,10 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
     // Skip HTML comments and fenced code blocks — these contain template
     // examples and diagram node labels, not real cross-phase citations.
     // (D11 fix: avoid false-positive dangling from template bodies)
-    const lines = raw.split('\n');
+    // M7 fix: strip HTML comments first (same-length spaces) so content
+    // AFTER a same-line '-->' is still scanned; buildSkipMask handles fences only.
+    const stripped = stripHtmlComments(raw);
+    const lines = stripped.split('\n');
     const skip = buildSkipMask(lines);
     lines.forEach((line, idx) => {
       if (skip[idx]) return;

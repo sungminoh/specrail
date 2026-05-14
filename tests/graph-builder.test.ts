@@ -157,6 +157,19 @@ describe('buildGraph (F4.1, INV-1·2, ADR-4·9, TC-7·8·31)', () => {
     expect(reservedHits).toEqual([]);
   });
 
+  it('extracts ID after same-line HTML comment close (M7 fix)', async () => {
+    await writeFile(
+      join(dir, 'docs/spec/03-features.md'),
+      '---\nphase: 3\n---\n## R1: foo\n',
+    );
+    await writeFile(
+      join(dir, 'docs/spec/05-flow.md'),
+      '---\nphase: 5\n---\n# Flow\n<!-- TODO --> Cites R1.\n',
+    );
+    const g = await buildGraph(dir);
+    expect(g.edges.find((e) => e.from === '05' && e.to === 'R1')).toBeDefined();
+  });
+
   it('handles 한국어 mixed body (NFR-I18N-1)', async () => {
     await writeFile(
       join(dir, 'docs/spec/03-features.md'),

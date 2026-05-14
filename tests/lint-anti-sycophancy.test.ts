@@ -117,6 +117,63 @@ describe('Anti-Sycophancy lint (US-9.1)', () => {
     ).toBe(true);
   });
 
+  // TC-H2a: keyword AFTER same-line HTML comment close IS detected
+  it('keyword after same-line HTML comment close → detected (H2 fix)', async () => {
+    const file = join(dir, 'test.md');
+    await writeFile(file, '<!-- prefix --> ship-ready\n');
+    const violations = await scanFile(file);
+    const v = violations.find((x: SycophancyViolation) => x.keyword === 'ship-ready');
+    expect(v).toBeDefined();
+  });
+
+  // TC-H2b: multi-line comment spanning 3 lines containing keyword in middle → all skipped
+  it('keyword inside multi-line HTML comment → skipped (H2 fix)', async () => {
+    const file = join(dir, 'test.md');
+    await writeFile(file, '<!--\nship-ready in middle\n-->\n');
+    const violations = await scanFile(file);
+    expect(violations).toHaveLength(0);
+  });
+
+  // TC-H2c: comment closed, keyword on next line → detected
+  it('keyword on line after HTML comment closes → detected (H2 fix)', async () => {
+    const file = join(dir, 'test.md');
+    await writeFile(file, '<!--\n-->\nship-ready after close\n');
+    const violations = await scanFile(file);
+    const v = violations.find((x: SycophancyViolation) => x.keyword === 'ship-ready');
+    expect(v).toBeDefined();
+  });
+
+  // TC-H3a: weak evidence present but not structured → hasStrongEvidence: false
+  it('weak evidence only → hasEvidence true, hasStrongEvidence false (H3 fix)', async () => {
+    const file = join(dir, 'test.md');
+    await writeFile(file, 'ship-ready (we ran the tests but they all failed)\n');
+    const violations = await scanFile(file);
+    const v = violations.find((x: SycophancyViolation) => x.keyword === 'ship-ready');
+    expect(v).toBeDefined();
+    expect(v!.hasEvidence).toBe(true);
+    expect(v!.hasStrongEvidence).toBe(false);
+  });
+
+  // TC-H3b: structured N tests PASS → hasStrongEvidence: true
+  it('structured "403 tests PASS" → hasStrongEvidence true (H3 fix)', async () => {
+    const file = join(dir, 'test.md');
+    await writeFile(file, 'ship-ready (403 tests PASS)\n');
+    const violations = await scanFile(file);
+    const v = violations.find((x: SycophancyViolation) => x.keyword === 'ship-ready');
+    expect(v).toBeDefined();
+    expect(v!.hasStrongEvidence).toBe(true);
+  });
+
+  // TC-H3c: test file reference → hasStrongEvidence: true
+  it('"verified by tests/foo.test.ts" → hasStrongEvidence true (H3 fix)', async () => {
+    const file = join(dir, 'test.md');
+    await writeFile(file, 'ship-ready\nverified by tests/foo.test.ts\n');
+    const violations = await scanFile(file);
+    const v = violations.find((x: SycophancyViolation) => x.keyword === 'ship-ready');
+    expect(v).toBeDefined();
+    expect(v!.hasStrongEvidence).toBe(true);
+  });
+
   // TC-8: context excerpt contains ±2 lines around match
   it('context field contains surrounding lines', async () => {
     const file = join(dir, 'test.md');

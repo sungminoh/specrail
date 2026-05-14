@@ -157,6 +157,59 @@ describe('INV-7 (extended)', () => {
     expect(v.length).toBe(0);
   });
 
+  // H6 fixes: broadened ALT_ITEM regex — digit, bullet, bold, ordered, alternative keyword
+  it('H6: ADR with digit alternatives (### 옵션 1, ### 옵션 2) → PASS', () => {
+    const text = `## ADR-101: Digit alts
+### Alternatives
+### 옵션 1: first choice
+- pros: something
+
+### 옵션 2: second choice
+- 거절 이유: too slow
+`;
+    const v = checkInv7(text, 'synthetic.md');
+    expect(v.filter((x) => x.reason.includes('ADR-101'))).toEqual([]);
+  });
+
+  it('H6: ADR with bullet alternatives (- Option A, - Option B) → PASS', () => {
+    const text = `## ADR-102: Bullet alts
+### Alternatives
+- Option A: first choice
+- some detail
+
+- Option B: second choice
+- 거절 이유: too complex
+`;
+    const v = checkInv7(text, 'synthetic.md');
+    expect(v.filter((x) => x.reason.includes('ADR-102'))).toEqual([]);
+  });
+
+  it('H6: ADR with bold alternatives (**옵션 A**, **옵션 B**) → PASS', () => {
+    const text = `## ADR-103: Bold alts
+### Alternatives
+**옵션 A**: first choice
+- detail
+
+**옵션 B**: second choice
+- 거절 이유: not scalable
+`;
+    const v = checkInv7(text, 'synthetic.md');
+    expect(v.filter((x) => x.reason.includes('ADR-103'))).toEqual([]);
+  });
+
+  it('H6: ADR with ordered list alternatives (1. Alternative A, 2. Alternative B) → PASS', () => {
+    const text = `## ADR-104: Ordered alts
+### Alternatives
+1. Alternative A: first choice
+- detail
+
+2. Alternative B: second choice
+- Rejection reason: maintenance burden
+`;
+    const v = checkInv7(text, 'synthetic.md');
+    expect(v.filter((x) => x.reason.includes('ADR-104'))).toEqual([]);
+  });
+
   it('Mixed real file: total violation count is deterministic and informative', async () => {
     const filePath = join(REPO_ROOT, 'docs/spec/examples/12-adr-risks.md');
     const violations = await checkInv7File(filePath);
