@@ -93,6 +93,44 @@ status: Approved   # ← 이 값이 truth
 
 Opt-out anytime: `/plan-pipeline opt-out`
 
+## Language config (optional, default TypeScript)
+
+기본값은 TypeScript stack (`npm run typecheck` + `vitest` + `.test.ts`). 다른 언어 프로젝트면 project root에 `.plan-pipeline.config.json` 생성:
+
+```json
+{ "extends": "python" }
+```
+
+Preset 4종 + 1 escape hatch:
+
+| `extends` | testFilePattern | QualityReview 5-checklist (요지) |
+|---|---|---|
+| `typescript` (default) | `.test.ts` | tsc / vitest / ESM `.js` suffix / no TODO / Phase 4 naming |
+| `python` | `_test.py` | mypy / pytest / ruff import sort / no TODO / Phase 4 naming |
+| `go` | `_test.go` | go vet / go test / gofmt / no TODO / Phase 4 naming |
+| `rust` | `.rs` | cargo check / cargo test / clippy `-D warnings` / no TODO / Phase 4 naming |
+| `none` | — | empty checklist (QualityReview는 자동 PASS) |
+
+영향 범위:
+- **`plan-pipeline check`의 AC traceability** — `testFilePattern`에 매칭되는 파일에서 `AC-R*` 라벨 검색
+- **Phase 13 subagent QualityReview prompt** — `qualityChecklist` 항목으로 5-check 본문 구성
+
+부분 override (preset 상속 + 일부 변경):
+
+```json
+{
+  "extends": "typescript",
+  "testFilePattern": ".spec.ts",
+  "qualityChecklist": [
+    "typecheck: npm run typecheck → 0 errors",
+    "tests: npm test → all green",
+    "no TODO/FIXME comments"
+  ]
+}
+```
+
+설정 파일 없으면 v4.0과 byte-identical 동작 (TypeScript 기본).
+
 ## Troubleshooting
 
 - **Windows hook 실행 안 됨:** Git for Windows의 Git Bash 사용 권장. WSL 사용자는 plugin이 Linux로 동작.
