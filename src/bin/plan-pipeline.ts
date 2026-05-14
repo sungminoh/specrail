@@ -30,10 +30,12 @@ async function main() {
       break;
     }
     case 'next': {
+      // L-Round4-2: blocked == "approve required" is normal state, not error.
+      // exit 2 differentiates from generic error (exit 1).
       const { nextPhase } = await import('../skill/orchestrator.js');
       const r = await nextPhase(process.cwd());
       console.log(JSON.stringify(r, null, 2));
-      exit(r.blocked ? 1 : 0);
+      exit(r.blocked ? 2 : 0);
     }
     case 'change': {
       const topic = args[0];

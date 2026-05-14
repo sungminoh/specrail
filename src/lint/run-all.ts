@@ -43,8 +43,19 @@ async function runAntiSycophancy(projectRoot: string): Promise<SingleLintReport>
   };
 }
 
-async function findAdrFiles(projectRoot: string): Promise<string[]> {
-  const candidates: string[] = [];
+// L-Round4-4: single-pass scan of spec dirs — coalesce ADR + AC discovery
+// into one readFile per file (was 2× before).
+interface SpecScan {
+  adrFiles: string[];
+  acFiles: string[];
+}
+
+const ADR_HEADING_RE = /^#{1,3}\s+ADR-\d+:/m;
+const AC_REF_RE = /AC-R\d+-\d+/m;
+
+async function scanSpecDirs(projectRoot: string): Promise<SpecScan> {
+  const adrFiles: string[] = [];
+  const acFiles: string[] = [];
   for (const subdir of ['docs/spec', 'docs/spec/examples']) {
     try {
       const dirPath = join(projectRoot, subdir);
@@ -53,34 +64,15 @@ async function findAdrFiles(projectRoot: string): Promise<string[]> {
         if (!f.endsWith('.md')) continue;
         const filePath = join(dirPath, f);
         const text = await readFile(filePath, 'utf8');
-        // Heuristic: contains ADR-N heading
-        if (/^#{1,3}\s+ADR-\d+:/m.test(text)) candidates.push(filePath);
+        if (ADR_HEADING_RE.test(text)) adrFiles.push(filePath);
+        if (AC_REF_RE.test(text)) acFiles.push(filePath);
       }
     } catch { /* dir missing — skip */ }
   }
-  return candidates;
+  return { adrFiles, acFiles };
 }
 
-async function findAcFiles(projectRoot: string): Promise<string[]> {
-  const candidates: string[] = [];
-  for (const subdir of ['docs/spec', 'docs/spec/examples']) {
-    try {
-      const dirPath = join(projectRoot, subdir);
-      const files = await readdir(dirPath);
-      for (const f of files) {
-        if (!f.endsWith('.md')) continue;
-        const filePath = join(dirPath, f);
-        const text = await readFile(filePath, 'utf8');
-        // Heuristic: contains AC-R heading
-        if (/AC-R\d+-\d+/m.test(text)) candidates.push(filePath);
-      }
-    } catch { /* dir missing — skip */ }
-  }
-  return candidates;
-}
-
-async function runInv7(projectRoot: string): Promise<SingleLintReport> {
-  const files = await findAdrFiles(projectRoot);
+async function runInv7(files: string[]): Promise<SingleLintReport> {
   if (files.length === 0) {
     return { name: 'inv-7', status: 'PASS', details: 'no ADR file' };
   }
@@ -118,8 +110,7 @@ async function runAcTraceability(projectRoot: string): Promise<SingleLintReport>
   };
 }
 
-async function runInv5(projectRoot: string): Promise<SingleLintReport> {
-  const files = await findAcFiles(projectRoot);
+async function runInv5(files: string[]): Promise<SingleLintReport> {
   if (files.length === 0) {
     return { name: 'inv-5', status: 'PASS', details: 'no spec file' };
   }
@@ -143,10 +134,12 @@ export async function runAllChecks(
 ): Promise<LintReport> {
   const reports: SingleLintReport[] = [];
 
+  // L-Round4-4: single spec scan shared between INV-7 and INV-5 (was 2 readFile per file)
+  const scan = await scanSpecDirs(projectRoot);
   reports.push(await runAntiSycophancy(projectRoot));
-  reports.push(await runInv7(projectRoot));
+  reports.push(await runInv7(scan.adrFiles));
   reports.push(await runAcTraceability(projectRoot));
-  reports.push(await runInv5(projectRoot));
+  reports.push(await runInv5(scan.acFiles));
 
   const strict = options.strict ?? false;
   const overall = reports.some((r) => r.status === 'FAIL' || (strict && r.status === 'WARN'))

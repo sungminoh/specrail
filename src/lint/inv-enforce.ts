@@ -36,8 +36,14 @@ export function checkInv5(text: string, filePath = ''): InvViolation[] {
     const acMatch = line.match(AC_LINE);
     if (!acMatch) continue;
 
-    // Look ahead: AC body는 같은 라인 또는 다음 1-3줄
-    const acContext = lines.slice(idx, idx + 4).join(' ');
+    // R4 M-Round4-1: scope lookahead to THIS AC's body — stop at next AC line OR blank line.
+    // Prevents adjacent AC's GIVEN/WHEN/THEN from masking current AC's missing format.
+    let acContext = line;
+    for (let j = idx + 1; j < Math.min(idx + 4, lines.length); j++) {
+      const next = lines[j];
+      if (AC_LINE.test(next) || next.trim() === '') break;
+      acContext += ' ' + next;
+    }
 
     if (!GIVEN_WHEN_THEN.test(acContext)) {
       violations.push({
