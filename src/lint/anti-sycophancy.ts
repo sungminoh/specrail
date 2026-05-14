@@ -40,7 +40,40 @@ const EVIDENCE_RE = /\b(test|tests|measurement|passed|verified|evidence|PASS)\b/
 // ↑ simple keyword proximity; subject to false-negatives — see module docstring.
 
 // Strong evidence: structured/measured claims — number + verb, test file ref, coverage, benchmark.
-const STRONG_EVIDENCE_RE = /(\d+\s*(?:tests?|specs?)\s*(?:PASS|passed|passing)|verified by\s+\S|tests\/\S+\.test\.[tj]sx?|coverage\s*[≥>=]\s*\d|measured|benchmark)/i;
+const STRONG_EVIDENCE_RE = /(\d+\s*(?:tests?|specs?)\s*(?:PASS|passed|passing)|verified by\s+\S{2,}|tests\/\S+\.test\.[tj]sx?|coverage\s*[≥>=]\s*\d|measured|benchmark)/i;
+
+/**
+ * Returns true when the matched keyword is in a benign noun-form context
+ * where it is not a self-praise claim (e.g. table cell, mermaid edge label,
+ * quoted status label). Currently only applied to '완료'.
+ */
+function isWordInBenignContext(line: string, matchIndex: number, keyword: string): boolean {
+  if (keyword !== '완료') return false;
+
+  // Table row: pipe character anywhere on the line → noun cell, not claim
+  if (line.includes('|')) return true;
+
+  // Mermaid edge label: line contains arrow notation
+  if (/-->|---|-->|<-->/.test(line)) return true;
+
+  // Quoted/backtick-enclosed label: keyword is inside quotes or backticks
+  const before = line.slice(0, matchIndex);
+  const after = line.slice(matchIndex + keyword.length);
+  const hasOpenQuote = /[`"']\s*\S*$/.test(before);
+  const hasCloseQuote = /^\S*\s*[`"']/.test(after);
+  if (hasOpenQuote && hasCloseQuote) return true;
+
+  return false;
+}
+
+/**
+ * Returns the evidence window radius (lines before/after) for a given keyword.
+ * Percentage keywords need a wider window to capture nearby matrix/metric lines.
+ */
+function getEvidenceWindowSize(keyword: string): number {
+  if (/%$/.test(keyword)) return 5;
+  return 3;
+}
 
 function buildKeywordRegex(): RegExp {
   const escaped = KEYWORDS.map((k) =>
@@ -68,7 +101,7 @@ function isInCodeFence(lines: string[], lineIdx: number): boolean {
  */
 function stripHtmlComments(text: string): string {
   return text.replace(/<!--[\s\S]*?-->/g, (match) =>
-    match.replace(/[^\n]/g, ' '),
+    match.replace(/[^\r\n]/g, ' '),
   );
 }
 
@@ -81,9 +114,11 @@ function extractContext(lines: string[], lineIdx: number): string {
 function evidenceFlags(
   lines: string[],
   lineIdx: number,
+  keyword: string,
 ): { hasEvidence: boolean; hasStrongEvidence: boolean } {
-  const start = Math.max(0, lineIdx - 3);
-  const end = Math.min(lines.length - 1, lineIdx + 3);
+  const radius = getEvidenceWindowSize(keyword);
+  const start = Math.max(0, lineIdx - radius);
+  const end = Math.min(lines.length - 1, lineIdx + radius);
   const window = lines.slice(start, end + 1).join('\n');
   return {
     hasEvidence: EVIDENCE_RE.test(window),
@@ -107,8 +142,9 @@ function scanText(text: string, filePath: string): SycophancyViolation[] {
     let m: RegExpExecArray | null;
     while ((m = re.exec(lines[i])) !== null) {
       const keyword = m[0].toLowerCase();
+      if (isWordInBenignContext(lines[i], m.index, keyword)) continue;
       const context = extractContext(originalLines, i);
-      const { hasEvidence, hasStrongEvidence } = evidenceFlags(originalLines, i);
+      const { hasEvidence, hasStrongEvidence } = evidenceFlags(originalLines, i, keyword);
       violations.push({
         filePath,
         line: i + 1,

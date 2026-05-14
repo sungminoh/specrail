@@ -59,7 +59,7 @@ interface HeadingNode {
  */
 function stripHtmlComments(text: string): string {
   return text.replace(/<!--[\s\S]*?-->/g, (match) =>
-    match.replace(/[^\n]/g, ' '),
+    match.replace(/[^\r\n]/g, ' '),
   );
 }
 

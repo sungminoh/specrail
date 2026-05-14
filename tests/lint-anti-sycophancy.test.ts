@@ -1,8 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtemp, writeFile, mkdir, rm } from 'node:fs/promises';
+import { execSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { scanFile, scanProject, type SycophancyViolation } from '../src/lint/anti-sycophancy.js';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = resolve(__dirname, '..');
+const SCRIPT = resolve(REPO_ROOT, 'src/lint/anti-sycophancy.ts');
 
 let dir: string;
 
@@ -189,5 +195,85 @@ describe('Anti-Sycophancy lint (US-9.1)', () => {
     expect(v).toBeDefined();
     expect(v!.context).toContain('line two');
     expect(v!.context).toContain('line four');
+  });
+
+  // TC-R2-N1: 완료 in table cell (pipe on line) → benign, no violation
+  it('완료 in table cell → benign, no violation (R2 noun-context fix)', async () => {
+    const file = join(dir, 'test.md');
+    await writeFile(file, '| 단계 | 상태 | 비고 |\n| --- | --- | --- |\n| 요청 처리 | 응답 완료 | OK |\n');
+    const violations = await scanFile(file);
+    const v = violations.find((x: SycophancyViolation) => x.keyword === '완료');
+    expect(v).toBeUndefined();
+  });
+
+  // TC-R2-N2: 완료 in mermaid edge label (arrow on line) → benign, no violation
+  it('완료 in mermaid edge label → benign, no violation (R2 noun-context fix)', async () => {
+    const file = join(dir, 'test.md');
+    await writeFile(file, 'A --> B: 호출 완료\n');
+    const violations = await scanFile(file);
+    const v = violations.find((x: SycophancyViolation) => x.keyword === '완료');
+    expect(v).toBeUndefined();
+  });
+
+  // TC-R2-M2: CRLF files — stripHtmlComments preserves \r
+  it('CRLF files: stripHtmlComments preserves \\r (R2-M2 fix)', async () => {
+    const file = join(dir, 'crlf.md');
+    await writeFile(file, '<!-- ship-ready -->\r\nBody line\r\n');
+    const violations = await scanFile(file);
+    expect(violations).toHaveLength(0);
+  });
+
+  // TC-R2-CLI1: CLI exits 0 when no bare violations (clean fixture)
+  it('CLI exits 0 when no bare violations (clean fixture)', async () => {
+    const fixture = await mkdtemp(join(tmpdir(), 'anti-syco-cli-clean-'));
+    try {
+      await mkdir(join(fixture, 'docs'), { recursive: true });
+      await writeFile(join(fixture, 'docs', 'a.md'), 'innocent content\n');
+      const result = execSync(
+        `npx --yes tsx "${SCRIPT}" "${fixture}"`,
+        { stdio: 'pipe', cwd: REPO_ROOT },
+      );
+      expect(result.toString()).toMatch(/clean/i);
+    } finally {
+      await rm(fixture, { recursive: true, force: true });
+    }
+  });
+
+  // TC-R2-CLI2: CLI exits 1 when bare violations exist
+  it('CLI exits 1 when bare violations exist', async () => {
+    const fixture = await mkdtemp(join(tmpdir(), 'anti-syco-cli-fail-'));
+    try {
+      await mkdir(join(fixture, 'docs'), { recursive: true });
+      await writeFile(join(fixture, 'docs', 'a.md'), 'This is ship-ready.\n');
+      expect(() => execSync(
+        `npx --yes tsx "${SCRIPT}" "${fixture}"`,
+        { stdio: 'pipe', cwd: REPO_ROOT },
+      )).toThrow();
+    } finally {
+      await rm(fixture, { recursive: true, force: true });
+    }
+  });
+
+  // TC-R2-CLI3: --strict CLI flag filters by hasStrongEvidence
+  it('--strict CLI flag: weak evidence passes default but fails strict (R2-H3 fix)', async () => {
+    const fixture = await mkdtemp(join(tmpdir(), 'anti-syco-cli-strict-'));
+    try {
+      await mkdir(join(fixture, 'docs'), { recursive: true });
+      await writeFile(join(fixture, 'docs', 'a.md'), 'ship-ready (we ran the tests)\n');
+
+      // Default mode — weak evidence present → exit 0
+      expect(() => execSync(
+        `npx --yes tsx "${SCRIPT}" "${fixture}"`,
+        { stdio: 'pipe', cwd: REPO_ROOT },
+      )).not.toThrow();
+
+      // --strict mode — no strong evidence → exit 1
+      expect(() => execSync(
+        `npx --yes tsx "${SCRIPT}" "${fixture}" --strict`,
+        { stdio: 'pipe', cwd: REPO_ROOT },
+      )).toThrow();
+    } finally {
+      await rm(fixture, { recursive: true, force: true });
+    }
   });
 });
