@@ -30,8 +30,15 @@ export class IdCounter {
 
   static async load(projectRoot: string): Promise<IdCounter> {
     const path = join(projectRoot, '.plan-pipeline-cache', 'id-counter.json');
+    let raw: string | null;
     try {
-      const raw = await readFile(path, 'utf8');
+      raw = await readFile(path, 'utf8');
+    } catch {
+      // File missing — fresh project, OK
+      return new IdCounter(structuredClone(EMPTY_STATE), path);
+    }
+    // File exists but may be corrupt
+    try {
       const parsed = JSON.parse(raw) as Partial<CounterState>;
       return new IdCounter(
         {
@@ -41,8 +48,17 @@ export class IdCounter {
         },
         path,
       );
-    } catch {
-      return new IdCounter(structuredClone(EMPTY_STATE), path);
+    } catch (e) {
+      // R3 M-Round3-7: corrupt cache — backup + throw with clear message
+      const backupPath = path + '.corrupt-' + Date.now();
+      try {
+        await rename(path, backupPath);
+      } catch { /* best-effort */ }
+      throw new Error(
+        `id-counter.json corrupted: ${String(e)}. ` +
+        `Backed up to ${backupPath}. ` +
+        `Either restore from backup or delete the file to start fresh (will reset all IDs to 1).`,
+      );
     }
   }
 

@@ -11,9 +11,19 @@ const DANGEROUS_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 export function parse(yaml: string): Record<string, unknown> {
   // D1: null prototype object — Object.prototype 오염 차단
   const result: Record<string, unknown> = Object.create(null) as Record<string, unknown>;
-  // D16 fix (4차 reviewer simplifier): dead variable currentKey removed
   const lines = yaml.split(/\r?\n/);
   let currentArray: string[] | null = null;
+  let currentArrayKey: string | null = null;
+
+  // R3 H-Round3-1: defensive copy — seal completed array so external mutation
+  // cannot affect result and subsequent pushes cannot affect callers.
+  const finalizeArray = (): void => {
+    if (currentArrayKey !== null && currentArray !== null) {
+      result[currentArrayKey] = currentArray.slice();
+    }
+    currentArray = null;
+    currentArrayKey = null;
+  };
 
   for (const rawLine of lines) {
     const line = rawLine.replace(/\s+$/, '');
@@ -29,15 +39,19 @@ export function parse(yaml: string): Record<string, unknown> {
     // Key: value
     const kvMatch = line.match(/^([A-Za-z_][\w-]*)\s*:\s*(.*)$/);
     if (kvMatch) {
+      // Finalize any in-progress array before processing next key
+      finalizeArray();
+
       const [, key, val] = kvMatch;
       // D1: reject dangerous keys (prototype pollution defense)
       if (DANGEROUS_KEYS.has(key)) continue;
       const trimmed = val.trim();
 
       if (trimmed === '') {
-        // Array follows
+        // Array follows — accumulate items; result[key] replaced with slice in finalizeArray
         currentArray = [];
-        result[key] = currentArray;
+        currentArrayKey = key;
+        result[key] = currentArray; // placeholder; replaced with defensive copy on finalize
       } else if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
         // Inline array
         result[key] = trimmed
@@ -45,14 +59,15 @@ export function parse(yaml: string): Record<string, unknown> {
           .split(',')
           .map((s) => stripQuotes(s.trim()))
           .filter((s) => s.length > 0);
-        currentArray = null;
       } else {
         const stripped = stripQuotes(trimmed);
         result[key] = coerce(stripped);
-        currentArray = null;
       }
     }
   }
+
+  // Finalize trailing array (last key in document)
+  finalizeArray();
 
   return result;
 }

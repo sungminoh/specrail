@@ -42,11 +42,13 @@ export interface ChangeProposal {
 }
 
 function kebabize(s: string): string {
-  return s
+  const cleaned = s
     .toLowerCase()
     .replace(/[^a-z0-9가-힣\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/^-+|-+$/g, '');
+  // R3 M-Round3-6: empty slug fallback for non-Korean/ASCII multilingual input
+  return cleaned.length > 0 ? cleaned : 'untitled';
 }
 
 export async function draftChange(
@@ -56,6 +58,10 @@ export async function draftChange(
 ): Promise<ChangeProposal> {
   const date = new Date().toISOString().slice(0, 10);
   const slug = kebabize(topic);
+  // R3 M-Round3-6: path containment defense
+  if (slug.includes('..') || slug.includes('/')) {
+    throw new Error(`Invalid topic slug after kebabize: "${slug}"`);
+  }
   const changeDir = join(projectRoot, 'docs', 'spec', 'changes', `${date}-${slug}`);
   await mkdir(changeDir, { recursive: true });
 

@@ -74,4 +74,31 @@ describe('change skill (T2.4, F4.3, AC-R4-1, TC-7)', () => {
     const r = await draftChange(dir, '결제 추가', ['R1']);
     expect(r.proposalPath).toMatch(/결제-추가/);
   });
+
+  it('kebabize empty input returns "untitled" (R3 M-Round3-6)', async () => {
+    await writeFile(
+      join(dir, 'docs/spec/03-features.md'),
+      '---\nphase: 3\nstatus: Approved\n---\n## R1: x\n',
+    );
+    await writeFile(
+      join(dir, 'docs/spec/05.md'),
+      '---\nphase: 5\n---\n# Flow\nRefs R1.\n',
+    );
+    // Topic with only chars that kebabize strips
+    const r = await draftChange(dir, '!!!', ['R1']);
+    expect(r.proposalPath).toMatch(/untitled/);
+  });
+
+  it('kebabize Japanese topic falls back to untitled (R3 M-Round3-6)', async () => {
+    await writeFile(
+      join(dir, 'docs/spec/03-features.md'),
+      '---\nphase: 3\nstatus: Approved\n---\n## R1: x\n',
+    );
+    await writeFile(
+      join(dir, 'docs/spec/05.md'),
+      '---\nphase: 5\n---\n# Flow\nRefs R1.\n',
+    );
+    const r = await draftChange(dir, '技術改善', ['R1']);
+    expect(r.proposalPath).toMatch(/untitled/);
+  });
 });

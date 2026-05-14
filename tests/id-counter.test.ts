@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { IdCounter } from '../src/spec/counter.js';
@@ -50,6 +50,22 @@ describe('IdCounter (F1.3, AC-R1-3, ADR-5, INV-1, TC-3, TC-30)', () => {
   it('S without 2 parents throws', async () => {
     const c = await IdCounter.load(dir);
     await expect(c.next(SpecTier.Specification, 3, [1])).rejects.toThrow(/parent R and F/);
+  });
+
+  it('throws on corrupt JSON with backup file created (R3 M-Round3-7)', async () => {
+    const cacheDir = join(dir, '.plan-pipeline-cache');
+    await mkdir(cacheDir, { recursive: true });
+    await writeFile(join(cacheDir, 'id-counter.json'), 'NOT VALID JSON {');
+    await expect(IdCounter.load(dir)).rejects.toThrow(/corrupt/i);
+    // Verify backup created
+    const files = await readdir(cacheDir);
+    expect(files.some((f) => f.startsWith('id-counter.json.corrupt-'))).toBe(true);
+  });
+
+  it('still loads cleanly when no file exists (R3 M-Round3-7 regression)', async () => {
+    const counter = await IdCounter.load(dir);
+    const id = await counter.next(SpecTier.Requirement, 1);
+    expect(id).toBe('R1');
   });
 
   afterEach(async () => {
