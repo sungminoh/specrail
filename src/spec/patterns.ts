@@ -24,7 +24,7 @@ export const ID_PATTERN_SOURCE =
   '[RFS]\\d+(?:\\.\\d+){0,2}' +
   '|ENT-[A-Za-z0-9_]+' +
   '|INV-\\d+' +
-  '|NFR-[A-Z]+-\\d+' +
+  '|NFR-[A-Z][A-Z0-9]*-\\d+' +
   '|ARCH-\\d+' +
   '|EXT-\\d+' +
   '|OPS-\\d+' +

@@ -24,7 +24,7 @@ status: Approved
 **해결하는 PAIN:** PAIN-1 (환각 ID), PAIN-2 (사용자 기억 의존)
 **해결하는 시나리오:** S1, S2
 **Importance:** P0
-**Status:** Draft
+**Status:** Approved
 
 ### Acceptance Criteria
 
@@ -53,7 +53,7 @@ status: Approved
 **해결하는 PAIN:** PAIN-3 (HARD-GATE 양심), PAIN-5 (self-check 잊음)
 **해결하는 시나리오:** S1, S2
 **Importance:** P0
-**Status:** Draft
+**Status:** Approved
 
 ### AC
 
@@ -89,7 +89,7 @@ status: Approved
 **해결하는 PAIN:** PAIN-DELTA-scope
 **해결하는 시나리오:** S2
 **Importance:** P0
-**Status:** Draft
+**Status:** Approved
 
 ### AC
 
@@ -109,7 +109,7 @@ status: Approved
 **해결하는 PAIN:** PAIN-fundamental (Forcing 도망)
 **해결하는 시나리오:** S1, S2
 **Importance:** P0
-**Status:** Draft
+**Status:** Approved
 
 ### AC
 
@@ -131,7 +131,7 @@ status: Approved
 **해결하는 PAIN:** PAIN-base
 **해결하는 시나리오:** S1
 **Importance:** P0
-**Status:** Draft
+**Status:** Approved
 
 ### AC
 
@@ -153,7 +153,7 @@ status: Approved
 **해결하는 PAIN:** 도메인 bias 산출물 왜곡
 **해결하는 시나리오:** S1, S2, S3
 **Importance:** P0
-**Status:** Draft
+**Status:** Approved
 
 ### AC
 
@@ -173,7 +173,7 @@ status: Approved
 **해결하는 PAIN:** (구현 단계 — Phase 13 후)
 **해결하는 시나리오:** S1, S2
 **Importance:** P0
-**Status:** Draft
+**Status:** Approved
 
 ### AC
 
@@ -195,7 +195,7 @@ status: Approved
 **해결하는 PAIN:** (KPI 측정 부재 — product 운영. 사용자 PAIN 아님 — maintainer 필요)
 **해결하는 시나리오:** 모든 (background)
 **Importance:** P0
-**Status:** Draft
+**Status:** Approved
 
 ### AC
 

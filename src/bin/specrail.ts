@@ -67,6 +67,12 @@ async function main() {
       await installHook(process.cwd());
       break;
     }
+    case 'verify': {
+      const { runVerifyCli } = await import('../cli/verify.js');
+      const { exitCode, output } = await runVerifyCli(process.cwd(), args);
+      process.stdout.write(output + (output.endsWith('\n') ? '' : '\n'));
+      exit(exitCode);
+    }
     default: {
       // Usage: stdout if user asked (no command); stderr if command was unknown
       const out = command ? console.error : console.log;
@@ -80,6 +86,7 @@ async function main() {
       out('  change "<topic>" --ids=...    Draft a change proposal');
       out('  check [--strict]              Run all lint checks');
       out('  install-hook                  Install git pre-commit hook');
+      out('  verify [--json|--md] [...]   Auto-derived implementation status report');
       exit(command ? 1 : 0);
     }
   }

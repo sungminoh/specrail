@@ -25,6 +25,61 @@ LLM-assisted planning에서 "사용자 양심·기억 의존"으로 발생하는
 3. Pre-commit hook — 환각 ID (INV-2) 자동 차단, frontmatter schema 자동 검증
 4. DELTA mode — `/specrail change "<topic>"` 시 영향 phase 자동 식별 (graph)
 5. Phase 13 후 implementation — fresh subagent + 2-stage review (Superpowers 패턴)
+6. `/specrail verify` — spec 항목별 implementation status를 코드·테스트·git에서 자동 도출
+
+## Verification — `specrail verify`
+
+Spec 안의 `Status:` 필드는 author **intent**(`Draft`나 `Approved`)만 표현합니다.
+실제 구현 **reality**는 도구가 매번 새로 계산합니다 — drift 불가능한 single
+source of truth:
+
+```bash
+specrail verify              # human-readable report
+specrail verify --json       # machine-readable
+specrail verify --md         # PR-comment friendly
+specrail verify --filter R1  # 특정 ID만
+specrail verify --no-tests   # vitest skip (faster but lower fidelity)
+```
+
+각 ID의 reality 5단계:
+
+- 🟢 **Built** — 자동탐지 evidence 완전 (test 통과, 파일 존재 등)
+- 🟡 **Partial** — 일부 evidence (children 일부 Built, 일부 NotBuilt 등)
+- ⚪ **NotBuilt** — evidence 0건
+- 🔵 **ManualReview** — semantic 영역 (ADR 등) — `**Verification:**` sign-off 필요
+- 🟠 **ManualReview-Stale** — sign-off 있으나 관련 파일 hash 변경됨
+
+ID 종류별 rule (요약):
+
+| ID | 출처 |
+|---|---|
+| AC / TC / INV / EDGE / NFR | `tests/`에서 ID 참조 + 그 test 통과 |
+| ARCH / EXT / OPS | spec 본문에 명시된 `src/...`, `.github/...` 경로 존재 |
+| ENT | spec 본문의 entity 이름이 `src/` 안에 interface/type/class로 존재 |
+| RB | `docs/runbooks/RB-{n}*.md` 존재 OR 정의 셀에 substantive body |
+| T (task) | spec body의 `Files:` 경로 존재 + TODO/FIXME 0건 |
+| OQ | row의 상태가 RESOLVED / DEFERRED / ADR 참조 |
+| ADR | `**Verification:**` sign-off + 옵션 `sha:<short> path:<rel>` |
+| R / F | 자식 AC + F + S를 roll-up |
+| PAIN / KPI / RISK | 정의 근처 cross-reference 된 ID들의 reality를 roll-up |
+
+자동탐지가 못 잡는 항목은 spec에 explicit annotation을 추가하면 됩니다:
+
+```markdown
+### ADR-7: Telemetry endpoint — Plausible
+
+**Verification:** Manual review by maintainer 2026-05-14 sha:abc1234 path:src/telemetry/plausible-adapter.ts
+```
+
+`Verification:` 블록의 `sha:` 가 현재 git blob SHA와 일치하지 않으면
+ManualReview-Stale로 자동 표시되어 재 sign-off가 필요해집니다.
+
+Pre-commit 통합: `src/hook/verify-status.ts`는 spec이 명시한 `Evidence:` /
+`Files:` 경로가 실제로 존재하는지 검증. NotBuilt/Partial 자체는 commit을
+막지 않지만 (작업 중인 상태도 commit해야 함), broken evidence pointer (예:
+`src/no/such.ts`)는 commit을 차단합니다.
+
+자세한 baseline은 [docs/verify-baseline-2026-05-14.md](docs/verify-baseline-2026-05-14.md).
 
 ## Install
 

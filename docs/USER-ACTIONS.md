@@ -59,3 +59,37 @@ Confirm latest version matches the tag pushed in step 4.
 
 - Within 24h of publish: `npm unpublish specrail@<version>`
 - After 24h: `npm deprecate specrail@<version> "<reason>"`
+
+## 6. ManualReview sign-off workflow (recurring, every release)
+
+**Action by maintainer — AI cannot do this**
+
+`specrail verify` classifies most IDs automatically, but ADRs and a few
+operational items live in the **ManualReview** state until a human signs
+off. Run before each release:
+
+```sh
+specrail verify --md > /tmp/verify.md
+```
+
+For every ADR-{n} / item that shows up as 🔵 ManualReview:
+
+1. Read the ADR body. Confirm the decision still matches the code in
+   the cited file.
+2. Append a single sign-off line at the end of the ADR section:
+
+   ```markdown
+   **Verification:** Manual review by <your-name> <YYYY-MM-DD> sha:<short> path:<rel/path/to/related/file>
+   ```
+
+   - `<short>` is the first 7+ chars of `git hash-object <path>` for the
+     file you reviewed.
+   - When that file changes in a future commit, `specrail verify` will
+     detect the SHA mismatch and re-flag the ADR as
+     🟠 ManualReview-Stale so you remember to re-sign.
+
+3. Commit the sign-off as part of the release prep.
+
+ManualReview-Stale items must be re-signed before publishing the next
+release — that's the contract that keeps the spec honest as the
+codebase evolves.
