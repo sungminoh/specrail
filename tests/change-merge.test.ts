@@ -199,6 +199,50 @@ describe('mergeChange (US-T7.4)', () => {
     expect(proposal).toMatch(/^status: proposed$/m);
   });
 
+  it('accumulates multiple deltas for same phase (C3 fix)', async () => {
+    // Manually create 2 delta files for phase 05 (same currentPath)
+    await mkdir(join(changeDir, 'deltas'), { recursive: true });
+    await writeFile(
+      join(changeDir, 'deltas', '05-user-flow-A-delta.md'),
+      '---\nphase: 5\n---\n## MODIFIED\n- ENT-Foo: change A\n',
+    );
+    await writeFile(
+      join(changeDir, 'deltas', '05-user-flow-B-delta.md'),
+      '---\nphase: 5\n---\n## MODIFIED\n- ENT-Foo: change B\n',
+    );
+
+    const r = await mergeChange(dir, changeDir);
+    expect(r.merged).toBe(true);
+    // Both delta phaseStrs are '05' — verify both phases entries
+    expect(r.phases).toEqual(['05', '05']);
+
+    const cur = await readFile(join(dir, 'docs/spec/05-user-flow.md'), 'utf8');
+    // Both DELTA sections must be present (accumulating, not overwriting)
+    expect(cur).toContain('change A');
+    expect(cur).toContain('change B');
+    expect(cur.match(/## DELTA — /g)?.length).toBe(2);
+  });
+
+  it('restores ORIGINAL (not intermediate) on multi-delta failure (C3 fix)', async () => {
+    // Setup: one valid delta (phase 05) + one invalid (phase 99 — file not found)
+    await mkdir(join(changeDir, 'deltas'), { recursive: true });
+    await writeFile(
+      join(changeDir, 'deltas', '05-user-flow-delta.md'),
+      '---\nphase: 5\n---\n## MODIFIED\n- ENT-Foo: legitimate change\n',
+    );
+    await writeFile(
+      join(changeDir, 'deltas', '99-nonexistent-delta.md'),
+      '---\nphase: 99\n---\n## MODIFIED\n- something\n',
+    );
+
+    await expect(mergeChange(dir, changeDir)).rejects.toThrow(/Phase 99/);
+
+    // Original 05 content must be intact (no leftover DELTA)
+    const cur = await readFile(join(dir, 'docs/spec/05-user-flow.md'), 'utf8');
+    expect(cur).not.toContain('## DELTA');
+    expect(cur).not.toContain('legitimate change');
+  });
+
   it('success path — 2-phase merge: both currents have DELTA section and proposal is applied', async () => {
     // Both phase 03 and phase 05 have valid content (no dangling citations)
     // Deltas for both phases merge cleanly

@@ -319,7 +319,8 @@ export async function mergeChange(
   }
 
   // Transaction: backup before write, restore on failure (architect M7 risk #4 close)
-  const backups = new Map<string, string>(); // currentPath → original content
+  const backups = new Map<string, string>(); // currentPath → ORIGINAL content (for restore on fail)
+  const currentState = new Map<string, string>(); // currentPath → CURRENT content (accumulates merges)
   const phases: string[] = [];
   try {
     // Phase A: backup all current files that will be touched
@@ -335,11 +336,13 @@ export async function mergeChange(
       }
       const currentPath = join(projectRoot, 'docs', 'spec', phaseFile);
       if (!backups.has(currentPath)) {
-        backups.set(currentPath, await readFile(currentPath, 'utf8'));
+        const original = await readFile(currentPath, 'utf8');
+        backups.set(currentPath, original);
+        currentState.set(currentPath, original);
       }
     }
 
-    // Phase B: actual merge writes
+    // Phase B: actual merge writes — read from currentState (accumulating), write back
     for (const deltaFile of deltaFiles) {
       const phaseStr = deltaFile.slice(0, 2);
       const phaseN = parseInt(phaseStr, 10);
@@ -356,14 +359,15 @@ export async function mergeChange(
       const deltaRaw = await readFile(join(deltaDir, deltaFile), 'utf8');
       const { body: deltaBody } = parseFrontmatter(deltaRaw);
 
-      const currentRaw = backups.get(currentPath)!;
+      const accumulatedRaw = currentState.get(currentPath)!;
       const merged =
-        currentRaw.replace(/\s+$/, '') +
+        accumulatedRaw.replace(/\s+$/, '') +
         '\n\n## DELTA — ' +
         basename(changeDir) +
         '\n' +
         deltaBody.replace(/^\s+/, '');
       await writeFile(currentPath, merged);
+      currentState.set(currentPath, merged); // accumulate for next iteration
       phases.push(phaseStr);
     }
 
