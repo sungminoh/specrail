@@ -1,324 +1,209 @@
-<!-- plugin-refinement (T2.5c, architect 옵션 B): self-check bash blocks → ARCH-5 schema validator + ARCH-3 hooks 자동 강제. HARD-GATE 수동 승인 step → ADR-8 state machine 자동 enforce. 상대 경로 file 참조 → plugin runtime의 docs/spec/ resolver. -->
-
----
-name: phase-10-test-strategy
-description: Pyramid (70/20/10), AC↔TC mapping, Edge case catalog, Performance test scenarios. Iron Law (TDD) 적용.
-inputs-from: Phase 3 AC + Phase 4 INV + Phase 9 측정가능 NFR
-trigger-words: test strategy, TDD, pyramid, edge cases, regression
-mode: GREENFIELD | DELTA
----
-
-# Phase 10: Test Strategy
-
-## Purpose
-
-무엇을 어떻게 검증할지 사양화. AC가 곧 testable. **Iron Law: 모든 production code는 failing test를 통과시키기 위해서만 존재.**
-
-## Inputs
-
-- Phase 3 모든 AC (각 R 단위)
-- Phase 4 모든 INV
-- Phase 9 측정가능 NFR (Perf/Scal/Avail/Sec)
-- Phase 5 시나리오별 path (E2E test)
-- (DELTA) `current/10-test-strategy.md`
-
-<HARD-GATE>
-Phase 9 사용자 승인 없이 진행 금지.
-</HARD-GATE>
-
-## Mode 상속
-
-- EXPANSION: 추가 chaos test, perf scenario 더 가혹하게
-- SELECTIVE: P0 cover하는 minimum + cherry-pick
-- HOLD: P0 + P1 cover (회귀 prevention)
-- REDUCTION: P0 만 (death-bug 방지선만)
-
----
-
-## Anti-Sycophancy
-
-00-common 참조 + Phase 10 특화:
-
-**금지:**
-- "테스트 커버리지를 높이면 좋아요" (% 없이)
-- "Edge case 처리"
-- "회귀 방지를 위해..."
-
-**대신:**
-- 모든 test는 AC ID / INV ID / NFR ID 인용 강제
-- "어느 AC도 cover 안 하는 test" → 정당화 못 하면 cut
-- "이 test가 빠지면 발생할 production 사고"를 명시
-
----
-
-## Reasoning Procedure
-
-1. AC 목록 받기 (Phase 3)
-2. INV 목록 받기 (Phase 4)
-3. 측정가능 NFR 받기 (Phase 9)
-4. **Iron Law 적용**: 각 AC는 RED → GREEN test로 변환 가능 (failing test 먼저).
-5. Test pyramid 결정 (default 70/20/10)
-6. AC ↔ TC 매핑
-7. INV ↔ TC 매핑
-8. Edge case catalog (시간·동시성·i18n·auth boundary·empty·network)
-9. Performance test scenario (NFR-PERF별)
-10. Regression policy
-11. Self-Check + 승인
-
----
-
-## Constraints
-
-1. **Iron Law**: production code는 failing test 통과 위해서만. 코드 먼저 쓰면 삭제.
-2. **모든 AC → 최소 1 TC** — cover 안 되는 AC 0건.
-3. **모든 INV → integration test** — 단위 test로 검증 안 됨.
-4. **모든 측정가능 NFR → perf test scenario**.
-5. **Edge case 명시 catalog** — `EDGE-{n}` ID.
-6. **Test pyramid 비율 명시** — 단순 "balanced" 금지.
-7. **Flakiness risk 표시** — 시간·외부·random·순서 의존 test는 flag.
-8. **No Placeholders** — "테스트 추가" 금지.
-
----
-
-## Output Format
-
-````markdown
 # Test Strategy
 
-**Mode:** {inherited}
-**Inputs:** Phase 3 AC, Phase 4 INV, Phase 9 NFR
-**Date:** YYYY-MM-DD
+**Mode:** HOLD SCOPE
+**Inputs:** Phase 3 AC (R1·R2·R4·R5·R6·R7·R8·R13), Phase 4 INV-1~9, Phase 9 측정가능 NFR
+**Date:** 2026-05-10
+
+> **Iron Law:** 모든 production code는 failing test 통과 위해서만 존재. RED → GREEN → REFACTOR.
 
 ## 1. Test Pyramid
 
 ```
-        ┌──────┐
-        │ E2E  │  10%
-        ├──────┤
-        │ Integ│  20%
-        ├──────┤
-        │ Unit │  70%
-        └──────┘
+        ┌──────────┐
+        │   E2E    │  10%
+        ├──────────┤
+        │  Integ   │  20%
+        ├──────────┤
+        │   Unit   │  70%
+        └──────────┘
 ```
 
 | 종류 | 비율 | 대상 | 도구 (ADR-CAND-{n}) |
 |---|---|---|---|
-| Unit | 70% | 도메인 로직, validation, state transition | <ADR-CAND> |
-| Integration | 20% | Container 간, INV | <ADR-CAND> |
-| E2E | 10% | 시나리오 path, 핵심 flow | <ADR-CAND> |
+| Unit | 70% | ID auto-gen, schema validator, graph builder, hook script logic, telemetry serializer | depends on ADR-CAND-3 (hook lang) |
+| Integration | 20% | Skill chain (Phase N→N+1), hook + git, telemetry queue + endpoint, frontmatter parse 일관 | 동일 |
+| E2E | 10% | S1 Greenfield 13 phase 풀, S2 DELTA, 사용자 시나리오 path | depends on Claude Code skill test framework |
 
-근거: 작은 unit은 빠르고 안정. E2E는 비싸고 flaky. mode가 EXPANSION 같으면 80/15/5로 unit 강화.
+근거: skill·hook·builder는 작은 unit으로 격리 가능 (markdown parse·counter·schema check). E2E는 LLM 응답 stochastic이라 비싸고 flaky — 핵심 시나리오만.
 
 ## 2. AC ↔ TC Mapping
 
-각 AC는 최소 1개 TC.
+각 AC 최소 1 TC.
 
-| AC ID | TC ID | TC 이름 | Layer | 구체 |
-|---|---|---|---|---|
-| AC-R{n}-{m} | TC-{n} | <이름> | Unit/Integ/E2E | GIVEN/WHEN/THEN |
-| ... | ... | ... | ... | ... |
+| AC ID | TC ID | TC 이름 | Layer |
+|---|---|---|---|
+| AC-R1-1 | TC-1 | Phase N+1 skill 호출 시 Phase N frontmatter ID auto-inject | Integ |
+| AC-R1-2 | TC-2 | 정의 안 된 ID 인용 시 plugin 차단 + valid list 표시 | Unit (Resolver) |
+| AC-R1-3 | TC-3 | ID 정의 시점 plugin auto-generation unique 보장 | Unit (IDGen) |
+| AC-R2-1 | TC-4 | Pre-commit hook이 self-check 자동 실행 + fail 시 commit 차단 | Integ (hook + git) |
+| AC-R2-2 | TC-5 | Phase transition gate — Phase N status≠Approved 시 N+1 호출 거부 | Unit (Skill) |
+| AC-R2-3 | TC-6 | Frontmatter schema 위반 시 hook이 violation 표시 + 차단 | Integ (hook) |
+| AC-R4-1 | TC-7 | `change` 명령 시 plugin이 영향 phase list 출력 + proposal auto-draft | Integ (Skill + Graph) |
+| AC-R4-2 | TC-8 | 변경된 ID set의 transitive downstream 영향 phase 모두 식별 | Unit (Graph) |
+| AC-R5-1 | TC-9 | Phase 1 진입 시 6 forcing questions ONE-AT-A-TIME (Smart Routing 적용) | Integ (Skill + LLM) |
+| AC-R5-2 | TC-10 | Vague answer 입력 시 forcing pushback 출력 (5 패턴 매칭) | Integ (LLM-dependent) |
+| AC-R5-3 | TC-11 | 모든 phase가 00-common 원칙 자동 상속 (Anti-Sycophancy 등) | Unit (Skill metadata) |
+| AC-R6-1 | TC-12 | 단일 명령으로 plugin install 성공 (의존성·setup 자동) | E2E |
+| AC-R6-2 | TC-13 | 첫 trigger 시 docs/spec 자동 생성 + Phase 1 skill 호출 | E2E |
+| AC-R6-3 | TC-14 | Plugin 첫 setup 시 git repo 감지 + pre-commit hook 자동 install (사용자 confirm 후) | Integ |
+| AC-R7-1 | TC-15 | Plugin 메인 prompt에 B2B 표현 검색 0건 | Static |
+| AC-R7-2 | TC-16 | Plugin 메인 prompt에 단일 도메인 entity inline 0건 | Static |
+| AC-R7-3 | TC-17 | specrail 작업 자체에서 legacy example 참조 0건 (chicken-and-egg 방지) | Static (history check) |
+| AC-R8-1 | TC-18 | Phase 13 Approved 시 implementation skill chain — atomic task별 fresh subagent | Integ |
+| AC-R8-2 | TC-19 | Subagent 2-stage review (spec compliance + quality) | Integ |
+| AC-R8-3 | TC-20 | BLOCKED·ambiguity 시 main session에 escalate (자동 진행 X) | Integ |
+| AC-R13-1 | TC-21 | Plugin install 첫 사용 시 telemetry opt-in 질문 default no | Unit |
+| AC-R13-2 | TC-22 | Opt-in true 시 익명 metric 전송 (사용자 ID·spec 내용 0건) | Integ + INV-8 |
+| AC-R13-3 | TC-23 | Opt-out 명령 anytime 즉시 전송 중단 + 데이터 삭제 요청 가능 | Integ |
 
 ## 3. INV ↔ TC Mapping
 
-| INV ID | TC ID | TC 이름 | Layer |
+| INV ID | TC ID | 이름 | Layer |
 |---|---|---|---|
-| INV-{n} | TC-{n} | <이름> | Integ |
-| ... | ... | ... | ... |
+| INV-1 | TC-30 | Spec ID는 Project 내 unique — 중복 시 grep으로 검출 | Unit (IDGen) |
+| INV-2 | TC-31 | 인용 ID는 정의 set 안 — diff alarm | Integ (hook + Graph) |
+| INV-3 | TC-32 | Phase N+1 진입 시 Phase N=Approved 강제 — gate 차단 | Unit (Skill) |
+| INV-4 | TC-33 | P0 Spec set이 PRD §3.3 시나리오 cover — Phase 13 self-check matrix | E2E (Phase 13 skill) |
+| INV-5 | TC-34 | AC는 R-tier만 GIVEN/WHEN/THEN — schema check | Unit (Schema) |
+| INV-6 | TC-35 | 모든 Change에 affectedPhases ≥ 1 — auto-extract 보장 | Unit (Graph) |
+| INV-7 | TC-36 | ADR alternatives ≥ 2 + 거절 이유 — Phase 12 self-check | Static |
+| INV-8 | TC-37 | TelemetryEvent에 spec 내용·user ID 0건 — schema enforce | Integ (Telem + Schema) |
+| INV-9 | TC-38 | TelemetryConsent default OptedOut — install flow | E2E |
 
 ## 4. Edge Case Catalog
 
 `EDGE-{n}` ID.
 
 ### 시간 / 시간대
-
 | ID | Edge | 검증 TC |
 |---|---|---|
-| EDGE-{n} | <자정·DST·만료 경계·윤년·시간대 변환> | TC-{n} |
+| EDGE-1 | Telemetry timestamp UTC vs 사용자 local TZ — 변환 일관 | TC-40 |
+| EDGE-2 | Change 시간 정렬 (timeline timeline 시 ISO 8601 비교) | TC-41 |
+| EDGE-3 | Skill invocation 자정 경계 (date roll-over) | TC-42 |
 
-### 동시성 / Race Condition
-
+### 동시성 / Race
 | ID | Edge | 검증 TC |
 |---|---|---|
-| EDGE-{n} | <동시 요청·중복 webhook·세션 만료 직전 등> | TC-{n} |
+| EDGE-4 | 한 사용자가 multi-project 동시 작업 — ID counter 충돌 X (per-project) | TC-43 |
+| EDGE-5 | 동시 commit (terminal 2개) — hook race condition | TC-44 |
+| EDGE-6 | Telemetry queue concurrent write | TC-45 |
 
 ### i18n / 인코딩
-
 | ID | Edge | 검증 TC |
 |---|---|---|
-| EDGE-{n} | <한국어/일본어 등 NFC·emoji·RTL·매우 긴 입력> | TC-{n} |
+| EDGE-7 | 한국어 spec + 영어 prompt mix | TC-46 |
+| EDGE-8 | Emoji·한자·매우 긴 unicode in spec | TC-47 |
+| EDGE-9 | 매우 긴 입력 (NFR-SCAL-1 한계 50KB) — LLM context 한계 직전 | TC-48 |
+| EDGE-10 | NFC vs NFD 정규화 (macOS file system NFD) | TC-49 |
 
-### Auth Boundary / IDOR (multi-user product)
-
+### Auth Boundary / Hook bypass
 | ID | Edge | 검증 TC |
 |---|---|---|
-| EDGE-{n} | <다른 user resource 접근·만료 토큰·재사용 토큰> | TC-{n} |
+| EDGE-11 | 사용자 `--no-verify` commit (hook bypass) — telemetry detection | TC-50 |
+| EDGE-12 | Telemetry token validation (서버 측, plugin 위조 방지) | TC-51 |
+| EDGE-13 | `.specrail-cache/` 변조 → invalidate + rebuild | TC-52 |
 
-### Empty / Boundary Input
-
+### Empty / Boundary
 | ID | Edge | 검증 TC |
 |---|---|---|
-| EDGE-{n} | <nil·empty string·max length·max+1> | TC-{n} |
+| EDGE-14 | docs/spec 빈 디렉토리 (Phase 1 시작 직전) | TC-53 |
+| EDGE-15 | 0 ID (첫 phase 첫 spec) — auto-gen "R1" 보장 | TC-54 |
+| EDGE-16 | NFR-SCAL-2 한계 5000 ID — 그래프 빌드 timeout 내 | TC-55 |
+| EDGE-17 | DELTA 영향 phase 0개 (변경이 spec에 영향 0) — graceful 거부 | TC-56 |
+| EDGE-18 | Frontmatter 빈 ({}) — schema validator 거부 + helpful message | TC-57 |
 
-### Network / External (해당 시)
-
+### Network / External
 | ID | Edge | 검증 TC |
 |---|---|---|
-| EDGE-{n} | <EXT timeout·malformed response·connection 고갈> | TC-{n} |
+| EDGE-19 | LLM API timeout (NFR-AVAIL-3) — graceful retry 또는 사용자에 알림 | TC-58 |
+| EDGE-20 | Telemetry endpoint 다운 — local queue 보존, 재전송 (NFR-AVAIL-5) | TC-59 |
+| EDGE-21 | Git Hosting 다운 — local git 작동 (NFR-AVAIL-4) | TC-60 |
+| EDGE-22 | Claude Code 갑작스런 종료 (사용자 ctrl-C) — skill state 일관 | TC-61 |
+| EDGE-23 | Subagent timeout (Phase 13 implementation) — escalation (AC-R8-3) | TC-62 |
+
+### Hook 무결성
+| ID | Edge | 검증 TC |
+|---|---|---|
+| EDGE-24 | Hook script 변조 (사용자 또는 malicious) — pre-commit 자체가 lint·sign 검증 | TC-63 (NFR-SEC-12) |
+| EDGE-25 | Hook 무한 loop (변조됨) — git timeout 10s 강제 abort | TC-64 (NFR-SEC-11) |
 
 ## 5. Performance Test Scenarios
 
-각 NFR-PERF·SCAL·AVAIL에 대해 perf TC.
-
 | NFR ID | TC ID | 시나리오 |
 |---|---|---|
-| NFR-PERF-{n} | TC-{n} | <RPS·duration·percentile 검증> |
-| NFR-SCAL-{n} | TC-{n} | <동시 사용자·peak·spike test> |
-| NFR-AVAIL-{n} | TC-{n} | <DR drill·RPO/RTO 검증> |
+| NFR-PERF-1 | TC-70 | Skill invocation 100회 평균 — `<500ms` |
+| NFR-PERF-2 | TC-71 | LLM 응답 평균 (Phase 1 PRD 작성, 표준 prompt) — `<60s` |
+| NFR-PERF-3 | TC-72 | Pre-commit hook 실행 (300 ID 가진 spec) — `<3s` |
+| NFR-PERF-4 | TC-73 | Graph cold build (1000 ID, 13 phase) — `<2s` |
+| NFR-PERF-5 | TC-74 | Graph incremental rebuild (1 file change) — `<300ms` |
+| NFR-PERF-6 | TC-75 | Schema validation (한 phase frontmatter, ~20 fields) — `<100ms` |
+| NFR-PERF-7 | TC-76 | E2E 13 phase 사용자 시간 (실 사용자 self-report) — `<6h` |
+| NFR-SCAL-2 | TC-77 | 5000 ID load test — graph build degradation 측정 |
 
 ## 6. Test Ambition Check
 
-각 핵심 기능 (P0 F)에 대해 답:
+핵심 R 5개에 대해:
 
-- **2am Friday test:** 새벽 2시 금요일에 ship해도 안 깨질 거란 자신을 줄 test는?
-- **Hostile QA test:** 깨려고 작정한 QA가 쓸 test는?
-- **Chaos test:** 외부 의존 무작위로 죽일 때 살아남는 test는?
-
-| Feature | 2am test | Hostile test | Chaos test |
+| R | 2am Friday test | Hostile QA test | Chaos test |
 |---|---|---|---|
-| <F{n}> | <TC 조합> | <TC 조합> | <TC 조합 + 환경 조건> |
+| R1 (Structured I/O) | TC-1·2·3 통과 | 환각 ID 의도 작성 — Resolver block 작동? | LLM이 random ID 생성 시 IDGen이 reject |
+| R2 (Hook validation) | TC-4·5·6 통과 | `--no-verify` bypass — telemetry detection | hook script timeout (변조 시) |
+| R4 (DELTA 자동 식별) | TC-7·8 통과 | 변경이 8 phase 동시 영향 — transitive 정확? | Graph 큰 project (5000 ID) |
+| R5 (Phase 강제 + Forcing) | TC-9·10·11 통과 | 사용자 vague 답변 고집 — push 작동? | LLM이 forcing 무시 시 reframe |
+| R8 (Implementation) | TC-18·19·20 통과 | 사용자 코드가 spec과 mismatch — review fail? | Subagent 무한 loop |
 
 ## 7. Regression Policy
 
-- 모든 bug fix → 그 bug에 대한 regression TC 추가 (TC-{n}-regression)
-- E2E suite는 PR마다 P0 시나리오 모두
-- Perf test는 release 전 + 주 1회
-- Chaos test는 monthly (해당 시)
-- Flaky test 격리: 3회 연속 fail 또는 retry로 succeed → quarantine, 24h 내 fix 또는 삭제
+- 모든 사용자 보고 issue → regression TC 추가 (TC-{n}-regression)
+- Hook fail 사례 → 정확히 그 시나리오 TC
+- 환각 ID 발견 시 → 해당 ID 패턴 regression
+- Phase별 산출물 변경 (메인 prompt update) → self-application example regression (specrail 작업 자체가 example이라 자기 검증)
 
-## 8. Test Framework Detection (Brownfield)
+## 8. Test Framework Detection
 
-DELTA mode에서 기존 test framework 자동 감지:
+현재 greenfield. 그러나 ADR-CAND-3 (hook script lang) 결정 후:
 
 ```bash
-# Node.js
-test -f package.json && jq '.devDependencies | keys[]' package.json | grep -iE "jest|vitest|mocha|playwright|cypress"
+# Hook script lang에 따라:
+# bash → bats (Bash Automated Testing System)
+# Node.js → Jest 또는 Vitest
+# Python → pytest
 
-# Python
-test -f pyproject.toml && grep -E "pytest|unittest" pyproject.toml
+# Skill test (Claude Code SDK 의존)
+# → Claude Code 자체 skill test framework (A1 가정 spike 결과)
 
-# Ruby
-test -f Gemfile && grep -E "rspec|minitest" Gemfile
-
-# Go
-test -f go.mod && grep -E "testify|ginkgo" go.mod
+# Markdown parser test
+# → 라이브러리 (ADR-CAND-4) 자체 test 차용
 ```
 
-기존 framework 따름. 새 framework 도입은 ADR-CAND.
+(Phase 12 ADR 결정 후 정식 framework 선정.)
 
 ## 9. Flakiness Risk Flags
 
 | TC | 위험 |
 |---|---|
-| TC-{n} (race) | 동시성 — flaky 가능. 격리 + 재시도 logic |
-| TC-{m} (EXT timeout) | 외부 의존 — mock으로. 실 EXT는 staging만 |
-| TC-{k} (DR 시뮬) | 시간 의존 — fixed clock 사용 |
+| TC-9·10 (LLM 응답 내용) | LLM stochastic — keyword 검증 (정확 매치 X), 5회 평균 |
+| TC-71 (LLM perf) | LLM API 측 variance — p50/p95/p99 측정, 절대값 X |
+| TC-58·59 (network) | 외부 의존 — mock으로 unit·integ, 실 endpoint는 staging만 |
+| TC-44 (concurrent commit) | Race condition reproducibility 어려움 — 격리 + retry logic |
+| TC-76 (E2E 사용자 시간) | 실 사용자 self-report — small N + 시뮬 |
 
 ## 10. Open Questions
 
 | Q ID | 질문 | 결정자 | Blocking? |
 |---|---|---|---|
-| OQ-10-1 | <E2E framework 선택> | Eng | N (ADR-CAND-{n}) |
-| OQ-10-2 | <Perf test 환경> | Eng | Y |
+| OQ-10-1 | Skill test framework — Claude Code 자체 vs LLM API mock | maintainer | A1 spike 후 |
+| OQ-10-2 | E2E test 환경 — CI에 LLM API 실 호출 vs cassette playback | maintainer | Phase 11 |
+| OQ-10-3 | Perf test data 큰 project (5000 ID) 어떻게 생성 — 자동 생성 fixture | maintainer | Phase 13 |
+| OQ-10-4 | TC-50 telemetry 기반 hook bypass detection 정밀도 — false positive 우려 | maintainer | Phase 11 |
 
 ## 11. 다음 phase 인풋
 
 Phase 11 (Operations)에:
-- Perf test scenario (production monitoring 후보)
-- Chaos test (production injection 후보)
+- Perf test scenario → production monitoring 후보 (NFR-PERF로 alert)
+- Chaos test → production 측 simulation (LLM 다운 시 사용자 경험)
+- 사용자 telemetry → KPI dashboard
 
 Phase 13 (Implementation)에:
-- 모든 TC ID + 시나리오 (각 task에 RED test로)
-````
-
----
-
-## DELTA Mode
-
-기존 test 위에 변경.
-
-### 형식
-
-`changes/{date}-{topic}/deltas/10-test-delta.md`:
-
-````markdown
-## ADDED TC
-| TC ID | TC 이름 | Cover (AC/INV/NFR) | Layer |
-
-## MODIFIED TC
-### TC-{existing}
-- Changed: <given/when/then 변경분>
-- Reason
-
-## REMOVED TC
-- TC-{n}: 더 이상 유효 안 함 / 새 TC로 대체
-
-## ADDED Edge Cases
-| EDGE ID | 시나리오 | TC |
-
-## Regression TC (이번 변경으로 추가)
-| TC | 어떤 bug 방지 |
-````
-
----
-
-## Self-Check
-
-```bash
-# AC cover 검증 (모든 AC가 TC 인용 있어야)
-grep -oE 'AC-R[0-9]+-[0-9]+' 03-features.md | sort -u > all_ac.txt
-grep -oE 'AC-R[0-9]+-[0-9]+' 10-test-strategy.md | sort -u > covered_ac.txt
-diff all_ac.txt covered_ac.txt   # 비어 있어야
-
-# INV cover
-grep -oE 'INV-[0-9]+' 04-domain-model.md | sort -u > all_inv.txt
-grep -oE 'INV-[0-9]+' 10-test-strategy.md | sort -u > covered_inv.txt
-diff all_inv.txt covered_inv.txt
-
-# NFR cover (측정가능)
-grep -E "NFR-(PERF|SCAL|AVAIL)-" 09-nfr.md | wc -l
-grep -E "NFR-(PERF|SCAL|AVAIL)-" 10-test-strategy.md | wc -l
-
-# TC ID 형식
-grep -oE 'TC-[0-9]+' 10-test-strategy.md | sort -u | wc -l
-
-# Edge case 카테고리 6종
-for cat in 시간 동시성 i18n Auth Empty Network; do
-  grep -q "$cat" 10-test-strategy.md || echo "Edge category $cat 누락"
-done
-
-# GIVEN/WHEN/THEN 사용
-grep -c "GIVEN" 10-test-strategy.md
-grep -c "WHEN" 10-test-strategy.md
-grep -c "THEN" 10-test-strategy.md
-
-# Pyramid 비율 명시
-grep -E "70%|80%|20%|10%|15%" 10-test-strategy.md
-```
-
-체크리스트:
-- [ ] Iron Law 명시
-- [ ] Pyramid 비율 명시
-- [ ] 모든 AC가 최소 1 TC
-- [ ] 모든 INV가 integration test
-- [ ] 모든 측정가능 NFR이 perf scenario
-- [ ] Edge category 6종
-- [ ] Test ambition 답변
-- [ ] Regression policy
-- [ ] Flakiness flag
-- [ ] Brownfield: 기존 framework 감지 + 따름
-
----
-
-<HARD-GATE>
-Self-check 통과 + 사용자 승인. Phase 11 진행.
-</HARD-GATE>
+- 모든 TC ID + 시나리오 — 각 task에 RED test
+- TC priority order: TC-30·31 (INV-1·2) → TC-1~3 (R1) → TC-4~6 (R2) → 등

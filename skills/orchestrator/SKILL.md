@@ -23,4 +23,4 @@ Single entry point for the plugin. State machine (ADR-8) enforces phase transiti
 Phase N+1 invoke requires Phase N status=Approved (frontmatter primary).
 Cache (`.specrail-cache/state.json`) derived from frontmatter.
 
-Reference: docs/spec/00-common-principles.md
+Reference: `skills/_common/principles.md` (auto-injected to every phase skill).

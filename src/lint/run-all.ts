@@ -56,19 +56,17 @@ const AC_REF_RE = /AC-R\d+-\d+/m;
 async function scanSpecDirs(projectRoot: string): Promise<SpecScan> {
   const adrFiles: string[] = [];
   const acFiles: string[] = [];
-  for (const subdir of ['docs/spec', 'docs/spec/examples']) {
-    try {
-      const dirPath = join(projectRoot, subdir);
-      const files = await readdir(dirPath);
-      for (const f of files) {
-        if (!f.endsWith('.md')) continue;
-        const filePath = join(dirPath, f);
-        const text = await readFile(filePath, 'utf8');
-        if (ADR_HEADING_RE.test(text)) adrFiles.push(filePath);
-        if (AC_REF_RE.test(text)) acFiles.push(filePath);
-      }
-    } catch { /* dir missing — skip */ }
-  }
+  try {
+    const dirPath = join(projectRoot, 'docs', 'spec');
+    const files = await readdir(dirPath);
+    for (const f of files) {
+      if (!f.endsWith('.md')) continue;
+      const filePath = join(dirPath, f);
+      const text = await readFile(filePath, 'utf8');
+      if (ADR_HEADING_RE.test(text)) adrFiles.push(filePath);
+      if (AC_REF_RE.test(text)) acFiles.push(filePath);
+    }
+  } catch { /* dir missing — skip */ }
   return { adrFiles, acFiles };
 }
 

@@ -1,302 +1,195 @@
-<!-- plugin-refinement (T2.5c, architect 옵션 B): self-check bash blocks → ARCH-5 schema validator + ARCH-3 hooks 자동 강제. HARD-GATE 수동 승인 step → ADR-8 state machine 자동 enforce. 상대 경로 file 참조 → plugin runtime의 docs/spec/ resolver. -->
-
----
-name: phase-9-non-functional-requirements
-description: 7 domains - Performance, Scalability, Availability, Security (STRIDE), Privacy, Accessibility (WCAG), i18n. 모두 측정가능.
-inputs-from: Phase 1 §4(성공지표) + Phase 8 ARCH·EXT
-trigger-words: NFR, performance, security, accessibility, privacy
-mode: GREENFIELD | DELTA
----
-
-# Phase 9: Non-Functional Requirements
-
-## Purpose
-
-기능 외 충족해야 할 품질 속성을 측정가능하게 사양화.
-
-## Inputs
-
-- PRD §4 성공지표 (KPI)
-- Phase 8 ARCH·EXT
-- Phase 8 Threat Boundaries
-- Phase 1 §5 환경
-- (DELTA) `current/09-nfr.md`
-
-<HARD-GATE>
-Phase 8 사용자 승인 없이 진행 금지.
-</HARD-GATE>
-
-## Mode 상속
-
-- EXPANSION: stricter NFR 추가
-- SELECTIVE: minimum + cherry-pick
-- HOLD: PRD 시나리오 cover하는 minimum NFR
-- REDUCTION: 죽이는 NFR만 (Perf P0, Sec P0)
-
----
-
-## Anti-Sycophancy
-
-00-common 참조 + Phase 9 특화:
-
-**금지:**
-- "성능을 좋게 하면..."
-- "보안은 중요해요" (구체 위협 없이)
-- "GDPR 준수해야 해요" (구체 의무 없이)
-- "WCAG 2.1 AA를 추천해요" (이유 없이)
-
-**대신:**
-- 모든 NFR은 측정 단위 + 목표값 + 측정 시점
-- 구체 의무는 PRD §3.1 Persona 환경 / §5 카테고리 인용
-- 기준 모르면 "기준 미정 — ADR-CAND-{n}" 표시. arbitrary 값 금지.
-
----
-
-## Reasoning Procedure
-
-1. PRD §4 성공지표 → Performance NFR 후보
-2. Phase 8 ARCH 부하 패턴 → Scalability NFR
-3. Phase 8 EXT 의존성 → Availability NFR
-4. Phase 8 Threat Boundaries → Security NFR (STRIDE)
-5. Phase 4 Entity 데이터 분류 → Privacy NFR
-6. PRD §3 Persona 사용 환경 → Accessibility NFR
-7. PRD §5 환경 (region·언어) → i18n NFR
-8. 미정 기준은 ADR-CAND
-9. Self-Check + 승인
-
----
-
-## Constraints
-
-1. **모든 NFR 측정가능** — "빠르게" 금지, 단위 + 수치.
-2. **NFR ID 형식 `NFR-{Domain}-{n}`** — 도메인 = PERF / SCAL / AVAIL / SEC / PRIV / A11Y / I18N.
-3. **각 NFR에 측정 방법** — 어떻게 측정할지.
-4. **위반 시 결과** — NFR이 깨졌을 때 무엇이 무너지나.
-5. **기준 모름 → ADR-CAND** — arbitrary 값 금지.
-6. **STRIDE 6 카테고리 모두 검토** — Spoofing/Tampering/Repudiation/InfoDisclosure/DoS/EoP.
-7. **WCAG 2.1 AA 기본** — 이유 있을 때만 더 높이거나 낮춤.
-8. **i18n: 사용 언어 명시**.
-
----
-
-## Output Format
-
-````markdown
 # Non-Functional Requirements
 
-**Mode:** {inherited}
-**Inputs:** PRD §4, Phase 8 ARCH·EXT·Threat
-**Date:** YYYY-MM-DD
+**Mode:** HOLD SCOPE
+**Inputs:** PRD §4 KPI, Phase 8 ARCH·EXT
+**Date:** 2026-05-10 (harness only)
+
+> Plugin은 passive 산출물이 아닌 실 작동 code (skills + hooks + builders). 7 domains 모두 적용.
 
 ## 1. Performance (Perf)
 
 | ID | NFR | 측정 단위 | 목표 | 측정 방법 | 위반 시 |
 |---|---|---|---|---|---|
-| NFR-PERF-1 | <지표 1> | ms / s / KB / 등 | <수치> | <측정 방법> | <결과> |
-| NFR-PERF-2 | ... | ... | ... | ... | ... |
+| NFR-PERF-1 | Skill invocation 시간 (LLM 응답 제외) | ms | <500 | log + 평균 | 사용자 phase 진행 흐름 끊김 (KPI-1 ↓) |
+| NFR-PERF-2 | LLM 응답 시간 (한 phase 산출물 생성) | s | <60 | LLM API log | 사용자 이탈 (KPI-1 ↓) |
+| NFR-PERF-3 | Pre-commit hook 실행 시간 | s | <3 | git timing | 사용자 commit 부담 — hook bypass 욕구 |
+| NFR-PERF-4 | Dependency graph 빌드 시간 (cold) | s | <2 (한 project 평균) | bench | 첫 hook·skill 실행 지연 |
+| NFR-PERF-5 | Dependency graph 빌드 시간 (incremental, file watch) | ms | <300 | bench | UI 반응 지연 |
+| NFR-PERF-6 | Schema validation 시간 (한 phase frontmatter) | ms | <100 | bench | hook 누적 지연 |
+| NFR-PERF-7 | 13 phase 사양화 누적 시간 (AI 보조) | h | <6 | 사용자 self-report | KPI-3 미달 |
 
-PRD §4 KPI 직접 매핑되는 NFR-PERF-* 명시.
+PRD KPI 직접 매핑:
+- KPI-1 (완주율) → NFR-PERF-1·2·3 모두 (지연이 누적 이탈 원인)
+- KPI-3 (사양화 시간) → NFR-PERF-7
 
 ## 2. Scalability (Scal)
 
+이 product는 server 없음. Scalability = **per-user spec 크기 한계 + plugin이 견디는 ID·노드 수**.
+
 | ID | NFR | 측정 단위 | 목표 | 측정 방법 | 위반 시 |
 |---|---|---|---|---|---|
-| NFR-SCAL-1 | 동시 사용자 | concurrent | <수> | load test | 응답 지연 |
-| NFR-SCAL-2 | RPS sustain | req/s | <수> | load test | 큐잉 실패 |
-| ... | ... | ... | ... | ... | ... |
+| NFR-SCAL-1 | 한 phase 산출물 크기 한계 | KB | LLM context 한계 따름 (~50KB body) | LLM 응답 모니터 | LLM 응답 잘림 → 사용자가 phase 분할 |
+| NFR-SCAL-2 | Project 내 누적 ID 수 (Spec·Entity·INV·NFR·OPS·ADR·RISK·TC 등) | count | <5000 | dependency graph node count | graph 빌드 지연 → NFR-PERF-4 위반 |
+| NFR-SCAL-3 | DELTA changes 누적 수 (per project) | count | <500 | file system | timeline navigation 지연 (향후 cycle) |
+| NFR-SCAL-4 | 동시 사용자 (서로 다른 머신) | concurrent | 무제한 (각자 환경) | - | 무관 |
+| NFR-SCAL-5 | 한 사용자 동시 multi-project | concurrent | 무제한 (각 docs/spec 분리) | - | ID counter 충돌 X (per-project) |
+
+이 product가 popular 해져도 (KPI-4: 500 stars) 인프라 비용 증가 X — passive code.
 
 ## 3. Availability (Avail)
 
 | ID | NFR | 측정 단위 | 목표 | 측정 방법 | 위반 시 |
 |---|---|---|---|---|---|
-| NFR-AVAIL-1 | uptime | % | <수> | uptime 모니터 | <결과> |
-| NFR-AVAIL-2 | RPO | hour | <수> | DR 테스트 | 데이터 손실 |
-| NFR-AVAIL-3 | RTO | hour | <수> | DR 테스트 | 영업 중단 |
-| NFR-AVAIL-4 | EXT-{n} 다운 시 | <시간 단위> | <목표> | 모니터 | <결과> |
+| NFR-AVAIL-1 | Plugin install 가용성 | % | fork 후 사용자 측 책임 | 사용자 측 | 무관 (passive code) |
+| NFR-AVAIL-2 | EXT-1 Claude Code 다운 시 처리 | - | 의존 (필수) | CC 측 | plugin 무용 — Persona가 다른 시간 사용 |
+| NFR-AVAIL-3 | EXT-2 LLM API 다운 시 | - | CC가 fallback 또는 사용자 대기 | CC 측 | phase 진행 일시 정지 |
+| NFR-AVAIL-4 | EXT-3 Git Hosting 다운 시 | - | local git 작동, push만 막힘 | git 측 | hook 작동 가능 (local git) |
+| NFR-AVAIL-5 | EXT-5 Telemetry endpoint 다운 시 | - | local queue 보존, 재전송 | local | 사용자 무관 (background) |
+| NFR-AVAIL-6 | Hook 자체 실패 (script error) | error rate | <0.1% | hook log | 사용자가 hook bypass 욕구 — INV-3 위반 위험 |
+| NFR-AVAIL-7 | RPO (사용자 spec 손실) | - | 사용자 git push 빈도 결정 | - | 사용자 책임 (가이드 README) |
+| NFR-AVAIL-8 | RTO | - | 즉시 (clone + plugin install) | - | 사용자 책임 |
 
-Cognitive Pattern: **Error budgets over uptime targets**. 99.5% = 0.1h budget/월. budget를 ship에 spend.
+Cognitive Pattern: **Error budgets** — 99.9% SLO = 0.1% budget. budget을 ship에 spend.
 
 ## 4. Security (Sec) — STRIDE
-
-각 STRIDE 카테고리에 대해 thread + 완화.
 
 ### Spoofing
 | ID | Threat | 완화 |
 |---|---|---|
-| NFR-SEC-1 | <인증 위조> | <완화> |
+| NFR-SEC-1 | Malicious plugin update (사용자가 가짜 plugin 설치) | maintainer signed release, README "공식 source 확인" |
+| NFR-SEC-2 | Hook bypass (사용자가 `--no-verify`로 commit) | hook은 plugin이 enforce 못 함 — git 자체 한계. 가이드 + telemetry로 detection (R13). 진짜 enforce는 CI에서 (사용자 측). |
 
 ### Tampering
 | ID | Threat | 완화 |
 |---|---|---|
-| NFR-SEC-{n} | <변조> | <완화> |
+| NFR-SEC-3 | Malicious PR로 plugin skill에 jailbreak 삽입 | PR review 강제, signed tag, marketplace verification |
+| NFR-SEC-4 | 사용자 spec 직접 변조 (frontmatter 수동 수정) | hook이 schema 검증 + ID consistency check (INV-1, INV-2) |
+| NFR-SEC-5 | `.specrail-cache/` 변조 (graph cache 위조) | hook이 cache invalidate + rebuild on commit |
 
 ### Repudiation
 | ID | Threat | 완화 |
 |---|---|---|
-| NFR-SEC-{n} | <부인> | <audit log·증거 보존> |
+| NFR-SEC-6 | 사용자가 자기 spec 변경 부인 | git history (사용자 책임 — out of plugin scope) |
 
 ### Information Disclosure
 | ID | Threat | 완화 |
 |---|---|---|
-| NFR-SEC-{n} | <정보 노출> | <완화> |
+| NFR-SEC-7 | 사용자가 spec에 secret/API key/PII 적고 LLM에 paste | README + Phase 1 prompt에 경고. Pre-commit hook이 secret pattern detection (optional, opt-in F) |
+| NFR-SEC-8 | 사용자가 spec에 proprietary info 적고 public LLM에 paste (회사 정책 위반) | README "회사 환경에서 self-hosted LLM 또는 enterprise plan 권장" |
+| NFR-SEC-9 | Telemetry event에 spec 내용 누출 (R13) | INV-8 enforce. Schema validator가 metadata 검사 — 허용된 field만 |
 
 ### DoS
 | ID | Threat | 완화 |
 |---|---|---|
-| NFR-SEC-{n} | <리소스 고갈> | <rate limit·timeout·budget> |
+| NFR-SEC-10 | Malicious 사용자가 매우 큰 spec 작성 → graph 빌드 메모리 고갈 | NFR-SCAL-2 한계 (5000 node) + builder timeout (30s) → graceful degradation |
+| NFR-SEC-11 | Hook script가 무한 loop (변조됨) | hook timeout (10s) — git이 자동 abort |
 
 ### Elevation of Privilege
 | ID | Threat | 완화 |
 |---|---|---|
-| NFR-SEC-{n} | <권한 상승> | <authz check·IDOR 방지> |
+| NFR-SEC-12 | Hook script가 임의 명령 실행 (사용자 머신에 RCE) | maintainer 자체 hook script만 install, 사용자 명시 confirm 후 install (AC-R6-3) |
+| NFR-SEC-13 | Telemetry payload injection (endpoint side) | endpoint validation, plugin 자체 권한 상승 X (single-user single-machine) |
 
-### Compliance 후보 (해당 시)
-| ID | 의무 | 적용 영역 |
+### Compliance 후보
+| ID | 의무 | 적용 |
 |---|---|---|
-| NFR-SEC-COMP-1 | <SOC2 / GDPR / HIPAA / etc.> | ADR-CAND-{n} |
+| NFR-SEC-COMP-1 | OSS 라이선스 (MIT 등) | LICENSE 파일 강제 |
+| NFR-SEC-COMP-2 | 사용자 GDPR/HIPAA 환경 | 가이드 (사용자 책임 — README + telemetry opt-out 안내) |
 
 ## 5. Privacy (Priv)
 
-PRD §3 Persona 데이터 분류 + Phase 4 Entity 분류.
+PRD §3 Persona 데이터 + Phase 4 Entity 분류.
 
 | ID | 데이터 | 분류 | 처리 정책 |
 |---|---|---|---|
-| NFR-PRIV-1 | <데이터 1> | <PII / public / sensitive / secret> | <마스킹·암호화·retention> |
-| ... | ... | ... | ... |
+| NFR-PRIV-1 | 사용자가 spec에 적는 idea·persona·시나리오·PAIN | 사용자 측 (PII 가능) | 이 product는 저장 안 함. 사용자 git repo + LLM API에만. README에 LLM 데이터 처리 정책 확인 권장. |
+| NFR-PRIV-2 | 사용자가 LLM에 paste한 prompt | 사용자 측 | LLM provider 정책 따름 (Claude Code 측 책임) |
+| NFR-PRIV-3 | Telemetry event metadata | 익명 (anonProjectHash) | INV-8 — spec 내용 0건. project root path SHA256 (irreversible) |
+| NFR-PRIV-4 | TelemetryConsent | 사용자 명시 동의 | INV-9 — default OptedOut. opt-in 명시 후만 전송. |
+| NFR-PRIV-5 | Plugin이 사용자 file system access 범위 | 최소 권한 | docs/spec/, .git/hooks/, .specrail-cache/, ~/.specrail/만 — 명시 |
 
-해당하는 권리 / 의무:
-- 데이터 export
-- 데이터 삭제
-- 동의 (cookie / push / etc.)
-- 데이터 region
+해당 권리:
+- 데이터 export: 사용자 git pull (사용자 책임)
+- 데이터 삭제: opt-out + 데이터 삭제 요청 (R13.F3) — 익명 hash이라 매칭 어려움이 trade-off
+- 동의: opt-in only (R13.F1)
+- 데이터 region: telemetry endpoint host 시점 결정 (ADR-CAND-7)
 
-## 6. Accessibility (A11y) — WCAG 2.1 AA
+## 6. Accessibility (A11y)
+
+Plugin 자체는 terminal·markdown surface. WCAG 2.1 AA 적용:
 
 | ID | NFR | 측정 방법 |
 |---|---|---|
-| NFR-A11Y-1 | Color contrast 4.5:1 | axe-core, manual |
-| NFR-A11Y-2 | Keyboard 전체 navigation | manual + automated |
-| NFR-A11Y-3 | Screen reader semantic | manual test |
-| NFR-A11Y-4 | Focus indicator visible | manual |
-| NFR-A11Y-5 | Form label association | axe-core |
-| NFR-A11Y-6 | Error message screen-reader 인식 | aria-live |
-| NFR-A11Y-7 | Image alt | axe-core |
-| NFR-A11Y-8 | <기타 — 동영상 자막 등> | manual |
+| NFR-A11Y-1 | 모든 status는 색 + icon + text (색만 X) | code review |
+| NFR-A11Y-2 | Markdown semantic 위계 일관 (H1/H2/H3) | grep `^##+` |
+| NFR-A11Y-3 | Code block fence + lang 명시 | grep `^\`\`\`` |
+| NFR-A11Y-4 | Mermaid 다이어그램 alt text 또는 prose 동등 설명 | 각 다이어그램 옆 prose |
+| NFR-A11Y-5 | Hyperlink descriptive ("여기 클릭" 금지) | review |
+| NFR-A11Y-6 | Terminal output screen reader 친화 (markdown native) | manual |
+| NFR-A11Y-7 | Keyboard navigation (terminal 자체 + IDE 자체) | 자동 (terminal·IDE 측) |
 
-기준 미정 → ADR-CAND-{n}: AAA로 강화 검토 (대상 사용자에 따라).
-
-(non-UI product — CLI·OSS 라이브러리 등 — 이 섹션 단순화)
+(Dashboard a11y — color contrast·focus indicator·ARIA 등 — 향후 cycle.)
 
 ## 7. Internationalization (i18n)
 
 | ID | NFR | 정책 |
 |---|---|---|
-| NFR-I18N-1 | 기본 언어 | <한국어 / English / etc.> (PRD §3 Persona 환경) |
-| NFR-I18N-2 | 추가 언어 | <Phase N에 추가> |
-| NFR-I18N-3 | 시간대 | <UTC 저장 / 사용자 profile / 시스템 자동> |
-| NFR-I18N-4 | 통화 | <단일 / multi> (해당 시) |
-| NFR-I18N-5 | 날짜 형식 | locale 기반 |
-| NFR-I18N-6 | 텍스트 길이 | <어떤 언어 기준 + 확장 비율> |
-| NFR-I18N-7 | RTL 지원 | <미지원 / 지원> + 이유 |
+| NFR-I18N-1 | 기본 언어 (plugin 자체 — skill prompt) | 한국어 우선 |
+| NFR-I18N-2 | 추가 언어 | 영어 — branch 또는 디렉토리 분리  |
+| NFR-I18N-3 | 사용자 spec 언어 | 사용자 자유 — plugin 무관 |
+| NFR-I18N-4 | 시간대 (Telemetry timestamp) | UTC 저장 |
+| NFR-I18N-5 | 날짜 형식 | ISO 8601 (YYYY-MM-DD) |
+| NFR-I18N-6 | 텍스트 길이 | 한국어/영어 차이 약 1.5x — markdown 표 자동 wrap |
+| NFR-I18N-7 | RTL 지원 | 미지원 (한국어·영어만) |
 
 ## 8. NFR ↔ ARCH 매핑
 
 | NFR | 영향받는 ARCH |
 |---|---|
-| NFR-PERF-{n} | ARCH-{n}, ARCH-{m} |
-| NFR-AVAIL-{n} | ARCH-{n} (모두) |
-| NFR-SEC-{n} | ARCH-{n} (특정) |
-| ... | ... |
+| NFR-PERF-1 (skill invoke) | ARCH-2 |
+| NFR-PERF-2 (LLM 응답) | ARCH-1 (CC measure), EXT-2 |
+| NFR-PERF-3 (hook 실행) | ARCH-3, ARCH-4, ARCH-5 |
+| NFR-PERF-4·5 (graph 빌드) | ARCH-4 |
+| NFR-PERF-6 (schema 검증) | ARCH-5 |
+| NFR-SCAL-2 (누적 ID) | ARCH-4, ARCH-6 |
+| NFR-AVAIL-6 (hook 실패) | ARCH-3 |
+| NFR-SEC-3 (PR jailbreak) | ARCH-2 (maintainer) |
+| NFR-SEC-4 (spec 변조) | ARCH-3, ARCH-5 |
+| NFR-SEC-7 (PII LLM paste) | ARCH-spec (사용자 측) — 가이드만 |
+| NFR-SEC-9 (telemetry leak) | ARCH-7 |
+| NFR-PRIV-3·4 | ARCH-7 |
+| NFR-A11Y-* | ARCH-2 (skill 산출물 형식) |
 
-## 9. Open Questions
+## 9. PRD KPI ↔ NFR 매핑
+
+| KPI | 지원 NFR |
+|---|---|
+| KPI-1 완주율 80% | NFR-PERF-1·2·3 (응답 빠름), NFR-AVAIL-2·3 (CC·LLM 가용), NFR-SEC-2 (hook bypass 억제) |
+| KPI-2 환각 ID 0 | NFR-SEC-4 (spec 변조 차단) |
+| KPI-3 사양화 시간 <6h | NFR-PERF-7 (누적 시간) |
+| KPI-4 GitHub stars 500 | (NFR 비종속, marketing·quality 의존) |
+| KPI-6 hook 정당 차단 >85% | NFR-AVAIL-6 (hook 실패율 <0.1%) |
+
+## 10. Open Questions
 
 | Q ID | 질문 | 결정자 | Blocking? |
 |---|---|---|---|
-| OQ-9-1 | <Compliance 적용 시기> | CTO | N |
-| OQ-9-2 | <RPO 가능한 storage 비용> | Eng | Y |
+| OQ-9-1 | NFR-SEC-7 secret pattern detection — base 또는 opt-in F? | maintainer | Phase 12 |
+| OQ-9-2 | NFR-PERF-3 hook timeout — 3s 한계 합리? graph 큰 project에서 검증 | maintainer | Phase 10 spike |
+| OQ-9-3 | NFR-SCAL-2 누적 ID 5000 한계 — 실 사용 시 도달 가능성? per-project archive 정책 | maintainer | Phase 11 |
+| OQ-9-4 | NFR-PRIV-3 telemetry endpoint host (region·jurisdiction) | maintainer | ADR-CAND-7 |
 
-## 10. 다음 phase 인풋
+## 11. 다음 phase 인풋
 
 Phase 10 (Test Strategy)에:
-- 측정가능 NFR 모두 (테스트 케이스 매핑)
+- 측정가능 NFR 모두 (PERF·SCAL 모두 → bench/perf test)
+- INV cover (특히 INV-2 환각 ID·INV-8 telemetry privacy)
+- Edge case: 매우 큰 spec, multi-project 동시, hook 변조
 
 Phase 11 (Operations)에:
-- Availability·Backup·Monitoring NFR
+- AVAIL·SEC·PRIV NFR (deploy·monitoring 정책)
+- Telemetry endpoint 운영 (R13)
+- DR: 사용자 spec backup 가이드
 
 Phase 12 (ADR)에:
-- 모든 ADR-CAND-{n}
-````
-
----
-
-## DELTA Mode
-
-기존 NFR 위에 변경.
-
-### 형식
-
-`changes/{date}-{topic}/deltas/09-nfr-delta.md`:
-
-````markdown
-## ADDED NFR
-| ID | NFR | 목표 | 이유 (변경 trigger) |
-
-## MODIFIED NFR
-### NFR-{existing}
-- 목표 Δ: <before → after>
-- Reason
-- Impact: <어느 ARCH 영향>
-
-## REMOVED NFR
-- NFR-{n}: 더 이상 유효 안 함 / 다른 NFR으로 대체
-
-## STRIDE Δ
-새 threat 또는 변경된 완화
-
-## Privacy Δ
-새 데이터 종류, 새 분류
-
-## i18n Δ
-언어 추가/제거
-````
-
----
-
-## Self-Check
-
-```bash
-# 측정 단위 없는 NFR
-grep -E "^\| NFR-" 09-nfr.md | awk -F'|' '{print $4}' | grep -iE "좋|빠르|편하|쉽" && echo "측정값 모호"
-
-# STRIDE 6 카테고리 모두
-for cat in Spoofing Tampering Repudiation Disclosure DoS Elevation; do
-  grep -q "$cat" 09-nfr.md || echo "STRIDE $cat 누락"
-done
-
-# WCAG 명시 (UI product)
-grep -i "WCAG\|2.1\|AA\|AAA" 09-nfr.md
-
-# i18n 언어 명시
-grep -E "한국어|영어|Korean|English|언어" 09-nfr.md
-
-# NFR ↔ ARCH 매핑 존재
-grep "NFR.*ARCH\|매핑" 09-nfr.md
-```
-
-체크리스트:
-- [ ] 7 domains 모두 (PERF·SCAL·AVAIL·SEC·PRIV·A11Y·I18N)
-- [ ] 모든 NFR 측정 단위·목표·방법
-- [ ] STRIDE 6 카테고리 모두
-- [ ] WCAG 2.1 AA 기본 (UI product)
-- [ ] i18n 언어·시간대·통화 명시
-- [ ] Privacy 데이터 분류
-- [ ] NFR ↔ ARCH 매핑
-- [ ] 기준 모름 → ADR-CAND
-- [ ] PRD §4 KPI와 NFR-PERF 일치
-- [ ] Phase 8 EXT fallback과 NFR-AVAIL 일치
-
----
-
-<HARD-GATE>
-Self-check 통과 + 사용자 승인. Phase 10 진행.
-</HARD-GATE>
+- 모든 ADR-CAND-1~10 (Phase 8) + ADR-CAND-7 telemetry host

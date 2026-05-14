@@ -1,328 +1,232 @@
-<!-- plugin-refinement (T2.5c, architect 옵션 B): self-check bash blocks → ARCH-5 schema validator + ARCH-3 hooks 자동 강제. HARD-GATE 수동 승인 step → ADR-8 state machine 자동 enforce. 상대 경로 file 참조 → plugin runtime의 docs/spec/ resolver. -->
-
----
-name: phase-11-operations
-description: Environments, deploy strategy, observability, alerts, backup/DR, feature flags, cost. 추상 도구만 (구체는 ADR-CAND).
-inputs-from: Phase 8 ARCH·EXT + Phase 9 AVAIL·SEC·PRIV NFR
-trigger-words: operations, deploy, monitoring, observability, DR
-mode: GREENFIELD | DELTA
----
-
-# Phase 11: Operations
-
-## Purpose
-
-어디서 어떻게 돌리고 관찰·복구할지 사양화. **Observability is scope, not afterthought.**
-
-## Inputs
-
-- Phase 8 모든 ARCH·EXT
-- Phase 9 NFR-AVAIL (RPO/RTO), NFR-SEC, NFR-PRIV
-- Phase 10 perf test scenario
-- (DELTA) `current/11-operations.md`
-
-<HARD-GATE>
-Phase 10 사용자 승인 없이 진행 금지.
-</HARD-GATE>
-
-## Mode 상속
-
-- EXPANSION: multi-region, blue-green, canary 모두 surface
-- SELECTIVE: minimum + cherry-pick (cost↔reliability tradeoff)
-- HOLD: NFR-AVAIL cover하는 minimum
-- REDUCTION: 단일 region, rolling deploy만
-
----
-
-## Anti-Sycophancy
-
-00-common 참조 + Phase 11 특화:
-
-**금지:**
-- 구체 vendor 추천 (Phase 11은 abstract)
-- "Best practice는 X예요"
-- "관측성을 잘 갖춰야..."
-
-**대신:**
-- 추상 도구만 — APM / log aggregator / metrics store / alerting platform
-- 구체 vendor 결정은 ADR-CAND
-- 모든 alert는 PRD KPI / NFR 인용 강제
-- "이 alert가 깨지면 발생할 production 사고" 명시
-
----
-
-## Reasoning Procedure
-
-1. Environment 정의 (Dev / Staging / Prod 최소)
-2. Deploy strategy (NFR-AVAIL과 일치)
-3. Observability 3축 (Logs / Metrics / Traces) — 각 ARCH 별
-4. Alert policy (severity / channel / on-call)
-5. Backup·DR (NFR-AVAIL의 RPO/RTO 충족)
-6. Feature flag 전략
-7. Cost model (3 시나리오)
-8. Runbook 후보 목록
-9. Self-Check + 승인
-
----
-
-## Constraints
-
-1. **추상 도구만** — 구체 vendor는 ADR-CAND.
-2. **모든 OPS-{n}는 NFR / KPI 인용**.
-3. **Logs는 PII 마스킹 명시** — NFR-PRIV / NFR-SEC 일치.
-4. **Alert 4 attribute** — 조건 / severity / channel / on-call response.
-5. **Backup은 RPO/RTO 일치** — NFR-AVAIL 충족.
-6. **Cost 3 시나리오** — 작음 / 기준 / 큼 (PRD §4 KPI 기반).
-7. **Cognitive Pattern**: Systems over heroes (피곤한 인간 새벽 3시), Error budgets.
-
----
-
-## Output Format
-
-````markdown
 # Operations
 
-**Mode:** {inherited}
+**Mode:** HOLD SCOPE
 **Inputs:** Phase 8 ARCH·EXT, Phase 9 AVAIL·SEC·PRIV
-**Date:** YYYY-MM-DD
+**Date:** 2026-05-10
+
+> Plugin은 passive skill·hook 모음 — server 안 돌림. Ops는 두 영역 분리:
+> 1. **Plugin code 운영** (maintainer 측) — GitHub OSS, Claude Code marketplace
+> 2. **Telemetry endpoint 운영** (maintainer 측) — opt-in 사용자 metric 수집
+> 사용자 측 (사용자 spec, hook 실행 환경)은 사용자 책임 — out of plugin ops scope.
 
 ## 1. Environments
 
 | Env | 목적 | 데이터 | 외부 EXT | 누가 접근 |
 |---|---|---|---|---|
-| Dev | 로컬 개발 | seed (가상) | mock 또는 sandbox | 개발자 본인 |
-| Staging | 통합 검증·QA | anonymized prod copy | sandbox | 팀 + QA |
-| Prod | 실 사용자 | live | live | on-call만 직접 |
+| Dev (개인) | maintainer 로컬 작업 | local git | LLM API (개인 key), Telemetry endpoint dev | maintainer |
+| Staging | release 전 검증 | dev fixture | LLM API, Telemetry endpoint staging | maintainer + 베타 사용자 |
+| Production | OSS 사용자 | (사용자 측 spec) | live LLM, Telemetry endpoint prod | 누구나 (OSS) |
 
-각 env 독립 인프라. 데이터 cross-env 금지.
+Plugin 자체 prod = main branch + tagged release. Telemetry endpoint = 별도 서비스 (호스트 — ADR-CAND-7).
 
 ## 2. Deploy Strategy
 
-**OPS-1 — Deploy 방식:** <rolling / canary / blue-green> (default), 다른 옵션 (옵트인)
+### Plugin code (skills + hooks + builders)
 
-**근거:** NFR-AVAIL-{n} 충족.
+**OPS-1 — Deploy 방식:** Git tag-based release + Claude Code marketplace 등록.
 
 ```mermaid
 sequenceDiagram
-    participant CI
-    participant Reg as Registry
-    participant Prod as Prod
-    participant Mon as Monitoring
+    participant Maintainer
+    participant CI as CI (GitHub Actions)
+    participant GitHub
+    participant Marketplace as Claude Code Marketplace
+    participant Users as 사용자
 
-    CI->>Reg: build, push artifact
-    CI->>Prod: deploy (점진)
-    Prod-->>Mon: health checks
-    Mon-->>CI: gate (NFR 위반 시 rollback)
-    CI->>Prod: rollback (필요 시)
+    Maintainer->>GitHub: branch + PR
+    GitHub->>CI: trigger tests
+    CI->>CI: Unit + Integ + Static (R7 도메인 무관 검증)
+    CI-->>Maintainer: pass / fail
+    Maintainer->>GitHub: merge to main
+    Maintainer->>GitHub: tag v{X}.{Y}.{Z}
+    GitHub->>CI: trigger release workflow
+    CI->>Marketplace: publish skill bundle (해당 시)
+    Marketplace-->>Users: skill update notification (CC가 자동)
+    Users->>Marketplace: pull update
 ```
 
 | 단계 | 비율 | 검증 시간 | Rollback trigger |
 |---|---|---|---|
-| Canary | 10% | 5분 | error rate +50% / NFR-PERF 위반 |
-| Partial | 50% | 10분 | 위와 동일 |
-| Full | 100% | - | manual rollback only |
+| Branch + PR | 0% (사용자 영향 없음) | 24-72h review | review 거부 |
+| Merge to main | 0% (release 전) | - | revert PR |
+| Tag release | 점진 (사용자 update 시점 결정) | 24h | hot fix patch tag (v{X}.{Y}.{Z+1}) |
+| Marketplace publish | 점진 | 사용자 update 후 24-72h | yank + advisory |
 
-DB / 데이터 migration: forward-only, two-step (확장 → backfill → 사용 → 정리).
+**Marketplace 미등록 시:** GitHub install 명령 (e.g. `claude code skill install <repo>` — Claude Code SDK에 의존).
 
-## 3. Observability — Logs
+### Hook script (사용자 머신에 install)
 
-**OPS-2 — 구조화 로그:** JSON Lines, 모든 ARCH 동일 schema.
+**OPS-2 — Hook deploy:** Plugin 첫 setup 시 `.git/hooks/`에 plugin 자체 hook script 자동 install (AC-R6-3, 사용자 confirm).
 
-| 필드 | 예 | PII 마스킹 |
-|---|---|---|
-| timestamp | ISO 8601 | - |
-| service | "ARCH-{n}" | - |
-| level | INFO/WARN/ERROR | - |
-| traceId | uuid | - |
-| userId | hash 또는 internal | NFR-PRIV-{n} |
-| <PII 필드> | <마스킹된 값> | NFR-SEC-{n} |
-| event | <이름> | - |
-| metadata | {} | PII 자동 redaction |
+Plugin 업데이트 시:
+- Hook script 자체도 업데이트 — 사용자 git pre-commit이 hash 비교 후 alert
+- 사용자가 plugin update 명령 실행 → hook script 재install (사용자 confirm)
 
-**OPS-3 — Retention:** Hot 7일 (검색), Warm 30일 (조사), Cold 1년 (감사).
+### Telemetry endpoint
 
-**OPS-4 — 금지:** 비밀번호·토큰·카드번호·OAuth secret 로그 절대 금지. CI에서 grep ban.
+**OPS-3 — Endpoint deploy:** Standard 웹 서비스 (Plausible / PostHog 호스트 또는 자체) — ADR-CAND-7 결정 후.
+
+- 단일 region (default UTC, GDPR 가능 시 EU region OQ-9-4)
+- TLS 강제
+- Token-based auth (plugin 자체 token, 사용자별 X)
+
+DB / 데이터 migration: telemetry event는 append-only — 미정 event field 추가 시 schema versioning.
+
+## 3. Observability — Logs (Plugin code)
+
+OSS code라 traditional log 없음. 대신:
+
+**OPS-4 — GitHub Activity:**
+
+| 신호 | 의미 |
+|---|---|
+| Issue 생성 | 사용자 PAIN 보고 (PAIN-* 또는 새) |
+| PR 생성 | 사용자 직접 수정 제안 |
+| Discussion | 질문·feedback |
+| Star·Fork | adoption (KPI-4) |
+| Issue resolution time | maintainer 반응성 |
+
+**OPS-5 — Telemetry stream (opt-in):**
+
+| Event | 의미 |
+|---|---|
+| PhaseStarted | 사용자가 phase N 진입 |
+| PhaseApproved | 사용자가 phase N 승인 (HARD-GATE 통과) |
+| HookBlock | hook이 commit 차단 (NFR-SEC-2 detection) |
+| ChangeProposed | DELTA mode 시작 |
+| ImplementationStarted | Phase 13 후 SEC-4 진입 |
+| Other | (events list ADR-CAND-7 결정 시 확장) |
+
+각 event metadata: timestamp, anonProjectHash, pluginVersion, phaseId / changeId 등 (INV-8 spec 내용 0건 강제).
+
+**OPS-6 — Retention:**
+- Plugin GitHub issue·PR: 영구 (GitHub 자체)
+- Telemetry event: 12개월 (privacy 부담 감소). Aggregate metric은 무기한.
+
+**OPS-7 — 금지 (Plugin code):**
+- Plugin 자체에 사용자 spec 내용 log 절대 금지 (NFR-PRIV-1)
+- LLM prompt 자체도 log X (CC 측 책임)
+- Telemetry payload에 spec 내용 (INV-8 schema enforce)
 
 ## 4. Observability — Metrics
 
-**OPS-5 — Metrics:** RED method per ARCH (Rate / Errors / Duration).
+### Plugin (사용자 보고 + Telemetry)
 
 | ARCH | Rate | Errors | Duration |
 |---|---|---|---|
-| ARCH-{edge} | RPS | 4xx, 5xx | p50/p95/p99 |
-| ARCH-{app} | calls/s | exceptions | latency |
-| ARCH-{data} | queries/s | timeouts | query time |
-| ARCH-{queue} | enqueue/s | DLQ size | wait time |
+| ARCH-2 Skills | telemetry PhaseStarted/일 | issue-reported skill failure | LLM 응답 시간 (자기보고) |
+| ARCH-3 Hooks | HookBlock event/주 | hook script error rate (telemetry 시) | NFR-PERF-3 (사용자 보고) |
+| ARCH-4 Graph | (telemetry 없음 — 내부) | issue 보고 | NFR-PERF-4·5 (자체 bench) |
+| ARCH-7 Telemetry Client | event/일 | local queue retry count | endpoint 응답 시간 |
 
-**OPS-6 — Business metrics:** PRD KPI 직접 dashboard화.
+### KPI Dashboard (maintainer 측)
 
-| KPI | Metric |
-|---|---|
-| KPI-1 | <측정 정의> |
-| KPI-2 | <측정 정의> |
-| KPI-3 | <측정 정의> |
+| KPI | Metric | 측정 도구 |
+|---|---|---|
+| KPI-1 (완주율) | telemetry: PhaseApproved 13 도달 / PhaseStarted 1 비율 | telemetry analytics |
+| KPI-2 (환각 ID 0) | hook telemetry: HookBlock with reason="invalid-id-ref" 비율 | telemetry |
+| KPI-3 (시간 <6h) | self-report (사용자 survey) + telemetry timestamp diff | survey + telemetry |
+| KPI-4 (stars 500) | GitHub stars | GitHub API |
+| KPI-6 (정당 차단 >85%) | HookBlock + 후속 PhaseApproved 비율 (사용자 수정 후 통과) | telemetry |
+
+(KPI-5 dashboard 사용 빈도 — 향후 dashboard cycle.)
 
 ## 5. Observability — Traces
 
-**OPS-7 — Distributed trace:** 모든 inter-ARCH 호출에 traceId.
-
-샘플링: prod 1%, error 100%, canary 10%.
+- **Plugin internal trace:** Skill chain (Phase N → Phase N+1) — telemetry event sequence per session_id (anonymous)
+- **사용자 측 trace:** out of scope (CC 측 또는 사용자 IDE 측)
+- **Telemetry endpoint trace:** 표준 server logging (request id)
 
 ## 6. Alert Policy
 
-| OPS-{n} | 조건 | severity | channel | on-call response |
-|---|---|---|---|---|
-| OPS-{n} | 5xx > 1%/5분 | P0 | <pager> | 즉시 (15분 내 ack) |
-| OPS-{n} | NFR-PERF 위반 (p95 초과 x 5분) | P1 | <pager + chat> | 30분 |
-| OPS-{n} | NFR-AVAIL budget 30% 소진/주 | P1 | <chat> | 1시간 |
-| OPS-{n} | EXT-{n} 다운 | P0 | <pager> | 즉시 |
-| OPS-{n} | DB connection > 80% | P2 | <chat> | 다음 영업일 |
-| OPS-{n} | Queue depth > <임계> | P1 | <chat> | 1시간 |
-| OPS-{n} | Failed login spike (NFR-SEC-{n}) | P1 | <보안 chat> | 1시간 |
-| OPS-{n} | Disk > 80% | P1 | <chat> | 4시간 |
+OSS 프로젝트라 새벽 3시 pager 없음. 대신 **maintainer attention**:
 
-**Alert hygiene:** 새벽 3시에 깨우는 alert는 actionable + 대응 가능. P0 false positive는 즉시 fix.
+| OPS-{n} | 조건 | severity | channel | maintainer response |
+|---|---|---|---|---|
+| OPS-8 | Critical issue (사용자 spec 깨짐 보고) | P0 | GitHub label | 24h ack |
+| OPS-9 | Telemetry endpoint 다운 (5xx > 1%/5분) | P1 | maintainer email | 4h ack |
+| OPS-10 | Plugin marketplace install failure 보고 | P0 | GitHub label | 24h ack |
+| OPS-11 | KPI-2 (환각 ID 0) 위반 보고 — Hook fail이지만 사용자가 이상 ID 작성 성공 | P0 | issue label | 48h fix |
+| OPS-12 | KPI-1 (완주율 80%) telemetry 측정 < 60% | P1 | dashboard | 다음 release cycle 검토 |
+| OPS-13 | NFR-SEC-3 PR jailbreak 시도 감지 (PR review 시) | P0 | maintainer review | 즉시 reject + advisory |
+| OPS-14 | NFR-SEC-12 hook RCE 보고 | P0 | security email | 24h fix + CVE if needed |
+| OPS-15 | Telemetry endpoint storage 80% | P2 | dashboard | retention 정책 검토 |
+| OPS-16 | Stars 성장 정체 (KPI-4) | P3 | GitHub | manual investigation |
+
+**Alert hygiene:** Plugin code OSS이라 24h ack가 minimum. 사용자 critical block (install·hook 실패 등)는 즉시.
 
 ## 7. Backup & Disaster Recovery
 
-**OPS-{n} — <Storage 1>:** PITR 또는 dump, RPO <시간> (NFR-AVAIL-{n}), RTO <시간> (NFR-AVAIL-{n}).
+| OPS-{n} | 영역 | 정책 |
+|---|---|---|
+| OPS-17 | Plugin GitHub repo | GitHub 자체 + maintainer local clone (사실상 multi-region) |
+| OPS-18 | 사용자 docs/spec | 사용자 책임 — README "git push 자주" |
+| OPS-19 | Telemetry endpoint DB | 일일 backup, 7일 retention (privacy 부담) |
+| OPS-20 | TelemetryConsent (사용자 측) | 사용자 직접 (재install 시 재opt-in 질문) |
+| OPS-21 | Plugin marketplace listing | maintainer가 release tag로 재publish 가능 (사실상 backup) |
 
-**OPS-{n} — <Storage 2>:** <cross-region replication / immutable lock for audit / etc.>
+**RPO·RTO:**
+- Plugin code: RPO 0 (git에 모두 보존), RTO 즉시 (clone)
+- Telemetry endpoint: RPO 24h, RTO 4h
+- 사용자 spec: 사용자 git push 빈도 결정
 
-**OPS-{n} — <Cache>:** 백업 안 함 (re-derivable).
-
-**OPS-{n} — <Queue>:** persistence + DLQ. 외부 호출 실패 시 retain (NFR-AVAIL-{n}).
-
-**OPS-{n} — DR drill:** 분기마다 staging에서 RPO/RTO 검증.
+**DR drill:** 분기마다 maintainer가 fresh 환경에서 plugin install + Phase 1 진행 시뮬 (regression test).
 
 ## 8. Feature Flags
 
-**OPS-{n} — Flag 종류:**
+현재 feature flag 없음 (단순 markdown skill collection). 유사 mechanism:
 
-| 종류 | 목적 | TTL |
-|---|---|---|
-| Release | 새 기능 점진 출시 | 2주 (이후 제거) |
-| Experiment | A/B 테스트 | 4주 |
-| Ops | 긴급 차단 (서킷브레이커) | 영구 |
-| Permission | role-based 점진 권한 | 영구 |
+| 종류 | 적용 |
+|---|---|
+| Telemetry consent | OptedIn / OptedOut — feature flag와 유사 (R13) |
+| Plugin version | 사용자가 pin 가능 (semver) |
+| Hook bypass | `--no-verify` (사용자 측 git 자체 mechanism — plugin 무관) |
 
-Flag 죽은 코드 금지: TTL 지나면 코드 + flag 모두 제거.
+(Real feature flag mechanism — A/B 테스트 등 — 향후 dashboard cycle.)
 
 ## 9. Cost Model
 
-3 시나리오 (사용량 기반):
-
-| 항목 | 작음 (KPI×0.1) | 기준 (KPI 목표) | 큼 (KPI×10) |
+| 항목 | 작음 (KPI×0.1) | 기준 (KPI 목표 500 stars) | 큼 (10x 5000 stars) |
 |---|---|---|---|
-| Compute | $X | $Y | $Z |
-| Storage | ... | ... | ... |
-| Cache | ... | ... | ... |
-| 외부 EXT 비용 | ... | ... | ... |
-| 관측성 도구 | ... | ... | ... |
-| **Total/월** | $A | $B | $C |
-| Per-user cost | $A/n | $B/n | $C/n |
+| GitHub repo | $0 (public OSS) | $0 | $0 (or Pro $4/월 maintainer) |
+| Telemetry endpoint host (Plausible / PostHog cloud) | $0 (free tier) | $20/월 (Plausible 10k events) | $50/월 (PostHog 100k events) |
+| Maintainer 시간 | 5h/월 | 10h/월 | 30h/월 + 다른 maintainer |
+| LLM API (자체 dogfood + spike) | $5/월 | $20/월 | $50/월 |
+| **Total / 월** | **$5** | **$40** | **$100** |
+| Per-user cost | $0.05 | $0.08 | $0.02 |
 
-가격은 ADR-CAND-{n}별 vendor 결정 후 채워짐.
+이 product의 cost는 사용자 수에 부분 의존 (telemetry event 수). Plugin code 자체는 $0.
 
 ## 10. Runbook 후보
 
-이번 phase에선 list만. 구체 runbook은 incident 발생 시 작성·축적.
-
 | RB | 시나리오 |
 |---|---|
-| RB-1 | <Storage 다운> |
-| RB-2 | <EXT-{n} 다운> |
-| RB-3 | <보안 incident — brute force·suspicious activity> |
-| RB-4 | DR 복구 (RPO/RTO) |
-| RB-5 | secret rotation |
-| RB-6 | rolling deploy 중단 / 롤백 |
+| RB-1 | "B2B 표현 발견" issue (R7 위반) → 위치 확인 + PR + merge |
+| RB-2 | Hook install 실패 사용자 보고 → OS 별 troubleshooting 문서 |
+| RB-3 | Plugin update 후 사용자 spec frontmatter schema mismatch → migration script |
+| RB-4 | Telemetry endpoint 다운 → fallback (사용자 측 local queue 재전송) |
+| RB-5 | Malicious PR (jailbreak 시도) → revert + advisory |
+| RB-6 | KPI-1 < 60% 추세 (사용자 이탈) → Phase 별 PhaseStarted vs PhaseApproved 분석 + 약점 phase 식별 |
+| RB-7 | Plugin marketplace publish 실패 → manual GitHub release fallback |
+| RB-8 | Subagent BLOCKED escalation 패턴 분석 (telemetry) → 자주 막히는 task 종류 식별 |
 
 ## 11. Open Questions
 
 | Q ID | 질문 | 결정자 | Blocking? |
 |---|---|---|---|
-| OQ-11-1 | <APM vendor 선택> | Eng | N (ADR-CAND) |
-| OQ-11-2 | <Multi-region 시기> | CTO | N |
-| OQ-11-3 | On-call rotation 인원 | Eng manager | Y |
+| OQ-11-1 | Telemetry endpoint host (Plausible / PostHog / 자체) — ADR-CAND-7 결정 + Phase 11 운영 결과 | maintainer | ADR Phase 12 |
+| OQ-11-2 | Marketplace 등록 시점 — 초기 release 동시 vs 안정 후 | maintainer | OQ-1-1 (PRD) |
+| OQ-11-3 | Survey mechanism (KPI-3 self-report) — Google Form / Tally / GitHub issue template | maintainer | 출시 전 |
+| OQ-11-4 | Hot fix release 정책 — patch tag 자동 vs maintainer 명시 | maintainer | 첫 production incident 후 |
 
 ## 12. 다음 phase 인풋
 
 Phase 12 (ADR)에:
-- 모든 OPS 관련 ADR-CAND
+- 모든 OPS 관련 ADR-CAND (telemetry host·marketplace registration·hook lang 등)
+- ADR-CAND-7 (telemetry endpoint host) — Phase 11 비용·privacy 분석 종합
 
 Phase 13 (Implementation)에:
 - OPS-1 deploy 단계 (마지막 milestone)
-- OPS-{n} alert 셋업 (infra task)
-````
-
----
-
-## DELTA Mode
-
-`changes/{date}-{topic}/deltas/11-operations-delta.md`:
-
-````markdown
-## ADDED OPS
-| ID | 항목 | 근거 NFR |
-
-## MODIFIED OPS
-### OPS-{existing}
-- Changed: <뭐가 어떻게>
-- Reason
-- 영향 ARCH
-
-## ADDED Alerts
-| ID | 조건 | severity | channel |
-
-## REMOVED Alerts
-- OPS-{n}: 더 이상 유효 안 함
-
-## Backup·DR Δ
-RPO/RTO 변경, retention 변경
-
-## Cost Δ
-이번 변경의 monthly cost 증감 추정
-````
-
----
-
-## Self-Check
-
-```bash
-# 구체 vendor 노출 검출
-grep -iE "Datadog|NewRelic|CloudWatch|Sentry|PagerDuty|Splunk|ELK" 11-operations.md
-
-# OPS ID 형식
-grep -E "^\| OPS-[0-9]+\|" 11-operations.md | wc -l
-
-# 모든 Alert가 NFR / KPI 인용
-grep -A1 "^\| OPS-1[0-7]" 11-operations.md | grep -cE "NFR-|KPI-"
-
-# Backup이 NFR-AVAIL과 일치
-grep "RPO\|RTO" 11-operations.md
-
-# PII 로그 마스킹 명시
-grep -i "마스킹\|redaction\|mask" 11-operations.md
-
-# Cost 3 시나리오
-grep -E "작음|기준|큼" 11-operations.md
-```
-
-체크리스트:
-- [ ] Env 3종 (Dev/Staging/Prod), 데이터 분리 명시
-- [ ] Deploy strategy + rollback trigger
-- [ ] Logs PII 마스킹 명시
-- [ ] Metrics RED method per ARCH
-- [ ] Business metrics → PRD KPI 직접 매핑
-- [ ] Alert 모두 4 attribute
-- [ ] Backup·DR이 NFR-AVAIL 충족
-- [ ] DR drill 정기 일정
-- [ ] Feature flag TTL 명시
-- [ ] Cost 3 시나리오
-- [ ] 구체 vendor 노출 0건 (모두 ADR-CAND)
-
----
-
-<HARD-GATE>
-Self-check 통과 + 사용자 승인. Phase 12 진행.
-</HARD-GATE>
+- OPS-5·11·12 telemetry instrumentation (R13 task)
+- OPS-2 hook auto-install (R6 task)
+- RB-1~8 runbook은 incident 발생 시 작성 (P1 — 출시 후)

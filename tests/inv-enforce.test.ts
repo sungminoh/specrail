@@ -108,7 +108,7 @@ describe('checkAllInvariants combines INV-5 and INV-7', () => {
 
 describe('INV-7 (extended)', () => {
   it('PASS ADR-11 (real file): no violations mentioning ADR-11', async () => {
-    const filePath = join(REPO_ROOT, 'docs/spec/examples/12-adr-risks.md');
+    const filePath = join(REPO_ROOT, 'docs/spec/12-adr-risks.md');
     const violations = await checkInv7File(filePath);
     const adr11 = violations.filter((v) => v.reason.includes('ADR-11'));
     expect(adr11).toEqual([]);
@@ -211,7 +211,7 @@ describe('INV-7 (extended)', () => {
   });
 
   it('Mixed real file: total violation count is deterministic and informative', async () => {
-    const filePath = join(REPO_ROOT, 'docs/spec/examples/12-adr-risks.md');
+    const filePath = join(REPO_ROOT, 'docs/spec/12-adr-risks.md');
     const violations = await checkInv7File(filePath);
     console.log(`INV-7 real-file violation count: ${violations.length}`);
     // The count may be >= 0 depending on older ADRs not following the option pattern.

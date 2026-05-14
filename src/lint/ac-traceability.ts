@@ -5,10 +5,8 @@
  * in the implementation-plan spec is also referenced in at least one test file
  * under tests/.
  *
- * Spec lookup order:
- *   1. docs/spec/examples/13-implementation-plan.md
- *   2. docs/spec/13-implementation-plan.md
- *   3. Neither found → empty result (specSource: 'none')
+ * Spec lookup: docs/spec/13-implementation-plan.md
+ * If not found → empty result (specSource: 'none').
  */
 
 import { readdir, readFile, stat } from 'node:fs/promises';
@@ -38,21 +36,15 @@ function extractAcLabels(text: string): string[] {
   return [...new Set(matches)].sort();
 }
 
-/** Resolve the spec file path, trying examples/ first. */
+/** Resolve the spec file path. */
 async function resolveSpecPath(projectRoot: string): Promise<string | null> {
-  const candidates = [
-    join(projectRoot, 'docs', 'spec', 'examples', '13-implementation-plan.md'),
-    join(projectRoot, 'docs', 'spec', '13-implementation-plan.md'),
-  ];
-  for (const p of candidates) {
-    try {
-      await stat(p);
-      return p;
-    } catch {
-      // not found — try next
-    }
+  const p = join(projectRoot, 'docs', 'spec', '13-implementation-plan.md');
+  try {
+    await stat(p);
+    return p;
+  } catch {
+    return null;
   }
-  return null;
 }
 
 /** Recursively collect all test files matching the configured suffix. */

@@ -1,266 +1,185 @@
-<!-- plugin-refinement (T2.5c, architect 옵션 B): self-check bash blocks → ARCH-5 schema validator + ARCH-3 hooks 자동 강제. HARD-GATE 수동 승인 step → ADR-8 state machine 자동 enforce. 상대 경로 file 참조 → plugin runtime의 docs/spec/ resolver. -->
-
----
-name: phase-6-information-architecture
-description: Page Tree, Navigation Strategy, Deep Link Patterns, Role Gating. User Flow 페이지 노드와 1:1 매핑.
-inputs-from: Phase 3 Permission Matrix + Phase 5 페이지 Node
-trigger-words: information architecture, page tree, navigation, deep link
-mode: GREENFIELD | DELTA
----
-
-# Phase 6: Information Architecture
-
-## Purpose
-
-페이지(또는 화면·뷰)가 어떻게 위계화되고 탐색되는지 사양화. Phase 5 페이지 Node와 1:1.
-
-## Inputs
-
-- Phase 3 Permission Matrix (multi-role product)
-- Phase 5 §2 페이지 Node + 섹션 최상위 페이지
-- Phase 5 §6 Cross-Section Path (deep link 후보)
-- (DELTA) `current/06-information-architecture.md`
-
-<HARD-GATE>
-Phase 5 사용자 승인 없이 진행 금지.
-</HARD-GATE>
-
-## Mode 상속
-
-- EXPANSION: 추가 navigation pattern, 부 페이지 surface
-- SELECTIVE: Phase 5 페이지만 base, 추가 cherry-pick
-- HOLD: Phase 5 페이지 1:1
-- REDUCTION: P0 Spec 페이지만
-
----
-
-## Anti-Sycophancy
-
-00-common 참조 + Phase 6 특화:
-
-**금지:**
-- "보통 이런 navigation을 쓰니까"
-- "사용자가 헷갈릴 수 있어요"
-- "표준 패턴이라..."
-
-**대신:**
-- 모든 페이지는 Phase 5 Node ID 인용 강제
-- 모든 navigation 결정은 Persona 도구 환경 인용
-- "이 깊이에서 사용자가 잃는 시간은?" 못 답하면 평탄화
-
----
-
-## Reasoning Procedure
-
-1. Phase 5 페이지 Node 모두 받기
-2. Page ID 부여 (`P-{n}`)
-3. Tree 구성 — 깊이 ≤ 4
-4. Navigation Strategy 결정 (플랫폼 따라 — sidebar / tab / drawer / 화면 전환 등)
-5. Deep Link 패턴 명시 (해당하는 경우)
-6. Role Gating — 어느 Role이 어느 Page 접근 가능 (multi-role product)
-7. Empty / Error states 매핑
-8. Self-Check + 승인
-
----
-
-## Constraints
-
-1. **Page ID `P-{n}`** — Phase 5 페이지 Node와 1:1 매핑.
-2. **깊이 ≤ 4** — 4단계 넘으면 평탄화 강제.
-3. **Phase 5 Node ID 인용** — 모든 Page는 어느 Node인지 명시.
-4. **Permission Matrix와 일치** — Phase 3와 모순 0건.
-5. **Deep Link 패턴 명시** — URL pattern 또는 deep link scheme + 인증 요구사항.
-6. **Empty state 페이지 명시** — 데이터 없을 때 어디로.
-7. **Error state 페이지 명시** — 404·403·500 또는 상응하는 처리.
-
----
-
-## Output Format
-
-````markdown
 # Information Architecture
 
-**Mode:** {inherited}
-**Inputs:** Phase 3 Permission Matrix, Phase 5 페이지 Node
-**Date:** YYYY-MM-DD
+**Mode:** HOLD SCOPE
+**Inputs:** Phase 5 페이지 Node + 섹션 최상위 페이지
+**Date:** 2026-05-10 (dashboard scope 제거 후)
+
+> 단일 surface — Claude Code session (terminal text). Dashboard surface는 향후 cycle.
 
 ## 1. Page Catalog
 
-| Page ID | 이름 | Phase 5 Node | URL Pattern / 위치 | 깊이 |
+### Claude Code surface (P-CC-*)
+
+명령·skill 호출·LLM 응답이 페이지 역할. URL 없음 — 명령어가 entry.
+
+| Page ID | 이름 | Phase 5 Node | Trigger / 위치 | 깊이 |
 |---|---|---|---|---|
-| P-1 | <이름> | N-{nnn} | <패턴> | 1 |
-| P-2 | <이름> | N-{nnn} | <패턴> | 2 |
-| P-3 | <이름> | N-{nnn} | <패턴> | 2 |
-| ... | ... | ... | ... | ... |
-| P-404 | 미발견 | - | * | - |
-| P-403 | 권한 없음 | - | * | - |
-| P-500 | 시스템 오류 | - | * | - |
+| P-CC-1 | README · marketplace landing | N-002 | GitHub URL 또는 Claude Code marketplace | 1 |
+| P-CC-2 | Setup 안내 | N-006 | install 직후 자동 출력 | 1 |
+| P-CC-3 | Phase init 응답 (docs/spec 생성·skill 호출) | N-011 | `/specrail init` 또는 trigger phrase | 1 |
+| P-CC-4 | Phase 산출물 출력 | N-014 | skill chain 자동 (13 phase 동일 layout) | 2 |
+| P-CC-5 | Hook fail 차단 메시지 | N-019 | git commit 시 자동 | 2 |
+| P-CC-6 | Phase transition 승인·진입 | N-022 | 사용자 "approve" 명령 | 2 |
+| P-CC-7 | Change 명령 응답 (영향 phase + proposal draft) | N-032, N-033 | `/specrail change "<topic>"` | 1 |
+| P-CC-8 | Phase delta 작성 | N-035 | DELTA 진행 중 영향 phase 별 | 2 |
+| P-CC-9 | Change 머지·archive 알림 | N-039 | 자동 | 2 |
+| P-CC-10 | Implementation task subagent | N-042 | Phase 13 후 자동 또는 명령 | 2 |
+| P-CC-11 | Spec review subagent | N-046 | task별 자동 | 3 |
+| P-CC-12 | Quality review subagent | N-047 | task별 자동 | 3 |
+| P-CC-13 | Implementation 종료 알림 | N-051 | 자동 | 2 |
+| P-CC-14 | Telemetry opt-in 질문 | N-071 | install 첫 사용 | 1 |
+| P-CC-15 | Escalation prompt (BLOCKED) | N-049 | subagent 막힘 시 | 3 |
+
+### 산출물 검토 surface (passive — markdown rendered)
+
+현재 인터랙티브 dashboard 없음. 산출물 검토는 사용자 환경의 markdown rendered:
+
+| 검토 surface | 도구 | 가능성 |
+|---|---|---|
+| GitHub UI | Web browser | Mermaid 자동 render, 표·코드 highlight |
+| VS Code preview | Cmd/Ctrl+Shift+V | Mermaid plugin 설치 시 render |
+| Obsidian / Typora 등 | Markdown viewer | 독립 |
+| Claude Code session 자체 | Terminal | 텍스트만 (Mermaid X) |
+
+(인터랙티브 검토 — ID 클릭, dependency graph navigate, timeline view 등은 향후 dashboard cycle.)
 
 ## 2. Page Tree
 
 ```mermaid
 graph TD
-    Root[/] --> Section1[섹션 1]
-    Section1 --> P1[P-1 ...]
-    Section1 --> P2[P-2 ...]
-    Root --> Section2[섹션 2]
-    Section2 --> P3[P-3 ...]
-    P3 --> P4[P-4 ...]
-    P4 --> P5[P-5 ...]
+    Plugin["Plugin (단일 surface — Claude Code)"]
+
+    Plugin --> CC_Init["P-CC-3 init"]
+    CC_Init --> CC_Phase["P-CC-4 phase 산출물 (13)"]
+    CC_Phase --> CC_Hook["P-CC-5 hook fail (조건부)"]
+    CC_Phase --> CC_Trans["P-CC-6 transition"]
+    Plugin --> CC_Change["P-CC-7 change"]
+    CC_Change --> CC_Delta["P-CC-8 phase delta"]
+    Plugin --> CC_Impl["P-CC-10 task"]
+    CC_Impl --> CC_Review["P-CC-11/12 review"]
+    CC_Impl --> CC_Esc["P-CC-15 escalation"]
+
+    classDef cc fill:#e1f5ff,stroke:#01579b
+    class Plugin,CC_Init,CC_Phase,CC_Hook,CC_Trans,CC_Change,CC_Delta,CC_Impl,CC_Review,CC_Esc cc
 ```
+
+깊이 ≤ 3 ✓
 
 ## 3. Navigation Strategy
 
-### Top-level (인증 후 또는 메인 진입)
+### Claude Code surface — 명령·skill 자동 trigger
 
-플랫폼 따라:
-- 데스크톱: <예: 좌측 sidebar / 상단 tab>
-- 모바일: <예: 하단 tab / 햄버거>
-- CLI: <예: 첫 명령어 / `--help`>
-- 게임: <예: 메인 메뉴>
+URL navigation 없음. 사용자 → 명령어 → LLM 응답이 "navigation".
 
-### Breadcrumb (해당 시)
-
-깊이 N 이상에서 표시.
-
-### Tab Navigation (해당 시)
-
-특정 페이지에 sub-tab.
-
-### 결정 근거
-
-| 결정 | 근거 (Persona 도구·환경 인용) |
+| 명령 / Trigger | 도착 페이지 |
 |---|---|
-| <패턴 1> | <Persona가 이미 사용 중인 비슷한 패턴> |
-| <패턴 2> | <환경 제약 또는 사용 컨텍스트> |
+| `/specrail init` (또는 자연어 trigger phrase) | P-CC-3 |
+| `/specrail change "<topic>"` | P-CC-7 |
+| `/specrail implement` (또는 Phase 13 후 자동) | P-CC-10 |
+| `/specrail status` | (CLI 출력 — Page 별 부여 X, raw 응답) |
+| 사용자 "approve phase N" | P-CC-6 (transition) |
+| 사용자 "opt out telemetry" | (CLI 응답) |
+| skill chain 자동 | P-CC-4 → P-CC-6 → 다음 P-CC-4 (13회) |
 
-## 4. Deep Link Patterns (해당 시)
+`/specrail help`로 명령 list 표시.
 
-| Deep Link | URL / Scheme | 인증 | 미인증 시 |
-|---|---|---|---|
-| <목적> | <패턴> | <필요 / 토큰 / 불필요> | <처리> |
+### 산출물 검토 navigation (passive)
 
-## 5. Role Gating (multi-role product)
+사용자가 자기 환경 markdown 도구로 navigate:
+- File 간 — 자기 file 시스템 (VS Code Explorer / Finder)
+- ID cross-reference — grep 또는 IDE search
+- Mermaid graph — GitHub·VS Code preview에서 자동 render
 
-각 Page에 어느 Role이 접근 가능. Phase 3 Permission Matrix와 일치.
+(interactive cross-reference·search·timeline은 향후 dashboard.)
 
-| Page | 미인증 | ROLE-1 | ROLE-2 | ROLE-3 |
-|---|---|---|---|---|
-| P-1 | ✅ | ✅ | ✅ | ✅ |
-| P-2 | ❌ | ✅ | ✅ | ❌ |
-| P-3 | ❌ | ✅ | 자기 것만 | 읽기 |
+### 결정 근거 (Persona 환경 인용)
 
-거부 시:
-- 미인증 → 로그인 + `?next=` 보존 (해당 시)
-- 권한 부족 → P-403
+| 결정 | 근거 |
+|---|---|
+| 단일 surface (terminal) | Persona는 Claude Code 네이티브 사용. 추가 도구 install 마찰 0 |
+| Markdown rendered fallback | Persona가 GitHub·VS Code 일상 — 추가 학습 0 |
+| 명령어 navigation | CLI 일상, URL 없는 게 더 자연 |
+| Help 명령 | Persona가 `--help` 일상 |
 
-(single-user product면 이 섹션 생략)
+## 4. Deep Link Patterns
+
+현재 deep link 없음 (URL 없는 surface). 향후 dashboard cycle에서 추가.
+
+다만 markdown file path는 deep link 역할:
+- `<repo>/docs/spec/03-features.md#L67` (line anchor)
+- `<repo>/docs/spec/03-features.md#r3` (heading anchor — H2가 R3)
+- 사용자가 git URL share 시 GitHub UI에서 navigate
+
+## 5. Role Gating
+
+**Single-user product. Permission Matrix 생략.**
 
 ## 6. Empty / Error States 매핑
 
-| 상태 | Page 또는 인라인 |
+| 상태 | Page 또는 처리 |
 |---|---|
-| 데이터 0개 (목록) | 인라인 "<첫 항목 만들기>" 또는 onboarding |
-| 404 | P-404 |
-| 403 | P-403 |
-| 500 | P-500 + 자동 보고 |
-| 네트워크 오프라인 | <글로벌 banner / offline state> |
+| 데이터 0개 (Project init 안 됨) | P-CC-3 (init 명령 또는 trigger phrase 안내) |
+| Hook fail 차단 | P-CC-5 — violation 명시 + 수정 가이드 |
+| Phase 미승인에 다음 phase trigger | F2.2 transition gate 차단 → Claude Code 응답: "Phase N-1 승인 필요" |
+| Telemetry endpoint 다운 (R13) | local queue + 재전송. 사용자 무관. |
+| Plugin install 실패 | Claude Code marketplace error → README troubleshooting |
+| Subagent BLOCKED | P-CC-15 — escalation prompt (사용자 결정) |
 
-## 7. URL / 경로 Conventions (해당 시)
+(Dashboard 관련 empty/error state — Server down, 404, file watch fail 등 — 모두 향후 cycle.)
 
-- 인증 영역
-- 앱 / 기능 영역
-- 정적 영역
-- 토큰 기반 경로
-- ID 위치 (path vs query)
+## 7. URL / 경로 Conventions
 
-## 8. Open Questions
+### Claude Code 명령
+
+| 영역 | 패턴 |
+|---|---|
+| Plugin 명령 | `/specrail {action}` |
+| Trigger phrase | "13단계로 사양화" · "phase {N} 시작" 등 — Skill의 triggerWords |
+| 자연어 자동 trigger | LLM이 사용자 의도 파악 후 skill 호출 |
+
+### File system path (사용자 spec)
+
+| 영역 | 패턴 |
+|---|---|
+| Project root | `<user-project>/docs/spec/` |
+| Greenfield 산출물 | `docs/spec/{NN-name}.md` |
+| Current (DELTA 적용 후) | `docs/spec/current/{NN-name}.md` |
+| Changes | `docs/spec/changes/{date}-{topic}/` |
+| ADR | `docs/spec/12-adr-risks/ADR-{n}-{topic}.md` |
+| Wireframe | `docs/spec/07-wireframe/W-{n}-{slug}.md` |
+
+이 file system path는 미래 dashboard가 read 호환 (frontmatter standard YAML).
+
+## 8. 검색 가능성
+
+현재 사용자 자기 환경 검색:
+- `/specrail status` — 현재 phase·진행
+- `/specrail find <query>` — spec content search (CLI)
+- 사용자 직접 grep / IDE search (file system level)
+
+(인터랙티브 search bar는 향후 dashboard cycle.)
+
+## 9. Open Questions
 
 | Q ID | 질문 | 결정자 | Blocking? |
 |---|---|---|---|
-| OQ-6-1 | ... | <역할> | N |
+| OQ-6-1 | `/specrail find` 명령 초기 포함 vs 향후 (간단 grep wrapper) | maintainer | Phase 8 |
+| OQ-6-2 | Settings page (telemetry consent toggle) — Claude Code 명령으로 충분? 또는 향후 dashboard | maintainer | Phase 8 |
 
-## 9. 다음 phase 인풋
+## 10. 다음 phase 인풋
 
 Phase 7 (Wireframe)에:
-- 모든 Page ID + URL Pattern
+- Page Catalog 15개 (P-CC-* 만)
 - Page Tree (위계)
-- Navigation Strategy
+- Navigation Strategy (명령어 entry)
+- Markdown zone 구조 wireframe (단일 W-CC-pattern)
+- Empty / Error states list
 
 Phase 8 (Architecture)에:
-- URL Conventions (routing 설계)
+- File system path conventions (storage layout)
+- 명령 entry → skill 매핑
+- Markdown rendered fallback이 사용자 측 책임 (out of scope)
 
 Phase 9 (NFR)에:
-- Empty/Error states 매핑 (a11y, error handling NFR)
-````
-
----
-
-## DELTA Mode
-
-기존 IA 위에 변경.
-
-### 형식
-
-`changes/{date}-{topic}/deltas/06-ia-delta.md`:
-
-````markdown
-## ADDED Pages
-| Page ID | 이름 | Phase 5 Node | URL Pattern | 깊이 |
-
-## MODIFIED Pages
-### P-{existing}
-- URL Pattern Changed: <before → after>
-- Reason
-- Migration: <기존 link redirect>
-
-## REMOVED Pages
-- P-{n}: 어디로 redirect
-
-## ADDED Deep Link Patterns
-| Pattern | URL | 인증 |
-
-## MODIFIED Role Gating
-| Page | Role | Before | After |
-
-## Tree Δ
-변경된 부분만 graph로.
-````
-
----
-
-## Self-Check
-
-```bash
-# Page ID 형식
-grep -E "^\| P-[0-9]+" 06-information-architecture.md | wc -l
-
-# 깊이 4 초과
-grep -E "^\| P-[0-9]+" 06-information-architecture.md | awk -F'|' '{print $7}' | grep -E "[5-9]" && echo "깊이 4 초과 있음"
-
-# 모든 Page가 Phase 5 Node 인용 (특수 페이지 제외)
-grep -E "^\| P-[0-9]+" 06-information-architecture.md | grep -v "P-40\|P-50" | grep -c "N-[0-9]"
-
-# Empty/Error states 명시
-grep -i "empty state\|error state" 06-information-architecture.md
-
-# Mermaid Tree 존재
-grep "graph TD\|graph LR" 06-information-architecture.md
-```
-
-체크리스트:
-- [ ] 모든 Page ID = Phase 5 Node와 1:1 (특수 페이지 제외)
-- [ ] 깊이 ≤ 4
-- [ ] Mermaid Tree
-- [ ] Navigation Strategy 결정 근거 = Persona 도구·환경 인용
-- [ ] Deep Link 패턴 + 미인증 처리 (해당 시)
-- [ ] Role Gating = Phase 3 Permission Matrix와 일치 (multi-role)
-- [ ] Empty/Error states 매핑
-- [ ] URL Conventions 명시 (해당 시)
-- [ ] 404·403·500 페이지 정의 (해당 시)
-
----
-
-<HARD-GATE>
-Self-check 통과 + 사용자 승인. Phase 7 진행.
-</HARD-GATE>
+- Markdown rendered a11y (Mermaid alt text, semantic 위계)
+- Empty state UX (PAIN-base 완화)

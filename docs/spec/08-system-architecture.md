@@ -1,344 +1,279 @@
-<!-- plugin-refinement (T2.5c, architect 옵션 B): self-check bash blocks → ARCH-5 schema validator + ARCH-3 hooks 자동 강제. HARD-GATE 수동 승인 step → ADR-8 state machine 자동 enforce. 상대 경로 file 참조 → plugin runtime의 docs/spec/ resolver. -->
-
----
-name: phase-8-system-architecture
-description: C4 L1 (Context) + L2 (Container), External integrations, Auth model, API surface intent, Storage strategy. ADR-CAND 식별.
-inputs-from: Phase 1 §5(환경) + Phase 3 R/F + Phase 4 ENT
-trigger-words: architecture, system design, C4, integrations
-mode: GREENFIELD | DELTA
----
-
-# Phase 8: System Architecture
-
-## Purpose
-
-시스템 경계·외부 의존성·내부 구성·데이터 흐름을 사양화. 구체 기술 결정은 Phase 12 ADR로 미룸.
-
-## Inputs
-
-- PRD §5 환경 / 카테고리
-- Phase 3 모든 R / F
-- Phase 4 모든 Entity
-- Phase 6 URL Conventions (해당 시)
-- (DELTA) `current/08-system-architecture.md`
-
-<HARD-GATE>
-Phase 7 사용자 승인 없이 진행 금지.
-</HARD-GATE>
-
-## Mode 상속
-
-- EXPANSION: 추가 container, scaling 옵션 surface
-- SELECTIVE: PRD 시나리오 cover하는 minimum + cherry-pick
-- HOLD: PRD 시나리오 cover 충분
-- REDUCTION: P0 Spec cover하는 minimum architecture
-
----
-
-## Anti-Sycophancy
-
-00-common 참조 + Phase 8 특화:
-
-**금지:**
-- "Microservices가 더 확장성 있어요" (정당화 없는)
-- 구체 vendor·기술 명시 (Phase 8은 abstract, 구체는 ADR)
-- "Best practice는 X예요"
-
-**대신:**
-- 추상 컴포넌트만 명시
-- 구체 기술 후보는 `ADR-CAND-{n}`으로 마킹 (Phase 12에서 결정)
-- Cognitive Pattern: **Boring by default** — innovation token 약 3개 신중히
-
----
-
-## Reasoning Procedure
-
-1. PRD §5 환경에서 client 정의 (Web / iOS / Android / Desktop / API / CLI / 콘솔 등)
-2. C4 L1 (Context) — 시스템과 외부 인물·외부 시스템
-3. C4 L2 (Container) — 시스템 내부 abstract container
-4. External Integration 표 (외부 의존이 있는 경우)
-5. Authentication & Authorization Model (multi-user product)
-6. API / Interface Surface (intent only)
-7. Storage Strategy (abstract — Entity → category 매핑)
-8. ADR-CAND 표시 (모든 구체 기술 결정 후보)
-9. Self-Check + 승인
-
----
-
-## Constraints
-
-1. **C4 L1 + L2 강제** — Mermaid flowchart로.
-2. **추상 컴포넌트만** — 구체 product 이름 금지, "관계형 DB"·"key-value 캐시"·"객체 스토리지"·"메시지 큐" 등 카테고리만.
-3. **모든 구체 기술 결정 → ADR-CAND** — `ADR-CAND-{n}: <영역> (Phase 12)`.
-4. **External은 데이터 분류 + 실패 fallback 명시** — 무엇을 보내고 받는지, 다운 시 무엇.
-5. **Auth model: Role × Resource matrix** (multi-role product).
-6. **API Surface는 intent만** — endpoint 형식·payload는 미정.
-7. **Sequence diagram 1개 이상** — 핵심 flow의 component 간 메시지.
-8. **Cognitive Pattern**: Boring by default, Reversibility, Make change easy then easy change.
-
----
-
-## Output Format
-
-````markdown
 # System Architecture
 
-**Mode:** {inherited}
-**Inputs:** PRD §5, Phase 3 R/F, Phase 4 ENT
-**Date:** YYYY-MM-DD
+**Mode:** HOLD SCOPE
+**Inputs:** PRD §5, Phase 3 R/F (R1·R2·R4·R5·R6·R7·R8·R13), Phase 4 ENT
+**Date:** 2026-05-10 (harness only)
+
+> Dashboard scope 제거됨. Plugin은 Claude Code 안에서 작동하는 passive product.
 
 ## 1. C4 L1: System Context
 
 ```mermaid
 flowchart TB
-    User([사용자<br/>Persona])
-    System[("우리 시스템")]
+    Builder([Builder<br/>Persona])
+    Plugin[("specrail Plugin<br/>(Claude Code skill collection)")]
 
-    Ext1[/외부 1<br/>EXT-1/]
-    Ext2[/외부 2<br/>EXT-2/]
+    CC[/Claude Code<br/>EXT-1/]
+    LLM[/LLM API<br/>EXT-2<br/>via Claude Code/]
+    Git[/Git Hosting<br/>EXT-3/]
+    Editor[/Editor·IDE<br/>(Markdown render)<br/>EXT-4/]
+    Telem[/Telemetry endpoint<br/>EXT-5<br/>opt-in only/]
 
-    User -->|<인터페이스>| System
-    System -->|<목적>| Ext1
-    System -->|<목적>| Ext2
+    Builder -->|명령·자연어| CC
+    CC -->|skill 호출| Plugin
+    Plugin -->|tool call·prompt| CC
+    CC -->|API| LLM
+    Plugin -->|hook script| Git
+    Builder -->|markdown 검토| Editor
+    Editor -.read-only.- Plugin
+    Plugin -.|opt-in metric|.-> Telem
 ```
 
-(외부 의존이 없는 경우 — 단순 client + system만 표시)
+Plugin 자체는 **passive skill 모음** — Claude Code가 호출. 별 process 안 돌림 (dashboard 제거 후).
 
 ## 2. C4 L2: Container
 
 ```mermaid
 flowchart TB
-    subgraph "사용자 영역"
-        Client([Client<br/>ARCH-1])
+    subgraph "Claude Code 환경"
+        CC[Claude Code<br/>ARCH-1]
     end
 
-    subgraph "우리 시스템"
-        Edge[Edge / Gateway<br/>ARCH-2]
-        App[App / Core<br/>ARCH-3]
-        Storage[(Storage<br/>ARCH-4<br/>ADR-CAND-1)]
+    subgraph "Plugin (이 product)"
+        Skills[Plugin Skills<br/>ARCH-2<br/>13 phase + orchestrator + telemetry]
+        Hooks[Hook Scripts<br/>ARCH-3<br/>pre-commit · transition · schema]
+        Graph[Dependency Graph Builder<br/>ARCH-4]
+        Schema[Frontmatter Schema Validator<br/>ARCH-5]
+        IDGen[ID Auto-gen + Resolver<br/>ARCH-6]
+        TelemClient[Telemetry Client<br/>ARCH-7<br/>opt-in only]
     end
 
-    Client -->|<protocol>| Edge
-    Edge --> App
-    App --> Storage
+    subgraph "사용자 측 (out-of-scope)"
+        Spec[(docs/spec/<br/>ARCH-spec)]
+        GitRepo[(Git repo<br/>ARCH-git)]
+    end
+
+    subgraph "외부"
+        LLM[/LLM API<br/>EXT-2/]
+        Telem[/Telemetry endpoint<br/>EXT-5/]
+    end
+
+    CC -->|skill invoke| Skills
+    Skills -->|read·write| Spec
+    Skills -->|use| Graph
+    Skills -->|use| IDGen
+    Skills -->|trigger| Schema
+    Hooks -->|read| Spec
+    Hooks -->|use| Schema
+    Hooks -->|use| Graph
+    Spec -.commit.-> GitRepo
+    GitRepo -->|trigger| Hooks
+    Skills -->|prompt| CC
+    CC -->|API| LLM
+    Skills -.|event|.-> TelemClient
+    TelemClient -.|opt-in 시|.-> Telem
 ```
 
 ## 3. Container Catalog
 
-| ID | 이름 | 역할 (data/app/edge/infra) | 책임 | 비책임 |
+| ID | 이름 | 역할 | 책임 | 비책임 |
 |---|---|---|---|---|
-| ARCH-1 | Client | UI | 렌더링·입력 | 비즈니스 로직 |
-| ARCH-2 | Edge | edge | 인증·rate limit·routing | 비즈니스 로직 |
-| ARCH-3 | App | application | 비즈니스 로직 | UI·async |
-| ARCH-4 | Storage | data | 영구 데이터 | 캐시·blob |
-| ... | ... | ... | ... | ... |
+| ARCH-1 | Claude Code | host (사용자 측) | skill registry, tool call orchestration | plugin 비즈니스 로직 |
+| ARCH-2 | Plugin Skills | application | 13 phase skill + orchestrator + telemetry skill | 검증 (hooks가) |
+| ARCH-3 | Hook Scripts | gate | self-check·schema·transition gate enforcement | 산출물 작성 |
+| ARCH-4 | Dependency Graph Builder | data | markdown parse → ENT-DependencyGraph 빌드 | 변경 추적 (Skills가) |
+| ARCH-5 | Frontmatter Schema Validator | gate | YAML schema 검증 | schema 작성 (Skills가) |
+| ARCH-6 | ID Auto-gen + Resolver | data | unique ID 부여 + 인용 valid ID list 노출 | 산출물 본문 |
+| ARCH-7 | Telemetry Client | data | event queue + 전송 (opt-in 시) | endpoint host (외부) |
+| ARCH-spec | 사용자 docs/spec/ | data (사용자 측) | spec markdown 파일 | 본 product 책임 외 |
+| ARCH-git | Git repo | infra (사용자 측) | version control | 본 product 책임 외 |
 
-## 4. External Integrations (해당 시)
+## 4. External Integrations
 
 | ID | 이름 | 카테고리 | 보내는 데이터 | 받는 데이터 | 분류 | Fallback |
 |---|---|---|---|---|---|---|
-| EXT-1 | <서비스> | <카테고리> | <데이터> | <데이터> | <PII / public / sensitive> | <다운 시 처리> |
+| EXT-1 | Claude Code | host | skill metadata, tool calls | 사용자 입력, LLM 응답 | - | plugin 작동 불가 (필수) |
+| EXT-2 | LLM API | AI | prompt + 사용자 paste content | 산출물 markdown | 사용자 spec 내용 (PII 가능) | LLM 다운 시 사용자가 다른 LLM (CC 통해) |
+| EXT-3 | Git Hosting | VCS | 파일 + commit | repo content | public OSS / private 가능 | local git 작동 (push만 막힘) |
+| EXT-4 | Editor·IDE | 도구 (사용자 측) | - | - | - | text editor 어떤 것이든 |
+| EXT-5 | Telemetry endpoint | metrics | 익명 event | (응답 없음 — fire-and-forget) | 사용자 식별 X (anonProjectHash) | local queue 보존, 재전송 |
 
-각 External의 구체 vendor 선정은 **ADR-CAND-{n}** 후보로 Phase 12.
+각 EXT의 구체 vendor 선정은 ADR-CAND.
 
-(외부 의존 없으면 이 섹션 생략)
+## 5. Authentication & Authorization
 
-## 5. Authentication & Authorization (multi-user product)
+이 product 자체는 인증 없음 (single-user, single machine).
 
-### Auth Model
+사용자 환경의 인증:
+- Claude Code: 사용자 자기 계정 (이 product 책임 외)
+- LLM API: Claude Code 통해 사용자 key (이 product 책임 외)
+- Git Hosting: 사용자 GitHub 계정 (이 product 책임 외)
+- Telemetry endpoint: token-based (plugin 자체 token, project 정보 X)
 
-- 인증 방식: <패턴> (ADR-CAND-{n})
-- 세션 / 토큰: <메커니즘>
-- 비밀번호 / 자격증명: <해시·저장 방식> (ADR-CAND-{n})
+**중요 안내:** 사용자가 spec 파일에 PII·secret·proprietary info를 적고 LLM에 paste할 때 위험 — README + 00-common 가이드 (NFR-PRIV-1).
 
-### Role × Resource Matrix
+## 6. API / Interface Surface
 
-| Resource | ROLE-1 | ROLE-2 | ROLE-3 |
-|---|---|---|---|
-| <리소스 1> | RWD | R | - |
-| <리소스 2> | RWD | RW | R |
-
-(R=Read, W=Write, D=Delete)
-
-### Threat Boundaries
-
-```
-[Public] ──TLS──▶ [Edge: rate limit, auth]
-                    │
-                    ▼
-[Authenticated] ──internal──▶ [App: authz check]
-                                 │
-                                 ▼
-[Trusted] ──────────────────▶ [Storage]
-```
-
-(single-user product면 Auth 섹션 단순화 또는 생략)
-
-## 6. API / Interface Surface (intent only)
-
-Phase 8은 **what**만. **how**(REST/GraphQL/RPC/CLI/etc.)는 ADR-CAND-{n}.
+이 product의 "API"는 **Claude Code skill interface + hook script interface**. 형식은 ADR-CAND.
 
 | Capability | Description | Container |
 |---|---|---|
-| <기능 영역 1> | <목적> | ARCH-{n} |
-| <기능 영역 2> | <목적> | ARCH-{n} |
+| Skill registration | Claude Code에 13 skill + orchestrator + telemetry skill 등록 | ARCH-2 |
+| Skill invocation | trigger phrase 또는 명시 명령 | ARCH-1 → ARCH-2 |
+| Skill internal data passing | Phase N 산출물 → Phase N+1 input (frontmatter parse) | ARCH-2 + ARCH-6 |
+| Hook trigger | git pre-commit + plugin internal phase transition | ARCH-3 |
+| Schema validation | YAML frontmatter check | ARCH-5 |
+| Dependency graph query | skill·hook이 ID 정의·인용 lookup | ARCH-4 |
+| Telemetry event emit | skill·hook이 event 발행 (consent OptedIn 시) | ARCH-7 |
 
-## 7. Storage Strategy (abstract)
+(Dashboard·HTTP API — 향후 cycle.)
+
+## 7. Storage Strategy
 
 ### Entity → Storage 매핑
 
-| Entity | Storage Category | 이유 |
+| Entity | Storage Category | 위치 |
 |---|---|---|
-| ENT-{Name} | <관계형 DB / KV / 객체 / 큐 / 인메모리> | <강한 일관성 / 빠른 조회 / binary / async / etc.> |
-| ... | ... | ... |
+| ENT-Project | file system (docs/spec 디렉토리 자체) | 사용자 측 |
+| ENT-Phase | markdown file + YAML frontmatter | docs/spec/{NN-name}.md |
+| ENT-Spec | markdown section + frontmatter ID list | 동일 file |
+| ENT-AcceptanceCriteria | markdown bullet list (R-tier) | 동일 file |
+| ENT-DependencyGraph | in-memory only (ADR-9 option D) | 없음 — 프로세스 종료 시 휘발 |
+| ENT-Hook | shell scripts | `.git/hooks/{pre-commit,...}` |
+| ENT-Change | markdown + frontmatter | `docs/spec/changes/{date}-{topic}/` |
+| ENT-Skill | plugin install 디렉토리 | Claude Code skill registry (`~/.claude/skills/` 또는 비슷) |
+| ENT-Subagent | ephemeral (in-memory) | 없음 — task 종료 시 휘발 |
+| ENT-TelemetryEvent | local queue (JSON Lines) | `~/.specrail/telemetry-queue.jsonl` |
+| ENT-TelemetryConsent | local config | `~/.specrail/consent.json` |
 
-### Backup·DR 후보 정책
+### Backup·DR
 
-- <Storage>: <RPO / RTO 후보> (ADR-CAND-{n})
+- 사용자 docs/spec/: 사용자 책임 (`git push` 빈도 — README 가이드)
+- Plugin 자체: 사용자 plugin re-install
+- Telemetry queue: 일시 (재전송 후 삭제). 다운 시 일부 event 손실 (acceptable for opt-in metric)
+- Consent: 사용자 직접 백업 X (재install 시 재opt-in 질문)
 
-## 8. Sequence Diagram (핵심 flow 1개 이상)
+### `.specrail-cache/` (gitignore 권장)
+
+- ~~`graph.json`~~ — **제거됨 (ADR-9 option D)**: DependencyGraph는 in-memory only. 디스크 cache 파일 없음.
+- `id-counter.json` — auto-gen ID 카운터 (R{n}, F{n}.{m}, S{n}.{m}.{k} 다음 번호)
+
+## 8. Sequence Diagram
+
+### S1: Greenfield Phase N 진행
 
 ```mermaid
 sequenceDiagram
-    actor User
-    participant Client as Client (ARCH-1)
-    participant Edge as Edge (ARCH-2)
-    participant App as App (ARCH-3)
-    participant Storage as Storage (ARCH-4)
+    actor Builder
+    participant CC as Claude Code (ARCH-1)
+    participant Sk as Phase N Skill (ARCH-2)
+    participant IDGen as ID Auto-gen (ARCH-6)
+    participant Schema as Schema Validator (ARCH-5)
+    participant Spec as docs/spec/ (file)
+    participant Hook as pre-commit hook (ARCH-3)
+    participant Graph as Dep Graph (ARCH-4)
 
-    User->>Client: <행동>
-    Client->>Edge: <요청>
-    Edge->>App: <validated>
-    App->>Storage: <write/read>
-    Storage-->>App: <result>
-    App-->>Client: <response>
-    Client-->>User: <표시>
+    Builder->>CC: trigger Phase N
+    CC->>Sk: invoke
+    Sk->>Spec: read Phase N-1 frontmatter
+    Sk->>IDGen: request next ID
+    IDGen-->>Sk: R5, F5.1, ...
+    Sk->>CC: prompt with structured input
+    CC->>Sk: LLM response
+    Sk->>Schema: validate output frontmatter
+    Schema-->>Sk: pass / fail
+    Sk->>Spec: write {NN-name}.md
+    Sk->>CC: display W-CC-pattern (산출물)
+    Builder->>Builder: 검수 + 수정 사이클
+    Builder->>CC: git commit
+    CC->>Hook: trigger pre-commit
+    Hook->>Schema: validate
+    Hook->>Graph: rebuild + check INV-2 (환각 ID)
+    Hook-->>CC: pass / fail
+    alt fail
+        Hook-->>Builder: violation 표시 (P-CC-5)
+    else pass
+        Builder->>CC: "approve phase N"
+        Sk->>Spec: frontmatter status: Approved
+        Note over Sk,CC: Phase N+1 자동 invoke
+    end
+```
+
+### S2: DELTA 변경
+
+```mermaid
+sequenceDiagram
+    actor Builder
+    participant CC as Claude Code
+    participant ChangeSk as Change Skill
+    participant Graph as Dep Graph
+    participant DeltaSk as Phase N Delta Skill
+    participant Spec as docs/spec/
+
+    Builder->>CC: /specrail change "<topic>"
+    CC->>ChangeSk: invoke
+    ChangeSk->>Spec: read all current phases
+    ChangeSk->>Graph: build full graph
+    ChangeSk->>Graph: identify affected phases (transitive)
+    Graph-->>ChangeSk: [Phase 1, 3, 4, 8, 12, 13]
+    ChangeSk->>Spec: create changes/{date}-{topic}/proposal.md
+    ChangeSk->>CC: display affected phases + proposal draft
+    Builder->>Builder: 검수
+    Builder->>CC: 승인
+    loop for each affected phase
+        ChangeSk->>DeltaSk: invoke phase N delta
+        DeltaSk->>Spec: read phase N current
+        DeltaSk->>Spec: write changes/.../deltas/{NN}-delta.md
+    end
+    Builder->>CC: tasks.md 작성·구현 (SEC-4)
+    Note over Builder,Spec: implementation 후
+    ChangeSk->>Spec: merge to current/, move to changes/archive/
 ```
 
 ## 9. ADR-Candidates (Phase 12에서 결정)
 
-| ADR-CAND ID | 결정 영역 | 옵션 후보 |
+| ID | 결정 영역 | 옵션 후보 |
 |---|---|---|
-| ADR-CAND-1 | <영역 1> | <A> / <B> / <C> |
-| ADR-CAND-2 | <영역 2> | ... |
-| ... | ... | ... |
+| ADR-CAND-1 | Plugin skill 형식 | Claude Code official skill spec / custom |
+| ADR-CAND-2 | Frontmatter schema 정의 형식 | JSON Schema / custom YAML / TypeScript types |
+| ADR-CAND-3 | Hook script language | bash / Node.js / Python |
+| ADR-CAND-4 | Markdown parser (for Graph builder + Schema validator) | unified/remark / marked / 자체 regex |
+| ADR-CAND-5 | ID auto-gen 알고리즘 | sequential counter (per phase per project) / UUID / hash-based |
+| ADR-CAND-6 | Subagent 구현 (R8) | Claude Code 자체 subagent 기능 / LLM API direct call / hybrid |
+| ADR-CAND-7 | Telemetry endpoint host | Plausible / PostHog / Self-hosted minimal / 자체 build |
+| ADR-CAND-8 | Skill orchestration mechanism | tool call chain (LLM driven) / explicit state machine (deterministic) |
+| ADR-CAND-9 | Dep Graph cache invalidation | file watch (always live) / on-demand rebuild / manual refresh |
+| ADR-CAND-10 | Phase N 산출물 파일 vs 디렉토리 | 단일 file / 디렉토리 (큰 산출물용) |
 
 ## 10. Open Questions
 
 | Q ID | 질문 | 결정자 | Blocking? |
 |---|---|---|---|
-| OQ-8-1 | <전체 architecture 영향> | CTO | Y |
+| OQ-8-1 | Skill orchestration LLM-driven vs deterministic (ADR-CAND-8) — 핵심 결정 | maintainer | Phase 12·13 |
+| OQ-8-2 | Subagent 구현 — Claude Code SDK 기능 의존성 (A1 검증 필요) | maintainer | Phase 12 spike |
+| OQ-8-3 | Hook script multi-OS 호환 (Windows WSL 시 bash·PowerShell 분기?) | maintainer | Phase 11 |
+| OQ-8-4 | Markdown parser 라이브러리 — Phase 8 spike 후 결정 | maintainer | Phase 12 |
 
 ## 11. 다음 phase 인풋
 
 Phase 9 (NFR)에:
-- 모든 ARCH·EXT
-- Threat Boundaries
+- 모든 ARCH·EXT (Perf·Avail·Sec·Privacy NFR 매핑)
+- Threat Boundaries: ARCH-spec (사용자 PII), EXT-5 (telemetry), Hook bypass
+- Single-machine·single-user 보안 가정
 
 Phase 10 (Test)에:
-- ARCH 별 테스트 종류 매핑
+- ARCH-2 (Skills) test 종류 — skill input/output 검증
+- ARCH-3 (Hooks) test — exit code, blocking 동작
+- ARCH-4 (Graph) test — INV-1·INV-2 검증
+- ARCH-5 (Schema) test — frontmatter validation
 
 Phase 11 (Operations)에:
-- ARCH·EXT 운영 (deploy·monitoring)
-- DR 후보 정책
+- ARCH 별 deploy: skill install (Claude Code marketplace), hook auto-install
+- Monitoring: GitHub issue·PR + telemetry (opt-in)
+- Cost: $0 (사용자 측 모두 사용자 책임, plugin 자체 free OSS)
 
 Phase 12 (ADR)에:
-- 모든 ADR-CAND-{n} 항목
-````
-
----
-
-## DELTA Mode
-
-기존 architecture 위에 변경.
-
-### 형식
-
-`changes/{date}-{topic}/deltas/08-architecture-delta.md`:
-
-````markdown
-## ADDED Containers
-| ID | 이름 | 역할 | 책임 |
-
-## MODIFIED Containers
-### ARCH-{existing}
-- Responsibility Δ
-- Migration: <기존 책임을 어디로 옮길지>
-
-## ADDED External Integrations
-| ID | 이름 | 카테고리 | Fallback |
-
-## MODIFIED External
-### EXT-{existing}
-- 데이터 Δ
-- Fallback Δ
-
-## REMOVED
-- ARCH-{n}: Migration plan
-
-## Auth Model Δ (multi-user)
-- Role 추가/변경
-- Matrix 변경분
-
-## Storage Δ
-| Entity | Before | After | Migration |
-
-## Sequence Diagram Δ
-새 flow 또는 변경된 flow
-
-## ADR-CAND 추가
-| ID | 결정 영역 |
-````
-
----
-
-## Self-Check
-
-```bash
-# 구체 기술명 노출 검출 (도메인-specific 라이브러리·서비스 명)
-# 사용자가 자기 도메인에 맞춰 검사 — 일반적 예시 키워드:
-grep -iE "PostgreSQL|MySQL|MongoDB|Redis|Memcached|AWS|GCP|Lambda|S3|Stripe" 08-system-architecture.md
-
-# C4 L1 + L2 둘 다
-grep -c "flowchart" 08-system-architecture.md   # 2 이상
-
-# Sequence diagram
-grep -c "sequenceDiagram" 08-system-architecture.md   # 1 이상
-
-# Container ID 형식
-grep -E "^\| ARCH-[0-9]+" 08-system-architecture.md | wc -l
-
-# External ID 형식 (있는 경우)
-grep -E "^\| EXT-[0-9]+" 08-system-architecture.md | wc -l
-
-# 모든 EXT에 fallback (있는 경우)
-grep -E "^\| EXT-[0-9]+" 08-system-architecture.md | awk -F'|' '{print $7}' | grep -c .
-
-# Auth Matrix 존재 (multi-user)
-grep "Role.*Resource.*Matrix\|Role × Resource" 08-system-architecture.md
-
-# ADR-CAND 표시
-grep -c "ADR-CAND-[0-9]" 08-system-architecture.md
-```
-
-체크리스트:
-- [ ] C4 L1 (Context) + L2 (Container) 모두 mermaid
-- [ ] Sequence diagram 1개 이상
-- [ ] 추상 컴포넌트만 (구체 기술명 0건)
-- [ ] 모든 ARCH가 책임·비책임 명시
-- [ ] 모든 EXT가 fallback 정책 (있는 경우)
-- [ ] 모든 EXT가 데이터 분류 (있는 경우)
-- [ ] Role × Resource matrix (multi-role)
-- [ ] Threat boundaries (multi-user)
-- [ ] Storage Strategy: Entity → category 매핑
-- [ ] 모든 구체 기술 결정 → ADR-CAND
-- [ ] Open Questions Blocking 표시
-
----
-
-<HARD-GATE>
-Self-check 통과 + 사용자 승인. Phase 9 진행.
-</HARD-GATE>
+- 모든 ADR-CAND-1~10
 
 ## 12. Phase 8 Container Detail (ARCH-8~12)
 

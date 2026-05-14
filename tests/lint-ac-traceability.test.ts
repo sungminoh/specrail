@@ -172,30 +172,22 @@ describe('AC Traceability (US-9.3)', () => {
     }
   });
 
-  // TC-6: examples/ path takes priority over plain docs/spec/
-  it('prefers docs/spec/examples/ over docs/spec/', async () => {
-    const specExamples = 'AC-R5-1\nAC-R5-2\n';
-    const specPlain = 'AC-R9-1\nAC-R9-2\nAC-R9-3\n';
+  // Spec is read from docs/spec/13-implementation-plan.md (single canonical path).
+  it('reads spec from docs/spec/13-implementation-plan.md', async () => {
+    const spec = 'AC-R9-1\nAC-R9-2\nAC-R9-3\n';
     const root = await mkdtemp(join(tmpdir(), 'ac-trace-'));
     try {
-      // Write both paths
-      await mkdir(join(root, 'docs', 'spec', 'examples'), { recursive: true });
-      await writeFile(
-        join(root, 'docs', 'spec', 'examples', '13-implementation-plan.md'),
-        specExamples,
-        'utf8',
-      );
+      await mkdir(join(root, 'docs', 'spec'), { recursive: true });
       await writeFile(
         join(root, 'docs', 'spec', '13-implementation-plan.md'),
-        specPlain,
+        spec,
         'utf8',
       );
       await mkdir(join(root, 'tests'), { recursive: true });
 
       const r = await checkAcCoverage(root);
-      // Should read from examples/ (2 ACs), not plain spec (3 ACs)
-      expect(r.totalAc).toBe(2);
-      expect(r.specSource).toContain('examples');
+      expect(r.totalAc).toBe(3);
+      expect(r.specSource).toContain('13-implementation-plan.md');
     } finally {
       await rm(root, { recursive: true });
     }

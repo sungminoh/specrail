@@ -55,8 +55,8 @@ describe('sample', () => {
 
 describe('lint orchestrator runAllChecks (US-9.6)', () => {
   it('all pass — clean fixtures', async () => {
-    await writeFixture('docs/spec/examples/12-adr-risks.md', CLEAN_ADR);
-    await writeFixture('docs/spec/examples/13-implementation-plan.md', CLEAN_IMPL_PLAN);
+    await writeFixture('docs/spec/12-adr-risks.md', CLEAN_ADR);
+    await writeFixture('docs/spec/13-implementation-plan.md', CLEAN_IMPL_PLAN);
     await writeFixture('tests/sample.test.ts', CLEAN_TEST);
 
     const result = await runAllChecks(dir);
@@ -68,8 +68,8 @@ describe('lint orchestrator runAllChecks (US-9.6)', () => {
   });
 
   it('sycophancy fail — bare ship-ready in docs', async () => {
-    await writeFixture('docs/spec/examples/12-adr-risks.md', CLEAN_ADR);
-    await writeFixture('docs/spec/examples/13-implementation-plan.md', CLEAN_IMPL_PLAN);
+    await writeFixture('docs/spec/12-adr-risks.md', CLEAN_ADR);
+    await writeFixture('docs/spec/13-implementation-plan.md', CLEAN_IMPL_PLAN);
     await writeFixture('tests/sample.test.ts', CLEAN_TEST);
     await writeFixture('docs/README.md', 'This implementation is ship-ready.\n');
 
@@ -102,8 +102,8 @@ describe('sample', () => {
   it('AC-R1-3: content', () => { expect(true).toBe(true); });
 });
 `;
-    await writeFixture('docs/spec/examples/12-adr-risks.md', CLEAN_ADR);
-    await writeFixture('docs/spec/examples/13-implementation-plan.md', implPlan);
+    await writeFixture('docs/spec/12-adr-risks.md', CLEAN_ADR);
+    await writeFixture('docs/spec/13-implementation-plan.md', implPlan);
     await writeFixture('tests/sample.test.ts', testFile);
 
     // Without --strict: WARN does not fail
@@ -139,8 +139,8 @@ describe('sample', () => {
 });
 `;
 
-    await writeFixture('docs/spec/examples/12-adr-risks.md', CLEAN_ADR);
-    await writeFixture('docs/spec/examples/13-implementation-plan.md', implPlan);
+    await writeFixture('docs/spec/12-adr-risks.md', CLEAN_ADR);
+    await writeFixture('docs/spec/13-implementation-plan.md', implPlan);
     await writeFixture('tests/sample.test.ts', testFile);
 
     const result = await runAllChecks(dir);

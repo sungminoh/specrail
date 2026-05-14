@@ -1,261 +1,176 @@
-<!-- plugin-refinement (T2.5c, architect 옵션 B): self-check bash blocks → ARCH-5 schema validator + ARCH-3 hooks 자동 강제. HARD-GATE 수동 승인 step → ADR-8 state machine 자동 enforce. 상대 경로 file 참조 → plugin runtime의 docs/spec/ resolver. -->
+# Wireframe
 
----
-name: phase-7-wireframe
-description: 페이지별 layout, Element Spec, Component States(Loading/Empty/Error/Success), Responsive 2 breakpoints.
-inputs-from: Phase 6 Page 명세 + Phase 5 들어오는·나가는 경로
-trigger-words: wireframe, layout, UI, screen
-mode: GREENFIELD | DELTA
----
+**Mode:** HOLD SCOPE
+**Inputs:** Phase 6 Page Catalog (15개 P-CC-*)
+**Date:** 2026-05-10 (dashboard scope 제거 후)
 
-# Phase 7: Wireframe
-
-## Purpose
-
-각 페이지 / 화면의 UI 구성을 사양화. 디자인이 아닌 **information layout**.
-
-## Inputs
-
-- Phase 6 Page Catalog
-- Phase 5 페이지 Node에 들어오는·나가는 Edge
-- Phase 4 Entity (필드명 매핑)
-- (DELTA) `current/07-wireframe/`
-
-<HARD-GATE>
-Phase 6 사용자 승인 없이 진행 금지.
-</HARD-GATE>
-
-## Mode 상속
-
-- EXPANSION: 추가 component 패턴 탐색
-- SELECTIVE: Phase 6 페이지만 base
-- HOLD: Phase 6 페이지 1:1 + 4-state (Loading/Empty/Error/Success) 모두
-- REDUCTION: P0 페이지만 + Success state만
+> 단일 surface — Claude Code 응답이라 단일 zone 패턴 + variation. (Dashboard wireframe 9개는 향후 cycle.)
 
 ---
 
-## Anti-Sycophancy
+# W-CC-pattern: Claude Code 응답 표준 zone
 
-00-common 참조 + Phase 7 특화:
+**Page:** P-CC-1 ~ P-CC-15 (15개 inheritance)
+**Surface:** Claude Code session (terminal text)
+**Primary Device:** terminal + desktop. 모바일은 read-only.
 
-**금지:**
-- "예쁘게 만들면..."
-- "디자인 시스템에서..."
-- "보통 이런 식으로 배치"
+## 들어오는·나가는 경로
 
-**대신:**
-- 모든 element는 Phase 4 Entity attribute 또는 Phase 3 AC 인용 강제
-- "Pixel-precise"는 Phase 7이 아님 (디자인 단계)
-- 색·폰트·구체 컴포넌트 라이브러리 금지
+들어오는: 사용자 명령 또는 skill chain 자동 trigger
+나가는: 사용자 응답·승인·수정 요청
 
----
-
-## Reasoning Procedure
-
-1. Phase 6 페이지마다 Wireframe ID `W-{n}` (P-{n}와 1:1)
-2. **단일 디바이스·플랫폼 우선** — PRD §5의 primary 환경 하나만 그림
-3. Layout 설계 (zone 분할)
-4. Element Spec — 각 element가 어느 Entity attribute / AC를 표시
-5. Component States 4종 — Loading / Empty / Error / Success
-6. Responsive 2 breakpoints (mobile / desktop) — 해당 시
-7. Self-Check + 승인
-
----
-
-## Constraints
-
-1. **Wireframe ID `W-{n}` = Page ID `P-{n}`** — 1:1 매핑.
-2. **단일 디바이스·플랫폼 우선** — 두 플랫폼 동시에 그리지 말 것 (산만).
-3. **모든 element는 Entity attribute / AC 인용** — 정당화 없는 element 금지.
-4. **4 Component States 필수** — Loading / Empty / Error / Success.
-5. **Responsive (해당 시) 2 breakpoints** — mobile (≤768px) / desktop (≥769px). 그 외 안 다룸.
-6. **색·폰트 금지** — 색은 black/white/gray만. 폰트 크기는 H1/H2/Body/Caption만.
-7. **Page별 분리 파일** — `07-wireframe/W-{n}-{slug}.md`로.
-
----
-
-## Output Format
-
-각 wireframe 별도 파일:
-```
-07-wireframe/
-├── W-1-{slug}.md
-├── W-2-{slug}.md
-└── ...
-```
-
-각 파일 구조:
-
-````markdown
-# W-{n}: <페이지 이름>
-
-**Mode:** {inherited}
-**Page:** P-{n}
-**URL / 위치:** <패턴>
-**Primary Device:** desktop | mobile | other (PRD §5)
-**Date:** YYYY-MM-DD
-
-## 1. 들어오는·나가는 경로 (Phase 5)
-
-**들어오는:**
-- E-{n}: from N-{x} (조건: ...)
-- E-{m}: from N-{y} (조건: ...)
-
-**나가는:**
-- E-{a}: to N-{z} (조건: <성공>)
-- E-{b}: to N-{w} (조건: <취소>)
-
-## 2. Layout (Primary Device)
+## Layout
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│ <Top zone>                                                │
-├─────────────────────────────────────────────────────────┤
-│ <Side zone>  │  <Main content zone>                      │
-│              │                                            │
-│              │  <Title (H1)>                              │
-│              │  <Description (Body)>                      │
-│              │  <Action zone> [Primary] [Secondary]       │
-│              │                                            │
-│              │  <Content list / detail / form>           │
-│              │  ┌───────────────────────────────────┐    │
-│              │  │ <Item / row / field>               │    │
-│              │  └───────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│ [Z1: Phase Header]                                      │
+│ ## Phase {N}: {Phase name}                              │
+│ Mode: HOLD SCOPE (inherited)                            │
+│ Status: 🔄 Draft / ✓ Approved / ⚠ Hook Block            │
+├────────────────────────────────────────────────────────┤
+│ [Z2: Inputs Received] (이전 phase frontmatter)          │
+│ - PRD §3.1 Persona                                      │
+│ - Phase 2 Pain Priority (PAIN-1, ...)                   │
+├────────────────────────────────────────────────────────┤
+│ [Z3: Output draft] (산출물 markdown 본문)               │
+│ ## R1: ...                                              │
+│ ### F1.1: ...                                           │
+│ AC-R1-1: GIVEN ... WHEN ... THEN ...                    │
+│ ...                                                      │
+├────────────────────────────────────────────────────────┤
+│ [Z4: Self-Check 결과]                                   │
+│ ✓ Vague AC: 0건                                         │
+│ ✓ ID consistency: 0 violation                           │
+│ ⚠ Open Questions: 3건 (OQ-3-1·2·3)                      │
+├────────────────────────────────────────────────────────┤
+│ [Z5: Markdown 검토 가이드]                              │
+│ 📄 docs/spec/{NN-name}.md (file open in IDE)            │
+│ 🌐 GitHub URL or VS Code preview                        │
+├────────────────────────────────────────────────────────┤
+│ [Z6: Next Step Prompt]                                  │
+│ <HARD-GATE>                                             │
+│ A) 승인 → Phase {N+1}                                   │
+│ B) 수정 요청                                            │
+│ </HARD-GATE>                                            │
+└────────────────────────────────────────────────────────┘
 ```
 
-## 3. Element Spec
+(이전 EXPANSION 버전의 Z5 "Dashboard Link"는 "Markdown 검토 가이드"로 변경 — file path + GitHub/VS Code preview 안내. 향후 dashboard cycle에서 Z5에 dashboard URL 추가.)
+
+## Element Spec
 
 | Element ID | 종류 | 표시 데이터 | Source |
 |---|---|---|---|
-| E-1 | <Logo / nav / button / list / form> | <표시 내용> | <static / ENT-X.attr / AC-R{n}-{m}> |
-| E-2 | ... | ... | ... |
-| E-3 | ... | ... | ... |
+| E-CC-1 | Header (H2) | "Phase {N}: {name}" | ENT-Phase.id, .name |
+| E-CC-2 | Mode indicator | inherited mode | ENT-Phase.mode (PRD §10) |
+| E-CC-3 | Status indicator (icon + text) | Draft/Approved/HookBlock | SM-Phase + SM-Hook |
+| E-CC-4 | Inputs list (markdown bullets) | 이전 phase frontmatter parsed | F1.2 (R1.F2 input auto-inject) |
+| E-CC-5 | Output draft (nested markdown) | 산출물 본문 | LLM 생성 (per phase) |
+| E-CC-6 | Self-Check 결과 (✓/⚠/❌ icon + 항목) | grep + frontmatter validation | F2.1, F2.3, F2.4 |
+| E-CC-7 | Markdown 검토 가이드 | file path + GitHub/VS Code 안내 | static |
+| E-CC-8 | HARD-GATE prompt | 승인/수정 옵션 | F5.4 |
 
-## 4. Component States
+## Component States
 
-### State 1: Loading
-- <어느 element가 placeholder / skeleton / spinner>
-- <어느 element가 disabled>
+### State 1: Loading (skill 호출 중)
+- Z3·Z4 placeholder ("…" 또는 spinner). Z1·Z2 표시.
+- 사용자에 "Phase {N} skill 작동 중" 안내.
 
-### State 2: Empty
-- <어느 zone이 empty 안내 + CTA>
-- <onboarding tip 위치>
+### State 2: Empty (Phase 첫 시작 — Phase 1 init)
+- Z2 (Inputs)가 비어있음 — "이전 phase 없음, raw idea 받음" 표시.
+- Z3가 6 forcing questions 진행 중 표시.
 
-### State 3: Error
-- 종류 1: 권한 거부 → <어디로>
-- 종류 2: 네트워크 실패 → <인라인 또는 banner>
-- 종류 3: 서버 오류 → <인라인 banner>
-- 종류 4: Validation 실패 (form) → <각 input 아래 message>
+### State 3: Hook Block (P-CC-5)
+- Z1 status: "⚠ Hook Block"
+- Z3 위치에 violation 명시:
+  - "INV-2 위반: 정의 안 된 ID 인용 (S99.1.1)"
+  - "→ valid IDs: [list]"
+- Z4 ❌ 표시
+- Z6 prompt: "수정 후 재commit"
 
 ### State 4: Success
-- 위 Layout 정상 표시
+- 위 Layout 정상
 
-## 5. Responsive (해당 시 — Mobile breakpoint ≤768px)
+### State 5: Escalation (P-CC-15, BLOCKED subagent)
+- Z1 status: "⚠ Subagent Blocked (Implementation stage)"
+- Z3 위치에 BLOCKED 사유 + 옵션
+- Z6 prompt: "재시도 / 사용자 결정 / spec 수정"
 
-```
-<모바일 layout ASCII>
-```
+## Responsive
 
-차이점:
-- <Side zone> → <Drawer / 햄버거>
-- <Action zone> → <화면 폭 채우는 button>
-- <List row> → <vertical 형식>
+Terminal text — viewport 무관. 모바일 Claude Code app에서도 읽기 가능. 명령은 데스크톱 first.
 
-## 6. Interactions
+## Interactions
 
 | Interaction | Element | Trigger | 결과 | SM 영향 |
 |---|---|---|---|---|
-| <행동> | E-{n} | click / submit / swipe | <결과> | SM-<Entity>: <전이> |
+| 승인 | E-CC-8 | "approve phase N" | Phase transition | SM-Phase: Draft → Approved |
+| 수정 요청 | E-CC-8 | 자유 텍스트 | Z3 재작성 | SM-Phase: Draft 유지 |
+| File open | E-CC-7 | file path 클릭 또는 IDE에서 직접 | IDE/editor 열림 | - |
+| Hook violation 수정 | E-CC-6 | 사용자 file edit + 재commit | Hook 재실행 | SM-Phase: Draft 유지 |
 
-## 7. Accessibility
+## Accessibility
 
-- 모든 button에 aria-label
-- 색만으로 정보 전달 금지 (Status는 색 + 텍스트)
-- Tab order: <순서>
-- Focus indicator: 명확한 ring
-- Empty state는 screen reader가 안내 가능
-
-## 8. Open Questions
-
-| Q ID | 질문 | 결정자 | Blocking? |
-|---|---|---|---|
-| OQ-7-W{n}-1 | ... | <역할> | N |
-````
+- 모든 status는 색 + icon + 텍스트 (색만으로 정보 X)
+- Markdown semantic 위계 (H2/H3)
+- Code block fence + lang
+- HARD-GATE는 명시 prompt — screen reader 친화
+- File path는 클릭 가능 hyperlink (terminal · GitHub UI · VS Code 모두)
 
 ---
 
-## DELTA Mode
+## 색·폰트 규약 (Claude Code 응답 = terminal markdown)
 
-기존 wireframe 위에 변경.
+- **색:** terminal default. 의미 색만 emoji/icon 사용:
+  - 🟢 ✓ green = Applied/Done/Approved (성공)
+  - 🟡 🔄 yellow = Proposed/Draft (진행 중)
+  - 🟠 orange = Review/Implementing (활성 작업)
+  - ⚪ gray = Archived/Empty
+  - 🔴 ❌ red = Hook fail/Error (경고)
+- **폰트 크기:** terminal 기본 (markdown rendered 시 H1/H2/Body — IDE/GitHub의 default)
 
-### 형식
-
-영향받는 wireframe만 새로 또는 수정 버전:
-
-`changes/{date}-{topic}/deltas/07-wireframe-delta.md`:
-
-````markdown
-## ADDED Wireframes
-- W-{n}-{slug}.md (full)
-
-## MODIFIED Wireframes
-### W-{existing}
-- Element Δ:
-  | E ID | Before | After | Reason |
-- State Δ: <Loading state 추가/변경 등>
-- Layout Δ: <zone 추가/제거>
-- Migration: <users 영향>
-
-## REMOVED Wireframes
-- W-{n}: 사라짐. 어디로 redirect.
-````
+(Dashboard 색·폰트 — Tailwind / 디자인 시스템 등 — 향후 cycle.)
 
 ---
 
-## Self-Check (디렉토리 전체에 대해)
+## Self-Check
 
 ```bash
-# Wireframe ID Page와 1:1
-ls 07-wireframe/W-*.md | sed 's|.*W-||;s|-.*||' | sort -u > w_ids.txt
-grep -E "^\| P-[0-9]+" 06-information-architecture.md | grep -v "P-40\|P-50" | sed 's|.*P-||;s| .*||' | sort -u > p_ids.txt
-diff p_ids.txt w_ids.txt   # 빈 결과 = 1:1
+# Wireframe 수
+grep -c "^# W-" 07-wireframe.md   # 1 (CC-pattern)
 
-# 각 wireframe에 4 states 모두
-for f in 07-wireframe/W-*.md; do
-  for state in Loading Empty Error Success; do
-    grep -q "State.*$state" "$f" || echo "$f: $state 누락"
-  done
-done
+# 5 component states 명시
+grep -cE "State [0-9]:" 07-wireframe.md
 
 # Element source 인용
-for f in 07-wireframe/W-*.md; do
-  grep -A1 "^| E-[0-9]" "$f" | grep -cE "ENT-|S[0-9]+\.|F[0-9]+\.|static"
-done
-
-# 색·폰트 디테일 노출
-grep -iE "blue|red|green|#[0-9a-f]{3}|font-weight|14px|16px" 07-wireframe/
-
-# Responsive 2 breakpoints (해당 시)
-for f in 07-wireframe/W-*.md; do
-  grep -q "Mobile\|≤768px\|Primary Device" "$f" || echo "$f: device·responsive 표시 누락"
-done
+grep -A1 "^| E-CC" 07-wireframe.md | grep -cE "ENT-|F[0-9]|UI state|system|static"
 ```
 
 체크리스트:
-- [ ] W-{n} = P-{n} (1:1)
-- [ ] 단일 primary device로 그림
-- [ ] 모든 element가 Source 인용 (Entity / AC / static)
-- [ ] 4 component states 모두
-- [ ] Responsive (해당 시)
-- [ ] 색은 black/white/gray만
-- [ ] 폰트는 H1/H2/Body/Caption만
-- [ ] Interactions 표 (Trigger → 결과 → SM 영향)
-- [ ] Accessibility 4항목
-- [ ] 들어오는·나가는 Edge 명시
+- [x] W-CC-pattern은 P-CC-* 15에 inheritance
+- [x] Primary device 명시 (terminal+desktop)
+- [x] 모든 element가 Source 인용
+- [x] 5 component states (Loading/Empty/HookBlock/Success/Escalation)
+- [x] 색은 의미만 (status emoji/icon)
+- [x] Interactions 표
+- [x] Accessibility 명시
+- [x] 들어오는·나가는 Edge
 
----
+## Open Questions
 
-<HARD-GATE>
-Self-check 통과 + 사용자 승인. Phase 8 진행.
-</HARD-GATE>
+| Q ID | 질문 | 결정자 | Blocking? |
+|---|---|---|---|
+| OQ-7-1 | Z3 출력 형식 — markdown 그대로 vs syntax-highlighted code | maintainer | Phase 8 |
+| OQ-7-2 | E-CC-7 file path를 자동 클릭 가능 (terminal hyperlink) — Claude Code 지원 여부 | maintainer | Phase 8 spike |
+
+## 다음 phase 인풋
+
+Phase 8 (Architecture)에:
+- Claude Code skill 응답 형식 (markdown + tool call)
+- File path hyperlink mechanism
+
+Phase 9 (NFR)에:
+- A11y: terminal screen reader, color + icon duplication
+
+Phase 10 (Test):
+- Wireframe 5 state 검증 (skill 응답 sample test)
