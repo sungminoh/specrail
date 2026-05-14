@@ -29,3 +29,15 @@ status: Draft
     expect(r1.tags).toEqual(r2.tags);
   });
 });
+
+describe('yaml inline array with quoted commas (R5 MEDIUM#3)', () => {
+  it('inline array with quoted comma (R5 MEDIUM)', () => {
+    const r = parseYaml('tags: ["a, b", c]');
+    expect(r.tags).toEqual(['a, b', 'c']);
+  });
+
+  it('inline array with mixed quotes', () => {
+    const r = parseYaml(`tags: ['x', "y, z"]`);
+    expect(r.tags).toEqual(['x', 'y, z']);
+  });
+});

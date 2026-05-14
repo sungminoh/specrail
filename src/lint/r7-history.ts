@@ -79,11 +79,13 @@ export function detectV3RefHistory(commitMessages: string[]): HistoryMatch[] {
 interface CommitEntry {
   sha: string;
   subject: string;
+  body?: string;
 }
 
 /**
  * Parse `git log --pretty=format:%H%n%s%n%b%n---` output into commit entries.
  * Each block is delimited by `---` on its own line.
+ * Body lines (lines 3+) are joined and stored in `body`.
  */
 function parseGitLog(stdout: string): CommitEntry[] {
   const entries: CommitEntry[] = [];
@@ -95,7 +97,8 @@ function parseGitLog(stdout: string): CommitEntry[] {
     const sha = lines[0].trim();
     const subject = lines[1].trim();
     if (!sha || !subject) continue;
-    entries.push({ sha, subject });
+    const body = lines.slice(2).join('\n').trim() || undefined;
+    entries.push({ sha, subject, body });
   }
 
   return entries;
@@ -124,8 +127,9 @@ export async function detectV3RefHistoryGit(projectRoot: string): Promise<Histor
   const results: HistoryMatch[] = [];
 
   for (const entry of entries) {
+    const haystack = entry.subject + (entry.body ? ' ' + entry.body : '');
     for (const rule of PATTERNS) {
-      if (rule.regex.test(entry.subject)) {
+      if (rule.regex.test(haystack)) {
         results.push({
           pattern: rule.name,
           commitSha: entry.sha,

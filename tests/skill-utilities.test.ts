@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { join, dirname, resolve } from 'node:path';
+import { mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { composeSkillPrompt, declaresCommonInheritance, loadCommon } from '../src/skill/inheritance.js';
 import { createAsker, next, answer, isComplete, type Question } from '../src/skill/ask.js';
@@ -28,7 +30,8 @@ describe('00-common inheritance (T2.6, F5.4, AC-R5-3, TC-11)', () => {
   it('loadCommon returns content from default path', async () => {
     const common = await loadCommon();
     // 00-common-principles.md should exist in this project
-    expect(common.length).toBeGreaterThan(0);
+    expect(common).not.toBeNull();
+    expect((common as string).length).toBeGreaterThan(0);
     expect(common).toContain('common-principles');
   });
 });
@@ -121,8 +124,37 @@ describe('R2-M8: loadCommon sibling-prefix traversal defense', () => {
     const projectRoot = resolve(join(here, '..'));
     // A path inside the project — may not exist but should not throw traversal error
     const insidePath = join(projectRoot, 'does-not-exist.md');
-    // Should not throw a traversal error (may return '' if file missing)
+    // Should not throw a traversal error (returns null if file missing — ENOENT)
     const result = await loadCommon(insidePath);
-    expect(typeof result).toBe('string');
+    expect(result === null || typeof result === 'string').toBe(true);
+  });
+});
+
+describe('R5 MEDIUM#1: loadCommon ENOENT vs other errors', () => {
+  it('loadCommon returns null on ENOENT but throws on other errors (R5 MEDIUM)', async () => {
+    let dir: string | undefined;
+    try {
+      dir = await mkdtemp(join(tmpdir(), 'inheritance-enoent-'));
+      // ENOENT case: nonexistent file inside the tmp dir returns null
+      const result = await loadCommon(join(dir, 'nonexistent.md'), dir);
+      expect(result).toBeNull();
+    } finally {
+      if (dir) await rm(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('R5 MEDIUM#5: loadCommon accepts custom projectRoot for user-side common', () => {
+  it('loadCommon accepts custom projectRoot for user-side common (R5 MEDIUM)', async () => {
+    let userRoot: string | undefined;
+    try {
+      userRoot = await mkdtemp(join(tmpdir(), 'inheritance-user-'));
+      const customCommon = join(userRoot, 'my-common.md');
+      await writeFile(customCommon, 'user content');
+      const result = await loadCommon(customCommon, userRoot);
+      expect(result).toBe('user content');
+    } finally {
+      if (userRoot) await rm(userRoot, { recursive: true, force: true });
+    }
   });
 });

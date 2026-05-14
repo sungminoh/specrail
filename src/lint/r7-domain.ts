@@ -119,14 +119,24 @@ function buildWordBoundaryRegex(pattern: string): RegExp {
   return new RegExp(`\\b${pattern}\\b`, 'gi');
 }
 
+export interface DomainScanOptions {
+  /**
+   * When true, deduplicate matches by pattern+category so each distinct
+   * pattern appears at most once in the result. Default false (all occurrences
+   * returned) for backwards compatibility.
+   */
+  dedupe?: boolean;
+}
+
 /**
  * Detects concrete brand names, vendors, and single-domain entity terms in
  * the given text. Code fences and URLs are excluded from matching.
  *
  * @param text - Raw markdown or prose to analyse.
+ * @param options - Optional scan options (e.g. dedupe).
  * @returns Array of DomainMatch objects for every detected occurrence.
  */
-export function detectDomainEntities(text: string): DomainMatch[] {
+export function detectDomainEntities(text: string, options: DomainScanOptions = {}): DomainMatch[] {
   const cleaned = stripUrls(stripCodeFences(text));
   const results: DomainMatch[] = [];
 
@@ -143,6 +153,16 @@ export function detectDomainEntities(text: string): DomainMatch[] {
         suggestion: entry.suggestion,
       });
     }
+  }
+
+  if (options.dedupe) {
+    const seen = new Set<string>();
+    return results.filter((f) => {
+      const key = f.pattern + '|' + f.category;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }
 
   return results;

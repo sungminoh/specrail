@@ -23,18 +23,36 @@ const DEFAULT_COMMON_PATH = join(here, '..', '..', 'docs', 'spec', '00-common-pr
 /**
  * D5 fix (4차 reviewer security): path traversal defense.
  * commonPath must resolve within project boundary.
+ *
+ * @param commonPath - Path to the common principles file.
+ * @param projectRoot - Explicit project root for boundary check.
+ *   Defaults to the package-derived PROJECT_ROOT. Pass the user's project
+ *   root when the package is installed under node_modules and the common
+ *   file lives in the user's project tree (R5 MEDIUM#5).
+ * @returns File content, or null if the file does not exist (ENOENT).
+ *   Other I/O errors (EACCES, EISDIR, etc.) are logged to stderr and re-thrown.
  */
-export async function loadCommon(commonPath: string = DEFAULT_COMMON_PATH): Promise<string> {
+export async function loadCommon(
+  commonPath: string = DEFAULT_COMMON_PATH,
+  projectRoot?: string,
+): Promise<string | null> {
+  const root = projectRoot ?? PROJECT_ROOT;
   const resolved = resolve(commonPath);
-  if (resolved !== PROJECT_ROOT && !resolved.startsWith(PROJECT_ROOT + sep)) {
+  if (resolved !== root && !resolved.startsWith(root + sep)) {
     throw new Error(
-      `D5: commonPath escapes project boundary (${resolved} not under ${PROJECT_ROOT})`,
+      `D5: commonPath escapes project boundary (${resolved} not under ${root})`,
     );
   }
   try {
     return await readFile(resolved, 'utf8');
-  } catch {
-    return '';
+  } catch (e) {
+    const err = e as NodeJS.ErrnoException;
+    if (err.code === 'ENOENT') return null; // legitimate skip — file simply absent
+    // Other errors (EACCES, EISDIR, …) — surface so callers are not silently misled
+    process.stderr.write(
+      `[inheritance] loadCommon failed for ${resolved}: ${String(err.message ?? err)}\n`,
+    );
+    throw err;
   }
 }
 

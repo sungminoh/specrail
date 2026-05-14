@@ -53,12 +53,8 @@ export function parse(yaml: string): Record<string, unknown> {
         currentArrayKey = key;
         result[key] = currentArray; // placeholder; replaced with defensive copy on finalize
       } else if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-        // Inline array
-        result[key] = trimmed
-          .slice(1, -1)
-          .split(',')
-          .map((s) => stripQuotes(s.trim()))
-          .filter((s) => s.length > 0);
+        // Inline array — use quote-aware splitter to handle ["a, b", c] correctly
+        result[key] = splitInlineArray(trimmed.slice(1, -1)).filter((s) => s.length > 0);
       } else {
         const stripped = stripQuotes(trimmed);
         result[key] = coerce(stripped);
@@ -70,6 +66,50 @@ export function parse(yaml: string): Record<string, unknown> {
   finalizeArray();
 
   return result;
+}
+
+/**
+ * Split an inline YAML array content (the part between `[` and `]`) by commas,
+ * respecting quoted strings and nested brackets.
+ * e.g. `"a, b", c` → ['a, b', 'c']
+ */
+function splitInlineArray(s: string): string[] {
+  const result: string[] = [];
+  let buf = '';
+  let inQuote: '"' | "'" | null = null;
+  let depth = 0; // bracket depth for nested [[..]]
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (inQuote) {
+      buf += c;
+      if (c === inQuote && s[i - 1] !== '\\') inQuote = null;
+    } else if (c === '"' || c === "'") {
+      buf += c;
+      inQuote = c as '"' | "'";
+    } else if (c === '[') {
+      depth++;
+      buf += c;
+    } else if (c === ']') {
+      depth--;
+      buf += c;
+    } else if (c === ',' && depth === 0) {
+      result.push(buf.trim());
+      buf = '';
+    } else {
+      buf += c;
+    }
+  }
+  if (buf.trim()) result.push(buf.trim());
+  return result.map((item) => {
+    // Strip surrounding quotes from each item
+    if (
+      (item.startsWith('"') && item.endsWith('"')) ||
+      (item.startsWith("'") && item.endsWith("'"))
+    ) {
+      return item.slice(1, -1);
+    }
+    return item;
+  });
 }
 
 function stripQuotes(s: string): string {

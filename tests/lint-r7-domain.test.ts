@@ -109,3 +109,21 @@ describe('T3.2 R7 domain entity lint (AC-R7-2, TC-16)', () => {
     expect(match.suggestion.length).toBeGreaterThan(0);
   });
 });
+
+describe('R5 MEDIUM#4: detectDomainEntities dedupe option', () => {
+  it('dedupe option groups by pattern+category (R5 MEDIUM)', () => {
+    // "Stripe" appears three times in the text
+    const text = 'Stripe is great. Stripe handles payments. Stripe integrates easily.';
+    const all = detectDomainEntities(text);
+    const deduped = detectDomainEntities(text, { dedupe: true });
+    expect(all.length).toBe(3);
+    expect(deduped.length).toBe(1);
+    expect(deduped[0].pattern).toBe('Stripe');
+  });
+
+  it('dedupe false (default) returns all occurrences', () => {
+    const text = 'Stripe ... Stripe ... Stripe';
+    const all = detectDomainEntities(text);
+    expect(all.length).toBe(3);
+  });
+});

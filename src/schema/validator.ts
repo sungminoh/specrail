@@ -19,22 +19,55 @@ export interface ValidationResult {
   errors: ErrorObject[];
 }
 
-const cache = new Map<string, ValidateFunction>();
+const VALIDATOR_CACHE_MAX = 50; // 13 phase + change-proposal + headroom
 
-export async function loadSchema(schemaPath: string): Promise<ValidateFunction> {
-  if (cache.has(schemaPath)) return cache.get(schemaPath)!;
+interface CacheEntry {
+  fn: ValidateFunction;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  schema: Record<string, any>;
+}
+
+const cache = new Map<string, CacheEntry>();
+
+async function getValidator(schemaPath: string): Promise<ValidateFunction> {
+  const cached = cache.get(schemaPath);
+  if (cached) return cached.fn;
+
+  if (cache.size >= VALIDATOR_CACHE_MAX) {
+    const oldestKey = cache.keys().next().value;
+    if (oldestKey !== undefined) {
+      const oldest = cache.get(oldestKey)!;
+      try { ajv.removeSchema(oldest.schema); } catch { /* ignore */ }
+      cache.delete(oldestKey);
+    }
+  }
+
   const raw = await readFile(schemaPath, 'utf8');
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const schema = JSON.parse(raw);
-  const validate = ajv.compile(schema);
-  cache.set(schemaPath, validate);
-  return validate;
+  const fn = ajv.compile(schema);
+  cache.set(schemaPath, { fn, schema });
+  return fn;
+}
+
+/** @deprecated Use getValidator internally; kept for backward compat */
+export async function loadSchema(schemaPath: string): Promise<ValidateFunction> {
+  return getValidator(schemaPath);
+}
+
+/** Reset validator cache and ajv schema registry (test helper) */
+export function _resetValidatorCache(): void {
+  for (const entry of cache.values()) {
+    try { ajv.removeSchema(entry.schema); } catch { /* ignore */ }
+  }
+  cache.clear();
 }
 
 export async function validateFrontmatter(
   frontmatter: object,
   schemaPath: string,
 ): Promise<ValidationResult> {
-  const validate = await loadSchema(schemaPath);
+  const validate = await getValidator(schemaPath);
   const valid = validate(frontmatter);
   return { valid: !!valid, errors: validate.errors ?? [] };
 }
