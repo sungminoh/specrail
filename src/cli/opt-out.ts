@@ -19,7 +19,10 @@ export async function optOut(configDir: string): Promise<OptOutResult> {
   }
 
   const revoked = await revokeConsent(configDir);
-  const revokedAt = revoked.revokedAt!;
+  const revokedAt = revoked.revokedAt;
+  if (!revokedAt) {
+    throw new Error('revokeConsent failed to set revokedAt');
+  }
 
   return {
     status: ConsentStatus.OptedOut,

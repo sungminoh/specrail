@@ -59,6 +59,21 @@ describe('ID resolver stub (F1.4, AC-R1-2, TC-2)', () => {
   });
 });
 
+describe('matchesTier T tier (R6 L5)', () => {
+  it('matchesTier "T" matches T1.1 task id', () => {
+    expect(matchesTier('T1.1', 'T')).toBe(true);
+    expect(matchesTier('T9.6', 'T')).toBe(true);
+  });
+
+  it('matchesTier "T" does not match TC-1 (different tier with dash)', () => {
+    expect(matchesTier('TC-1', 'T')).toBe(false);
+  });
+
+  it('matchesTier "T" does not match empty string after T', () => {
+    expect(matchesTier('T', 'T')).toBe(false);
+  });
+});
+
 describe('matchesTier strict (R2-M4)', () => {
   it('"TC" does not match "TCP-server" (R2-M4)', () => {
     expect(matchesTier('TCP-server', 'TC')).toBe(false);

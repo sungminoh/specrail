@@ -48,6 +48,7 @@ export function _resetCounterCache(): void {
 export interface NextPhaseResult {
   hasNext: boolean;
   nextPhase: number | null;
+  currentPhase?: number; // R6 L7: explicit current — distinguish "approve current" vs "advance"
   reason: string;
   blocked?: boolean; // current phase status가 Approved 아닐 때
 }
@@ -89,7 +90,8 @@ export async function nextPhase(projectRoot: string): Promise<NextPhaseResult> {
   if (cur && cur.status === 'Draft') {
     return {
       hasNext: true,
-      nextPhase: s.currentPhase,
+      currentPhase: s.currentPhase, // R6 L7: caller can show "approve this"
+      nextPhase: s.currentPhase, // backward compat
       reason: `Phase ${s.currentPhase} status=Draft. Approve first via /plan-pipeline approve ${s.currentPhase}.`,
       blocked: true,
     };

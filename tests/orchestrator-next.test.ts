@@ -58,6 +58,30 @@ describe('nextPhase() — ADR-11 Phase N+1 suggestion (US-T7.2, M7)', () => {
     expect(result.reason).toContain('1');
   });
 
+  it('Phase 1 Draft → currentPhase set to 1 (R6 L7: approve current vs advance)', async () => {
+    await setupSpec([{ file: '01-prd.md', status: 'Draft' }]);
+    const result = await nextPhase(dir);
+    expect(result.currentPhase).toBe(1);
+  });
+
+  it('Phase 1-3 Approved + Phase 4 Draft → currentPhase set to 4 (R6 L7)', async () => {
+    await setupSpec([
+      { file: '01-prd.md', status: 'Approved' },
+      { file: '02-goals.md', status: 'Approved' },
+      { file: '03-features.md', status: 'Approved' },
+      { file: '04-ia.md', status: 'Draft' },
+    ]);
+    const result = await nextPhase(dir);
+    expect(result.currentPhase).toBe(4);
+    expect(result.blocked).toBe(true);
+  });
+
+  it('Phase 1 Empty → currentPhase is undefined (only set in Draft branch)', async () => {
+    await setupSpec([{ file: '01-prd.md', status: 'Empty' }]);
+    const result = await nextPhase(dir);
+    expect(result.currentPhase).toBeUndefined();
+  });
+
   it('Phase 1-3 Approved + Phase 4 Empty → hasNext: true, nextPhase: 4', async () => {
     await setupSpec([
       { file: '01-prd.md', status: 'Approved' },

@@ -1,6 +1,6 @@
 // US-T7.4 (M7) — S2 DELTA current/ merge
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtemp, writeFile, mkdir, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, writeFile, mkdir, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { invokeDeltaChain, mergeChange } from '../src/cli/change.js';
@@ -221,6 +221,24 @@ describe('mergeChange (US-T7.4)', () => {
     expect(cur).toContain('change A');
     expect(cur).toContain('change B');
     expect(cur.match(/## DELTA — /g)?.length).toBe(2);
+  });
+
+  it('mergeChange writes atomically — no .tmp file leftover (R6 M3)', async () => {
+    await invokeDeltaChain(
+      dir,
+      changeDir,
+      { affectedPhases: ['05'], affectedIds: ['R1'] },
+      ['R1'],
+    );
+    await mergeChange(dir, changeDir);
+
+    // No .tmp files should remain after successful merge
+    const specFiles = await readdir(join(dir, 'docs', 'spec'));
+    expect(specFiles.filter((f) => f.endsWith('.tmp'))).toHaveLength(0);
+
+    // Verify changeDir proposal has no .tmp either
+    const changeFiles = await readdir(changeDir);
+    expect(changeFiles.filter((f) => f.endsWith('.tmp'))).toHaveLength(0);
   });
 
   it('restores ORIGINAL (not intermediate) on multi-delta failure (C3 fix)', async () => {

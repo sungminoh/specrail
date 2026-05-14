@@ -376,7 +376,9 @@ export async function mergeChange(
         basename(changeDir) +
         '\n' +
         deltaBody.replace(/^\s+/, '');
-      await writeFile(currentPath, merged);
+      const tmpPath = currentPath + '.tmp';
+      await writeFile(tmpPath, merged);
+      await rename(tmpPath, currentPath);
       currentState.set(currentPath, merged); // accumulate for next iteration
       phases.push(phaseStr);
     }
@@ -385,7 +387,9 @@ export async function mergeChange(
     const newProposal = /^status:.*$/m.test(proposalRaw)
       ? proposalRaw.replace(/^status:.*$/m, 'status: applied')
       : proposalRaw;
-    await writeFile(proposalPath, newProposal);
+    const proposalTmpPath = proposalPath + '.tmp';
+    await writeFile(proposalTmpPath, newProposal);
+    await rename(proposalTmpPath, proposalPath);
   } catch (err) {
     // Restore all backed-up files to original content
     for (const [path, content] of backups) {

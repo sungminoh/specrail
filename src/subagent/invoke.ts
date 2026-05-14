@@ -19,6 +19,9 @@ export async function invokeSubagent(agent: AgentTool, task: SubagentTask): Prom
   const composedPrompt = `[${task.stage} for ${task.taskId}]\n${task.prompt}`;
   const r = await agent({ prompt: composedPrompt });
 
+  // Convention: subagent indicates BLOCKED via output prefix `BLOCKED:` (or `BLOCKED ...`).
+  // This overrides r.status — even Passed result with BLOCKED-prefixed output is treated as BLOCKED.
+  // To indicate something else but include literal "BLOCKED" in output, prefix with whitespace or ZWSP.
   if (r.status === 'Blocked' || r.output.startsWith('BLOCKED')) {
     const firstLine = r.output.split('\n')[0];
     const escalationReason = firstLine.replace(/^BLOCKED:?\s*/, '');

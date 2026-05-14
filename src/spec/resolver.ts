@@ -36,6 +36,11 @@ export function matchesTier(id: string, tier: IdTier): boolean {
   if (tier === 'S') return /^S\d+\.\d+\.\d+$/.test(id);
   // Tiers like 'TC', 'ADR', 'NFR' use dash separator
   if (id.startsWith(tier + '-')) return true;
+  // R6 L5: T tier uses digit directly after prefix (e.g. T1.1, T9.6) — no dash separator
+  if (/^[T]$/.test(tier)) {
+    const after = id.slice(tier.length);
+    return after.length > 0 && /^\d/.test(after);
+  }
   // Single-char R/F/S handled above; for multi-char tiers, dash is required
   return false;
 }

@@ -60,21 +60,23 @@ function isPrimitiveValue(v: unknown): boolean {
 }
 
 let _cachedVersion: string | undefined;
+let _lookupAttempted = false;
 
 /**
  * Read package.json version at runtime. Cached after first call.
  * Returns undefined when version cannot be determined (graceful degradation).
  */
 async function getPluginVersion(): Promise<string | undefined> {
-  if (_cachedVersion !== undefined) return _cachedVersion || undefined;
+  if (_lookupAttempted) return _cachedVersion;
+  _lookupAttempted = true;
   try {
     const pkgPath = fileURLToPath(new URL('../../package.json', import.meta.url));
     const raw = await readFile(pkgPath, 'utf8');
     const pkg = JSON.parse(raw) as { version?: string };
-    _cachedVersion = typeof pkg.version === 'string' ? pkg.version : '';
-    return _cachedVersion || undefined;
+    _cachedVersion = typeof pkg.version === 'string' && pkg.version ? pkg.version : undefined;
+    return _cachedVersion;
   } catch {
-    _cachedVersion = '';
+    _cachedVersion = undefined;
     return undefined;
   }
 }

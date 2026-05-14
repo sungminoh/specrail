@@ -105,6 +105,35 @@ describe('Pre-commit hook installer (T1.7, AC-R6-3, AC-R2-1, F2.1, F6.4, RISK-3,
   });
 });
 
+describe('R6 M1: detectExisting alreadyChained flag', () => {
+  it('alreadyChained is true when .git/hooks/pre-commit contains V4_MARKER', async () => {
+    await mkdir(join(dir, '.git/hooks'), { recursive: true });
+    await writeFile(
+      join(dir, '.git/hooks/pre-commit'),
+      '#!/usr/bin/env node\n// plan-pipeline v4 hook chain (INV-10 보존)\n',
+    );
+    const r = await detectExisting(dir);
+    expect(r.type).toBe('plain');
+    expect(r.alreadyChained).toBe(true);
+  });
+
+  it('alreadyChained is false when .git/hooks/pre-commit is an external hook', async () => {
+    await mkdir(join(dir, '.git/hooks'), { recursive: true });
+    await writeFile(join(dir, '.git/hooks/pre-commit'), '#!/bin/sh\necho user hook\n');
+    const r = await detectExisting(dir);
+    expect(r.type).toBe('plain');
+    expect(r.alreadyChained).toBe(false);
+  });
+
+  it('alreadyChained is undefined for non-plain types', async () => {
+    await mkdir(join(dir, '.husky'), { recursive: true });
+    await writeFile(join(dir, '.husky/pre-commit'), 'npm test\n');
+    const r = await detectExisting(dir);
+    expect(r.type).toBe('husky');
+    expect(r.alreadyChained).toBeUndefined();
+  });
+});
+
 describe('V4_HOOK_TEMPLATE ESM compatibility (R3 M-Round3-1)', () => {
   it('V4_HOOK_TEMPLATE does not use require() in ESM context (R3 M-Round3-1)', () => {
     // Template should NOT contain bare require( calls (only createRequire is OK)

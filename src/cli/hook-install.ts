@@ -11,6 +11,7 @@ export type ExistingHookType = 'husky' | 'lefthook' | 'plain' | 'none';
 export interface DetectionResult {
   type: ExistingHookType;
   path?: string;
+  alreadyChained?: boolean; // R6 M1: signal V4 marker already present
 }
 
 // JS-comment marker (not shell #) so it's valid in #!/usr/bin/env node scripts
@@ -32,11 +33,7 @@ export async function detectExisting(projectRoot: string): Promise<DetectionResu
   const plainPath = join(projectRoot, '.git', 'hooks', 'pre-commit');
   if (await exists(plainPath)) {
     const content = await readFile(plainPath, 'utf8').catch(() => '');
-    // Already chain-installed by us → skip
-    if (content.includes(V4_MARKER)) {
-      return { type: 'plain', path: plainPath };
-    }
-    return { type: 'plain', path: plainPath };
+    return { type: 'plain', path: plainPath, alreadyChained: content.includes(V4_MARKER) };
   }
 
   return { type: 'none' };
@@ -185,8 +182,7 @@ export async function installHook(
 
   let backupPath: string | undefined;
   if (detection.type === 'plain' && detection.path) {
-    const existing = await readFile(detection.path, 'utf8').catch(() => '');
-    if (existing.includes(V4_MARKER) && !options.force) {
+    if (detection.alreadyChained && !options.force) {
       return {
         installed: false,
         chainedExisting: false,
@@ -195,6 +191,7 @@ export async function installHook(
       };
     }
     // Do NOT back up our own hook (any version) — only back up external user hooks
+    const existing = await readFile(detection.path, 'utf8').catch(() => '');
     if (existing.trim().length > 0 && !existing.includes(V4_SENTINEL)) {
       backupPath = join(projectRoot, '.git', 'hooks', 'pre-commit.user-original');
       await copyFile(detection.path, backupPath);

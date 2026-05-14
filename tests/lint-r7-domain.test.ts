@@ -110,6 +110,27 @@ describe('T3.2 R7 domain entity lint (AC-R7-2, TC-16)', () => {
   });
 });
 
+describe('R6 M5: r7-domain regex bug fix — word boundary for ASCII brands', () => {
+  it('does NOT false-positive match Stripe in "Stripes" or "Striped" (R6 M5)', () => {
+    const findings = detectDomainEntities('Striped pattern Stripes plural');
+    const stripe = findings.filter((f) => f.pattern === 'Stripe');
+    expect(stripe).toHaveLength(0);
+  });
+
+  it('still matches bare Stripe brand name (regression)', () => {
+    const findings = detectDomainEntities('We use Stripe for payments');
+    const stripe = findings.filter((f) => f.pattern === 'Stripe');
+    expect(stripe.length).toBeGreaterThan(0);
+  });
+
+  it('non-ASCII patterns hit the bare-test branch — 토스 matches (regression for r7-domain)', () => {
+    // Korean brand entries are non-ASCII — should still match without \b
+    const findings = detectDomainEntities('사용자가 장바구니에 상품을 담는다');
+    const cart = findings.filter((f) => f.pattern === '장바구니');
+    expect(cart.length).toBeGreaterThan(0);
+  });
+});
+
 describe('R5 MEDIUM#4: detectDomainEntities dedupe option', () => {
   it('dedupe option groups by pattern+category (R5 MEDIUM)', () => {
     // "Stripe" appears three times in the text
