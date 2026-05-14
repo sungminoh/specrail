@@ -144,4 +144,19 @@ describe('US-T5.6 dispatchWithRetry', () => {
     expect(result.action).toBe('interrupt');
     expect(decider).toHaveBeenCalledOnce();
   });
+
+  it('dispatchWithRetry passes real escalationReason to decideOnEscalation (R2-H3)', async () => {
+    const agent = makeAgent([
+      { status: 'Blocked', output: 'BLOCKED: CONCRETE REASON FROM REVIEWER' },
+    ]);
+
+    const decider = vi.fn<[string], Promise<EscalationDecision>>().mockResolvedValue({
+      decision: 'abort',
+    });
+
+    await dispatchWithRetry(agent, baseTask, decider, 1);
+
+    expect(decider).toHaveBeenCalled();
+    expect(decider.mock.calls[0]![0]).toContain('CONCRETE REASON FROM REVIEWER');
+  });
 });

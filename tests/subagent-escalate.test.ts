@@ -153,4 +153,35 @@ describe('T3.6 BLOCKED escalation (F8.4, AC-R8-3, TC-20·62)', () => {
     expect(result.continue).toBe(false);
     expect(result.modifiedTask).toBeUndefined();
   });
+
+  it('rejects modify decision with invalid stage from corrupted audit trail (R2-M5)', () => {
+    const escalation: Escalation = {
+      taskId: 'T1',
+      stage: 'BogusStage',
+      reason: 'some reason',
+      auditTrail: [],
+    };
+    const decision: EscalationDecision = {
+      decision: 'modify',
+      modifiedPrompt: 'do thing',
+    };
+    expect(() => applyDecision(escalation, decision)).toThrow(/Invalid stage/);
+  });
+
+  it('accepts modify decision with valid stage (R2-M5)', () => {
+    const escalation: Escalation = {
+      taskId: 'T1',
+      stage: 'Implementation',
+      reason: 'some reason',
+      auditTrail: [],
+    };
+    const decision: EscalationDecision = {
+      decision: 'modify',
+      modifiedPrompt: 'do thing',
+    };
+    expect(() => applyDecision(escalation, decision)).not.toThrow();
+    const result = applyDecision(escalation, decision);
+    expect(result.continue).toBe(true);
+    expect(result.modifiedTask).toBeDefined();
+  });
 });

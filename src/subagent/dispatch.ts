@@ -49,7 +49,8 @@ export async function dispatchWithRetry(
     if (attempt >= maxRetries) return result;
 
     // Escalation — ask user decision
-    const decision = await decideOnEscalation(result.escalationMessage ?? 'Blocked');
+    const reason = result.reviewResult?.escalationReason ?? result.reviewResult?.stages?.slice(-1)[0]?.output ?? result.escalationMessage ?? 'Blocked';
+    const decision = await decideOnEscalation(reason);
     const handle = handleResult({ taskId: currentTask.taskId, result: result.reviewResult });
     if (handle.action !== 'interrupt' || !handle.escalation) return result;
     const applied = applyDecision(handle.escalation, decision);

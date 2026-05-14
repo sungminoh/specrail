@@ -1,6 +1,13 @@
 import type { ReviewResult, StageRecord } from './review.js';
 import type { SubagentTask } from './invoke.js';
 
+const VALID_STAGES = ['Implementation', 'SpecReview', 'QualityReview'] as const;
+type ValidStage = typeof VALID_STAGES[number];
+
+function isValidStage(s: string): s is ValidStage {
+  return (VALID_STAGES as readonly string[]).includes(s);
+}
+
 export type EscalationAction = 'continue' | 'interrupt';
 export type UserDecision = 'retry' | 'skip' | 'modify' | 'abort';
 
@@ -89,10 +96,13 @@ export function applyDecision(
     case 'skip':
       return { continue: true };
     case 'modify': {
+      if (!isValidStage(e.stage)) {
+        throw new Error(`Invalid stage in audit trail: ${e.stage}. Expected one of ${VALID_STAGES.join(', ')}`);
+      }
       const modifiedTask: SubagentTask = {
         taskId: e.taskId,
         prompt: d.modifiedPrompt ?? '',
-        stage: e.stage as SubagentTask['stage'],
+        stage: e.stage,
       };
       return { continue: true, modifiedTask };
     }
