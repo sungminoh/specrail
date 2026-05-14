@@ -75,21 +75,21 @@
 `EDGE-{n}` ID.
 
 ### 시간 / 시간대
-| ID | Edge | 검증 TC |
+| EDGE ID | Edge | TC ID |
 |---|---|---|
 | EDGE-1 | Telemetry timestamp UTC vs 사용자 local TZ — 변환 일관 | TC-40 |
 | EDGE-2 | Change 시간 정렬 (timeline timeline 시 ISO 8601 비교) | TC-41 |
 | EDGE-3 | Skill invocation 자정 경계 (date roll-over) | TC-42 |
 
 ### 동시성 / Race
-| ID | Edge | 검증 TC |
+| EDGE ID | Edge | TC ID |
 |---|---|---|
 | EDGE-4 | 한 사용자가 multi-project 동시 작업 — ID counter 충돌 X (per-project) | TC-43 |
 | EDGE-5 | 동시 commit (terminal 2개) — hook race condition | TC-44 |
 | EDGE-6 | Telemetry queue concurrent write | TC-45 |
 
 ### i18n / 인코딩
-| ID | Edge | 검증 TC |
+| EDGE ID | Edge | TC ID |
 |---|---|---|
 | EDGE-7 | 한국어 spec + 영어 prompt mix | TC-46 |
 | EDGE-8 | Emoji·한자·매우 긴 unicode in spec | TC-47 |
@@ -97,14 +97,14 @@
 | EDGE-10 | NFC vs NFD 정규화 (macOS file system NFD) | TC-49 |
 
 ### Auth Boundary / Hook bypass
-| ID | Edge | 검증 TC |
+| EDGE ID | Edge | TC ID |
 |---|---|---|
 | EDGE-11 | 사용자 `--no-verify` commit (hook bypass) — telemetry detection | TC-50 |
 | EDGE-12 | Telemetry token validation (서버 측, plugin 위조 방지) | TC-51 |
 | EDGE-13 | `.specrail-cache/` 변조 → invalidate + rebuild | TC-52 |
 
 ### Empty / Boundary
-| ID | Edge | 검증 TC |
+| EDGE ID | Edge | TC ID |
 |---|---|---|
 | EDGE-14 | docs/spec 빈 디렉토리 (Phase 1 시작 직전) | TC-53 |
 | EDGE-15 | 0 ID (첫 phase 첫 spec) — auto-gen "R1" 보장 | TC-54 |
@@ -113,7 +113,7 @@
 | EDGE-18 | Frontmatter 빈 ({}) — schema validator 거부 + helpful message | TC-57 |
 
 ### Network / External
-| ID | Edge | 검증 TC |
+| EDGE ID | Edge | TC ID |
 |---|---|---|
 | EDGE-19 | LLM API timeout (NFR-AVAIL-3) — graceful retry 또는 사용자에 알림 | TC-58 |
 | EDGE-20 | Telemetry endpoint 다운 — local queue 보존, 재전송 (NFR-AVAIL-5) | TC-59 |
@@ -122,7 +122,7 @@
 | EDGE-23 | Subagent timeout (Phase 13 implementation) — escalation (AC-R8-3) | TC-62 |
 
 ### Hook 무결성
-| ID | Edge | 검증 TC |
+| EDGE ID | Edge | TC ID |
 |---|---|---|
 | EDGE-24 | Hook script 변조 (사용자 또는 malicious) — pre-commit 자체가 lint·sign 검증 | TC-63 (NFR-SEC-12) |
 | EDGE-25 | Hook 무한 loop (변조됨) — git timeout 10s 강제 abort | TC-64 (NFR-SEC-11) |

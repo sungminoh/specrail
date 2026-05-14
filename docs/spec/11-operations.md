@@ -141,6 +141,7 @@ OSS code라 traditional log 없음. 대신:
 
 OSS 프로젝트라 새벽 3시 pager 없음. 대신 **maintainer attention**:
 
+<!-- specrail:deftable -->
 | OPS-{n} | 조건 | severity | channel | maintainer response |
 |---|---|---|---|---|
 | OPS-8 | Critical issue (사용자 spec 깨짐 보고) | P0 | GitHub label | 24h ack |
@@ -157,6 +158,7 @@ OSS 프로젝트라 새벽 3시 pager 없음. 대신 **maintainer attention**:
 
 ## 7. Backup & Disaster Recovery
 
+<!-- specrail:deftable -->
 | OPS-{n} | 영역 | 정책 |
 |---|---|---|
 | OPS-17 | Plugin GitHub repo | GitHub 자체 + maintainer local clone (사실상 multi-region) |
@@ -199,6 +201,7 @@ OSS 프로젝트라 새벽 3시 pager 없음. 대신 **maintainer attention**:
 
 ## 10. Runbook 후보
 
+<!-- specrail:deftable -->
 | RB | 시나리오 |
 |---|---|
 | RB-1 | "B2B 표현 발견" issue (R7 위반) → 위치 확인 + PR + merge |

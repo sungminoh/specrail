@@ -49,7 +49,7 @@
 | description | string | Y | AC | 1-2줄 |
 | importance | Importance | Y | spec | P0/P1/P2/P3 |
 | status | SpecStatus | Y | SM-Spec-Status | Draft/Approved/Implementing/Done |
-| sourcePainIds | PainId[] | N | F2 의존 | 인용된 PAIN |
+| sourcePainIds | PainId[] | N | Phase 2 Pain catalog | 인용된 PAIN |
 | frontmatterRaw | YAML | Y | F1.1 | structured form |
 
 ### ENT-AcceptanceCriteria
@@ -102,7 +102,7 @@
 | Name | Type | Required | Source | 설명 |
 |---|---|---|---|---|
 | id | HookId | Y | system | "pre-commit-self-check" 등 |
-| type | HookType | Y | F2.x | PreCommit / PhaseTransition / SchemaValidation |
+| type | HookType | Y | F2.1·F2.2·F2.3·F2.4 | PreCommit / PhaseTransition / SchemaValidation |
 | projectId | ProjectId | Y | FK | - |
 | installPath | FilePath | Y | F6.4 | .git/hooks/pre-commit 등 |
 | status | HookStatus | Y | SM-Hook | Installed / Failed / Disabled |
@@ -111,7 +111,7 @@
 
 **Description:** 기존 spec 위 변경 단위. ADDED/MODIFIED/REMOVED + 영향 phase 자동 식별 결과.
 **Aggregate root:** Yes
-**Source spec:** R4 (모든), R10 cherry-pick (timeline)
+**Source spec:** R4 (모든). R10 deferred — EXPANSION cherry-pick (timeline) not yet promoted to a requirement.
 
 | Name | Type | Required | Source | 설명 |
 |---|---|---|---|---|

@@ -54,7 +54,7 @@
 |---|---|---|---|---|
 | N-030 | 시작 | 사용자 변경 결정 | - | - |
 | N-031 | 행동 | `/specrail change "<topic>"` | F4.3 (R4.F3) | SM-Change: ∅ → Proposed |
-| N-032 | 페이지 | Plugin이 dependency graph 분석 + 영향 phase list 출력 | F4.1, F4.2 (R4.F1·F2) | - |
+| N-032 | 페이지 | Plugin이 dependency graph 분석 + 영향 phase list 출력 | F4.1, F4.2 (R4.F1·R4.F2) | - |
 | N-033 | 페이지 | ADDED/MODIFIED/REMOVED proposal 자동 draft | F4.3 | - |
 | N-034 | 행동 | 사용자 검수 (proposal.md) | - | SM-Change: Proposed → Reviewed |
 | N-035 | 페이지 | 영향 phase 별 delta 작성 (skill 호출, 영향 spec만 input) | F1.2 (R1.F2) | SM-Spec: Approved → Draft (modified) |

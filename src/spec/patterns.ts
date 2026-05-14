@@ -37,14 +37,16 @@ export const ID_PATTERN_SOURCE =
 
 /**
  * US-T6.4 (M6): User-defined namespace pattern.
- * Matches custom spec IDs (e.g. PAY-12, AUTH-3, GHOST-999) that don't fit
- * the canonical taxonomy above. Without this, arbitrary namespaces silently
- * pass dangling-citation checks.
+ * Matches custom spec IDs (e.g. PAY-12, AUTH-3, GHOST-999, OQ-1-2) that
+ * don't fit the canonical taxonomy above. Without this, arbitrary
+ * namespaces silently pass dangling-citation checks.
  *
  * Shape: leading uppercase letter, 1+ uppercase/digit chars, '-', digits,
- * optional '.NN' tails (T-style nested tasks).
+ * then zero or more `.NN` (dotted) or `-NN` (compound) tails. The
+ * compound-tail support lets `OQ-1-2`, `OQ-13-1` parse as single tokens
+ * (previously only the `OQ-1` prefix matched).
  */
-export const USER_NAMESPACE_PATTERN = '[A-Z][A-Z0-9]+-\\d+(?:\\.\\d+)*';
+export const USER_NAMESPACE_PATTERN = '[A-Z][A-Z0-9]+-\\d+(?:[-.]\\d+)*';
 
 /**
  * US-T6.4 (M6): Reserved-word blocklist.
@@ -83,14 +85,19 @@ const ZWS_CHARS = '\\u200B\\u200C\\u200D\\uFEFF';
  * Negative lookarounds for ZWS_CHARS prevent false-positive matches when
  * an ID is adjacent to a zero-width character (US-11.6, M11).
  *
- * Leading hyphen guard (Step 0): `\b` treats `-` as a word boundary, so
- * without an explicit lookbehind, in-prose compound tokens leak phantom
- * substring matches — `ADR-CAND-1` → `CAND-1`, `P-CC-1` → `CC-1`,
- * `NFR-SEC-COMP-1` → `COMP-1`. Adding `\\-` to the lookbehind class
- * rejects any match that begins immediately after a hyphen.
+ * Compound-token guards (Step 0 + Step 1): `\b` treats `-` and `.` as
+ * word boundaries, so without explicit lookbehinds, in-prose compound
+ * tokens leak phantom substring matches:
+ *   - `ADR-CAND-1` → `CAND-1` (hyphen boundary)
+ *   - `P-CC-1` → `CC-1` (hyphen boundary)
+ *   - `NFR-SEC-COMP-1` → `COMP-1` (hyphen boundary)
+ *   - `R6.F1` → `F1` (dot boundary in author shorthand `R{n}.F{m}`)
+ *   - `R1.F3` → `F3`
+ * Adding `\\-` and `\\.` to the negative lookbehind class rejects any
+ * match that begins immediately after either separator.
  */
 export const CITATION_RE = new RegExp(
-  `(?<![${ZWS_CHARS}\\-])\\b(${ID_PATTERN_SOURCE}|${USER_NAMESPACE_PATTERN})\\b(?![${ZWS_CHARS}])`,
+  `(?<![${ZWS_CHARS}\\-.])\\b(${ID_PATTERN_SOURCE}|${USER_NAMESPACE_PATTERN})\\b(?![${ZWS_CHARS}])`,
   'g',
 );
 

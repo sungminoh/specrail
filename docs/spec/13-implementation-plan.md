@@ -1054,6 +1054,9 @@ README → M2? ✅ (T2.13, M2 ship-able 최소 조건)
 - T2.1b graph filter dash-relax — `^\d{2}-.*\.md$` → `^\d{2}.*\.md$` (resolver test fix)
 
 ### M5 wire-up integration (~4-6h)
+
+<!-- specrail:def-list -->
+
 - T5.1 hook install entry point — `src/cli/hook-install.ts`
 - T5.2 HOOK_TEMPLATE chain detection — husky/lefthook/plain
 - T5.3 orchestrator status entry — `src/skill/orchestrator.ts`
@@ -1062,12 +1065,18 @@ README → M2? ✅ (T2.13, M2 ship-able 최소 조건)
 - T5.6 subagent dispatch wrapper — `dispatchTaskWithReview` + `dispatchWithRetry`
 
 ### M6 silent fix (~2-3h)
+
+<!-- specrail:def-list -->
+
 - T6.2 schema-validate strict mode — silent skip → warnings
 - T6.3 graph builder initialized flag — explicit project state
 - T6.4 ID_RE expansion — user-defined namespace + reserved blocklist
 - T6.5 heading line self-edge fix — INV-6 bypass close
 
 ### M7 orchestrator + S2 DELTA chain (~6-8h)
+
+<!-- specrail:def-list -->
+
 - T7.1 ADR-11 — Phase N+1 manual trigger + optional /specrail continue
 - T7.2 nextPhase() function — phase chain logic per ADR-11
 - T7.3 invokeDeltaChain — delta skeleton per affected phase
@@ -1075,6 +1084,9 @@ README → M2? ✅ (T2.13, M2 ship-able 최소 조건)
 - T7.5 archiveChange — applied → archived rename
 
 ### M9 plan self-check enhancement (~3-4h)
+
+<!-- specrail:def-list -->
+
 - T9.1 Anti-Sycophancy lint — keyword + evidence proximity
 - T9.2 Atomic commit lint — mega-commit detection
 - T9.3 AC traceability auto-grep — spec ↔ tests gap
@@ -1083,6 +1095,9 @@ README → M2? ✅ (T2.13, M2 ship-able 최소 조건)
 - T9.6 lint:plan orchestrator — single CLI entry
 
 ### M10 EDGE coverage + 3 conditions (~6-8h)
+
+<!-- specrail:def-list -->
+
 - T10.1 EDGE-1·2·3 timestamp/TZ tests
 - T10.2 EDGE-4·5·6 concurrency tests
 - T10.3 EDGE-7·8·9·10 i18n tests (2 real bugs documented)
@@ -1093,6 +1108,9 @@ README → M2? ✅ (T2.13, M2 ship-able 최소 조건)
 - T10.8 architect C1 — roadmap T11.5 lock-in
 
 ### M8 external integration (~3-4h + user action)
+
+<!-- specrail:def-list -->
+
 - T8.1 npm publish workflow + tag/version guard
 - T8.2 marketplace research doc
 - T8.3 Plausible config loader (.env + adapter)
@@ -1101,6 +1119,9 @@ README → M2? ✅ (T2.13, M2 ship-able 최소 조건)
 - T8.6 M11 PRD shell
 
 ### M11 spec doc update + post-M10 cleanup (this cycle)
+
+<!-- specrail:def-list -->
+
 - T11.1 ARCH-8~12 spec
 - T11.2 graph.json cache 명시 제거 (ADR-9 옵션 D)
 - T11.3 S2 DELTA sequence diagram

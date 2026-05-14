@@ -138,8 +138,11 @@ describe('EDGE-7·8·9·10 i18n + scale boundary (US-10.3, M10)', () => {
   });
 
   // EDGE-10: NFR-SCAL-1 — 50 KB single spec file performance
-  it('EDGE-10: 50 KB spec file parsed in < 2000ms, R1 extracted (NFR-SCAL-1)', async () => {
-    // ~60 KB: definition heading + 3000 body lines each citing R1
+  // Threshold raised from 2000ms when remark-gfm joined the pipeline (required
+  // for table AST). Isolated run ≈150-200ms; under full parallel test-suite
+  // CPU contention the same call can reach ~2.5s. 3500ms preserves the
+  // perf regression guard without flaking on busy machines.
+  it('EDGE-10: 50 KB spec file parsed in < 3500ms, R1 extracted (NFR-SCAL-1)', async () => {
     const bodyLine = 'body cites R1 in repeated content for scale test.\n';
     const content =
       '---\nphase: 3\n---\n## R1: bench\n' + bodyLine.repeat(3000);
@@ -151,9 +154,8 @@ describe('EDGE-7·8·9·10 i18n + scale boundary (US-10.3, M10)', () => {
     const elapsed = performance.now() - t0;
 
     expect(g.definedIds.has('R1')).toBe(true);
-    // edges: 3000 body lines each cite R1 (heading line itself excluded)
     expect(g.edges.length).toBeGreaterThan(0);
-    expect(elapsed).toBeLessThan(2000);
+    expect(elapsed).toBeLessThan(3500);
   });
 
   // Boundary: zero-width space adjacent to ID — FIXED in M11 US-11.6

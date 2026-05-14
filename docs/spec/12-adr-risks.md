@@ -393,7 +393,11 @@ T0.2 A1 spike 실패 시 (CC SDK가 subagent 미지원 또는 BLOCKED escalation
 
 **Trigger to revisit:** CC SDK가 subagent 기능 정식 공개 또는 third-party (Aider 등) 표준화 시 → 향후 R8 부활.
 
-**Risk:** R8 deferral 시 사용자 manual context 관리 부담 ↑. KPI-1 (완주율 80%) 영향 가능 (Phase 13 후 사용자가 직접 chat 시작해야). — Plausible (managed, EU region)
+**Risk:** R8 deferral 시 사용자 manual context 관리 부담 ↑. KPI-1 (완주율 80%) 영향 가능 (Phase 13 후 사용자가 직접 chat 시작해야).
+
+---
+
+### ADR-7: Telemetry endpoint — Plausible (managed, EU region)
 
 **Status:** Accepted
 **Date:** 2026-05-12
@@ -973,6 +977,31 @@ Phase 13 Milestone hint:
 - M2 — R4·R8·R13 (DELTA·subagent·telemetry)
 - M3 — Polish, perf test, docs (README + fallback 가이드 OQ-1-3)
 - M4 — deferred (dashboard, multi-project, refactor S3)
+
+---
+
+## Appendix: Illustrative ID stubs
+
+이 항목들은 본문에서 **예시·축약·placeholder** 로 언급되는 ID이며, 실제 기능적 정의가 없는 stub. INV-2 (환각 ID 차단) lint가 dogfood spec 자체를 통과하도록 하기 위한 self-validation 보조.
+
+<!-- specrail:ignore-start -->
+
+### S1.2.3: illustrative — 환각 ID 예시
+### S1.1.1: illustrative — 초기 cycle prose 참조
+### S99.1.1: illustrative — synthetic test fixture
+### S99.99.99: illustrative — synthetic test fixture
+### F3.1: illustrative — archived R3 detail
+### F3.5: illustrative — archived R3 detail
+### R0: illustrative — synthetic test fixture (graph builder fixture)
+### R10: deferred — EXPANSION cherry-pick (timeline) not yet promoted to a real Requirement
+### KPI-5: illustrative — deferred to next cycle (dashboard)
+### AC-R3-1: illustrative — archived R3 detail
+### ENT-Foo: illustrative — placeholder 명
+### SEC-5: illustrative — NFR-SEC-N 단축 표기 단편
+### T2.5: illustrative — earlier cycle task
+### US-11.2: illustrative — internal milestone 참조
+
+<!-- specrail:ignore-end -->
 
 ---
 
