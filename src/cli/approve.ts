@@ -1,4 +1,4 @@
-// US-T5.5 — /plan-pipeline approve CLI (M5 wire-up)
+// US-T5.5 — /specrail approve CLI (M5 wire-up)
 // frontmatter status: Draft → Approved write + 검증.
 // 검증 chain: schema → INV-2 → state machine transition.
 
@@ -77,8 +77,8 @@ function updateFrontmatter(raw: string, updates: Record<string, string>): string
     if (lineRe.test(body)) {
       body = body.replace(lineRe, `${key}: ${value}`);
     } else {
-      // R7 M1: trim trailing newlines before append, exactly 1 separator
-      body = body.replace(/\n+$/, '') + '\n' + key + ': ' + value;
+      // R7 M1: trim trailing newlines/CRs before append, exactly 1 separator (L-R8-1 CRLF)
+      body = body.replace(/[\r\n]+$/, '') + '\n' + key + ': ' + value;
     }
   }
   return match[1] + body + match[3] + raw.slice(match[0].length);

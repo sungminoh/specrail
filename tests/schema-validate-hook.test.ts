@@ -69,6 +69,46 @@ describe('schema validation hook (F2.4, AC-R2-3, TC-6·34)', () => {
   });
 });
 
+describe('template file detection (M-R8-1)', () => {
+  it('does NOT warn on template file with name: field (R8 M1)', async () => {
+    await writeFile(
+      join(dir, 'docs/spec/01-prd.md'),
+      '---\nname: phase-1-prd\ninputs-from: prior\n---\nbody\n',
+    );
+    const errs: string[] = [];
+    const origWrite = process.stderr.write.bind(process.stderr);
+    (process.stderr as unknown as { write: (chunk: unknown) => boolean }).write = (chunk: unknown) => {
+      errs.push(String(chunk));
+      return true;
+    };
+    try {
+      await checkSchemas(dir);
+    } finally {
+      (process.stderr as unknown as { write: (chunk: unknown) => boolean }).write = origWrite as (chunk: unknown) => boolean;
+    }
+    expect(errs.filter((e) => e.includes('matches phase pattern')).length).toBe(0);
+  });
+
+  it('DOES warn on phase-named file with no phase or template fields (R8 M1)', async () => {
+    await writeFile(
+      join(dir, 'docs/spec/01-prd.md'),
+      '---\nstatus: Approved\n---\nbody\n',
+    );
+    const errs: string[] = [];
+    const origWrite = process.stderr.write.bind(process.stderr);
+    (process.stderr as unknown as { write: (chunk: unknown) => boolean }).write = (chunk: unknown) => {
+      errs.push(String(chunk));
+      return true;
+    };
+    try {
+      await checkSchemas(dir);
+    } finally {
+      (process.stderr as unknown as { write: (chunk: unknown) => boolean }).write = origWrite as (chunk: unknown) => boolean;
+    }
+    expect(errs.filter((e) => e.includes('matches phase pattern')).length).toBeGreaterThan(0);
+  });
+});
+
 describe('schema missing → warning (US-T6.2)', () => {
   it('missing schema file produces warning, ok: true (lenient default)', async () => {
     // Phase 99 has no schema file in schemas/

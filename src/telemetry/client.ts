@@ -110,7 +110,7 @@ export function createSenderFromEnv(): PlausibleSender | null {
 // Never throws — telemetry failure must not block plugin operation.
 export async function tryEmit(projectRoot: string, event: TelemetryEvent): Promise<void> {
   try {
-    const configDir = join(projectRoot, '.plan-pipeline-cache');
+    const configDir = join(projectRoot, '.specrail-cache');
     const consent = await loadConsent(configDir);
     if (consent.status !== ConsentStatus.OptedIn) return;
     const sender = createSenderFromEnv();
@@ -189,44 +189,51 @@ export function createTelemetryClient(cfg: ClientConfig): TelemetryClient {
 
   async function flushQueue(): Promise<void> {
     if (!queuePath) return;
-
-    let raw: string;
-    try {
-      raw = await readFile(queuePath, 'utf8');
-    } catch {
-      return; // no queue file → nothing to flush
-    }
-
-    const lines = raw.split('\n').filter((l) => l.trim() !== '');
-    if (lines.length === 0) return;
-
-    const remaining: string[] = [];
-    for (const line of lines) {
+    // M-R8-2: extend _queueMutex to cover flushQueue body — closes append↔flush race
+    // where concurrent emit + flush could lose events written between read and rename.
+    const op = _queueMutex.then(async () => {
+      let raw: string;
       try {
-        // D6 fix (4차 reviewer security): re-filter on replay
-        // INV-8 enforcement: queue file 변조 시에도 ALLOWED_FIELDS 외 field strip
-        const rawPayload = JSON.parse(line) as Record<string, unknown>;
-        const filtered: Record<string, unknown> = {};
-        for (const key of ALLOWED_FIELDS) {
-          if (rawPayload[key] !== undefined && isPrimitiveValue(rawPayload[key])) {
-            filtered[key] = rawPayload[key];
-          }
-        }
-        // Preserve standard metadata only
-        if (typeof rawPayload.timestamp === 'string') filtered.timestamp = rawPayload.timestamp;
-        if (typeof rawPayload.anonProjectHash === 'string') filtered.anonProjectHash = rawPayload.anonProjectHash;
-        if (typeof rawPayload.pluginVersion === 'string') filtered.pluginVersion = rawPayload.pluginVersion;
-        await send(filtered);
+        raw = await readFile(queuePath!, 'utf8');
       } catch {
-        remaining.push(line);
+        return; // no queue file → nothing to flush
       }
-    }
 
-    // H8 fix (3차 reviewer code-reviewer): atomic rename pattern
-    // 두 concurrent flushQueue가 중간에 같이 read해도 마지막 rename만 winner
-    const tmpPath = queuePath + '.tmp';
-    await writeFile(tmpPath, remaining.join('\n') + (remaining.length > 0 ? '\n' : ''), 'utf8');
-    await rename(tmpPath, queuePath);
+      const lines = raw.split('\n').filter((l) => l.trim() !== '');
+      if (lines.length === 0) return;
+
+      const remaining: string[] = [];
+      for (const line of lines) {
+        try {
+          // D6 fix (4차 reviewer security): re-filter on replay
+          // INV-8 enforcement: queue file 변조 시에도 ALLOWED_FIELDS 외 field strip
+          const rawPayload = JSON.parse(line) as Record<string, unknown>;
+          const filtered: Record<string, unknown> = {};
+          for (const key of ALLOWED_FIELDS) {
+            if (rawPayload[key] !== undefined && isPrimitiveValue(rawPayload[key])) {
+              filtered[key] = rawPayload[key];
+            }
+          }
+          // Preserve standard metadata only
+          if (typeof rawPayload.timestamp === 'string') filtered.timestamp = rawPayload.timestamp;
+          if (typeof rawPayload.anonProjectHash === 'string')
+            filtered.anonProjectHash = rawPayload.anonProjectHash;
+          if (typeof rawPayload.pluginVersion === 'string')
+            filtered.pluginVersion = rawPayload.pluginVersion;
+          await send(filtered);
+        } catch {
+          remaining.push(line);
+        }
+      }
+
+      // H8 fix (3차 reviewer code-reviewer): atomic rename pattern
+      // 두 concurrent flushQueue가 중간에 같이 read해도 마지막 rename만 winner
+      const tmpPath = queuePath! + '.tmp';
+      await writeFile(tmpPath, remaining.join('\n') + (remaining.length > 0 ? '\n' : ''), 'utf8');
+      await rename(tmpPath, queuePath!);
+    });
+    _queueMutex = op.catch(() => undefined);
+    return op;
   }
 
   return { emit, flushQueue };

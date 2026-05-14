@@ -51,12 +51,19 @@ export async function checkSchemas(projectRoot: string, options?: SchemaCheckOpt
       continue;
     }
 
-    // Skip template guide files — they lack the 'phase' field which is only
-    // present in filled user spec outputs. Template files define 'name' instead.
+    // Skip files without a 'phase' field. Template files have positive signals
+    // (name/inputs-from/applies-to); real user phase files with a phase-shaped
+    // name but no phase field are likely missing the field accidentally.
     if (!Object.prototype.hasOwnProperty.call(frontmatter, 'phase')) {
-      // Heuristic: template files have no phase prefix in name. User spec files do.
-      if (/^\d{2}-/.test(basename(file))) {
-        process.stderr.write(`[schema-validate] WARN: ${file} matches phase pattern but lacks 'phase' field — skipped silently\n`);
+      const isTemplate =
+        Object.prototype.hasOwnProperty.call(frontmatter, 'name') ||
+        Object.prototype.hasOwnProperty.call(frontmatter, 'inputs-from') ||
+        Object.prototype.hasOwnProperty.call(frontmatter, 'applies-to');
+      if (!isTemplate && /^\d{2}-/.test(basename(file))) {
+        // Real user file with phase-shaped name but no phase field — likely accidental deletion
+        process.stderr.write(
+          `[schema-validate] WARN: ${file} matches phase pattern but lacks 'phase' field — skipped silently\n`,
+        );
       }
       continue;
     }

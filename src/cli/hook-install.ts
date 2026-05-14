@@ -15,7 +15,8 @@ export interface DetectionResult {
 }
 
 // JS-comment marker (not shell #) so it's valid in #!/usr/bin/env node scripts
-const V4_MARKER = '// plan-pipeline v4 hook chain (INV-10 보존)';
+const HOOK_SENTINEL = 'specrail hook chain';
+const HOOK_MARKER = `// ${HOOK_SENTINEL} (INV-10 보존)`;
 
 export async function detectExisting(projectRoot: string): Promise<DetectionResult> {
   // husky v9: .husky/pre-commit (no underscore)
@@ -33,7 +34,7 @@ export async function detectExisting(projectRoot: string): Promise<DetectionResu
   const plainPath = join(projectRoot, '.git', 'hooks', 'pre-commit');
   if (await exists(plainPath)) {
     const content = await readFile(plainPath, 'utf8').catch(() => '');
-    return { type: 'plain', path: plainPath, alreadyChained: content.includes(V4_MARKER) };
+    return { type: 'plain', path: plainPath, alreadyChained: content.includes(HOOK_MARKER) };
   }
 
   return { type: 'none' };
@@ -56,14 +57,14 @@ export interface InstallResult {
   guidance?: string;
 }
 
-export const V4_HOOK_TEMPLATE = `#!/usr/bin/env node
-${V4_MARKER}
+export const HOOK_TEMPLATE = `#!/usr/bin/env node
+${HOOK_MARKER}
 // Chain order:
 //   1. Run user-original hook if exists (backup file)
-//   2. Run v4 checks (schema + id consistency)
+//   2. Run specrail checks (schema + id consistency)
 //
 // Dist resolution (D11 fix):
-//   - Try npm-installed package: @plan-pipeline/v4/dist/...
+//   - Try npm-installed package: specrail/dist/...
 //   - Fallback to local repo: ./dist/hook/... (self-dogfood / dev)
 //   - If neither found: stderr + exit 1 (no silent pass)
 import { execFile as ef } from 'node:child_process';
@@ -81,13 +82,13 @@ async function existsP(p) { try { await st(p); return true; } catch { return fal
 async function loadHooks() {
   // Try npm-installed package first
   try {
-    const pkg = await import('@plan-pipeline/v4/dist/hook/schema-validate.js');
-    const ic = await import('@plan-pipeline/v4/dist/hook/id-consistency.js');
-    process.stderr.write('[v4-hook] loaded from @plan-pipeline/v4 package\\n');
+    const pkg = await import('specrail/dist/hook/schema-validate.js');
+    const ic = await import('specrail/dist/hook/id-consistency.js');
+    process.stderr.write('[specrail] loaded from specrail package\\n');
     return { schemaHook: pkg.runHook, idHook: ic.runHook };
   } catch (e) {
     if (e?.code !== 'ERR_MODULE_NOT_FOUND') {
-      process.stderr.write(\`[v4-hook] npm package load failed: \${String(e)}\\n\`);
+      process.stderr.write(\`[specrail] npm package load failed: \${String(e)}\\n\`);
       throw e;
     }
   }
@@ -98,10 +99,10 @@ async function loadHooks() {
     const distIdPath = resolvePath(localDir, '../dist/hook/id-consistency.js');
     const pkg = await import(distSchemaPath);
     const ic = await import(distIdPath);
-    process.stderr.write('[v4-hook] loaded from local dist (development mode)\\n');
+    process.stderr.write('[specrail] loaded from local dist (development mode)\\n');
     return { schemaHook: pkg.runHook, idHook: ic.runHook };
   } catch (e2) {
-    process.stderr.write(\`[v4-hook] local dist load failed: \${String(e2)}\\n\`);
+    process.stderr.write(\`[specrail] local dist load failed: \${String(e2)}\\n\`);
     return null;
   }
 }
@@ -118,10 +119,10 @@ async function loadHooks() {
     }
   }
 
-  // 2. v4 checks
+  // 2. specrail checks
   const hooks = await loadHooks();
   if (!hooks) {
-    process.stderr.write('[v4-hook] dist not found — build first or install package\\n');
+    process.stderr.write('[specrail] dist not found — build first or install package\\n');
     process.exit(1);
   }
 
@@ -133,7 +134,7 @@ async function loadHooks() {
 
   process.exit(0);
 })().catch((e) => {
-  process.stderr.write(\`[v4-hook] uncaught: \${String(e?.stack ?? e)}\\n\`);
+  process.stderr.write(\`[specrail] uncaught: \${String(e?.stack ?? e)}\\n\`);
   process.exit(1);
 });
 `;
@@ -153,8 +154,8 @@ export async function installHook(
     existsSync(join(projectRoot, '.git', 'hooks', 'pre-commit'))
   ) {
     process.stderr.write(
-      '[v4-hook] WARNING: both .husky/pre-commit and .git/hooks/pre-commit detected.\n' +
-        '[v4-hook] V4 hook chain installed in .husky path. Verify legacy .git/hooks/pre-commit content matches expectation.\n',
+      '[specrail] WARNING: both .husky/pre-commit and .git/hooks/pre-commit detected.\n' +
+        '[specrail] specrail hook chain installed in .husky path. Verify legacy .git/hooks/pre-commit content matches expectation.\n',
     );
   }
 
@@ -164,7 +165,7 @@ export async function installHook(
       chainedExisting: true,
       hookPath: detection.path!,
       guidance:
-        'husky detected. Add this line to .husky/pre-commit instead:\n  npx plan-pipeline check',
+        'husky detected. Add this line to .husky/pre-commit instead:\n  npx specrail check',
     };
   }
   if (detection.type === 'lefthook') {
@@ -173,15 +174,12 @@ export async function installHook(
       chainedExisting: true,
       hookPath: detection.path!,
       guidance:
-        'lefthook detected. Add this block to lefthook.yml under pre-commit.commands:\n  plan-pipeline-check:\n    run: npx plan-pipeline check',
+        'lefthook detected. Add this block to lefthook.yml under pre-commit.commands:\n  specrail-check:\n    run: npx specrail check',
     };
   }
 
-  // Sentinel derived from V4_MARKER to detect any version of our hook (DRY, L-R7-6)
-  const V4_SENTINEL = V4_MARKER.match(/plan-pipeline v4 hook chain/)?.[0] ?? '';
-  if (!V4_MARKER.includes(V4_SENTINEL) || V4_SENTINEL === '') {
-    throw new Error('V4_SENTINEL must be a non-empty substring of V4_MARKER');
-  }
+  // L-R8-2: HOOK_SENTINEL is the module-level source; V4_MARKER is built from it (true DRY).
+  // V4_MARKER.includes(HOOK_SENTINEL) is true by construction — non-empty guaranteed statically.
 
   let backupPath: string | undefined;
   if (detection.type === 'plain' && detection.path) {
@@ -190,12 +188,12 @@ export async function installHook(
         installed: false,
         chainedExisting: false,
         hookPath,
-        guidance: 'v4 hook already installed (force=true to reinstall)',
+        guidance: 'specrail hook already installed (force=true to reinstall)',
       };
     }
     // Do NOT back up our own hook (any version) — only back up external user hooks
     const existing = await readFile(detection.path, 'utf8').catch(() => '');
-    if (existing.trim().length > 0 && !existing.includes(V4_SENTINEL)) {
+    if (existing.trim().length > 0 && !existing.includes(HOOK_SENTINEL)) {
       backupPath = join(projectRoot, '.git', 'hooks', 'pre-commit.user-original');
       await copyFile(detection.path, backupPath);
       const hash = createHash('sha256').update(existing).digest('hex');
@@ -206,7 +204,7 @@ export async function installHook(
     }
   }
 
-  await writeFile(hookPath, V4_HOOK_TEMPLATE);
+  await writeFile(hookPath, HOOK_TEMPLATE);
   await chmod(hookPath, 0o755);
 
   return {

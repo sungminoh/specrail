@@ -26,7 +26,7 @@ export interface AcCoverageResult {
 }
 
 export interface CheckAcCoverageOptions {
-  /** Override test file suffix (default: loaded from .plan-pipeline.config.json or '.test.ts') */
+  /** Override test file suffix (default: loaded from .specrail.config.json or '.test.ts') */
   readonly testFilePattern?: string;
 }
 
@@ -115,8 +115,8 @@ export async function checkAcCoverage(
   const acsInTests = new Set<string>();
   for (const file of testFiles) {
     const text = await readFile(file, 'utf8');
-    for (const m of text.matchAll(AC_PATTERN)) {
-      acsInTests.add(m[0]);
+    for (const ac of extractAcLabels(text)) {
+      acsInTests.add(ac);
     }
   }
   const testedAc = acsInTests;

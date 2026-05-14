@@ -129,6 +129,20 @@ describe('approve (US-T5.5)', () => {
     expect(ts.toISOString()).toBe(result.approvedAt);
   });
 
+  it('approve trims CRLF properly (R8 L1)', async () => {
+    // CRLF line endings in frontmatter body
+    await writeFile(
+      join(dir, 'docs/spec/01-prd.md'),
+      '---\r\nphase: 1\r\nstatus: Draft\r\n\r\n---\r\nbody\r\n',
+    );
+    await approve(dir, 1);
+    const result = await readFile(join(dir, 'docs/spec/01-prd.md'), 'utf8');
+    // No stray \r immediately before approvedAt key
+    expect(result).not.toMatch(/\r\napprovedAt/);
+    // approvedAt should be present
+    expect(result).toContain('approvedAt:');
+  });
+
   it('approve appends approvedAt without extra blank line (R7 M1)', async () => {
     // Setup: phase file with trailing newline in frontmatter body
     await writeFile(
