@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, rm, writeFile, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createTelemetryClient, hashProjectRoot } from '../src/telemetry/client.js';
@@ -117,6 +117,31 @@ describe('T3.8 Telemetry client (F13.2, AC-R13-2, INV-8·9, ADR-7, TC-22·37·45
     await c.emit({ eventType: 'Other' });
     const payload = mockSend.mock.calls[0][0] as Record<string, unknown>;
     expect(payload.pluginVersion).toBe('1.2.3');
+  });
+
+  it('queue caps at QUEUE_MAX_LINES — oldest dropped (R3 H3)', async () => {
+    let dir: string = '';
+    try {
+      dir = await mkdtemp(join(tmpdir(), 'telem-cap-'));
+      const queuePath = join(dir, 'q.jsonl');
+      const client = createTelemetryClient({
+        consent: ConsentStatus.OptedIn,
+        send: vi.fn().mockRejectedValue(new Error('down')),
+        queuePath,
+      });
+      // Emit 1500 events (exceeds 1000 cap)
+      for (let i = 0; i < 1500; i++) {
+        await client.emit({ eventType: 'PhaseStarted', phaseId: i });
+      }
+      const raw = await readFile(queuePath, 'utf8');
+      const lines = raw.split('\n').filter((l) => l.trim() !== '');
+      expect(lines.length).toBeLessThanOrEqual(1000);
+      // Newest preserved
+      const last = JSON.parse(lines[lines.length - 1]);
+      expect(last.phaseId).toBe(1499);
+    } finally {
+      if (dir) await rm(dir, { recursive: true, force: true });
+    }
   });
 
   it('INV-8: flushQueue strips non-primitive ALLOWED_FIELDS values (object-typed hookReason)', async () => {

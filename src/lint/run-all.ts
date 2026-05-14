@@ -4,7 +4,7 @@
 // git staged-files context. Invoke separately: see src/lint/atomic-commit.ts
 // for pre-commit hook wiring instructions.
 
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { scanProject } from './anti-sycophancy.js';
 import { checkAcCoverage } from './ac-traceability.js';
@@ -43,18 +43,57 @@ async function runAntiSycophancy(projectRoot: string): Promise<SingleLintReport>
   };
 }
 
+async function findAdrFiles(projectRoot: string): Promise<string[]> {
+  const candidates: string[] = [];
+  for (const subdir of ['docs/spec', 'docs/spec/examples']) {
+    try {
+      const dirPath = join(projectRoot, subdir);
+      const files = await readdir(dirPath);
+      for (const f of files) {
+        if (!f.endsWith('.md')) continue;
+        const filePath = join(dirPath, f);
+        const text = await readFile(filePath, 'utf8');
+        // Heuristic: contains ADR-N heading
+        if (/^#{1,3}\s+ADR-\d+:/m.test(text)) candidates.push(filePath);
+      }
+    } catch { /* dir missing — skip */ }
+  }
+  return candidates;
+}
+
+async function findAcFiles(projectRoot: string): Promise<string[]> {
+  const candidates: string[] = [];
+  for (const subdir of ['docs/spec', 'docs/spec/examples']) {
+    try {
+      const dirPath = join(projectRoot, subdir);
+      const files = await readdir(dirPath);
+      for (const f of files) {
+        if (!f.endsWith('.md')) continue;
+        const filePath = join(dirPath, f);
+        const text = await readFile(filePath, 'utf8');
+        // Heuristic: contains AC-R heading
+        if (/AC-R\d+-\d+/m.test(text)) candidates.push(filePath);
+      }
+    } catch { /* dir missing — skip */ }
+  }
+  return candidates;
+}
+
 async function runInv7(projectRoot: string): Promise<SingleLintReport> {
-  const adrPath = join(projectRoot, 'docs', 'spec', 'examples', '12-adr-risks.md');
-  if (!(await fileExists(adrPath))) {
+  const files = await findAdrFiles(projectRoot);
+  if (files.length === 0) {
     return { name: 'inv-7', status: 'PASS', details: 'no ADR file' };
   }
-  const violations = await checkInv7File(adrPath);
-  const status = violations.length > 0 ? 'FAIL' : 'PASS';
+  let total = 0;
+  for (const file of files) {
+    const violations = await checkInv7File(file);
+    total += violations.length;
+  }
   return {
     name: 'inv-7',
-    status,
-    details: violations.length > 0 ? `${violations.length} violations` : 'PASS',
-    count: violations.length,
+    status: total > 0 ? 'FAIL' : 'PASS',
+    details: total > 0 ? `${total} violations across ${files.length} files` : `PASS (${files.length} files)`,
+    count: total,
   };
 }
 
@@ -80,26 +119,22 @@ async function runAcTraceability(projectRoot: string): Promise<SingleLintReport>
 }
 
 async function runInv5(projectRoot: string): Promise<SingleLintReport> {
-  const candidates = [
-    join(projectRoot, 'docs', 'spec', 'examples', '12-adr-risks.md'),
-    join(projectRoot, 'docs', 'spec', 'examples', '04-domain-model.md'),
-  ];
-
-  for (const candidate of candidates) {
-    if (await fileExists(candidate)) {
-      const text = await readFile(candidate, 'utf8');
-      const violations = checkInv5(text, candidate);
-      const status = violations.length > 0 ? 'FAIL' : 'PASS';
-      return {
-        name: 'inv-5',
-        status,
-        details: violations.length > 0 ? `${violations.length} violations` : 'PASS',
-        count: violations.length,
-      };
-    }
+  const files = await findAcFiles(projectRoot);
+  if (files.length === 0) {
+    return { name: 'inv-5', status: 'PASS', details: 'no spec file' };
   }
-
-  return { name: 'inv-5', status: 'PASS', details: 'no spec file' };
+  let total = 0;
+  for (const file of files) {
+    const text = await readFile(file, 'utf8');
+    const violations = checkInv5(text, file);
+    total += violations.length;
+  }
+  return {
+    name: 'inv-5',
+    status: total > 0 ? 'FAIL' : 'PASS',
+    details: total > 0 ? `${total} violations across ${files.length} files` : `PASS (${files.length} files)`,
+    count: total,
+  };
 }
 
 export async function runAllChecks(

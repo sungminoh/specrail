@@ -254,6 +254,40 @@ describe('Anti-Sycophancy lint (US-9.1)', () => {
     }
   });
 
+  // R3 M-Round3-2: mermaid regex dedupe + horizontal rule
+  it('keyword on line with markdown horizontal rule does not match (R3 M-Round3-2)', async () => {
+    const file = join(dir, 'test.md');
+    // 완료 in heading should be DETECTED — no special context
+    await writeFile(file, '## Phase 1 완료\n', 'utf8');
+    const violations = await scanFile(file);
+    const v = violations.find((x) => x.keyword === '완료');
+    expect(v).toBeDefined(); // 완료 in heading is real claim
+  });
+
+  it('mermaid edge arrow patterns recognized — 완료 in label silenced (R3 M-Round3-2)', async () => {
+    const file = join(dir, 'test.md');
+    // 완료 in mermaid edge label → benign
+    await writeFile(file, 'A --> 완료 안내 --> B\n', 'utf8');
+    const violations = await scanFile(file);
+    expect(violations.find((x) => x.keyword === '완료')).toBeUndefined();
+  });
+
+  // R3 M-Round3-3: O(N) fence mask perf test
+  it('handles large file (5000 lines) without quadratic slowdown (R3 M-Round3-3)', async () => {
+    const file = join(dir, 'big.md');
+    const lines: string[] = [];
+    for (let i = 0; i < 5000; i++) {
+      lines.push(`Line ${i}: some content`);
+    }
+    lines.push('ship-ready');
+    await writeFile(file, lines.join('\n'));
+    const start = Date.now();
+    const violations = await scanFile(file);
+    const elapsed = Date.now() - start;
+    expect(elapsed).toBeLessThan(2000); // sanity bound
+    expect(violations.find((v) => v.keyword === 'ship-ready')).toBeDefined();
+  });
+
   // TC-R2-CLI3: --strict CLI flag filters by hasStrongEvidence
   it('--strict CLI flag: weak evidence passes default but fails strict (R2-H3 fix)', async () => {
     const fixture = await mkdtemp(join(tmpdir(), 'anti-syco-cli-strict-'));

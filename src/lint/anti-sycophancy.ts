@@ -53,8 +53,11 @@ function isWordInBenignContext(line: string, matchIndex: number, keyword: string
   // Table row: pipe character anywhere on the line → noun cell, not claim
   if (line.includes('|')) return true;
 
-  // Mermaid edge label: line contains arrow notation
-  if (/-->|---|-->|<-->/.test(line)) return true;
+  // Mermaid edge arrows: -->, <--, <-->, -.->, etc.
+  if (/--+>|<--+|<--+>|-\.->/i.test(line)) return true;
+
+  // Markdown horizontal rule: line consists ONLY of dashes (with optional whitespace)
+  if (/^\s*-{3,}\s*$/.test(line)) return true;
 
   // Quoted/backtick-enclosed label: keyword is inside quotes or backticks
   const before = line.slice(0, matchIndex);
@@ -84,14 +87,18 @@ function buildKeywordRegex(): RegExp {
 
 const KEYWORD_RE = buildKeywordRegex();
 
-function isInCodeFence(lines: string[], lineIdx: number): boolean {
-  let fenceCount = 0;
-  for (let i = 0; i < lineIdx; i++) {
+function buildFenceMask(lines: string[]): boolean[] {
+  const mask = new Array<boolean>(lines.length).fill(false);
+  let inFence = false;
+  for (let i = 0; i < lines.length; i++) {
     if (/^```/.test(lines[i].trimStart())) {
-      fenceCount++;
+      inFence = !inFence;
+      mask[i] = true; // fence delimiter line itself is "in fence"
+    } else {
+      mask[i] = inFence;
     }
   }
-  return fenceCount % 2 === 1;
+  return mask;
 }
 
 /**
@@ -133,10 +140,11 @@ function scanText(text: string, filePath: string): SycophancyViolation[] {
   const stripped = stripHtmlComments(text);
   const lines = stripped.split('\n');
   const originalLines = text.split('\n');
+  const fenceMask = buildFenceMask(originalLines);
   const violations: SycophancyViolation[] = [];
 
   for (let i = 0; i < lines.length; i++) {
-    if (isInCodeFence(originalLines, i)) continue;
+    if (fenceMask[i]) continue;
 
     const re = new RegExp(KEYWORD_RE.source, 'gi');
     let m: RegExpExecArray | null;

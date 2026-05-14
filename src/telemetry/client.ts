@@ -1,5 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFile, appendFile, writeFile, rename } from 'node:fs/promises';
+
+const QUEUE_MAX_LINES = 1000;
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ConsentStatus, loadConsent } from './consent.js';
@@ -130,6 +132,19 @@ export function createTelemetryClient(cfg: ClientConfig): TelemetryClient {
   async function appendToQueue(payload: object): Promise<void> {
     if (!queuePath) return;
     await appendFile(queuePath, JSON.stringify(payload) + '\n', 'utf8');
+    // R3 H3: cap queue size — drop oldest if exceeded
+    try {
+      const raw = await readFile(queuePath, 'utf8');
+      const lines = raw.split('\n').filter((l) => l.trim() !== '');
+      if (lines.length > QUEUE_MAX_LINES) {
+        const trimmed = lines.slice(-QUEUE_MAX_LINES); // keep newest
+        const tmp = queuePath + '.tmp';
+        await writeFile(tmp, trimmed.join('\n') + '\n');
+        await rename(tmp, queuePath);
+      }
+    } catch {
+      // best-effort — don't break emit if rotation fails
+    }
   }
 
   async function trySend(payload: object): Promise<void> {
