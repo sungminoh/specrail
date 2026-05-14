@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFile, appendFile, writeFile, rename } from 'node:fs/promises';
-import { ConsentStatus } from './consent.js';
+import { join } from 'node:path';
+import { ConsentStatus, loadConsent } from './consent.js';
 import { loadConfigFromEnv, createPlausibleSender, PlausibleSender } from './plausible-adapter.js';
 
 export type TelemetryEventType =
@@ -64,6 +65,28 @@ export function createSenderFromEnv(): PlausibleSender | null {
     return null;
   }
   return createPlausibleSender({ domain: cfg.domain, endpoint: cfg.endpoint });
+}
+
+// Production boot wire — fire-and-forget telemetry emit.
+// Architect M11 verdict: createSenderFromEnv was a renamed helper, not a wire-up.
+// tryEmit closes the gap: real call site that production code (approve, change, etc.) invokes.
+// Never throws — telemetry failure must not block plugin operation.
+export async function tryEmit(projectRoot: string, event: TelemetryEvent): Promise<void> {
+  try {
+    const configDir = join(projectRoot, '.plan-pipeline-cache');
+    const consent = await loadConsent(configDir);
+    if (consent.status !== ConsentStatus.OptedIn) return;
+    const sender = createSenderFromEnv();
+    if (!sender) return;
+    const client = createTelemetryClient({
+      consent: consent.status,
+      send: (payload) => sender.emit(payload),
+      anonProjectHash: hashProjectRoot(projectRoot),
+    });
+    await client.emit(event);
+  } catch {
+    // Swallow — telemetry must never block plugin operation
+  }
 }
 
 export function createTelemetryClient(cfg: ClientConfig): TelemetryClient {

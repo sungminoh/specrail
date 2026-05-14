@@ -8,6 +8,7 @@ import { parseFrontmatter } from '../markdown/frontmatter.js';
 import { PhaseStatus, assertTransition } from '../state/machine.js';
 import { runHook as runIdHook } from '../hook/id-consistency.js';
 import { runHook as runSchemaHook } from '../hook/schema-validate.js';
+import { tryEmit } from '../telemetry/client.js';
 
 export interface ApproveResult {
   approved: boolean;
@@ -51,6 +52,10 @@ export async function approve(projectRoot: string, phaseN: number): Promise<Appr
   const approvedAt = new Date().toISOString();
   const updated = updateFrontmatter(raw, { status: PhaseStatus.Approved, approvedAt });
   await writeFile(path, updated);
+
+  // 6. Emit PhaseApproved telemetry (architect M11 P1 wire-up close).
+  // Fire-and-forget: never blocks approval. No-op if env vars unset or consent !== OptedIn.
+  await tryEmit(projectRoot, { eventType: 'PhaseApproved', phaseId: phaseN });
 
   return {
     approved: true,
