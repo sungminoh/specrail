@@ -82,9 +82,15 @@ const ZWS_CHARS = '\\u200B\\u200C\\u200D\\uFEFF';
 /** Citation regex (word-boundary, captured group, global flag).
  * Negative lookarounds for ZWS_CHARS prevent false-positive matches when
  * an ID is adjacent to a zero-width character (US-11.6, M11).
+ *
+ * Leading hyphen guard (Step 0): `\b` treats `-` as a word boundary, so
+ * without an explicit lookbehind, in-prose compound tokens leak phantom
+ * substring matches — `ADR-CAND-1` → `CAND-1`, `P-CC-1` → `CC-1`,
+ * `NFR-SEC-COMP-1` → `COMP-1`. Adding `\\-` to the lookbehind class
+ * rejects any match that begins immediately after a hyphen.
  */
 export const CITATION_RE = new RegExp(
-  `(?<![${ZWS_CHARS}])\\b(${ID_PATTERN_SOURCE}|${USER_NAMESPACE_PATTERN})\\b(?![${ZWS_CHARS}])`,
+  `(?<![${ZWS_CHARS}\\-])\\b(${ID_PATTERN_SOURCE}|${USER_NAMESPACE_PATTERN})\\b(?![${ZWS_CHARS}])`,
   'g',
 );
 
