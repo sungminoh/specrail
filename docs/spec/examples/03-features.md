@@ -2,7 +2,6 @@
 
 **Mode:** HOLD SCOPE (retroactive — PRD §10 변경 2026-05-12)
 **Inputs:** PRD §3·§5·§6, Phase 2 §6 Pain Priority, §7 차단 단계
-**Reference:** `/reference-v3/03-features.md`
 **Date:** 2026-05-10 (DELTA 2026-05-12: R13 KPI 인용 정정 + R6 AC-R6-3 기존 hook 보존 정책)
 
 ## 0. Roles
@@ -64,17 +63,17 @@
 
 ---
 
-## R3: 로컬 웹 대시보드 — DEFERRED (v4.5 cycle)
+## R3: 로컬 웹 대시보드 — DEFERRED (별 cycle)
 
 **Status:** Deferred (별 cycle)
-**Reason:** Boil the Lake 정확한 응용 — 단일 product 한 cycle. Dashboard는 v4.5+. 본 v4의 frontmatter schema는 미래 dashboard read 호환 design 보장.
+**Reason:** Boil the Lake 정확한 응용 — 단일 product 한 cycle. Dashboard는 별 cycle. plugin의 frontmatter schema는 미래 dashboard read 호환 design 보장.
 
-**v4에서 PAIN-4 (검토 cumbersome) 부분 mitigate:**
+**현재 PAIN-4 (검토 cumbersome) 부분 mitigate:**
 - R1 structured frontmatter — 인용·정의 명시
 - Phase 5 dependency graph mermaid (markdown 안) — GitHub·VS Code preview에서 자동 render
 - R5 phase 진행이 명확 — "어디까지 했나" 의문 감소
 
-(R3 detail은 v4.5 PRD에서 정의. 이전 작성한 F3.1~F3.5, AC-R3-1~5는 v4.5 reference로 archive.)
+(R3 detail은 향후 PRD에서 정의. 이전 작성한 F3.1~F3.5, AC-R3-1~5는 향후 cycle reference로 archive.)
 
 ---
 
@@ -100,7 +99,7 @@
 
 ## R5: Phase 진행 강제 + Forcing questions
 
-**Description:** 13 phase 순차 진행 + Phase 0 reframing. v3 R1·R2 차용. plugin이 도구로 강제.
+**Description:** 13 phase 순차 진행 + Phase 0 reframing. plugin이 도구로 강제.
 
 **해결하는 PAIN:** PAIN-fundamental (Forcing 도망)
 **해결하는 시나리오:** S1, S2
@@ -122,7 +121,7 @@
 
 ## R6: 단일 명령 install·setup
 
-**Description:** Plugin install 마찰 최소. 첫 trigger 시 docs/spec 자동 생성, 대시보드 spawn, hook 자동 install.
+**Description:** Plugin install 마찰 최소. 첫 trigger 시 docs/spec 자동 생성, hook 자동 install.
 
 **해결하는 PAIN:** PAIN-base
 **해결하는 시나리오:** S1
@@ -132,33 +131,33 @@
 ### AC
 
 - **AC-R6-1:** GIVEN Claude Code 환경, WHEN plugin install 명령, THEN 단일 명령으로 설치 (의존성·setup script 자동).
-- **AC-R6-2:** GIVEN 첫 plugin trigger, WHEN docs/spec 부재, THEN 자동 생성 + Phase 1 skill 호출. (대시보드 spawn은 v4.5)
-- **AC-R6-3:** GIVEN git repo + 기존 pre-commit hook 존재 가능 (husky·lefthook·plain script), WHEN plugin 첫 setup, THEN (a) 기존 hook 감지 (`.husky/`, `lefthook.yml`, `.git/hooks/pre-commit` plain), (b) **chain 방식** install — v4 hook이 기존 hook을 먼저 호출 후 자체 검증 실행, (c) 사용자 명시 confirm 후 적용. 기존 hook 덮어쓰기 절대 금지 — INV 등급 보호.
+- **AC-R6-2:** GIVEN 첫 plugin trigger, WHEN docs/spec 부재, THEN 자동 생성 + Phase 1 skill 호출.
+- **AC-R6-3:** GIVEN git repo + 기존 pre-commit hook 존재 가능 (husky·lefthook·plain script), WHEN plugin 첫 setup, THEN (a) 기존 hook 감지 (`.husky/`, `lefthook.yml`, `.git/hooks/pre-commit` plain), (b) **chain 방식** install — specrail hook이 기존 hook을 먼저 호출 후 자체 검증 실행, (c) 사용자 명시 confirm 후 적용. 기존 hook 덮어쓰기 절대 금지 — INV 등급 보호.
 
 ### F6.1: Claude Code plugin install (1 명령)
 ### F6.2: 첫 trigger 시 자동 bootstrap
-### F6.3: ~~대시보드 server 자동 spawn~~ → Deferred (v4.5 — R3와 함께)
+### F6.3: ~~대시보드 server 자동 spawn~~ → Deferred (별 cycle — R3와 함께)
 ### F6.4: Hook 자동 install (git 감지)
 
 ---
 
 ## R7: 도메인 무관성
 
-**Description:** v3 R5 차용. 메인 prompt 도메인 무관 placeholder. self-application example로 dogfood (v4 자체).
+**Description:** 메인 prompt 도메인 무관 placeholder. self-application example로 dogfood (specrail 자체).
 
-**해결하는 PAIN:** v3 R5 동일 — 도메인 bias 산출물 왜곡
+**해결하는 PAIN:** 도메인 bias 산출물 왜곡
 **해결하는 시나리오:** S1, S2, S3
 **Importance:** P0
-**Status:** Draft (v3에서 Done — 차용)
+**Status:** Draft
 
 ### AC
 
-- **AC-R7-1:** GIVEN plugin 메인 prompt, WHEN B2B specific 표현 검색, THEN 0건 (v3 R5 그대로).
+- **AC-R7-1:** GIVEN plugin 메인 prompt, WHEN B2B specific 표현 검색, THEN 0건.
 - **AC-R7-2:** GIVEN plugin 메인 prompt, WHEN 단일 도메인 entity inline, THEN 0건.
-- **AC-R7-3:** GIVEN self-application example (v4 작업 자체), WHEN 작업 진행, THEN v3 example 참조 X (chicken-and-egg 방지).
+- **AC-R7-3:** GIVEN self-application example (specrail 작업 자체), WHEN 작업 진행, THEN legacy example 참조 X (chicken-and-egg 방지).
 
-### F7.1: v3 메인 14 prompt 차용 (skill 형태로)
-### F7.2: v4 자체가 example (작업 산출물이 곧 example)
+### F7.1: 메인 14 prompt (skill 형태로)
+### F7.2: specrail 자체가 example (작업 산출물이 곧 example)
 
 ---
 
@@ -186,7 +185,7 @@
 
 ## R13: Telemetry opt-in (e6 cherry-pick)
 
-**Description:** 사용자 동의 시 plugin 사용 metric 익명 수집. PRD KPI-6 측정 mechanism + KPI-1 완주율 부분 데이터 (PhaseStarted vs PhaseApproved 비율). Privacy first — opt-in only, default off. (KPI-5 dashboard 사용 빈도는 v4.5로 이동됨.)
+**Description:** 사용자 동의 시 plugin 사용 metric 익명 수집. PRD KPI-6 측정 mechanism + KPI-1 완주율 부분 데이터 (PhaseStarted vs PhaseApproved 비율). Privacy first — opt-in only, default off. (KPI-5 dashboard 사용 빈도는 dashboard cycle로 이동됨.)
 
 **해결하는 PAIN:** (KPI 측정 부재 — product 운영. 사용자 PAIN 아님 — maintainer 필요)
 **해결하는 시나리오:** 모든 (background)
@@ -209,37 +208,37 @@
 
 | | Draft | Approved | Implementing | Done | Deferred |
 |---|---|---|---|---|---|
-| P0 | 8 (R1·R2·R4·R5·R6·R7·R8·R13) | 0 | 0 | 0 | 1 (R3 → v4.5) |
+| P0 | 8 (R1·R2·R4·R5·R6·R7·R8·R13) | 0 | 0 | 0 | 1 (R3 → 향후 cycle) |
 | P1 | 0 | 0 | 0 | 0 | 0 |
-| P2 | 0 | 0 | 0 | 0 | 1 (F3.5 → v4.5) |
+| P2 | 0 | 0 | 0 | 0 | 1 (F3.5 → 향후 cycle) |
 | P3 | 0 | 0 | 0 | 0 | 0 |
 
 ## Pain → Spec 매핑
 
-| Pain ID | 해결 Spec | 차단 시나리오 | v4 cover |
+| Pain ID | 해결 Spec | 차단 시나리오 | 현재 cover |
 |---|---|---|---|
 | PAIN-1 환각 ID | R1 (모든 F·S) | S1, S2 | Full |
-| PAIN-2 기억 의존 | R1 (F1.2, F1.4) | S1, S2 | Full (R1) — dashboard 보강은 v4.5 |
+| PAIN-2 기억 의존 | R1 (F1.2, F1.4) | S1, S2 | Full (R1) — dashboard 보강은 향후 cycle |
 | PAIN-3 HARD-GATE 양심 | R2 (F2.2) | S1, S2 | Full |
-| PAIN-4 검토 cumbersome | R1 structured + Phase 5 mermaid + GitHub/VS Code preview | S1, S2 | **Partial** — 인터랙티브 검토는 v4.5 dashboard |
+| PAIN-4 검토 cumbersome | R1 structured + Phase 5 mermaid + GitHub/VS Code preview | S1, S2 | **Partial** — 인터랙티브 검토는 향후 dashboard cycle |
 | PAIN-5 self-check 잊음 | R2 (F2.1, F2.3, F2.4) | S1, S2 | Full |
 | PAIN-DELTA-scope | R4 (모든) | S2 | Full |
 | PAIN-fundamental Forcing 도망 | R5 (F5.2, F5.3) | S1 | Full |
 | PAIN-base install 마찰 | R6 (모든) | S1 | Full |
-| PAIN-6 다중 project (Edge-2) | (v4.5 dashboard cycle) | (Edge-2) | Deferred |
-| PAIN-7 brownfield (Edge-3) | (v4.1 후보) | S3 | Deferred |
+| PAIN-6 다중 project (Edge-2) | (dashboard cycle) | (Edge-2) | Deferred |
+| PAIN-7 brownfield (Edge-3) | (향후 cycle 후보) | S3 | Deferred |
 
 ## EXPANSION 후보 (Mode HOLD로 변경 — 모두 Deferred)
 
-PRD §10 Mode가 EXPANSION → HOLD 변경됨 (Boil the Lake 정확한 응용). 본 cycle은 harness 견고하게. 모든 expansion 후보는 별 cycle (v4.5+).
+PRD §10 Mode가 EXPANSION → HOLD 변경됨 (Boil the Lake 정확한 응용). 본 cycle은 harness 견고하게. 모든 expansion 후보는 별 cycle.
 
 | 후보 ID | 후보 | Status |
 |---|---|---|
-| e1 | AI 자동 review (다른 LLM second opinion) | Deferred (v4.5+) |
-| e2 | DELTA timeline visualization | Deferred → R3 (대시보드)에 흡수, v4.5 |
+| e1 | AI 자동 review (다른 LLM second opinion) | Deferred (향후 cycle) |
+| e2 | DELTA timeline visualization | Deferred → R3 (대시보드)에 흡수, 향후 cycle |
 | e3 | 다중 LLM provider | Rejected — PRD §6 Non-Goal과 충돌 |
-| e4 | Edge-1 (non-dev) primary 승격 | Deferred (v5+) — Phase 1 PRD revisit 필요 |
-| e5 | 다중 project tab (Edge-2) | Deferred (v4.5+) — dashboard와 함께 |
+| e4 | Edge-1 (non-dev) primary 승격 | Deferred (향후 cycle) — Phase 1 PRD revisit 필요 |
+| e5 | 다중 project tab (Edge-2) | Deferred (향후 cycle) — dashboard와 함께 |
 | e6 | Telemetry opt-in (KPI 측정) | **채택** — R13 base 유지 |
 
 ## Open Questions
