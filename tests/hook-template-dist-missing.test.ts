@@ -23,7 +23,7 @@ describe('V4_HOOK_TEMPLATE dist resolution (US-T6.1, M6, D11 regression)', () =>
     const templateMatch = templateSource.match(/const V4_HOOK_TEMPLATE = `[\s\S]+?`;/);
     const template = templateMatch![0];
     expect(template).toContain('dist not found');
-    expect(template).toContain('npm run build');
+    expect(template).toContain('build first or install package');
   });
 
   it('loadHooks tries npm package first then local dist', () => {
@@ -32,7 +32,7 @@ describe('V4_HOOK_TEMPLATE dist resolution (US-T6.1, M6, D11 regression)', () =>
     expect(template).toContain('@plan-pipeline/v4/dist/hook/id-consistency.js');
     expect(template).toContain('dist/hook/id-consistency.js');
     expect(template.indexOf('@plan-pipeline/v4')).toBeLessThan(
-      template.indexOf("joinPath(projectRoot, 'dist/hook"),
+      template.indexOf('../dist/hook/id-consistency.js'),
     );
   });
 

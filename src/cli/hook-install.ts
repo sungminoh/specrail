@@ -2,6 +2,7 @@
 // AC-R6-3, F2.1, F6.4, RISK-3, INV-10 (기존 hook 절대 보존)
 
 import { readFile, writeFile, mkdir, stat, copyFile, chmod } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 
@@ -58,7 +59,7 @@ export interface InstallResult {
   guidance?: string;
 }
 
-const V4_HOOK_TEMPLATE = `#!/usr/bin/env node
+export const V4_HOOK_TEMPLATE = `#!/usr/bin/env node
 ${V4_MARKER}
 // Chain order:
 //   1. Run user-original hook if exists (backup file)
@@ -82,20 +83,29 @@ async function existsP(p) { try { await st(p); return true; } catch { return fal
 async function loadHooks() {
   // Try npm-installed package first
   try {
-    const { runHook: idHook } = await import('@plan-pipeline/v4/dist/hook/id-consistency.js');
-    const { runHook: schemaHook } = await import('@plan-pipeline/v4/dist/hook/schema-validate.js');
-    return { idHook, schemaHook };
-  } catch {
-    // not installed as package — try local dist (self-dogfood / dev)
+    const pkg = await import('@plan-pipeline/v4/dist/hook/schema-validate.js');
+    const ic = await import('@plan-pipeline/v4/dist/hook/id-consistency.js');
+    process.stderr.write('[v4-hook] loaded from @plan-pipeline/v4 package\\n');
+    return { schemaHook: pkg.runHook, idHook: ic.runHook };
+  } catch (e) {
+    if (e?.code !== 'ERR_MODULE_NOT_FOUND') {
+      process.stderr.write(\`[v4-hook] npm package load failed: \${String(e)}\\n\`);
+      throw e;
+    }
   }
+  // ERR_MODULE_NOT_FOUND — try local dist (self-dogfood / dev)
   try {
-    const { runHook: idHook } = await import(joinPath(projectRoot, 'dist/hook/id-consistency.js'));
-    const { runHook: schemaHook } = await import(joinPath(projectRoot, 'dist/hook/schema-validate.js'));
-    return { idHook, schemaHook };
-  } catch {
-    // neither found
+    const localDir = require('node:path').dirname(require('node:url').fileURLToPath(import.meta.url));
+    const distSchemaPath = require('node:path').resolve(localDir, '../dist/hook/schema-validate.js');
+    const distIdPath = require('node:path').resolve(localDir, '../dist/hook/id-consistency.js');
+    const pkg = await import(distSchemaPath);
+    const ic = await import(distIdPath);
+    process.stderr.write('[v4-hook] loaded from local dist (development mode)\\n');
+    return { schemaHook: pkg.runHook, idHook: ic.runHook };
+  } catch (e2) {
+    process.stderr.write(\`[v4-hook] local dist load failed: \${String(e2)}\\n\`);
+    return null;
   }
-  return null;
 }
 
 (async () => {
@@ -113,7 +123,7 @@ async function loadHooks() {
   // 2. v4 checks
   const hooks = await loadHooks();
   if (!hooks) {
-    process.stderr.write('[plan-pipeline v4 hook: dist not found, run npm run build]\\n');
+    process.stderr.write('[v4-hook] dist not found — build first or install package\\n');
     process.exit(1);
   }
 
@@ -124,7 +134,10 @@ async function loadHooks() {
   if (!sc.ok) { process.stderr.write(sc.message + '\\n'); process.exit(1); }
 
   process.exit(0);
-})();
+})().catch((e) => {
+  process.stderr.write(\`[v4-hook] uncaught: \${String(e?.stack ?? e)}\\n\`);
+  process.exit(1);
+});
 `;
 
 export async function installHook(
@@ -135,6 +148,17 @@ export async function installHook(
   await mkdir(join(projectRoot, '.git', 'hooks'), { recursive: true });
 
   const detection = await detectExisting(projectRoot);
+
+  // M3: warn if both .husky/pre-commit and .git/hooks/pre-commit coexist
+  if (
+    existsSync(join(projectRoot, '.husky', 'pre-commit')) &&
+    existsSync(join(projectRoot, '.git', 'hooks', 'pre-commit'))
+  ) {
+    process.stderr.write(
+      '[v4-hook] WARNING: both .husky/pre-commit and .git/hooks/pre-commit detected.\n' +
+        '[v4-hook] V4 hook chain installed in .husky path. Verify legacy .git/hooks/pre-commit content matches expectation.\n',
+    );
+  }
 
   if (detection.type === 'husky') {
     return {

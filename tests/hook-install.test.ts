@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdtemp, writeFile, mkdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { detectExisting, installHook } from '../src/cli/hook-install.js';
+import { detectExisting, installHook, V4_HOOK_TEMPLATE } from '../src/cli/hook-install.js';
 
 let dir: string;
 
@@ -102,5 +102,68 @@ describe('Pre-commit hook installer (T1.7, AC-R6-3, AC-R2-1, F2.1, F6.4, RISK-3,
     await installHook(dir);
     const r2 = await installHook(dir, { force: true });
     expect(r2.installed).toBe(true);
+  });
+});
+
+describe('V4_HOOK_TEMPLATE source string contents', () => {
+  it('R2-H1: IIFE has .catch() after closing paren', () => {
+    // The IIFE must end with })().catch( to ensure uncaught rejections are handled
+    expect(V4_HOOK_TEMPLATE).toContain('.catch(');
+    // Verify the catch comes AFTER the closing })() of the IIFE
+    const iifeClose = V4_HOOK_TEMPLATE.indexOf('})()');
+    const catchIdx = V4_HOOK_TEMPLATE.indexOf('.catch(', iifeClose);
+    expect(catchIdx).toBeGreaterThan(iifeClose);
+  });
+
+  it('R2-H2: template contains npm package loaded message', () => {
+    expect(V4_HOOK_TEMPLATE).toContain('loaded from @plan-pipeline/v4 package');
+  });
+
+  it('R2-H2: template contains local dist loaded message', () => {
+    expect(V4_HOOK_TEMPLATE).toContain('loaded from local dist');
+  });
+
+  it('R2-H2: template contains dist-not-found exit message', () => {
+    expect(V4_HOOK_TEMPLATE).toContain('dist not found');
+  });
+});
+
+describe('M3: dual-tool existence warning', () => {
+  let dir: string;
+
+  beforeEach(async () => {
+    dir = await mkdtemp(join(tmpdir(), 'hook-install-m3-'));
+  });
+
+  afterEach(async () => {
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  it('emits WARNING when both .husky/pre-commit and .git/hooks/pre-commit exist', async () => {
+    // Set up .husky/pre-commit
+    await mkdir(join(dir, '.husky'), { recursive: true });
+    await writeFile(join(dir, '.husky/pre-commit'), 'npm test\n');
+
+    // Set up .git/hooks/pre-commit
+    await mkdir(join(dir, '.git/hooks'), { recursive: true });
+    await writeFile(join(dir, '.git/hooks/pre-commit'), '#!/bin/sh\necho legacy\n');
+
+    const stderrChunks: string[] = [];
+    const originalStderrWrite = process.stderr.write.bind(process.stderr);
+    vi.spyOn(process.stderr, 'write').mockImplementation((chunk: unknown) => {
+      stderrChunks.push(String(chunk));
+      return true;
+    });
+
+    try {
+      await installHook(dir);
+    } finally {
+      vi.restoreAllMocks();
+    }
+
+    const stderrOutput = stderrChunks.join('');
+    expect(stderrOutput).toContain('WARNING');
+    expect(stderrOutput).toContain('.husky/pre-commit');
+    expect(stderrOutput).toContain('.git/hooks/pre-commit');
   });
 });
