@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFile, appendFile, writeFile, rename } from 'node:fs/promises';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { ConsentStatus, loadConsent } from './consent.js';
 import { loadConfigFromEnv, createPlausibleSender, PlausibleSender } from './plausible-adapter.js';
 
@@ -48,6 +49,34 @@ export function hashProjectRoot(rootPath: string): string {
   return createHash('sha256').update(rootPath, 'utf8').digest('hex');
 }
 
+/**
+ * Type guard for values that are safe to forward in telemetry payloads.
+ * Rejects objects, arrays, functions — accepts string, number, or undefined only.
+ */
+function isPrimitiveValue(v: unknown): boolean {
+  return typeof v === 'string' || typeof v === 'number' || v === undefined;
+}
+
+let _cachedVersion: string | undefined;
+
+/**
+ * Read package.json version at runtime. Cached after first call.
+ * Returns undefined when version cannot be determined (graceful degradation).
+ */
+async function getPluginVersion(): Promise<string | undefined> {
+  if (_cachedVersion !== undefined) return _cachedVersion || undefined;
+  try {
+    const pkgPath = fileURLToPath(new URL('../../package.json', import.meta.url));
+    const raw = await readFile(pkgPath, 'utf8');
+    const pkg = JSON.parse(raw) as { version?: string };
+    _cachedVersion = typeof pkg.version === 'string' ? pkg.version : '';
+    return _cachedVersion || undefined;
+  } catch {
+    _cachedVersion = '';
+    return undefined;
+  }
+}
+
 let _warnedOnce = false;
 
 /**
@@ -64,7 +93,11 @@ export function createSenderFromEnv(): PlausibleSender | null {
     }
     return null;
   }
-  return createPlausibleSender({ domain: cfg.domain, endpoint: cfg.endpoint });
+  return createPlausibleSender({
+    domain: cfg.domain,
+    endpoint: cfg.endpoint,
+    ...(cfg.token ? { token: cfg.token } : {}),
+  });
 }
 
 // Production boot wire — fire-and-forget telemetry emit.
@@ -78,10 +111,12 @@ export async function tryEmit(projectRoot: string, event: TelemetryEvent): Promi
     if (consent.status !== ConsentStatus.OptedIn) return;
     const sender = createSenderFromEnv();
     if (!sender) return;
+    const pluginVersion = await getPluginVersion();
     const client = createTelemetryClient({
       consent: consent.status,
       send: (payload) => sender.emit(payload),
       anonProjectHash: hashProjectRoot(projectRoot),
+      ...(pluginVersion ? { pluginVersion } : {}),
     });
     await client.emit(event);
   } catch {
@@ -149,7 +184,9 @@ export function createTelemetryClient(cfg: ClientConfig): TelemetryClient {
         const rawPayload = JSON.parse(line) as Record<string, unknown>;
         const filtered: Record<string, unknown> = {};
         for (const key of ALLOWED_FIELDS) {
-          if (rawPayload[key] !== undefined) filtered[key] = rawPayload[key];
+          if (rawPayload[key] !== undefined && isPrimitiveValue(rawPayload[key])) {
+            filtered[key] = rawPayload[key];
+          }
         }
         // Preserve standard metadata only
         if (typeof rawPayload.timestamp === 'string') filtered.timestamp = rawPayload.timestamp;

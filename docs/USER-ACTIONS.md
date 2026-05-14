@@ -23,8 +23,8 @@ Only if you want telemetry enabled. See `docs/TELEMETRY.md` for full setup.
 
 1. Create account at https://plausible.io (choose **EU region** for GDPR)
 2. Add a site for this plugin
-3. Generate API token (Account → API Keys)
-4. Copy `.env.example` → `.env` and fill in `PLAUSIBLE_DOMAIN`, `PLAUSIBLE_ENDPOINT`, `PLAUSIBLE_API_TOKEN`
+3. (Optional) Generate API token (Account → API Keys). Token is only needed for self-hosted setups that require Bearer — Plausible /api/event is unauthenticated by default.
+4. Copy `.env.example` → `.env` and fill in `PLAUSIBLE_DOMAIN`, `PLAUSIBLE_ENDPOINT` (required). `PLAUSIBLE_API_TOKEN` is optional.
 
 Skip this section to ship without telemetry.
 

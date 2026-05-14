@@ -30,21 +30,22 @@ describe('createSenderFromEnv — env-based sender boot (US-11.7)', () => {
     expect(typeof sender!.flush).toBe('function');
   });
 
-  it('missing PLAUSIBLE_API_TOKEN → returns null', async () => {
+  it('missing PLAUSIBLE_API_TOKEN but domain+endpoint present → returns non-null sender (token is optional)', async () => {
     vi.stubGlobal('process', {
       ...process,
       env: {
         PLAUSIBLE_DOMAIN: 'plan-pipeline-v4.example',
         PLAUSIBLE_ENDPOINT: 'https://plausible.io/api/event',
-        // PLAUSIBLE_API_TOKEN intentionally absent
+        // PLAUSIBLE_API_TOKEN intentionally absent — token is optional per C1 fix
       },
     });
-    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 
     const { createSenderFromEnv } = await import('../src/telemetry/client.js');
     const sender = createSenderFromEnv();
 
-    expect(sender).toBeNull();
+    expect(sender).not.toBeNull();
+    expect(typeof sender!.emit).toBe('function');
+    expect(typeof sender!.flush).toBe('function');
   });
 
   it('null result: warns exactly once across multiple calls (warn-once dedup)', async () => {

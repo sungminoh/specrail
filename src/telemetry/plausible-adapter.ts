@@ -16,6 +16,9 @@ export interface PlausibleAdapterConfig {
   endpoint?: string;
   /** User-Agent override (optional) */
   userAgent?: string;
+  /** Bearer token (optional) — Plausible /api/event is unauthenticated by default;
+   *  some self-hosted setups require Authorization: Bearer <token> */
+  token?: string;
 }
 
 export interface PluginPayload {
@@ -63,7 +66,7 @@ export function toPlausiblePayload(
 export interface PlausibleConfig {
   domain: string;
   endpoint: string;
-  token: string;
+  token?: string;  // optional — Plausible /api/event is unauthenticated; some self-hosted setups require Bearer
 }
 
 /**
@@ -83,9 +86,9 @@ export interface PlausibleSender {
 export function loadConfigFromEnv(env: NodeJS.ProcessEnv = process.env): PlausibleConfig | null {
   const domain = env.PLAUSIBLE_DOMAIN;
   const endpoint = env.PLAUSIBLE_ENDPOINT;
-  const token = env.PLAUSIBLE_API_TOKEN;
-  if (!domain || !endpoint || !token) return null;
-  return { domain, endpoint, token };
+  const token = env.PLAUSIBLE_API_TOKEN; // optional
+  if (!domain || !endpoint) return null;
+  return token ? { domain, endpoint, token } : { domain, endpoint };
 }
 
 /**
@@ -104,6 +107,7 @@ export function createPlausibleSender(cfg: PlausibleAdapterConfig): PlausibleSen
       'Content-Type': 'application/json',
     };
     if (cfg.userAgent) headers['User-Agent'] = cfg.userAgent;
+    if (cfg.token) headers['Authorization'] = `Bearer ${cfg.token}`;
 
     const p: Promise<{ ok: boolean }> = fetch(endpoint, {
       method: 'POST',

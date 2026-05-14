@@ -74,4 +74,60 @@ describe('tryEmit (architect M11 P1 wire-up)', () => {
       tryEmit(dir, { eventType: 'PhaseApproved', phaseId: 4 }),
     ).resolves.toBeUndefined();
   });
+
+  it('sends Bearer Authorization when token configured', async () => {
+    vi.stubEnv('PLAUSIBLE_DOMAIN', 'x.example');
+    vi.stubEnv('PLAUSIBLE_ENDPOINT', 'https://x.example/api/event');
+    vi.stubEnv('PLAUSIBLE_API_TOKEN', 'secret-tok');
+    const cacheDir = join(dir, '.plan-pipeline-cache');
+    await mkdir(cacheDir, { recursive: true });
+    await writeFile(
+      join(cacheDir, 'consent.json'),
+      JSON.stringify({ status: 'OptedIn' }),
+    );
+    const fetchSpy = vi.fn().mockResolvedValue(new Response('ok', { status: 200 }));
+    vi.stubGlobal('fetch', fetchSpy);
+    await tryEmit(dir, { eventType: 'PhaseApproved', phaseId: 1 });
+    expect(fetchSpy).toHaveBeenCalled();
+    const headers = fetchSpy.mock.calls[0][1].headers as Record<string, string>;
+    expect(headers['Authorization']).toBe('Bearer secret-tok');
+  });
+
+  it('omits Authorization when token absent', async () => {
+    vi.stubEnv('PLAUSIBLE_DOMAIN', 'x.example');
+    vi.stubEnv('PLAUSIBLE_ENDPOINT', 'https://x.example/api/event');
+    // no PLAUSIBLE_API_TOKEN
+    const cacheDir = join(dir, '.plan-pipeline-cache');
+    await mkdir(cacheDir, { recursive: true });
+    await writeFile(
+      join(cacheDir, 'consent.json'),
+      JSON.stringify({ status: 'OptedIn' }),
+    );
+    const fetchSpy = vi.fn().mockResolvedValue(new Response('ok', { status: 200 }));
+    vi.stubGlobal('fetch', fetchSpy);
+    await tryEmit(dir, { eventType: 'PhaseApproved', phaseId: 1 });
+    expect(fetchSpy).toHaveBeenCalled();
+    const headers = fetchSpy.mock.calls[0][1].headers as Record<string, string>;
+    expect(headers['Authorization']).toBeUndefined();
+  });
+
+  it('includes pluginVersion in emitted payload', async () => {
+    vi.stubEnv('PLAUSIBLE_DOMAIN', 'x.example');
+    vi.stubEnv('PLAUSIBLE_ENDPOINT', 'https://x.example/api/event');
+    const cacheDir = join(dir, '.plan-pipeline-cache');
+    await mkdir(cacheDir, { recursive: true });
+    await writeFile(
+      join(cacheDir, 'consent.json'),
+      JSON.stringify({ status: 'OptedIn' }),
+    );
+    const fetchSpy = vi.fn().mockResolvedValue(new Response('ok', { status: 200 }));
+    vi.stubGlobal('fetch', fetchSpy);
+    await tryEmit(dir, { eventType: 'PhaseApproved', phaseId: 1 });
+    expect(fetchSpy).toHaveBeenCalled();
+    const body = JSON.parse(fetchSpy.mock.calls[0][1].body as string) as {
+      props: Record<string, string>;
+    };
+    expect(body.props.pluginVersion).toBeDefined();
+    expect(body.props.pluginVersion).toMatch(/^\d+\.\d+\.\d+/);
+  });
 });

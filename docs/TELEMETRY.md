@@ -2,19 +2,19 @@
 
 Telemetry is **opt-in**. The plugin runs without telemetry if env vars are unset.
 
-> Note: with all 3 env vars set, the adapter sends events. Without them, telemetry is fully disabled (no-op).
+> Note: with domain + endpoint set, the adapter sends events. Without them, telemetry is fully disabled (no-op). Token is optional.
 
 ## Setup
 
 1. Create a Plausible account: https://plausible.io
 2. Choose **EU region** (data residency).
 3. Add a site for this plugin (e.g., `plan-pipeline-v4.example`).
-4. Generate an API token (Account → API Keys).
+4. (Optional) Generate an API token (Account → API Keys). Plausible /api/event is unauthenticated by default; you only need this for self-hosted setups that require Bearer.
 5. Copy `.env.example` to `.env` and fill in:
    ```
    PLAUSIBLE_DOMAIN=<your-site-domain>
    PLAUSIBLE_ENDPOINT=https://plausible.io/api/event
-   PLAUSIBLE_API_TOKEN=<your-token>
+   # PLAUSIBLE_API_TOKEN=<your-token>   # optional
    ```
 
 ## Opt-out

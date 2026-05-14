@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createTelemetryClient, hashProjectRoot } from '../src/telemetry/client.js';
@@ -117,5 +117,36 @@ describe('T3.8 Telemetry client (F13.2, AC-R13-2, INV-8·9, ADR-7, TC-22·37·45
     await c.emit({ eventType: 'Other' });
     const payload = mockSend.mock.calls[0][0] as Record<string, unknown>;
     expect(payload.pluginVersion).toBe('1.2.3');
+  });
+
+  it('INV-8: flushQueue strips non-primitive ALLOWED_FIELDS values (object-typed hookReason)', async () => {
+    let dir: string = '';
+    try {
+      dir = await mkdtemp(join(tmpdir(), 'telem-inv8-'));
+      const queuePath = join(dir, 'queue.jsonl');
+
+      // Write a tampered queue line with hookReason as an object
+      const tampered = JSON.stringify({
+        eventType: 'HookBlock',
+        hookReason: { malicious: 'value' }, // object — must be stripped
+        timestamp: '2026-05-13T00:00:00Z',
+      });
+      await writeFile(queuePath, tampered + '\n', 'utf8');
+
+      const sendSpy = vi.fn().mockResolvedValue({ ok: true });
+      const client = createTelemetryClient({
+        consent: ConsentStatus.OptedIn,
+        send: sendSpy,
+        queuePath,
+      });
+
+      await client.flushQueue();
+      expect(sendSpy).toHaveBeenCalled();
+      const sent = sendSpy.mock.calls[0][0] as Record<string, unknown>;
+      expect(sent.hookReason).toBeUndefined(); // object stripped
+      expect(sent.eventType).toBe('HookBlock'); // string preserved
+    } finally {
+      if (dir) await rm(dir, { recursive: true, force: true });
+    }
   });
 });
