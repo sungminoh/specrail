@@ -20,6 +20,9 @@
     "typescript": "^5.3.0",
     "vitest": "^1.0.0"
   },
+  "bin": {
+    "plan-pipeline": "dist/bin/plan-pipeline.js"
+  },
   "files": [
     "dist",
     "README.md",

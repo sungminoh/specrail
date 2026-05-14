@@ -121,8 +121,8 @@ single-user product: "단일 사용자, role 구분 없음" 명시 후 Permissio
 ### Acceptance Criteria (Requirement 수준)
 
 - **AC-R1-1:** GIVEN <전제 상태>, WHEN <행동>, THEN <기대 결과>.
-- **AC-R1-2:** GIVEN ..., WHEN ..., THEN ...
-- **AC-R1-3:** GIVEN <엣지 조건>, WHEN ..., THEN <적절한 처리>.
+- **AC-R1-2:** GIVEN <대안 시나리오>, WHEN <행동>, THEN <기대 결과>.
+- **AC-R1-3:** GIVEN <엣지 조건>, WHEN <행동>, THEN <적절한 처리>.
 
 ### F1.1: <Feature 제목>
 

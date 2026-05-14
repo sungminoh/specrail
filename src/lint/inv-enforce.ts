@@ -18,13 +18,21 @@ const GIVEN_WHEN_THEN = /GIVEN[^.]+WHEN[^.]+THEN/i;
 /**
  * INV-5 check: AC들이 GIVEN/WHEN/THEN 형식인가.
  * Only R-tier (R{n}) AC 매칭. F·S tier 무관.
+ *
+ * Skips ASCII art / box-drawing lines (wireframe sketches like
+ * `│ AC-R1-1: GIVEN ... │`) — those are visualization, not real AC definitions.
  */
+const BOX_DRAWING_PREFIX = /^[\s│┌┐└┘├┤┬┴┼─━┃║╔╗╚╝╠╣╦╩╬]/;
+
 export function checkInv5(text: string, filePath = ''): InvViolation[] {
   const lines = text.split('\n');
   const violations: InvViolation[] = [];
 
   for (let idx = 0; idx < lines.length; idx++) {
     const line = lines[idx];
+    // R3 fix: skip wireframe / ASCII-box lines (visualization, not real AC)
+    if (BOX_DRAWING_PREFIX.test(line) && /[│┃║]/.test(line)) continue;
+
     const acMatch = line.match(AC_LINE);
     if (!acMatch) continue;
 

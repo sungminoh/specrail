@@ -53,9 +53,13 @@ v3 markdown은 사용자가 직접 self-check grep 실행 + HARD-GATE 수동 확
 
 ## Quickstart
 
-(CLI entry forthcoming — see src/cli/)
-
-현재 `/plan-pipeline init` 명령은 Claude Code skill로만 실행됩니다. npm으로 설치 후 CC plugin entry가 확정되면 여기에 반영 예정.
+```sh
+plan-pipeline init       # Initialize spec
+plan-pipeline status     # Show progress
+plan-pipeline next       # Suggest next phase
+plan-pipeline approve 1  # Approve phase N
+plan-pipeline check      # Run lint
+```
 
 ## Requirements
 
