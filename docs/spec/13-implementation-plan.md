@@ -1,3 +1,8 @@
+---
+phase: 13
+status: Approved
+---
+
 # Implementation Plan
 
 **Mode:** HOLD SCOPE (PRD §10 상속)

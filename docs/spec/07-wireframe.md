@@ -1,3 +1,8 @@
+---
+phase: 7
+status: Approved
+---
+
 # Wireframe
 
 **Mode:** HOLD SCOPE

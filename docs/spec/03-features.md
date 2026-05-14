@@ -1,3 +1,8 @@
+---
+phase: 3
+status: Approved
+---
+
 # Functional Specification
 
 **Mode:** HOLD SCOPE (retroactive — PRD §10 변경 2026-05-12)

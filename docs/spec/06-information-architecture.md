@@ -1,3 +1,8 @@
+---
+phase: 6
+status: Approved
+---
+
 # Information Architecture
 
 **Mode:** HOLD SCOPE

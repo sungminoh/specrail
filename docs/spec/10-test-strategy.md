@@ -1,3 +1,8 @@
+---
+phase: 10
+status: Approved
+---
+
 # Test Strategy
 
 **Mode:** HOLD SCOPE

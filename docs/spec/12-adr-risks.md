@@ -1,3 +1,8 @@
+---
+phase: 12
+status: Approved
+---
+
 # ADR + Risks
 
 **Mode:** HOLD SCOPE (PRD §10 상속)

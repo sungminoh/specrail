@@ -1,3 +1,8 @@
+---
+phase: 1
+status: Approved
+---
+
 # PRD: specrail
 
 **Mode:** HOLD SCOPE (retroactive — PRD §10 변경 2026-05-12. 원래 SCOPE EXPANSION이었으나 dashboard 분리 결정으로 변경)

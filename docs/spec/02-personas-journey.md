@@ -1,3 +1,8 @@
+---
+phase: 2
+status: Approved
+---
+
 # Personas & Journey
 
 **Mode:** HOLD SCOPE (retroactive — PRD §10 변경 2026-05-12. 원래 EXPANSION이었으나 dashboard 분리)

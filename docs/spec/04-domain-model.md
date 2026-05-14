@@ -1,3 +1,8 @@
+---
+phase: 4
+status: Approved
+---
+
 # Domain Model
 
 **Mode:** HOLD SCOPE (retroactive — PRD §10 변경 2026-05-12)

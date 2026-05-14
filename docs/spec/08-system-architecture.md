@@ -1,3 +1,8 @@
+---
+phase: 8
+status: Approved
+---
+
 # System Architecture
 
 **Mode:** HOLD SCOPE

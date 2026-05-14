@@ -1,3 +1,8 @@
+---
+phase: 5
+status: Approved
+---
+
 # User Flow
 
 **Mode:** HOLD SCOPE (retroactive — PRD §10 변경 2026-05-12)
