@@ -35,14 +35,27 @@ const TASK_HEADING_RE = /^####\s+T\d+\.\d+[a-z]?:[^\n]*$/gm;
 const F_CITATION_RE = /\bF\d+\.\d+\b/g;
 const T_CITATION_RE = /\bT\d+\.\d+[a-z]?\b/;
 
-interface CitingTask {
-  readonly taskId: string;
+/**
+ * Expand dot-list shorthand `F8.1·8.2·8.3` → `F8.1 F8.2 F8.3`. Mirrors
+ * the same convention `scanTestFilesForIds` (vitest-bridge.ts) uses for
+ * TC/AC IDs. Without this, the F-task rule silently dropped every
+ * F-id after the first in a packed citation — architect round-N+1
+ * flagged dogfood line `13-implementation-plan.md:716` as live example.
+ */
+function expandDotListF(s: string): string {
+  return s.replace(
+    /\bF(\d+\.\d+)((?:·\d+(?:\.\d+)?)+)/g,
+    (_, first, tail) => {
+      const tails = tail.replace(/·(\d+(?:\.\d+)?)/g, ' F$1');
+      return 'F' + first + tails;
+    },
+  );
 }
 
 /**
  * Build the reverse map `F-id → set<task-id>` by scanning task headings
  * in 13-implementation-plan.md. Done lazily once per verify run via
- * a module-scoped cache keyed by projectRoot+mtime — see callers.
+ * a module-scoped cache keyed by projectRoot — see callers.
  */
 async function buildFToTaskMap(
   projectRoot: string,
@@ -58,7 +71,8 @@ async function buildFToTaskMap(
     const taskMatch = heading.match(T_CITATION_RE);
     if (!taskMatch) continue;
     const taskId = taskMatch[0];
-    for (const m of heading.matchAll(F_CITATION_RE)) {
+    const expanded = expandDotListF(heading);
+    for (const m of expanded.matchAll(F_CITATION_RE)) {
       const fId = m[0];
       let set = out.get(fId);
       if (!set) {
