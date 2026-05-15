@@ -27,30 +27,55 @@ const ADR_RE = /ADR-\d+/;
 const RESOLVED_RE = /\bResolved\b/i;
 const DEFERRED_RE = /\bDEFERRED\b/i;
 const OPEN_RE = /\bOPEN\b/i;
-// Rationale heuristic (architect round-N+1 P0): the previous 10-char
-// length check passed `DEFERRED ttttttttt` and `DEFERRED later TBD`
-// — any 10 characters won. The honest check counts ALPHABETIC
-// characters (any Unicode letter), not bytes. Punctuation/digits/
-// spaces don't substitute for prose. Set the bar at 5 letters which
-// is "enough for ~1 word of rationale" while still admitting compact
-// real-world rows like `DEFERRED → 향후 cycle` (Korean letters count).
-const MIN_RATIONALE_LETTERS = 5;
-const LETTER_RE = /\p{L}/gu;
+
+/**
+ * Architect round-N+2 audit: letter-count rationale gates are the same
+ * byte-count lie shape that the round-N+1 fix attempted to close.
+ * `DEFERRED xxxxx`, `DEFERRED later`, `DEFERRED TODOs` all passed the
+ * 5-letter threshold — adversary cost was zero.
+ *
+ * The honest test is STRUCTURAL ANCHOR: the rationale must reference
+ * something verifiable in the spec graph or repo. The valid anchors:
+ *
+ *   1. Canonical spec ID reference (ADR-N, TC-N, T-N.M, EDGE-N, RISK-N,
+ *      INV-N, AC-R-..., F/R-..., NFR-..., OPS-N, RB-N, PAIN-N, KPI-N,
+ *      ENT-X, or another OQ-N-M) — citation to an existing decision
+ *   2. File path token under a known repo root (src/, tests/, docs/,
+ *      schemas/, skills/, .github/, dist/) — concrete deliverable
+ *   3. Milestone / version marker (M0..M9, M-Round-N, v3..v9, Phase N)
+ *      — explicit when-it-will-be-resolved bound
+ *
+ * Without one of these three the row is just padding. ManualReview.
+ *
+ * Notes:
+ *   - ADR-N alone (with no Resolved/DEFERRED keyword) is the canonical
+ *     resolution and continues to hit the early-return at line 99.
+ *   - The check is intentionally generous about Korean prose — any
+ *     row that names a real anchor is accepted regardless of language.
+ *   - INV-2 catches dangling citations to phantom IDs at a different
+ *     layer, so this rule does NOT validate the cited ID exists.
+ */
+const ANCHOR_ID_RE =
+  /\b(?:ADR-\d+|TC-\d+|T\d+\.\d+[a-z]?|EDGE-\d+|RISK-\d+|INV-\d+|AC-R\d+-\d+|[RF]\d+(?:\.\d+){0,2}|NFR-[A-Z][A-Z0-9]*-\d+|OPS-\d+|RB-\d+|PAIN-\d+|KPI-\d+|ENT-[A-Za-z][A-Za-z0-9_]*|OQ-\d+-\d+)\b/;
+const ANCHOR_PATH_RE = /\b(?:src|tests|docs|schemas|skills|\.github|dist)\/[\w.\-/]+/;
+const ANCHOR_MILESTONE_RE = /\b(?:M\d+(?:-Round-\d+)?|v\d+\+?|Phase\s\d+\+?)\b/i;
 
 function rationaleAfter(row: string, keywordRe: RegExp): string | null {
   const m = row.match(keywordRe);
   if (!m || m.index === undefined) return null;
   const tail = row.slice(m.index + m[0].length).trim();
-  // Strip leading punctuation/em-dash so the visible rationale starts
-  // at the first real character.
-  const stripped = tail.replace(/^[\s\-—–:|·]+/, '');
-  // Strip trailing pipe / table separator so cell-end junk doesn't pad.
-  const cellOnly = stripped.replace(/[\s|]+$/, '');
-  // Count Unicode letters (handles 한국어 cycle, English, Greek…). Reject
-  // rationales padded with non-letter junk.
-  const letterCount = (cellOnly.match(LETTER_RE) ?? []).length;
-  if (letterCount < MIN_RATIONALE_LETTERS) return null;
-  return cellOnly.slice(0, 200);
+  // Strip leading punctuation/em-dash so the anchor scan starts on prose.
+  const stripped = tail.replace(/^[\s\-—–:|·]+/, '').replace(/[\s|]+$/, '');
+  if (stripped.length === 0) return null;
+  // Require at least one structural anchor — see comment block above.
+  if (
+    !ANCHOR_ID_RE.test(stripped) &&
+    !ANCHOR_PATH_RE.test(stripped) &&
+    !ANCHOR_MILESTONE_RE.test(stripped)
+  ) {
+    return null;
+  }
+  return stripped.slice(0, 200);
 }
 
 export const oqRule: IdRule = {

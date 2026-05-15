@@ -89,7 +89,7 @@ describe('scanTestFilesForIds() (US-V02)', () => {
     await writeTest(
       'tests/a.test.ts',
       "import { describe, it, expect } from 'vitest';\n" +
-        'describe("AC-R1-1: foo", () => { it("checks AC-R1-1", () => { expect(1).toBe(1); }); });',
+        'describe("AC-R1-1: foo", () => { it("checks AC-R1-1", () => { expect(1 + 1).toBe(2); }); });',
     );
     const out = await scanTestFilesForIds(dir);
     expect(out.get('AC-R1-1')?.has('tests/a.test.ts')).toBe(true);
@@ -140,7 +140,7 @@ describe('scanTestFilesForIds() (US-V02)', () => {
     await writeTest(
       'tests/e.test.ts',
       "import { describe, it, expect } from 'vitest';\n" +
-        "describe('s', () => { it.only('AC-R6-1: focused', () => { expect(1).toBe(1); }); });\n",
+        "describe('s', () => { it.only('AC-R6-1: focused', () => { expect(1 + 1).toBe(2); }); });\n",
     );
     const out = await scanTestFilesForIds(dir);
     expect(out.get('AC-R6-1')?.has('tests/e.test.ts')).toBe(true);
@@ -150,7 +150,7 @@ describe('scanTestFilesForIds() (US-V02)', () => {
     await writeTest(
       'tests/f.test.ts',
       "import { describe, it, expect } from 'vitest';\n" +
-        "describe('s', () => { it.each([1,2])('AC-R7-1 case %s', () => { expect(1).toBe(1); }); });\n",
+        "describe('s', () => { it.each([1,2])('AC-R7-1 case %s', () => { expect(1 + 1).toBe(2); }); });\n",
     );
     const out = await scanTestFilesForIds(dir);
     expect(out.get('AC-R7-1')?.has('tests/f.test.ts')).toBe(true);
@@ -160,10 +160,65 @@ describe('scanTestFilesForIds() (US-V02)', () => {
     await writeTest(
       'tests/unit/x.test.ts',
       "import { describe, it, expect } from 'vitest';\n" +
-        "describe('TC-42: scenario', () => { it('runs', () => { expect(1).toBe(1); }); });\n",
+        "describe('TC-42: scenario', () => { it('runs', () => { expect(1 + 1).toBe(2); }); });\n",
     );
     const out = await scanTestFilesForIds(dir);
     expect(out.get('TC-42')?.has('tests/unit/x.test.ts')).toBe(true);
+  });
+
+  it('REJECTS tautological assertions like expect(1).toBe(1) (architect round-N+2)', async () => {
+    // expect(literal).toBe(samelitral) doesn't test behaviour.
+    await writeTest(
+      'tests/taut.test.ts',
+      "import { describe, it, expect } from 'vitest';\n" +
+        "describe('s', () => {\n" +
+        "  it('AC-R7-99: vacuous numeric', () => { expect(1).toBe(1); });\n" +
+        "  it('AC-R7-98: vacuous boolean', () => { expect(true).toBe(true); });\n" +
+        "  it('AC-R7-97: vacuous string', () => { expect('a').toBe('a'); });\n" +
+        "});\n",
+    );
+    const out = await scanTestFilesForIds(dir);
+    expect(out.get('AC-R7-99')).toBeUndefined();
+    expect(out.get('AC-R7-98')).toBeUndefined();
+    expect(out.get('AC-R7-97')).toBeUndefined();
+  });
+
+  it('REJECTS expect.assertions(0) configurator (architect round-N+2)', async () => {
+    await writeTest(
+      'tests/zero-assert.test.ts',
+      "import { describe, it, expect } from 'vitest';\n" +
+        "describe('s', () => {\n" +
+        "  it('AC-R7-96: zero assertions configured', () => { expect.assertions(0); });\n" +
+        "});\n",
+    );
+    const out = await scanTestFilesForIds(dir);
+    expect(out.get('AC-R7-96')).toBeUndefined();
+  });
+
+  it('ACCEPTS expect(varname).toBe(varname) (cannot statically prove tautology)', async () => {
+    // Identifiers might point at different values at runtime — only
+    // structural-literal equality counts as tautological.
+    await writeTest(
+      'tests/non-taut.test.ts',
+      "import { describe, it, expect } from 'vitest';\n" +
+        "describe('s', () => {\n" +
+        "  it('AC-R7-95: variable comparison', () => { const x = computeX(); expect(x).toBe(x); });\n" +
+        "});\n",
+    );
+    const out = await scanTestFilesForIds(dir);
+    expect(out.get('AC-R7-95')?.has('tests/non-taut.test.ts')).toBe(true);
+  });
+
+  it('ACCEPTS expect(literal).toBe(differentLiteral) (real assertion)', async () => {
+    await writeTest(
+      'tests/real.test.ts',
+      "import { describe, it, expect } from 'vitest';\n" +
+        "describe('s', () => {\n" +
+        "  it('AC-R7-94: 1 vs 2', () => { expect(1 + 1).toBe(2); });\n" +
+        "});\n",
+    );
+    const out = await scanTestFilesForIds(dir);
+    expect(out.get('AC-R7-94')?.has('tests/real.test.ts')).toBe(true);
   });
 
   it('REJECTS test name without assertion body (architect AV2)', async () => {
@@ -186,7 +241,7 @@ describe('scanTestFilesForIds() (US-V02)', () => {
       'tests/asserted.test.ts',
       "import { describe, it, expect } from 'vitest';\n" +
         "describe('s', () => {\n" +
-        "  it('AC-R8-98: has real expect', () => { expect(1).toBe(1); });\n" +
+        "  it('AC-R8-98: has real expect', () => { expect(1 + 1).toBe(2); });\n" +
         "});\n",
     );
     const out = await scanTestFilesForIds(dir);
@@ -198,11 +253,22 @@ describe('scanTestFilesForIds() (US-V02)', () => {
       'tests/nested.test.ts',
       "import { describe, it, expect } from 'vitest';\n" +
         "describe('AC-R8-97: suite name with nested assert', () => {\n" +
-        "  it('runs', () => { expect(1).toBe(1); });\n" +
+        "  it('runs', () => { expect(1 + 1).toBe(2); });\n" +
         "});\n",
     );
     const out = await scanTestFilesForIds(dir);
     expect(out.get('AC-R8-97')?.has('tests/nested.test.ts')).toBe(true);
+  });
+
+  it('REJECTS files with class test shadow (architect round-N+2)', async () => {
+    await writeTest(
+      'tests/class-shadow.test.ts',
+      "import { describe, it, expect } from 'vitest';\n" +
+        "class test { run(name: string, fn: () => void) { fn(); } }\n" +
+        "new test().run('AC-R9-93: class shadow attack', () => { expect(1 + 1).toBe(2); });\n",
+    );
+    const out = await scanTestFilesForIds(dir);
+    expect(out.get('AC-R9-93')).toBeUndefined();
   });
 
   it('REJECTS files with locally-defined function test() (architect AV1)', async () => {
@@ -248,7 +314,7 @@ describe('scanTestFilesForIds() (US-V02)', () => {
     await writeTest(
       'tests/aliased.test.ts',
       "import { describe as desc, it as ut, expect } from 'vitest';\n" +
-        "desc('AC-R9-96: aliased describe', () => { ut('AC-R9-95: aliased it', () => { expect(1).toBe(1); }); });\n",
+        "desc('AC-R9-96: aliased describe', () => { ut('AC-R9-95: aliased it', () => { expect(1 + 1).toBe(2); }); });\n",
     );
     const out = await scanTestFilesForIds(dir);
     expect(out.get('AC-R9-96')?.has('tests/aliased.test.ts')).toBe(true);

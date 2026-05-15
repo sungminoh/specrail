@@ -36,17 +36,27 @@ const F_CITATION_RE = /\bF\d+\.\d+\b/g;
 const T_CITATION_RE = /\bT\d+\.\d+[a-z]?\b/;
 
 /**
- * Expand dot-list shorthand `F8.1·8.2·8.3` → `F8.1 F8.2 F8.3`. Mirrors
- * the same convention `scanTestFilesForIds` (vitest-bridge.ts) uses for
- * TC/AC IDs. Without this, the F-task rule silently dropped every
- * F-id after the first in a packed citation — architect round-N+1
- * flagged dogfood line `13-implementation-plan.md:716` as live example.
+ * Expand dot-list shorthand `F8.1·8.2·8.3` → `F8.1 F8.2 F8.3` and
+ * tolerate author-natural variants:
+ *   - `F-8.1·8.2`  (extra hyphen — typo or convention drift)
+ *   - `F8.1 · 8.2` (spaces around middle dot)
+ *   - `F8.1·F8.2`  (redundant prefix in tail)
+ *
+ * Mirrors the same convention `scanTestFilesForIds` uses for TC/AC.
+ * Without this normalisation the F-task rule silently dropped F-ids
+ * after the first — architect round-N+2 audit demonstrated the live
+ * exploit with `/tmp/attack-dotlist.mjs`.
  */
 function expandDotListF(s: string): string {
-  return s.replace(
-    /\bF(\d+\.\d+)((?:·\d+(?:\.\d+)?)+)/g,
+  // First normalise `F-` → `F` and collapse whitespace around `·`.
+  const normalised = s
+    .replace(/\bF-(?=\d)/g, 'F')
+    .replace(/\s*·\s*/g, '·');
+  return normalised.replace(
+    /\bF(\d+\.\d+)((?:·F?\d+(?:\.\d+)?)+)/g,
     (_, first, tail) => {
-      const tails = tail.replace(/·(\d+(?:\.\d+)?)/g, ' F$1');
+      // Tail may contain `·F8.2` or `·8.2`. Strip stray F before digits.
+      const tails = tail.replace(/·F?(\d+(?:\.\d+)?)/g, ' F$1');
       return 'F' + first + tails;
     },
   );

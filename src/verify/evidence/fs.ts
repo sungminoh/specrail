@@ -141,8 +141,31 @@ function isTriviallyEmptyType(typeNode: ts.TypeNode): boolean {
   if (typeNode.kind === ts.SyntaxKind.VoidKeyword) return true;
   if (typeNode.kind === ts.SyntaxKind.UndefinedKeyword) return true;
   if (typeNode.kind === ts.SyntaxKind.NullKeyword) return true;
+  // `null` in type position is a LiteralTypeNode wrapping NullLiteral.
+  if (
+    ts.isLiteralTypeNode(typeNode) &&
+    typeNode.literal.kind === ts.SyntaxKind.NullKeyword
+  ) {
+    return true;
+  }
   if (ts.isTypeLiteralNode(typeNode) && typeNode.members.length === 0) {
     return true;
+  }
+  // Architect round-N+2: `string | never`, `void | undefined`, etc.
+  // wrap the trivial leaves in a union/intersection node and bypassed
+  // the leaf-only keyword check. A union of ALL trivials is itself
+  // trivial; same for intersection.
+  if (ts.isUnionTypeNode(typeNode) || ts.isIntersectionTypeNode(typeNode)) {
+    return typeNode.types.every(isTriviallyEmptyType);
+  }
+  // `typeof undefined` — TypeQuery wrapping the undefined identifier
+  // is structurally the same as undefined.
+  if (ts.isTypeQueryNode(typeNode)) {
+    const name = typeNode.exprName;
+    if (ts.isIdentifier(name)) {
+      const t = name.text;
+      if (t === 'undefined' || t === 'null') return true;
+    }
   }
   return false;
 }

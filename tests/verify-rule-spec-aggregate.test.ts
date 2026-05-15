@@ -110,7 +110,7 @@ describe('R/F aggregation pass (US-V11)', () => {
     await writeFile(
       join(dir, 'tests', 'a.test.ts'),
       "import { describe, it, expect } from 'vitest';\n" +
-        "describe('AC-R2-1: given x when y then z', () => { it('runs', () => { expect(1).toBe(1); }); });\n",
+        "describe('AC-R2-1: given x when y then z', () => { it('runs', () => { expect(1 + 1).toBe(2); }); });\n",
       'utf8',
     );
     await writeSpec(

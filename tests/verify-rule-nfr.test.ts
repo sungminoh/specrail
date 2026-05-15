@@ -50,12 +50,12 @@ describe('NFR rule dispatch (US-V08)', () => {
     await writeTest(
       'a.test.ts',
       "import { describe, it, expect } from 'vitest';\n" +
-        "describe('NFR-PERF-1: parse <500ms', () => { it('runs', () => { expect(1).toBe(1); }); });\n",
+        "describe('NFR-PERF-1: parse <500ms', () => { it('runs', () => { expect(1 + 1).toBe(2); }); });\n",
     );
     await writeTest(
       'b.test.ts',
       "import { describe, it, expect } from 'vitest';\n" +
-        "describe('NFR-SEC-2: secret detection', () => { it('runs', () => { expect(1).toBe(1); }); });\n",
+        "describe('NFR-SEC-2: secret detection', () => { it('runs', () => { expect(1 + 1).toBe(2); }); });\n",
     );
 
     const r = await verify(dir, { skipTests: true });

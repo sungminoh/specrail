@@ -69,6 +69,51 @@ describe('f-task-aggregate rule', () => {
     expect(ev?.rule).toBe('f-task-aggregate');
   });
 
+  it('normalises F- prefix, spaced separator, redundant prefix (architect round-N+2)', async () => {
+    await mkdir(join(dir, 'src'), { recursive: true });
+    await writeFile(join(dir, 'src', 'real.ts'), '// ok', 'utf8');
+    await writeSpec(
+      '03-features.md',
+      [
+        '---',
+        'phase: 3',
+        'status: Approved',
+        '---',
+        '',
+        '## R9: req',
+        '### F9.1: a',
+        '### F9.2: b',
+        '### F9.3: c',
+      ].join('\n'),
+    );
+    await writeSpec(
+      '13-implementation-plan.md',
+      [
+        '---',
+        'phase: 13',
+        'status: Approved',
+        '---',
+        '',
+        // All three task headings should credit all three Fs.
+        '#### T9.1: extra hyphen — F-9.1·9.2·9.3',
+        '',
+        'Files: `src/real.ts`.',
+        '',
+        '#### T9.2: spaced separator — F9.1 · 9.2 · 9.3',
+        '',
+        'Files: `src/real.ts`.',
+        '',
+        '#### T9.3: redundant prefix in tail — F9.1·F9.2·F9.3',
+        '',
+        'Files: `src/real.ts`.',
+      ].join('\n'),
+    );
+    const r = await verify(dir, { skipTests: true });
+    expect(r.results.get('F9.1')?.reality).toBe('Built');
+    expect(r.results.get('F9.2')?.reality).toBe('Built');
+    expect(r.results.get('F9.3')?.reality).toBe('Built');
+  });
+
   it('dot-list shorthand F8.1·8.2 credits BOTH F8.1 and F8.2 (architect BLOCKED fix)', async () => {
     await mkdir(join(dir, 'src'), { recursive: true });
     await writeFile(join(dir, 'src', 'real.ts'), '// ok', 'utf8');

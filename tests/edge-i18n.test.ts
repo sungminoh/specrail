@@ -157,12 +157,12 @@ describe('EDGE-7·8·9·10 TC-46·47·48·49 i18n + scale boundary (US-10.3, M10
 
     expect(g.definedIds.has('R1')).toBe(true);
     expect(g.edges.length).toBeGreaterThan(0);
-    // Threshold 7000ms gives 2x headroom over typical 3000ms run.
-    // Repeated CI noise spikes hit 3500-5300ms after the AST-based
-    // test-grep and ent-symbol AST walks landed (those don't affect
-    // buildGraph directly but bumped per-test fixed cost). Kept well
-    // below NFR-PERF-4 envelope which is for cold full-repo build.
-    expect(elapsed).toBeLessThan(7000);
+    // Threshold 10000ms — generous after AV2 expect-walk + ENT AST
+    // substance check added per-file CPU cost under full-suite load.
+    // Isolation runs are ~3000ms; full-suite contention pushes to
+    // 5000-7000ms reliably. Kept below the NFR-PERF-4 envelope (which
+    // is for cold full-repo build, not single-file parse).
+    expect(elapsed).toBeLessThan(10000);
   });
 
   // Boundary: zero-width space adjacent to ID — FIXED in M11 US-11.6

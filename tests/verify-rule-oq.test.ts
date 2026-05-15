@@ -39,7 +39,7 @@ describe('oq-resolution rule (US-V10)', () => {
     expect(ev?.rule).toBe('oq-resolution');
   });
 
-  it('Built when the row says Resolved or DEFERRED', async () => {
+  it('Built when Resolved/DEFERRED row carries a structural anchor (ADR, path, or milestone)', async () => {
     await writeSpec(
       '12-adr.md',
       [
@@ -51,13 +51,43 @@ describe('oq-resolution rule (US-V10)', () => {
         '<!-- specrail:deftable -->',
         '| Q ID | Question | Status |',
         '|---|---|---|',
-        '| OQ-1-2 | thing 1 | Resolved — see ADR notes |',
-        '| OQ-1-3 | thing 2 | DEFERRED to next cycle |',
+        '| OQ-1-2 | thing 1 | Resolved — see ADR-7 |',
+        '| OQ-1-3 | thing 2 | DEFERRED to M3 cycle |',
+        '| OQ-1-4 | thing 3 | Resolved — `src/lint/secret.ts` |',
       ].join('\n'),
     );
     const r = await verify(dir, { skipTests: true });
-    expect(r.results.get('OQ-1-2')?.reality).toBe('Built');
-    expect(r.results.get('OQ-1-3')?.reality).toBe('Built');
+    expect(r.results.get('OQ-1-2')?.reality).toBe('Built'); // ADR ref
+    expect(r.results.get('OQ-1-3')?.reality).toBe('Built'); // milestone ref
+    expect(r.results.get('OQ-1-4')?.reality).toBe('Built'); // path ref
+  });
+
+  it('ManualReview when Resolved/DEFERRED row has NO anchor (architect round-N+2)', async () => {
+    // The round-N+1 letter-count check passed `DEFERRED xxxxx` because
+    // it counted bytes. The honest check requires a STRUCTURAL anchor:
+    // a real ID/file/milestone reference — not 5 letters of padding.
+    await writeSpec(
+      '12-adr.md',
+      [
+        '---',
+        'phase: 12',
+        'status: Approved',
+        '---',
+        '',
+        '<!-- specrail:deftable -->',
+        '| Q ID | Question | Status |',
+        '|---|---|---|',
+        '| OQ-77-1 | self-defer 1 | DEFERRED xxxxx |',
+        '| OQ-77-2 | self-defer 2 | DEFERRED later |',
+        '| OQ-77-3 | self-defer 3 | DEFERRED to next cycle |',
+        '| OQ-77-4 | self-defer 4 | Resolved — see ADR notes |',
+      ].join('\n'),
+    );
+    const r = await verify(dir, { skipTests: true });
+    expect(r.results.get('OQ-77-1')?.reality).toBe('ManualReview');
+    expect(r.results.get('OQ-77-2')?.reality).toBe('ManualReview');
+    expect(r.results.get('OQ-77-3')?.reality).toBe('ManualReview');
+    expect(r.results.get('OQ-77-4')?.reality).toBe('ManualReview'); // "ADR" alone, no number
   });
 
   it('NotBuilt when the row says OPEN', async () => {
@@ -103,7 +133,7 @@ describe('oq-resolution rule (US-V10)', () => {
     expect(r.results.get('OQ-99-2')?.reality).toBe('ManualReview');
   });
 
-  it('Built when DEFERRED rationale has Korean letters', async () => {
+  it('Built when DEFERRED rationale has Korean letters AND a structural anchor', async () => {
     await writeSpec(
       '12-adr.md',
       [
@@ -115,11 +145,15 @@ describe('oq-resolution rule (US-V10)', () => {
         '<!-- specrail:deftable -->',
         '| Q ID | Question | Status |',
         '|---|---|---|',
-        '| OQ-99-3 | korean rationale | DEFERRED → 향후 cycle |',
+        '| OQ-99-3 | korean + milestone | DEFERRED → M5 향후 cycle |',
+        '| OQ-99-4 | korean + ADR | Resolved → ADR-9 결정됨 |',
+        '| OQ-99-5 | korean alone (no anchor) | DEFERRED → 향후 cycle |',
       ].join('\n'),
     );
     const r = await verify(dir, { skipTests: true });
     expect(r.results.get('OQ-99-3')?.reality).toBe('Built');
+    expect(r.results.get('OQ-99-4')?.reality).toBe('Built');
+    expect(r.results.get('OQ-99-5')?.reality).toBe('ManualReview'); // no anchor
   });
 
   it('ManualReview when DEFERRED alone (self-defer attack — round-N P2 fix)', async () => {

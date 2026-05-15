@@ -180,6 +180,29 @@ describe('fs helpers (US-V03)', () => {
     expect(await hasSymbolInFile(file, 'Inferred')).toBe(1);
   });
 
+  it('hasSymbolInFile rejects union/intersection types whose constituents are ALL trivial (architect round-N+2)', async () => {
+    const file = join(dir, 'union-stubs.ts');
+    await writeFile(
+      file,
+      [
+        'export interface UnionStub1 { id: never | any; }', // all-trivial union
+        'export interface UnionStub2 { id: void | undefined | null; }', // all trivials
+        'export interface UnionStub3 { id: never & any; }', // intersection of trivials
+        'export interface MixedUnion { id: string | undefined; }', // string is non-trivial → accept
+        'export interface RealUnion { id: string | never; }', // string is non-trivial → accept (never doesn\'t poison)
+        'export interface TypeofStub { id: typeof undefined; }', // typeof undefined ≡ undefined
+      ].join('\n'),
+      'utf8',
+    );
+
+    expect(await hasSymbolInFile(file, 'UnionStub1')).toBe(0);
+    expect(await hasSymbolInFile(file, 'UnionStub2')).toBe(0);
+    expect(await hasSymbolInFile(file, 'UnionStub3')).toBe(0);
+    expect(await hasSymbolInFile(file, 'MixedUnion')).toBe(4);
+    expect(await hasSymbolInFile(file, 'RealUnion')).toBe(5);
+    expect(await hasSymbolInFile(file, 'TypeofStub')).toBe(0);
+  });
+
   it('hasSymbolInFile accepts methods/getters as substance signals', async () => {
     const file = join(dir, 'methods.ts');
     await writeFile(
