@@ -75,10 +75,10 @@ export async function hasSymbolInFile(
 
 function isSubstantiveDeclaration(node: ts.Node, name: string): boolean {
   if (ts.isInterfaceDeclaration(node) && node.name.text === name) {
-    return node.members.length > 0;
+    return hasSubstantiveMember(node.members);
   }
   if (ts.isClassDeclaration(node) && node.name?.text === name) {
-    return node.members.length > 0;
+    return hasSubstantiveMember(node.members);
   }
   if (ts.isEnumDeclaration(node) && node.name.text === name) {
     return node.members.length > 0;
@@ -94,11 +94,53 @@ function isSubstantiveDeclaration(node: ts.Node, name: string): boolean {
   return false;
 }
 
+/**
+ * Architect round-N+1 attack vector: `interface User { _stub: never; }`
+ * satisfied the previous `members.length > 0` check trivially. Require
+ * at least one member whose declared type is NOT one of the trivial
+ * placeholders (`never` / `any` / `unknown` / `void` / `undefined` /
+ * `null` / `{}`). Class methods / accessors and property signatures
+ * without a type annotation (inferred) count as substantive.
+ */
+function hasSubstantiveMember(
+  members: ReadonlyArray<ts.ClassElement | ts.TypeElement>,
+): boolean {
+  if (members.length === 0) return false;
+  for (const m of members) {
+    if (
+      ts.isMethodDeclaration(m) ||
+      ts.isMethodSignature(m) ||
+      ts.isGetAccessor(m) ||
+      ts.isSetAccessor(m) ||
+      ts.isConstructorDeclaration(m) ||
+      ts.isConstructSignatureDeclaration(m) ||
+      ts.isCallSignatureDeclaration(m) ||
+      ts.isIndexSignatureDeclaration(m)
+    ) {
+      return true; // any callable/accessor member is non-trivial
+    }
+    if (
+      ts.isPropertyDeclaration(m) ||
+      ts.isPropertySignature(m)
+    ) {
+      if (!m.type) return true; // inferred type, treat as substantive
+      if (!isTriviallyEmptyType(m.type)) return true;
+    }
+    if (ts.isEnumMember(m as unknown as ts.Node)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function isTriviallyEmptyType(typeNode: ts.TypeNode): boolean {
   if (typeNode.kind === ts.SyntaxKind.AnyKeyword) return true;
   if (typeNode.kind === ts.SyntaxKind.NeverKeyword) return true;
   if (typeNode.kind === ts.SyntaxKind.UnknownKeyword) return true;
   if (typeNode.kind === ts.SyntaxKind.ObjectKeyword) return true;
+  if (typeNode.kind === ts.SyntaxKind.VoidKeyword) return true;
+  if (typeNode.kind === ts.SyntaxKind.UndefinedKeyword) return true;
+  if (typeNode.kind === ts.SyntaxKind.NullKeyword) return true;
   if (ts.isTypeLiteralNode(typeNode) && typeNode.members.length === 0) {
     return true;
   }

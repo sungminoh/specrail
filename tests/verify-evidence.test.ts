@@ -138,6 +138,66 @@ describe('fs helpers (US-V03)', () => {
     expect(await hasSymbolInFile(file, 'Void')).toBe(0);
   });
 
+  it('hasSymbolInFile REJECTS interfaces whose only members have trivial types (round-N+1)', async () => {
+    // Architect round-N+1: single `_stub: never` member passed the
+    // previous ≥1-member check trivially. Now substantive requires
+    // at least one member with a non-trivial type annotation.
+    const file = join(dir, 'trivial-stubs.ts');
+    await writeFile(
+      file,
+      [
+        'export interface NeverStub { _stub: never; }', // line 1: trivial
+        'export interface AnyStub { _stub: any; }',     // line 2: trivial
+        'export interface VoidStub { _stub: void; }',   // line 3: trivial
+        'export interface UndefinedStub { _stub: undefined; }', // line 4: trivial
+        'export interface EmptyTypeStub { _stub: {}; }', // line 5: trivial
+        'export interface MixedReal { _stub: never; id: string; }', // line 6: substantive (one real member)
+      ].join('\n'),
+      'utf8',
+    );
+
+    expect(await hasSymbolInFile(file, 'NeverStub')).toBe(0);
+    expect(await hasSymbolInFile(file, 'AnyStub')).toBe(0);
+    expect(await hasSymbolInFile(file, 'VoidStub')).toBe(0);
+    expect(await hasSymbolInFile(file, 'UndefinedStub')).toBe(0);
+    expect(await hasSymbolInFile(file, 'EmptyTypeStub')).toBe(0);
+    expect(await hasSymbolInFile(file, 'MixedReal')).toBe(6);
+  });
+
+  it('hasSymbolInFile accepts member with inferred type (no annotation)', async () => {
+    // Class properties with initializers and no explicit type annotation
+    // count as substantive — the initializer carries the semantic.
+    const file = join(dir, 'inferred.ts');
+    await writeFile(
+      file,
+      [
+        'export class Inferred {',
+        '  name = "default"; // no type annotation, but real value',
+        '}',
+      ].join('\n'),
+      'utf8',
+    );
+    expect(await hasSymbolInFile(file, 'Inferred')).toBe(1);
+  });
+
+  it('hasSymbolInFile accepts methods/getters as substance signals', async () => {
+    const file = join(dir, 'methods.ts');
+    await writeFile(
+      file,
+      [
+        'export interface HasMethod {',
+        '  doThing(input: string): void;',
+        '}',
+        'export class HasGetter {',
+        '  get value(): string { return "x"; }',
+        '}',
+      ].join('\n'),
+      'utf8',
+    );
+    expect(await hasSymbolInFile(file, 'HasMethod')).toBe(1);
+    expect(await hasSymbolInFile(file, 'HasGetter')).toBe(4);
+  });
+
   it('findSymbol walks a directory and locates the first definition', async () => {
     await mkdir(join(dir, 'src', 'nested'), { recursive: true });
     await writeFile(
