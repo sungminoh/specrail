@@ -27,7 +27,7 @@ export const oqRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [{ kind: 'no-definition-location' }],
         confidence: 'low',
@@ -42,7 +42,7 @@ export const oqRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [{ kind: 'spec-file-unreadable', path: loc.file }],
         confidence: 'low',
@@ -57,7 +57,7 @@ export const oqRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'Built',
         evidence: [
           {
@@ -75,7 +75,7 @@ export const oqRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'NotBuilt',
         evidence: [
           { kind: 'oq-open', path: loc.file, line: loc.line, note: rowLine.slice(0, 120) },
@@ -87,7 +87,7 @@ export const oqRule: IdRule = {
     return {
       id,
       idType,
-      intent: 'Approved',
+      intent: ctx.intents.get(id) ?? 'Draft',
       reality: 'ManualReview',
       evidence: [
         { kind: 'oq-status-unknown', path: loc.file, line: loc.line, note: rowLine.slice(0, 120) },

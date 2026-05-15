@@ -27,7 +27,7 @@ export const testGrepRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'NotBuilt',
         evidence: [{ kind: 'no-test-ref' }],
         confidence: 'high',
@@ -39,7 +39,7 @@ export const testGrepRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview-Stale',
         evidence: refs.map(
           (f): EvidenceItem => ({ kind: 'test-ref-no-run', path: f }),
@@ -72,7 +72,7 @@ export const testGrepRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'Built',
         evidence,
         confidence: 'high',
@@ -83,7 +83,7 @@ export const testGrepRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'Partial',
         evidence,
         confidence: 'high',
@@ -94,7 +94,7 @@ export const testGrepRule: IdRule = {
     const unmatched: IdEvidence = {
       id,
       idType,
-      intent: 'Approved',
+      intent: ctx.intents.get(id) ?? 'Draft',
       reality: 'ManualReview',
       evidence: refs.map(
         (f): EvidenceItem => ({ kind: 'test-ref-no-outcome', path: f }),

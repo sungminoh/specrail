@@ -36,7 +36,7 @@ export const pathRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [{ kind: 'no-definition-location' }],
         confidence: 'low',
@@ -52,7 +52,7 @@ export const pathRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [{ kind: 'spec-file-unreadable', path: loc.file }],
         confidence: 'low',
@@ -75,7 +75,7 @@ export const pathRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [
           { kind: 'no-path-tokens', path: loc.file, line: loc.line },
@@ -106,7 +106,7 @@ export const pathRule: IdRule = {
     return {
       id,
       idType,
-      intent: 'Approved',
+      intent: ctx.intents.get(id) ?? 'Draft',
       reality: reality as 'Built' | 'Partial' | 'NotBuilt',
       evidence,
       confidence: 'high',

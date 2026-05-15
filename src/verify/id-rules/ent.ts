@@ -22,7 +22,7 @@ export const entRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [
           {
@@ -40,7 +40,7 @@ export const entRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'Built',
         evidence: [
           { kind: 'symbol-found', path: hit.file, line: hit.line, note: entityName },
@@ -53,7 +53,7 @@ export const entRule: IdRule = {
     return {
       id,
       idType,
-      intent: 'Approved',
+      intent: ctx.intents.get(id) ?? 'Draft',
       reality: 'NotBuilt',
       evidence: [
         { kind: 'symbol-missing', note: entityName },

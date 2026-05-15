@@ -8,7 +8,7 @@
  *   spec body typically declares Files:).
  */
 
-import type { IdEvidence, RealityState } from '../types.js';
+import type { EvidenceItem, IdEvidence, RealityState } from '../types.js';
 import { pathRule } from './path.js';
 import type { IdRule } from '../runner.js';
 
@@ -91,14 +91,23 @@ function parseRfs(id: string): RfsParts | null {
 }
 
 /**
- * Mutate `results` in place: for every R{n} / F{n}.{m} entry, replace
- * its reality with the rolled-up aggregation of its children.
+ * Apply RFS aggregation — for every R{n} / F{n}.{m} entry, replace its
+ * reality with the rolled-up aggregation of its children.
+ *
+ * Pure / functional contract: takes a `ReadonlyMap` snapshot, returns a
+ * brand new `Map` with the R/F entries replaced. The caller is the only
+ * code allowed to write to its own results map. This deliberately avoids
+ * the previous in-place mutation pattern, which exposed mutation through
+ * a parameter type that did not advertise it.
  */
-export function applyRfsAggregation(results: Map<string, IdEvidence>): void {
+export function applyRfsAggregation(
+  results: ReadonlyMap<string, IdEvidence>,
+): Map<string, IdEvidence> {
+  const out = new Map(results);
   const byR = new Map<number, IdEvidence[]>();
   const byF = new Map<string, IdEvidence[]>();
 
-  for (const ev of results.values()) {
+  for (const ev of out.values()) {
     if (ev.idType === 'AC') {
       const m = /^AC-R(\d+)-\d+$/.exec(ev.id);
       if (m) {
@@ -122,46 +131,52 @@ export function applyRfsAggregation(results: Map<string, IdEvidence>): void {
   // should still contribute to R aggregation directly. Architect
   // pointed out the original loop double-counted S via both byF and
   // byR; this guard fixes that.
-  for (const ev of results.values()) {
+  for (const ev of out.values()) {
     const parts = parseRfs(ev.id);
     if (parts?.tier !== 'S' || parts.r == null || parts.f == null) continue;
     const parentFId = `F${parts.r}.${parts.f}`;
-    if (results.has(parentFId)) continue;
+    if (out.has(parentFId)) continue;
     (byR.get(parts.r) ?? byR.set(parts.r, []).get(parts.r)!).push(ev);
   }
 
   for (const [key, kids] of byF) {
     const fId = `F${key}`;
-    const fNode = results.get(fId);
+    const fNode = out.get(fId);
     if (!fNode) continue;
     const { reality, confidence } = rollup(kids);
-    results.set(fId, {
+    out.set(fId, {
       ...fNode,
       reality,
       confidence,
       rule: 'rfs-aggregate',
       evidence: [
         { kind: 'aggregated-children', note: `${kids.length} child(ren)` },
-        ...kids.map((c) => ({ kind: `child:${c.reality}`, path: c.id })),
+        ...kids.map(
+          (c): EvidenceItem => ({ kind: `child:${c.reality}`, path: c.id }),
+        ),
       ],
     });
   }
 
   for (const [r, kids] of byR) {
     const rId = `R${r}`;
-    const rNode = results.get(rId);
+    const rNode = out.get(rId);
     if (!rNode) continue;
-    const refreshed = kids.map((c) => results.get(c.id) ?? c);
+    const refreshed = kids.map((c) => out.get(c.id) ?? c);
     const { reality, confidence } = rollup(refreshed);
-    results.set(rId, {
+    out.set(rId, {
       ...rNode,
       reality,
       confidence,
       rule: 'rfs-aggregate',
       evidence: [
         { kind: 'aggregated-children', note: `${refreshed.length} child(ren)` },
-        ...refreshed.map((c) => ({ kind: `child:${c.reality}`, path: c.id })),
+        ...refreshed.map(
+          (c): EvidenceItem => ({ kind: `child:${c.reality}`, path: c.id }),
+        ),
       ],
     });
   }
+
+  return out;
 }

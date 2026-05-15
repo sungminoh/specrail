@@ -11,9 +11,11 @@ import {
   classifyId,
   type IdEvidence,
   type IdType,
+  type IntentIndex,
   type VerifyOptions,
   type VerifyResult,
 } from './types.js';
+import { buildIntentIndex } from './intent.js';
 import { runVitest, scanTestFilesForIds, type VitestRunResult } from './vitest-bridge.js';
 import { applyRfsAggregation } from './id-rules/spec.js';
 import { applyCrossRefAggregation } from './id-rules/aggregate.js';
@@ -30,6 +32,14 @@ export interface VerifyContext {
   readonly testFileIds: ReadonlyMap<string, ReadonlySet<string>>;
   /** id → spec file + line where the ID is defined (one shared map). */
   readonly locations: LocationIndex;
+  /**
+   * id → author-declared intent (Empty | Draft | Approved). Sourced from
+   * each phase file's frontmatter `status:`. Rules MUST read intent from
+   * this map (defaulting to 'Draft' when missing) rather than hardcoding
+   * `intent: 'Approved'` — that hardcode was the root of the two-axis lie
+   * flagged in the architect review.
+   */
+  readonly intents: IntentIndex;
 }
 
 /** A rule classifies a single ID by inspecting the project state. */
@@ -59,16 +69,28 @@ function resolveRule(idType: IdType): IdRule {
   return RULE_REGISTRY.get(idType) ?? SKELETON_RULE;
 }
 
-/** Default rule for IDs without a registered classifier. */
+/**
+ * Default rule for IDs whose idType has no registered classifier
+ * (e.g. `idType === 'unknown'`, or a future taxonomy expansion that
+ * outpaces the rule registry).
+ *
+ * Returns `ManualReview` — NOT `NotBuilt`. Claiming `NotBuilt` for an ID
+ * we cannot classify would itself be a lie: we have no evidence either
+ * way. The honesty check (`--check-honesty`) only fires on `NotBuilt`,
+ * so a wrong default here would create a flood of false positives (the
+ * round-9 architect review flagged 8 such in the dogfood baseline:
+ * illustrative `SEC-5`, `US-11.2`, and other unknown-type entries in
+ * Approved phases).
+ */
 const SKELETON_RULE: IdRule = {
   id: 'skeleton',
-  async apply({ id, idType }) {
+  async apply({ id, idType, ctx }) {
     return {
       id,
       idType,
-      intent: 'Approved',
-      reality: 'NotBuilt',
-      evidence: [],
+      intent: ctx.intents.get(id) ?? 'Draft',
+      reality: 'ManualReview',
+      evidence: [{ kind: 'no-rule-registered', note: `idType=${idType}` }],
       confidence: 'low',
       rule: 'skeleton',
     };
@@ -99,34 +121,38 @@ export async function verify(
   for (const node of graph.nodes) {
     locations.set(node.specId, { file: node.definedAt.file, line: node.definedAt.line });
   }
+  const intents = await buildIntentIndex(projectRoot, graph);
   const ctx: VerifyContext = {
     projectRoot,
     options,
     vitest,
     testFileIds,
     locations,
+    intents,
   };
 
   const filter = options.filter;
-  const results = new Map<string, IdEvidence>();
+  const initial = new Map<string, IdEvidence>();
 
   for (const id of graph.definedIds) {
     if (filter && !filter.test(id)) continue;
     const idType = classifyId(id);
     const rule = resolveRule(idType);
     const ev = await rule.apply({ id, idType, ctx });
-    results.set(id, ev);
+    initial.set(id, ev);
   }
 
   // Aggregation pass: roll up R / F over their AC + child evidence,
-  // and resolve PAIN / KPI / RISK from their cited cross-references.
-  applyRfsAggregation(results);
-  applyCrossRefAggregation(results);
+  // then resolve PAIN / KPI / RISK from their cited cross-references.
+  // Each step takes a ReadonlyMap snapshot and returns a fresh Map —
+  // the runner owns the only mutable handle.
+  const afterRfs = applyRfsAggregation(initial);
+  const afterCrossRef = applyCrossRefAggregation(afterRfs);
 
   return {
     timestamp: new Date().toISOString(),
     projectRoot,
-    results,
+    results: afterCrossRef,
     initialized: true,
   };
 }

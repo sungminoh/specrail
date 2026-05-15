@@ -14,7 +14,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { IdRule } from '../runner.js';
-import type { IdEvidence, RealityState } from '../types.js';
+import type { EvidenceItem, IdEvidence, RealityState } from '../types.js';
 import { CITATION_RE } from '../../spec/patterns.js';
 
 const WINDOW_LINES = 4;
@@ -33,7 +33,7 @@ function buildAggregator(ruleId: string): IdRule {
         return {
           id,
           idType,
-          intent: 'Approved',
+          intent: ctx.intents.get(id) ?? 'Draft',
           reality: 'ManualReview',
           evidence: [{ kind: 'no-definition-location' }],
           confidence: 'low',
@@ -49,7 +49,7 @@ function buildAggregator(ruleId: string): IdRule {
         return {
           id,
           idType,
-          intent: 'Approved',
+          intent: ctx.intents.get(id) ?? 'Draft',
           reality: 'ManualReview',
           evidence: [{ kind: 'spec-file-unreadable', path: loc.file }],
           confidence: 'low',
@@ -71,11 +71,11 @@ function buildAggregator(ruleId: string): IdRule {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [
           { kind: 'cross-references', note: [...refs].join(', ') || '(none)' },
-          ...[...refs].map((r) => ({ kind: 'cited', path: r })),
+          ...[...refs].map((r): EvidenceItem => ({ kind: 'cited', path: r })),
         ],
         confidence: 'low',
         rule: ruleId,
@@ -91,12 +91,15 @@ export const riskRule = buildAggregator('risk-cross-ref');
 /**
  * Second-pass aggregation: for each PAIN/KPI/RISK that produced a
  * cross-references evidence list, look up those cited IDs in the
- * results map and roll up.
+ * snapshot map and produce an updated map with the aggregated reality.
+ *
+ * Pure / functional contract — see `applyRfsAggregation` for rationale.
  */
 export function applyCrossRefAggregation(
-  results: Map<string, IdEvidence>,
-): void {
-  for (const [id, ev] of results) {
+  results: ReadonlyMap<string, IdEvidence>,
+): Map<string, IdEvidence> {
+  const out = new Map(results);
+  for (const [id, ev] of out) {
     if (ev.idType !== 'PAIN' && ev.idType !== 'KPI' && ev.idType !== 'RISK') continue;
     if (!ev.evidence[0] || ev.evidence[0].kind !== 'cross-references') continue;
 
@@ -107,7 +110,7 @@ export function applyCrossRefAggregation(
 
     const refEvidence: IdEvidence[] = [];
     for (const r of refs) {
-      const found = results.get(r);
+      const found = out.get(r);
       if (found) refEvidence.push(found);
     }
     if (refEvidence.length === 0) continue;
@@ -123,18 +126,21 @@ export function applyCrossRefAggregation(
     else if (anyPartial) reality = 'Partial';
     else reality = 'NotBuilt';
 
-    results.set(id, {
+    out.set(id, {
       ...ev,
       reality,
       confidence: 'medium',
       evidence: [
         { kind: 'aggregated-from', note: refs.join(', ') },
-        ...refEvidence.map((re) => ({
-          kind: `ref:${re.reality}`,
-          path: re.id,
-        })),
+        ...refEvidence.map(
+          (re): EvidenceItem => ({
+            kind: `ref:${re.reality}`,
+            path: re.id,
+          }),
+        ),
       ],
     });
   }
+  return out;
 }
 

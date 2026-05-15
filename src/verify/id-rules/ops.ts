@@ -52,7 +52,7 @@ export const opsRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [{ kind: 'no-definition-location' }],
         confidence: 'low',
@@ -69,7 +69,7 @@ export const opsRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [{ kind: 'spec-file-unreadable', path: loc.file }],
         confidence: 'low',
@@ -86,7 +86,7 @@ export const opsRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [
           { kind: 'no-path-tokens', path: loc.file, line: loc.line },
@@ -112,7 +112,7 @@ export const opsRule: IdRule = {
     return {
       id,
       idType,
-      intent: 'Approved',
+      intent: ctx.intents.get(id) ?? 'Draft',
       reality: missing === 0 ? 'Built' : exists > 0 ? 'Partial' : 'NotBuilt',
       evidence,
       confidence: 'high',
@@ -141,7 +141,7 @@ export const rbRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'Built',
         evidence,
         confidence: 'high',
@@ -155,7 +155,7 @@ export const rbRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'NotBuilt',
         evidence: [{ kind: 'no-runbook-no-definition' }],
         confidence: 'medium',
@@ -167,7 +167,7 @@ export const rbRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [{ kind: 'spec-file-unreadable', path: loc.file }],
         confidence: 'low',
@@ -188,7 +188,7 @@ export const rbRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'Built',
         evidence,
         confidence: 'medium',
@@ -199,7 +199,7 @@ export const rbRule: IdRule = {
     return {
       id,
       idType,
-      intent: 'Approved',
+      intent: ctx.intents.get(id) ?? 'Draft',
       reality: 'NotBuilt',
       evidence: [
         { kind: 'inline-body-thin', path: loc.file, line: loc.line, note: bodyCell },

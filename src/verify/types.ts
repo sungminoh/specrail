@@ -10,8 +10,22 @@
  * `Evidence:` pointer that does not resolve).
  */
 
-/** Author intent. Sourced from `**Status:**` line near the spec heading. */
-export type IntentState = 'Draft' | 'Approved';
+/**
+ * Author intent. Sourced from the phase frontmatter `status:` field — the
+ * authoritative declaration of whether the phase author has committed to
+ * this body of spec being built. Schema enum is `Empty | Draft | Approved`
+ * (see schemas/common-frontmatter.json).
+ *
+ *   - `Empty`    — phase placeholder, author has not yet authored anything.
+ *   - `Draft`    — author is still drafting; do not lie-detect against it.
+ *   - `Approved` — author asserts the spec is final and should be built.
+ *
+ * Only `Approved` IDs are candidates for the `intent vs reality` lie check.
+ */
+export type IntentState = 'Empty' | 'Draft' | 'Approved';
+
+/** id → declared author intent. Read from spec frontmatter, not hardcoded. */
+export type IntentIndex = ReadonlyMap<string, IntentState>;
 
 /** Auto-derived build reality. Never written by hand. */
 export type RealityState =
@@ -24,17 +38,53 @@ export type RealityState =
 /** Confidence in the rule's classification. */
 export type Confidence = 'high' | 'medium' | 'low';
 
+/**
+ * All evidence kinds produced by any rule. Discriminated-union typed so
+ * that a typo (`'sigoff'` instead of `'signoff'`) fails the build instead
+ * of silently mis-categorising a rule's output.
+ *
+ * Dynamic ref/child kinds (`ref:Built`, `child:Partial`, ...) are
+ * generated from `RealityState` via template literal types so adding a
+ * new reality state automatically extends the union.
+ */
+export type EvidenceKind =
+  | 'aggregated-children'
+  | 'aggregated-from'
+  | 'cited'
+  | 'cross-references'
+  | 'file-exists'
+  | 'file-has-todo'
+  | 'file-missing'
+  | 'inline-body'
+  | 'inline-body-thin'
+  | 'no-definition-location'
+  | 'no-path-tokens'
+  | 'no-rule-registered'
+  | 'no-runbook-no-definition'
+  | 'no-signoff'
+  | 'no-test-ref'
+  | 'oq-open'
+  | 'oq-resolved'
+  | 'oq-status-unknown'
+  | 'runbook-doc'
+  | 'sha-match'
+  | 'sha-mismatch'
+  | 'signoff'
+  | 'signoff-target-missing'
+  | 'spec-file-unreadable'
+  | 'symbol-found'
+  | 'symbol-missing'
+  | 'test-fail'
+  | 'test-pass'
+  | 'test-ref-no-outcome'
+  | 'test-ref-no-run'
+  | 'unparseable-entity-name'
+  | `ref:${RealityState}`
+  | `child:${RealityState}`;
+
 /** One piece of evidence collected by a rule for a single ID. */
 export interface EvidenceItem {
-  /**
-   * Evidence kind tag. Examples:
-   *   - "test-pass" / "test-fail" / "test-skip"
-   *   - "file-exists" / "symbol-found"
-   *   - "git-commit" / "runbook-doc"
-   *   - "signoff" / "signoff-stale"
-   *   - "child-aggregation"
-   */
-  readonly kind: string;
+  readonly kind: EvidenceKind;
   readonly path?: string;
   readonly line?: number;
   readonly note?: string;

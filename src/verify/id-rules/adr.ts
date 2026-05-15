@@ -35,7 +35,7 @@ export const adrRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [{ kind: 'no-definition-location' }],
         confidence: 'low',
@@ -50,7 +50,7 @@ export const adrRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [{ kind: 'spec-file-unreadable', path: loc.file }],
         confidence: 'low',
@@ -68,7 +68,7 @@ export const adrRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [
           { kind: 'no-signoff', path: loc.file, line: loc.line },
@@ -92,7 +92,7 @@ export const adrRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'Built',
         evidence,
         confidence: 'low',
@@ -105,7 +105,7 @@ export const adrRule: IdRule = {
       return {
         id,
         idType,
-        intent: 'Approved',
+        intent: ctx.intents.get(id) ?? 'Draft',
         reality: 'ManualReview',
         evidence: [
           ...evidence,
@@ -122,7 +122,7 @@ export const adrRule: IdRule = {
     return {
       id,
       idType,
-      intent: 'Approved',
+      intent: ctx.intents.get(id) ?? 'Draft',
       reality: matches ? 'Built' : 'ManualReview-Stale',
       evidence: [
         ...evidence,
