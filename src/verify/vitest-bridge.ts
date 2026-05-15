@@ -17,6 +17,7 @@ import { readdir, readFile, mkdtemp, rm } from 'node:fs/promises';
 import type { Dirent } from 'node:fs';
 import { join, relative } from 'node:path';
 import { tmpdir } from 'node:os';
+import * as ts from 'typescript';
 import { CITATION_RE } from '../spec/patterns.js';
 
 const execFileP = promisify(execFile);
@@ -165,10 +166,24 @@ async function* walkFiles(dir: string): AsyncGenerator<string> {
 }
 
 /**
- * Scan every file under `testDir` for spec ID references. Returns a map
- * `id → Set<relative path>` so rules can ask "which test files mention
- * AC-R1-1?". File content is scanned with CITATION_RE (the shared
- * citation regex) — same semantics the graph builder uses.
+ * Scan every file under `testDir` for spec ID references via TS AST.
+ *
+ * Round-N architect flagged that the previous content-grep treated any
+ * mention of an ID anywhere in the file as evidence — including string
+ * literals inside assertions like `expect(opts.filter?.test('AC-R1-1'))`
+ * which is testing the filter, not AC-R1-1. The attacker's free-text
+ * exit was to drop `// AC-R1-1` in any test comment.
+ *
+ * The honest semantic: an ID is "mentioned by a test" only when it
+ * appears as a string literal in the FIRST argument of an `it()` /
+ * `test()` / `describe()` call (or their `.skip`/`.only`/`.todo`/`.each`
+ * variants). The first argument is the test-name slot — the only place
+ * the framework treats as identification.
+ *
+ * Returns `id → Set<relative path>` for ACTIVE tests only. Skipped /
+ * todo'd tests do NOT count as Built evidence — the architect's
+ * round-N audit pointed out the old `allGreen` would credit a file
+ * containing `it.skip('AC-R1-1', ...)` plus an unrelated trivial pass.
  */
 export async function scanTestFilesForIds(
   projectRoot: string,
@@ -186,17 +201,104 @@ export async function scanTestFilesForIds(
       continue;
     }
     const rel = relative(projectRoot, file);
-    const re = new RegExp(CITATION_RE.source, CITATION_RE.flags);
-    for (const m of content.matchAll(re)) {
-      const id = m[1];
-      let set = out.get(id);
-      if (!set) {
-        set = new Set();
-        out.set(id, set);
+
+    const sf = ts.createSourceFile(
+      file,
+      content,
+      ts.ScriptTarget.Latest,
+      /* setParentNodes */ true,
+      ts.ScriptKind.TSX,
+    );
+
+    const visit = (node: ts.Node): void => {
+      if (ts.isCallExpression(node) && isFrameworkTestCall(node) && !isSkippedCall(node)) {
+        const firstArg = node.arguments[0];
+        const name = stringLiteralValue(firstArg);
+        if (name) extractIdsFromString(name, rel, out);
       }
-      set.add(rel);
-    }
+      ts.forEachChild(node, visit);
+    };
+    visit(sf);
   }
 
   return out;
+}
+
+/**
+ * Recognise the names the test framework uses to register a test or
+ * suite. Direct identifier (`it`, `test`, `describe`) AND any property
+ * access chain ending in those names (`it.each`, `describe.skip`,
+ * `it.concurrent.each(...)`, ...). Skip/only/todo are handled by
+ * `isSkippedCall` so they don't reach this allow-list as false negatives.
+ */
+function isFrameworkTestCall(node: ts.CallExpression): boolean {
+  return getCallRootName(node.expression) !== null;
+}
+
+function getCallRootName(expr: ts.Expression): string | null {
+  if (ts.isIdentifier(expr)) {
+    return ['it', 'test', 'describe'].includes(expr.text) ? expr.text : null;
+  }
+  if (ts.isPropertyAccessExpression(expr)) {
+    return getCallRootName(expr.expression);
+  }
+  if (ts.isCallExpression(expr)) {
+    return getCallRootName(expr.expression);
+  }
+  return null;
+}
+
+function isSkippedCall(node: ts.CallExpression): boolean {
+  // Recognise `it.skip`, `test.skip`, `describe.skip`, `.todo`, and
+  // the table-driven `.each.skip(...)` variants. `.only` is NOT
+  // skipped — those tests still run.
+  let expr: ts.Expression = node.expression;
+  while (ts.isPropertyAccessExpression(expr) || ts.isCallExpression(expr)) {
+    if (ts.isPropertyAccessExpression(expr)) {
+      if (expr.name.text === 'skip' || expr.name.text === 'todo') return true;
+      expr = expr.expression;
+    } else {
+      expr = expr.expression;
+    }
+  }
+  return false;
+}
+
+function stringLiteralValue(arg: ts.Node | undefined): string | null {
+  if (!arg) return null;
+  if (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg)) return arg.text;
+  if (ts.isTemplateExpression(arg)) {
+    // Concatenate the literal portions; ID is unlikely to live inside
+    // a ${expr} interpolation anyway. This is best-effort.
+    return arg.head.text + arg.templateSpans.map((s) => s.literal.text).join('');
+  }
+  return null;
+}
+
+function extractIdsFromString(
+  s: string,
+  rel: string,
+  out: Map<string, Set<string>>,
+): void {
+  // Spec author convention: dot-list shorthand `TC-5·32·41` packs
+  // multiple TC IDs into one token (· = Korean middle dot, U+00B7).
+  // Expand to `TC-5 TC-32 TC-41` before citation extraction so each
+  // resolves individually.
+  const expanded = s.replace(
+    /\b([A-Z]+(?:-[A-Z]+)*-)(\d+(?:\.\d+)*)((?:·\d+(?:\.\d+)*)+)/g,
+    (_, prefix, first, tail) => {
+      const tails = tail.replace(/·(\d+(?:\.\d+)*)/g, ` ${prefix}$1`);
+      return prefix + first + tails;
+    },
+  );
+  const re = new RegExp(CITATION_RE.source, CITATION_RE.flags);
+  for (const m of expanded.matchAll(re)) {
+    const id = m[1];
+    let set = out.get(id);
+    if (!set) {
+      set = new Set();
+      out.set(id, set);
+    }
+    set.add(rel);
+  }
 }

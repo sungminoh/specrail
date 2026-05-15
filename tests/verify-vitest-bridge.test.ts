@@ -85,25 +85,78 @@ describe('scanTestFilesForIds() (US-V02)', () => {
     expect(out.size).toBe(0);
   });
 
-  it('extracts IDs from test file content via CITATION_RE', async () => {
+  it('extracts IDs that appear in describe/it/test first-argument strings', async () => {
     await writeTest(
       'tests/a.test.ts',
       'describe("AC-R1-1: foo", () => { it("checks AC-R1-1", () => {}); });',
     );
+    const out = await scanTestFilesForIds(dir);
+    expect(out.get('AC-R1-1')?.has('tests/a.test.ts')).toBe(true);
+  });
+
+  it('does NOT extract IDs that appear only in comments (architect round-N attack vector #1)', async () => {
     await writeTest(
       'tests/b.test.ts',
-      '// covers AC-R1-2 and INV-3\nimport {} from "x";\n',
+      '// covers AC-R1-2 and INV-3\nimport {} from "x";\n' +
+        'describe("unrelated", () => { it("trivial", () => {}); });\n',
     );
-
     const out = await scanTestFilesForIds(dir);
+    expect(out.get('AC-R1-2')).toBeUndefined();
+    expect(out.get('INV-3')).toBeUndefined();
+  });
 
-    expect(out.get('AC-R1-1')?.has('tests/a.test.ts')).toBe(true);
-    expect(out.get('AC-R1-2')?.has('tests/b.test.ts')).toBe(true);
-    expect(out.get('INV-3')?.has('tests/b.test.ts')).toBe(true);
+  it('does NOT extract IDs that appear inside assertion string arguments', async () => {
+    // The exact case from the live dogfood: AC-R1-1 in `.test('AC-R1-1')`
+    // expression inside an assertion is NOT a test name.
+    await writeTest(
+      'tests/c.test.ts',
+      "import { describe, it, expect } from 'vitest';\n" +
+        "describe('parseArgs', () => {\n" +
+        "  it('rejects unknown ids', () => {\n" +
+        "    expect(filter.test('AC-R1-1')).toBe(false);\n" +
+        "  });\n" +
+        "});\n",
+    );
+    const out = await scanTestFilesForIds(dir);
+    expect(out.get('AC-R1-1')).toBeUndefined();
+  });
+
+  it('does NOT extract IDs from skipped/todo tests', async () => {
+    await writeTest(
+      'tests/d.test.ts',
+      "describe('s', () => {\n" +
+        "  it.skip('AC-R5-1: not yet', () => {});\n" +
+        "  test.todo('AC-R5-2: planned');\n" +
+        "});\n",
+    );
+    const out = await scanTestFilesForIds(dir);
+    expect(out.get('AC-R5-1')).toBeUndefined();
+    expect(out.get('AC-R5-2')).toBeUndefined();
+  });
+
+  it('extracts from `.only` (those tests do run)', async () => {
+    await writeTest(
+      'tests/e.test.ts',
+      "describe('s', () => { it.only('AC-R6-1: focused', () => {}); });\n",
+    );
+    const out = await scanTestFilesForIds(dir);
+    expect(out.get('AC-R6-1')?.has('tests/e.test.ts')).toBe(true);
+  });
+
+  it('extracts from `.each` table-driven tests', async () => {
+    await writeTest(
+      'tests/f.test.ts',
+      "describe('s', () => { it.each([1,2])('AC-R7-1 case %s', () => {}); });\n",
+    );
+    const out = await scanTestFilesForIds(dir);
+    expect(out.get('AC-R7-1')?.has('tests/f.test.ts')).toBe(true);
   });
 
   it('honours nested test directories', async () => {
-    await writeTest('tests/unit/x.test.ts', '// TC-42\n');
+    await writeTest(
+      'tests/unit/x.test.ts',
+      "describe('TC-42: scenario', () => { it('runs', () => {}); });\n",
+    );
     const out = await scanTestFilesForIds(dir);
     expect(out.get('TC-42')?.has('tests/unit/x.test.ts')).toBe(true);
   });

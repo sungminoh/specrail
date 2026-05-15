@@ -47,8 +47,16 @@ describe('NFR rule dispatch (US-V08)', () => {
         '| NFR-A11Y-3 | keyboard nav |',
       ].join('\n'),
     );
-    await writeTest('a.test.ts', '// NFR-PERF-1\n');
-    await writeTest('b.test.ts', '// NFR-SEC-2\n');
+    await writeTest(
+      'a.test.ts',
+      "import { describe, it } from 'vitest';\n" +
+        "describe('NFR-PERF-1: parse <500ms', () => { it('runs', () => {}); });\n",
+    );
+    await writeTest(
+      'b.test.ts',
+      "import { describe, it } from 'vitest';\n" +
+        "describe('NFR-SEC-2: secret detection', () => { it('runs', () => {}); });\n",
+    );
 
     const r = await verify(dir, { skipTests: true });
 

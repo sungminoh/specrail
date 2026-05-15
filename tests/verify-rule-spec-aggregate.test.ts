@@ -107,7 +107,12 @@ describe('R/F aggregation pass (US-V11)', () => {
 
   it('R aggregates over both AC and F children', async () => {
     await mkdir(join(dir, 'tests'), { recursive: true });
-    await writeFile(join(dir, 'tests', 'a.test.ts'), '// AC-R2-1\n', 'utf8');
+    await writeFile(
+      join(dir, 'tests', 'a.test.ts'),
+      "import { describe, it } from 'vitest';\n" +
+        "describe('AC-R2-1: given x when y then z', () => { it('runs', () => {}); });\n",
+      'utf8',
+    );
     await writeSpec(
       '03-features.md',
       [

@@ -280,7 +280,8 @@ describe('runVerifyCli (US-V16)', () => {
     await mkdir(join(dir, 'tests'), { recursive: true });
     await writeFile(
       join(dir, 'tests', 'a.test.ts'),
-      "// covers AC-R1-1\nimport { describe } from 'vitest';\n",
+      "import { describe, it } from 'vitest';\n" +
+        "describe('AC-R1-1: x when y then z', () => { it('runs', () => {}); });\n",
       'utf8',
     );
     await writeFile(

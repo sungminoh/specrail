@@ -76,7 +76,11 @@ describe('test-grep rule (US-V04)', () => {
         '- **AC-R1-2:** GIVEN x WHEN y THEN z',
       ].join('\n'),
     );
-    await writeTest('a.test.ts', '// covers AC-R1-2\n');
+    await writeTest(
+      'a.test.ts',
+      "import { describe, it } from 'vitest';\n" +
+        "describe('AC-R1-2: given x when y then z', () => { it('runs', () => {}); });\n",
+    );
 
     const r = await verify(dir, { skipTests: true });
     const ev = r.results.get('AC-R1-2');
