@@ -9,7 +9,7 @@
  * so external tooling can correlate runs.
  */
 
-import { readFile, writeFile, mkdir, stat, readdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, stat, readdir, rm } from 'node:fs/promises';
 import type { Dirent, Stats } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, relative } from 'node:path';
@@ -143,5 +143,24 @@ export function cacheToResult(cache: CacheFile, projectRoot: string): VerifyResu
 /** Path the cache lives at (exposed for cleanup / debugging). */
 export function cachePath(projectRoot: string): string {
   return join(projectRoot, CACHE_DIR, CACHE_FILE);
+}
+
+/**
+ * Remove the entire `.specrail-cache/` directory for this project. Returns
+ * `true` when something was deleted, `false` when nothing was present.
+ *
+ * Use this when a stale cache survives a real change — e.g. when the user
+ * changes a verifier rule and wants to force a recompute without having
+ * to bump every watched file's mtime.
+ */
+export async function clearCache(projectRoot: string): Promise<boolean> {
+  const dirPath = join(projectRoot, CACHE_DIR);
+  try {
+    await stat(dirPath);
+  } catch {
+    return false;
+  }
+  await rm(dirPath, { recursive: true, force: true });
+  return true;
 }
 
