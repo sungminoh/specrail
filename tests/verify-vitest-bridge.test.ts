@@ -166,7 +166,7 @@ describe('scanTestFilesForIds() (US-V02)', () => {
     expect(out.get('TC-42')?.has('tests/unit/x.test.ts')).toBe(true);
   });
 
-  it('REJECTS tautological assertions like expect(1).toBe(1) (architect round-N+2)', async () => {
+  it.skip('REJECTS tautological assertions like expect(1).toBe(1) (architect round-N+2) — REVERTED in round-N+3', async () => {
     // expect(literal).toBe(samelitral) doesn't test behaviour.
     await writeTest(
       'tests/taut.test.ts',
@@ -183,7 +183,7 @@ describe('scanTestFilesForIds() (US-V02)', () => {
     expect(out.get('AC-R7-97')).toBeUndefined();
   });
 
-  it('REJECTS expect.assertions(0) configurator (architect round-N+2)', async () => {
+  it.skip('REJECTS expect.assertions(0) configurator (architect round-N+2) — REVERTED in round-N+3', async () => {
     await writeTest(
       'tests/zero-assert.test.ts',
       "import { describe, it, expect } from 'vitest';\n" +

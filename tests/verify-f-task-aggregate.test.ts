@@ -69,7 +69,7 @@ describe('f-task-aggregate rule', () => {
     expect(ev?.rule).toBe('f-task-aggregate');
   });
 
-  it('normalises F- prefix, spaced separator, redundant prefix (architect round-N+2)', async () => {
+  it.skip('normalises F- prefix, spaced separator, redundant prefix (architect round-N+2) — REVERTED in round-N+3 scope correction; F-/spaced typo tolerance is review concern, not verifier', async () => {
     await mkdir(join(dir, 'src'), { recursive: true });
     await writeFile(join(dir, 'src', 'real.ts'), '// ok', 'utf8');
     await writeSpec(

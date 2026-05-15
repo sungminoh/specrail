@@ -63,6 +63,26 @@ ID 종류별 rule (요약):
 | R / F | 자식 AC + F + S를 roll-up |
 | PAIN / KPI / RISK | 정의 근처 cross-reference 된 ID들의 reality를 roll-up |
 
+### Verifier scope: shape presence, not shape quality
+
+각 rule은 evidence가 **존재하는지**를 검사할 뿐, evidence의 **품질**은 검사하지
+않습니다. 예:
+
+- ENT rule: `interface User {}` 처럼 멤버가 없는 빈 stub은 reject. 하지만
+  `interface User { _stub: never }`는 accept — 멤버가 있으므로 "shape는 존재"
+  합니다. 그 멤버의 타입이 의미 있는지(`never` vs `string`)는 **code review의
+  영역**이지 verifier의 책임이 아닙니다.
+- OQ rule: row에 `Resolved` / `DEFERRED` / `ADR-N` 키워드가 있으면 Built.
+  rationale 텍스트가 substantive한지(글자 수, 구조적 anchor 유무 등)는 검사하지
+  않습니다. 바보같이 `DEFERRED`만 쓴 spec은 review가 잡아야 합니다.
+- vitest rule: `it('AC-X', ...)` 안에 `expect(...)` 호출이 하나라도 있으면
+  Built. `expect(1).toBe(1)` 같은 tautological assertion인지는 검사하지 않습니다
+  — review나 runtime이 잡습니다.
+
+**Why this matters**: 적대적 author가 "spec lie"를 만들기 위한 키워드는 verifier가
+탐지하지만, 의미 없는 substance를 적어 review를 우회하는 건 verifier 범위 밖입니다.
+verifier loop를 무한히 늘리지 않기 위한 honest cut입니다.
+
 자동탐지가 못 잡는 항목은 spec에 explicit annotation을 추가하면 됩니다:
 
 ```markdown

@@ -36,27 +36,21 @@ const F_CITATION_RE = /\bF\d+\.\d+\b/g;
 const T_CITATION_RE = /\bT\d+\.\d+[a-z]?\b/;
 
 /**
- * Expand dot-list shorthand `F8.1·8.2·8.3` → `F8.1 F8.2 F8.3` and
- * tolerate author-natural variants:
- *   - `F-8.1·8.2`  (extra hyphen — typo or convention drift)
- *   - `F8.1 · 8.2` (spaces around middle dot)
- *   - `F8.1·F8.2`  (redundant prefix in tail)
+ * Expand dot-list shorthand `F8.1·8.2·8.3` → `F8.1 F8.2 F8.3`. This
+ * is the documented author convention for packing multiple F-IDs into
+ * one citation token; without expansion the F-task rule would silently
+ * drop every F-id after the first.
  *
- * Mirrors the same convention `scanTestFilesForIds` uses for TC/AC.
- * Without this normalisation the F-task rule silently dropped F-ids
- * after the first — architect round-N+2 audit demonstrated the live
- * exploit with `/tmp/attack-dotlist.mjs`.
+ * Author-typo variants (`F-8.1`, `F  8.1`, `F8.1 · 8.2`) are NOT
+ * normalised. Those are review concerns — author wrote the wrong
+ * citation form. Verifier scope (round-N+3 correction) is shape
+ * presence, not author-typo tolerance.
  */
 function expandDotListF(s: string): string {
-  // First normalise `F-` → `F` and collapse whitespace around `·`.
-  const normalised = s
-    .replace(/\bF-(?=\d)/g, 'F')
-    .replace(/\s*·\s*/g, '·');
-  return normalised.replace(
-    /\bF(\d+\.\d+)((?:·F?\d+(?:\.\d+)?)+)/g,
+  return s.replace(
+    /\bF(\d+\.\d+)((?:·\d+(?:\.\d+)?)+)/g,
     (_, first, tail) => {
-      // Tail may contain `·F8.2` or `·8.2`. Strip stray F before digits.
-      const tails = tail.replace(/·F?(\d+(?:\.\d+)?)/g, ' F$1');
+      const tails = tail.replace(/·(\d+(?:\.\d+)?)/g, ' F$1');
       return 'F' + first + tails;
     },
   );

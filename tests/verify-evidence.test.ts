@@ -133,12 +133,14 @@ describe('fs helpers (US-V03)', () => {
     expect(await hasSymbolInFile(file, 'User')).toBe(0);
     expect(await hasSymbolInFile(file, 'Empty')).toBe(0);
     expect(await hasSymbolInFile(file, 'noop')).toBe(0);
-    expect(await hasSymbolInFile(file, 'Anything')).toBe(0);
+    // `type Anything = any;` is a type alias to `any` — scope correction
+    // (round-N+3) trusts the author beyond literal-empty types.
+    expect(await hasSymbolInFile(file, 'Anything')).toBe(4);
     expect(await hasSymbolInFile(file, 'Nothing')).toBe(0);
     expect(await hasSymbolInFile(file, 'Void')).toBe(0);
   });
 
-  it('hasSymbolInFile REJECTS interfaces whose only members have trivial types (round-N+1)', async () => {
+  it.skip('hasSymbolInFile REJECTS interfaces whose only members have trivial types (round-N+1) — REVERTED in round-N+3 scope correction', async () => {
     // Architect round-N+1: single `_stub: never` member passed the
     // previous ≥1-member check trivially. Now substantive requires
     // at least one member with a non-trivial type annotation.
@@ -180,7 +182,7 @@ describe('fs helpers (US-V03)', () => {
     expect(await hasSymbolInFile(file, 'Inferred')).toBe(1);
   });
 
-  it('hasSymbolInFile rejects union/intersection types whose constituents are ALL trivial (architect round-N+2)', async () => {
+  it.skip('hasSymbolInFile rejects union/intersection types whose constituents are ALL trivial (architect round-N+2) — REVERTED in round-N+3 scope correction', async () => {
     const file = join(dir, 'union-stubs.ts');
     await writeFile(
       file,

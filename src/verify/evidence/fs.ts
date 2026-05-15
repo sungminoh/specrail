@@ -95,77 +95,32 @@ function isSubstantiveDeclaration(node: ts.Node, name: string): boolean {
 }
 
 /**
- * Architect round-N+1 attack vector: `interface User { _stub: never; }`
- * satisfied the previous `members.length > 0` check trivially. Require
- * at least one member whose declared type is NOT one of the trivial
- * placeholders (`never` / `any` / `unknown` / `void` / `undefined` /
- * `null` / `{}`). Class methods / accessors and property signatures
- * without a type annotation (inferred) count as substantive.
+ * Round-N+3 scope correction: verifier checks SHAPE PRESENCE, not
+ * shape QUALITY. An interface with ≥1 member has shape; whether the
+ * member's type is `never` / `any` / `string` is the author's modeling
+ * choice — review's concern, not verifier's. Previous rounds tried
+ * non-trivial-type checks, then union/intersection recursion, and
+ * still left wrapper shapes (paren, array, tuple, generic, mapped,
+ * conditional) gameable in 2-32 chars. The search space is unbounded.
+ *
+ * The honest cut: `members.length > 0` for interface/class. Author
+ * who writes `_stub: never` declares zero modeling — that's a review
+ * issue, not a verifier lie.
+ *
+ * Type alias still rejects literal `{}` since that's `members.length === 0`
+ * in structural form. Other type-alias bodies trust the author.
  */
 function hasSubstantiveMember(
   members: ReadonlyArray<ts.ClassElement | ts.TypeElement>,
 ): boolean {
-  if (members.length === 0) return false;
-  for (const m of members) {
-    if (
-      ts.isMethodDeclaration(m) ||
-      ts.isMethodSignature(m) ||
-      ts.isGetAccessor(m) ||
-      ts.isSetAccessor(m) ||
-      ts.isConstructorDeclaration(m) ||
-      ts.isConstructSignatureDeclaration(m) ||
-      ts.isCallSignatureDeclaration(m) ||
-      ts.isIndexSignatureDeclaration(m)
-    ) {
-      return true; // any callable/accessor member is non-trivial
-    }
-    if (
-      ts.isPropertyDeclaration(m) ||
-      ts.isPropertySignature(m)
-    ) {
-      if (!m.type) return true; // inferred type, treat as substantive
-      if (!isTriviallyEmptyType(m.type)) return true;
-    }
-    if (ts.isEnumMember(m as unknown as ts.Node)) {
-      return true;
-    }
-  }
-  return false;
+  return members.length > 0;
 }
 
 function isTriviallyEmptyType(typeNode: ts.TypeNode): boolean {
-  if (typeNode.kind === ts.SyntaxKind.AnyKeyword) return true;
-  if (typeNode.kind === ts.SyntaxKind.NeverKeyword) return true;
-  if (typeNode.kind === ts.SyntaxKind.UnknownKeyword) return true;
-  if (typeNode.kind === ts.SyntaxKind.ObjectKeyword) return true;
-  if (typeNode.kind === ts.SyntaxKind.VoidKeyword) return true;
-  if (typeNode.kind === ts.SyntaxKind.UndefinedKeyword) return true;
-  if (typeNode.kind === ts.SyntaxKind.NullKeyword) return true;
-  // `null` in type position is a LiteralTypeNode wrapping NullLiteral.
-  if (
-    ts.isLiteralTypeNode(typeNode) &&
-    typeNode.literal.kind === ts.SyntaxKind.NullKeyword
-  ) {
-    return true;
-  }
+  // Only the literal empty-type cases. Anything author wrote with
+  // structure is trusted at the verifier layer.
   if (ts.isTypeLiteralNode(typeNode) && typeNode.members.length === 0) {
     return true;
-  }
-  // Architect round-N+2: `string | never`, `void | undefined`, etc.
-  // wrap the trivial leaves in a union/intersection node and bypassed
-  // the leaf-only keyword check. A union of ALL trivials is itself
-  // trivial; same for intersection.
-  if (ts.isUnionTypeNode(typeNode) || ts.isIntersectionTypeNode(typeNode)) {
-    return typeNode.types.every(isTriviallyEmptyType);
-  }
-  // `typeof undefined` — TypeQuery wrapping the undefined identifier
-  // is structurally the same as undefined.
-  if (ts.isTypeQueryNode(typeNode)) {
-    const name = typeNode.exprName;
-    if (ts.isIdentifier(name)) {
-      const t = name.text;
-      if (t === 'undefined' || t === 'null') return true;
-    }
   }
   return false;
 }

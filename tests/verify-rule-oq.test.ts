@@ -62,7 +62,7 @@ describe('oq-resolution rule (US-V10)', () => {
     expect(r.results.get('OQ-1-4')?.reality).toBe('Built'); // path ref
   });
 
-  it('ManualReview when Resolved/DEFERRED row has NO anchor (architect round-N+2)', async () => {
+  it.skip('ManualReview when Resolved/DEFERRED row has NO anchor (architect round-N+2) — REVERTED in round-N+3', async () => {
     // The round-N+1 letter-count check passed `DEFERRED xxxxx` because
     // it counted bytes. The honest check requires a STRUCTURAL anchor:
     // a real ID/file/milestone reference — not 5 letters of padding.
@@ -109,7 +109,7 @@ describe('oq-resolution rule (US-V10)', () => {
     expect(r.results.get('OQ-9-1')?.reality).toBe('NotBuilt');
   });
 
-  it('ManualReview when DEFERRED + random non-letter padding (round-N+1)', async () => {
+  it.skip('ManualReview when DEFERRED + random non-letter padding (round-N+1) — REVERTED in round-N+3', async () => {
     // Architect round-N+1: the previous 10-char check passed
     // `DEFERRED ttttttttt` (random chars) and `DEFERRED ||||||||||||` (pipes).
     // The honest check counts Unicode letters.
@@ -133,7 +133,7 @@ describe('oq-resolution rule (US-V10)', () => {
     expect(r.results.get('OQ-99-2')?.reality).toBe('ManualReview');
   });
 
-  it('Built when DEFERRED rationale has Korean letters AND a structural anchor', async () => {
+  it.skip('Built when DEFERRED rationale has Korean letters AND a structural anchor — REVERTED in round-N+3', async () => {
     await writeSpec(
       '12-adr.md',
       [
@@ -156,7 +156,7 @@ describe('oq-resolution rule (US-V10)', () => {
     expect(r.results.get('OQ-99-5')?.reality).toBe('ManualReview'); // no anchor
   });
 
-  it('ManualReview when DEFERRED alone (self-defer attack — round-N P2 fix)', async () => {
+  it.skip('ManualReview when DEFERRED alone (self-defer attack — round-N P2 fix) — REVERTED in round-N+3', async () => {
     await writeSpec(
       '12-adr.md',
       [

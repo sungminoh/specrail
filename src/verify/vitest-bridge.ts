@@ -251,25 +251,23 @@ export async function scanTestFilesForIds(
 
 /**
  * True when the call expression's tree contains at least one
- * NON-TAUTOLOGICAL `expect(...)` invocation. Walks the second argument
- * (test body or suite body) and any nested calls.
+ * `expect(...)` invocation.
  *
- * Architect round-N+2: the previous "any `expect(`" check credited
- * tautological assertions like `expect(1).toBe(1)`, `expect(true)`
- * `.toBe(true)`, and `expect.assertions(0)` (which configures zero
- * assertions). Adversary cost was 17 keystrokes.
+ * Round-N+3 scope correction: the verifier checks SHAPE presence
+ * (does the test body contain at least one `expect(` call?), not
+ * shape QUALITY (does that `expect` actually exercise behaviour?).
  *
- * Rejected forms:
- *   - `expect(literalA).matcher(literalA)` where the two literals are
- *     structurally identical (numeric, string, boolean, null) — the
- *     classic "I asserted nothing" reflex
- *   - `expect.assertions(0)` and `expect.assertions(<negative>)` — the
- *     assertion-count configurator with no actual assertions
+ * Vitest itself accepts `expect(1).toBe(1)` and `expect.assertions(0)`
+ * as legitimate calls — the assertion-count is not zero, the test
+ * passes. Whether the assertion is *meaningful* is a code-review and
+ * runtime-mutation-testing concern, not a static-AST concern.
  *
- * Accepted forms:
- *   - any expect chain with at least one non-tautological matcher call
- *   - `expect(value).toBe(value)` where value is an identifier / call
- *     expression / property access (cannot determine staticly)
+ * Previous rounds attempted to reject tautological assertions
+ * (literal-equal toBe, assertions(0), empty-object matcher); each
+ * round left adjacent shapes gameable in <20 chars and accidentally
+ * false-negatived legitimate `.resolves` / `.rejects` chains in real
+ * tests. The unbounded shape space of TypeScript expressions cannot
+ * be covered with regex-style static rules.
  *
  * `assert`, `chai.expect`, `should.*` style helpers are NOT counted.
  * Spec convention pins specrail to vitest's `expect`.
@@ -278,126 +276,17 @@ function callHasAssertion(call: ts.CallExpression): boolean {
   let found = false;
   const visit = (n: ts.Node): void => {
     if (found) return;
-    if (ts.isCallExpression(n) && isRealExpectAssertion(n)) {
-      found = true;
-      return;
+    if (ts.isCallExpression(n)) {
+      const root = getCallRootName(n.expression);
+      if (root === 'expect') {
+        found = true;
+        return;
+      }
     }
     ts.forEachChild(n, visit);
   };
   for (const arg of call.arguments) ts.forEachChild(arg, visit);
   return found;
-}
-
-/**
- * True when the call expression is a vitest assertion that actually
- * exercises something. Recognised shapes:
- *
- *   - `expect(A).matcher(B)`     — chain form, must be non-tautological
- *   - `expect(A).not.matcher(B)` — negated chain, same rule
- *   - `expect.hasAssertions()`   — assertion-count enforcer (real claim)
- *   - `expect.fail(...)`         — explicit failure (counts as assertion)
- *
- * Bare `expect(value)` without a matcher does NOT count — it captures
- * a value but performs no check. `expect.assertions(N)` with N<=0 also
- * doesn't count (vacuous configurator).
- */
-function isRealExpectAssertion(call: ts.CallExpression): boolean {
-  const expr = call.expression;
-  // Chain form: expect(A).matcher(B) — or `.not.matcher(B)`
-  if (ts.isPropertyAccessExpression(expr)) {
-    // Walk up the chain to find the head `expect(...)` call.
-    let head: ts.Node = expr.expression;
-    while (
-      ts.isPropertyAccessExpression(head) &&
-      head.name.text === 'not'
-    ) {
-      head = head.expression;
-    }
-    if (ts.isCallExpression(head)) {
-      const root = getCallRootName(head.expression);
-      if (root === 'expect') {
-        // It IS an expect chain. Check tautology.
-        return !isTautologicalAssertion(call);
-      }
-    }
-    // expect.hasAssertions() / expect.fail() — static configurator forms
-    if (
-      ts.isIdentifier(expr.expression) &&
-      expr.expression.text === 'expect' &&
-      (expr.name.text === 'hasAssertions' || expr.name.text === 'fail')
-    ) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Heuristic: returns true when the call is a known-empty assertion
- * shape that does not exercise behaviour.
- */
-function isTautologicalAssertion(call: ts.CallExpression): boolean {
-  // `expect.assertions(N)` configurator — vacuous when N === 0 or negative.
-  if (
-    ts.isPropertyAccessExpression(call.expression) &&
-    ts.isIdentifier(call.expression.expression) &&
-    call.expression.expression.text === 'expect' &&
-    call.expression.name.text === 'assertions'
-  ) {
-    const arg = call.arguments[0];
-    if (arg && ts.isNumericLiteral(arg) && Number(arg.text) <= 0) return true;
-    return false;
-  }
-  // `expect.hasAssertions()` — actually a real claim, NOT tautological.
-  // Only `expect(...).matcher(...)` form remains. We need a chain like
-  // `expect(A).toBe(B)` — walk up to the head `expect(A)` and the
-  // matcher's argument B.
-  if (
-    ts.isPropertyAccessExpression(call.expression) &&
-    ts.isCallExpression(call.expression.expression)
-  ) {
-    const head = call.expression.expression;
-    // Skip the `.not` modifier — `expect(A).not.toBe(A)` is still
-    // tautological (always false but exercises nothing about the SUT).
-    let matcher = call;
-    let matcherName = call.expression.name.text;
-    if (
-      matcherName === 'not' &&
-      ts.isPropertyAccessExpression(matcher.expression)
-    ) {
-      // No call here yet; the `.not` itself isn't called. Skip.
-      return false;
-    }
-    if (head.expression.kind === ts.SyntaxKind.Identifier && (head.expression as ts.Identifier).text === 'expect') {
-      const lhs = head.arguments[0];
-      const rhs = call.arguments[0];
-      if (lhs && rhs && areStructurallyIdenticalLiterals(lhs, rhs)) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-function areStructurallyIdenticalLiterals(a: ts.Node, b: ts.Node): boolean {
-  if (a.kind !== b.kind) return false;
-  if (ts.isNumericLiteral(a) && ts.isNumericLiteral(b)) {
-    return Number(a.text) === Number(b.text);
-  }
-  if (ts.isStringLiteral(a) && ts.isStringLiteral(b)) {
-    return a.text === b.text;
-  }
-  if (ts.isNoSubstitutionTemplateLiteral(a) && ts.isNoSubstitutionTemplateLiteral(b)) {
-    return a.text === b.text;
-  }
-  if (
-    (a.kind === ts.SyntaxKind.TrueKeyword && b.kind === ts.SyntaxKind.TrueKeyword) ||
-    (a.kind === ts.SyntaxKind.FalseKeyword && b.kind === ts.SyntaxKind.FalseKeyword) ||
-    (a.kind === ts.SyntaxKind.NullKeyword && b.kind === ts.SyntaxKind.NullKeyword)
-  ) {
-    return true;
-  }
-  return false;
 }
 
 /**
