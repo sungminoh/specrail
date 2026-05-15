@@ -17,7 +17,7 @@ afterEach(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
-describe('change skill (T2.4, F4.3, AC-R4-1, TC-7)', () => {
+describe('change skill (T2.4, F4.3, AC-R4-1, TC-7, INV-6, TC-35, TC-56, EDGE-17)', () => {
   it('drafts proposal.md in changes/{date}-{slug}/', async () => {
     await writeFile(
       join(dir, 'docs/spec/03-features.md'),

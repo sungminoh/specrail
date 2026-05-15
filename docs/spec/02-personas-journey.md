@@ -85,7 +85,7 @@ status: Approved
 
 ### Emotion Curve
 
-```
+```text
    high │                                     ●satisfied─●trust─●satisfied
         │                          ●relieved─●satisfied─●confident
         │                       ●impressed

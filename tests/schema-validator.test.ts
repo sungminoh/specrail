@@ -5,7 +5,7 @@ import { validateFrontmatter, getSchemaPath, _resetValidatorCache } from '../src
 
 const commonSchema = getSchemaPath('common-frontmatter.json');
 
-describe('schema validator (ADR-2, F1.1, F2.4)', () => {
+describe('schema validator (ADR-2, F1.1, F2.4, TC-34, NFR-SEC-4)', () => {
   it('passes valid frontmatter', async () => {
     const result = await validateFrontmatter(
       { phase: 1, status: 'Draft' },

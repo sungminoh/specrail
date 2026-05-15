@@ -21,7 +21,7 @@ afterEach(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
-describe('verify() skeleton (US-V01)', () => {
+describe('verify() skeleton (US-V01, EDGE-14 TC-53 empty docs/spec)', () => {
   it('returns initialized=false for projects without docs/spec/', async () => {
     const r = await verify(dir, { skipTests: true });
     expect(r.initialized).toBe(false);

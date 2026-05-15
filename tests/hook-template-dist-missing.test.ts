@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 const HOOK_INSTALL_PATH = join(process.cwd(), 'src/cli/hook-install.ts');
 
-describe('HOOK_TEMPLATE dist resolution (US-T6.1, M6, D11 regression)', () => {
+describe('HOOK_TEMPLATE dist resolution (US-T6.1, M6, D11 regression, NFR-AVAIL-6)', () => {
   let templateSource: string;
 
   beforeAll(async () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { detectSecrets, type SecretMatch } from '../src/lint/secret-detect.js';
 
-describe('T3.10 Secret detection (RISK-5, OQ-9-1)', () => {
+describe('T3.10 Secret detection (RISK-5, OQ-9-1, NFR-SEC-7)', () => {
   // TC-1: OpenAI API key pattern
   it('detects OpenAI API key (sk- + 48 chars)', () => {
     const m = detectSecrets('OPENAI_KEY=sk-1234567890abcdef1234567890abcdef1234567890abcd');

@@ -13,7 +13,7 @@ beforeEach(async () => {
   dir = await mkdtemp(join(tmpdir(), 'idc-'));
 });
 
-describe('IdCounter (F1.3, AC-R1-3, ADR-5, INV-1, TC-3, TC-30)', () => {
+describe('IdCounter (F1.3, AC-R1-3, ADR-5, INV-1, TC-3, TC-30, EDGE-4, TC-43, NFR-SCAL-5)', () => {
   it('issues sequential R IDs', async () => {
     const c = await IdCounter.load(dir);
     expect(await c.next(SpecTier.Requirement, 1)).toBe('R1');

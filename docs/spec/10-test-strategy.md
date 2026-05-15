@@ -13,7 +13,7 @@ status: Approved
 
 ## 1. Test Pyramid
 
-```
+```text
         ┌──────────┐
         │   E2E    │  10%
         ├──────────┤

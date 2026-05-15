@@ -43,7 +43,7 @@ afterEach(async () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // EDGE-1: approve() emits approvedAt in ISO 8601 UTC (Z suffix)
 // ─────────────────────────────────────────────────────────────────────────────
-describe('EDGE-1: UTC normalization', () => {
+describe('EDGE-1 TC-40 NFR-I18N-4 NFR-I18N-5: UTC normalization', () => {
   it('approve() writes approvedAt ending in Z (UTC ISO 8601)', async () => {
     await writeFile(
       join(dir, 'docs/spec/01-prd.md'),
@@ -70,7 +70,7 @@ describe('EDGE-1: UTC normalization', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // EDGE-2: lexicographic sort === chronological order for ISO 8601 UTC strings
 // ─────────────────────────────────────────────────────────────────────────────
-describe('EDGE-2: lexicographic = chronological', () => {
+describe('EDGE-2 TC-41: lexicographic = chronological', () => {
   it('three timestamps 1 sec apart sort correctly as strings', () => {
     const base = new Date('2026-05-13T12:00:00.000Z');
     const t1 = base.toISOString();
@@ -103,7 +103,7 @@ describe('EDGE-2: lexicographic = chronological', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // EDGE-3: date roll-over — crossing midnight sorts correctly
 // ─────────────────────────────────────────────────────────────────────────────
-describe('EDGE-3: date roll-over', () => {
+describe('EDGE-3 TC-42: date roll-over', () => {
   it('2026-05-13T23:59:00Z < 2026-05-14T00:01:00Z (lexicographic)', () => {
     const before = '2026-05-13T23:59:00.000Z';
     const after = '2026-05-14T00:01:00.000Z';

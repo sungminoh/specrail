@@ -90,7 +90,7 @@ describe('EDGE-4: multi-project independence — concurrent issueId across two r
 // EDGE-5: same-project burst — 100 concurrent issueId calls
 // ---------------------------------------------------------------------------
 
-describe('EDGE-5: same-project burst — 100 concurrent issueId calls must all be unique', () => {
+describe('EDGE-5 TC-44: same-project burst — 100 concurrent issueId calls must all be unique', () => {
   it('Promise.all of 100 issueId(root, R, 1) produces 100 unique IDs (mutex serializes)', async () => {
     const root = await makeTmpDir();
     const COUNT = 100;
@@ -122,7 +122,7 @@ describe('EDGE-5: same-project burst — 100 concurrent issueId calls must all b
 // EDGE-6: telemetry concurrent emit
 // ---------------------------------------------------------------------------
 
-describe('EDGE-6: telemetry — concurrent emit() calls', () => {
+describe('EDGE-6 TC-45: telemetry — concurrent emit() calls', () => {
   it(
     'adapter is synchronous per-call (fire-and-forget fetch) — ' +
       'no observable in-memory queue field; 10 concurrent emits call send 10 times',

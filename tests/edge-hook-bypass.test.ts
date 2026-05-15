@@ -31,7 +31,7 @@ afterEach(async () => {
   vi.restoreAllMocks();
 });
 
-describe('EDGE-11: hook missing recovery (US-10.4)', () => {
+describe('EDGE-11 TC-50 NFR-SEC-2: hook missing recovery (US-10.4)', () => {
   it('restores HOOK_MARKER after pre-commit deleted and re-installed', async () => {
     // First install
     const r1 = await installHook(dir);
@@ -120,7 +120,7 @@ describe('EDGE-12: telemetry bad/empty config → silent no-op (US-10.4)', () =>
   });
 });
 
-describe('EDGE-13: graph cache corruption N/A — ADR-9 option D (US-10.4)', () => {
+describe('EDGE-13 TC-52 NFR-SEC-5: graph cache corruption N/A — ADR-9 option D (US-10.4)', () => {
   /**
    * ADR-9 option D (adopted at M0 spike T0.4): full rebuild every commit,
    * no on-disk cache. buildGraph() reads docs/spec/ directly on every call.
@@ -163,7 +163,7 @@ describe('EDGE-13: graph cache corruption N/A — ADR-9 option D (US-10.4)', () 
   });
 });
 
-describe('EDGE: hook template + dist missing (extends hook-template-dist-missing pattern)', () => {
+describe('EDGE-24 EDGE-25 TC-63 TC-64 NFR-SEC-11 hook template + dist missing / hook tampering / infinite loop guard', () => {
   it('HOOK_TEMPLATE contains exit(1) when dist not found (no silent pass)', async () => {
     const { readFile: fsReadFile } = await import('node:fs/promises');
     const src = await fsReadFile(join(process.cwd(), 'src/cli/hook-install.ts'), 'utf8');

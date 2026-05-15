@@ -26,7 +26,7 @@ status: Approved
 
 ## Layout
 
-```
+```text
 ┌────────────────────────────────────────────────────────┐
 │ [Z1: Phase Header]                                      │
 │ ## Phase {N}: {Phase name}                              │

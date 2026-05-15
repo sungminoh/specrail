@@ -29,7 +29,7 @@ describe('EDGE-19: Plausible timeout / network error — no-throw (US-10.5)', ()
   });
 });
 
-describe('EDGE-20: Plausible 5xx response — graceful, no-throw (US-10.5)', () => {
+describe('EDGE-20 TC-59: Plausible 5xx response — graceful, no-throw (US-10.5)', () => {
   it('fetch returns 500 → emit resolves { ok: false }, never throws', async () => {
     vi.stubGlobal(
       'fetch',

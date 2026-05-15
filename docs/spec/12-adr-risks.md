@@ -633,7 +633,7 @@ ARCH-4 (Dependency Graph Builder)가 markdown parse → ID 정의·인용 그래
 
 **Single file default + 디렉토리 (phase 7, 12, 13).** 초기 README §174-196 패턴 그대로:
 
-```
+```text
 docs/spec/
 ├── 01-prd.md ~ 06-information-architecture.md  (single file)
 ├── 07-wireframe/
@@ -776,7 +776,7 @@ Phase 8 §8 S1 sequence diagram이 'Phase N+1 자동 invoke' 명시. 그러나 4
 
 ### Risk Matrix
 
-```
+```text
             Impact: Low      Medium     High      Critical
 Likely      ┌──────────┬──────────┬──────────┬──────────┐
 High        │          │ RISK-3   │ RISK-1·2 │          │

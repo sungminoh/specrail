@@ -6,7 +6,7 @@ import { dirname, resolve } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-describe('Phase 8 ARCH coverage (US-11.1, M11)', () => {
+describe('Phase 8 ARCH coverage (US-11.1, M11, TC-14, TC-33)', () => {
   it('graph builder recognizes ARCH-8 through ARCH-12', async () => {
     const root = resolve(__dirname, '..');
     const graph = await buildGraph(root);

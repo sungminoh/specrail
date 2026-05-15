@@ -20,7 +20,7 @@ afterEach(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
-describe('EDGE-7·8·9·10 i18n + scale boundary (US-10.3, M10)', () => {
+describe('EDGE-7·8·9·10 TC-46·47·48·49 i18n + scale boundary (US-10.3, M10)', () => {
   // EDGE-7: 한자 (CJK) mixed heading and body
   it('EDGE-7: extracts R1 from 한자·中文 mixed heading and body (NFR-I18N-1)', async () => {
     await writeFile(

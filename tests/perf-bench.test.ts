@@ -38,7 +38,7 @@ async function generateSpec(dir: string, totalIds: number, phases = 13): Promise
 // Tests
 // ---------------------------------------------------------------------------
 
-describe('T4.4 Performance benchmarks (NFR-PERF, TC-70~77)', { timeout: 120_000 }, () => {
+describe('T4.4 Performance benchmarks (NFR-PERF, TC-70~77, TC-48, TC-55, EDGE-9, EDGE-16, NFR-SEC-10)', { timeout: 120_000 }, () => {
   // -------------------------------------------------------------------------
   // NFR-PERF-4: graph cold build <2s → threshold 20s (10x)
   // TC-70

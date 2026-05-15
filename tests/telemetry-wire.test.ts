@@ -13,7 +13,7 @@ afterEach(() => {
   vi.resetModules();
 });
 
-describe('createSenderFromEnv — env-based sender boot (US-11.7)', () => {
+describe('createSenderFromEnv — env-based sender boot (US-11.7, NFR-SEC-9, NFR-PRIV-3)', () => {
   it('all 3 env vars set → returns non-null PlausibleSender with emit + flush', async () => {
     vi.stubGlobal('process', {
       ...process,

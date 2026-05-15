@@ -5,7 +5,7 @@ import { invokeSubagent, type AgentTool, type SubagentTask } from '../src/subage
 type AgentInput = { prompt: string };
 type AgentOutput = { status: string; output: string };
 
-describe('T3.4 Subagent wrapper (F8.1·8.2, AC-R8-1, TC-18, ADR-6)', () => {
+describe('T3.4 Subagent wrapper (F8.1·8.2, AC-R8-1, TC-18, ADR-6, TC-62, EDGE-23)', () => {
   it('invokes Agent tool with task spec and returns Passed', async () => {
     const mock = vi.fn<[AgentInput], Promise<AgentOutput>>().mockResolvedValue({ status: 'Passed', output: 'done' });
     const task: SubagentTask = {

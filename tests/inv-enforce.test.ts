@@ -33,7 +33,7 @@ describe('INV-5: AC R-tier GIVEN/WHEN/THEN format (3차 verifier 보강)', () =>
   });
 });
 
-describe('INV-7: ADR alternatives ≥ 2 + rejection reasons (3차 verifier 보강)', () => {
+describe('INV-7 TC-36: ADR alternatives ≥ 2 + rejection reasons', () => {
   it('passes ADR with 2 alternatives + rejection', () => {
     const text = `## ADR-1: Choose X
 

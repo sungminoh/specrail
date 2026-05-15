@@ -120,7 +120,7 @@ P0 Spec 모음 = MVP. PRD §3.3 시나리오 cover:
 
 ## 7. Critical Path
 
-```
+```text
 M0 spike 9개 (A1+H1 frontmatter inject + ADR-8 + ADR-9 + NFR-PERF-3 + Windows hook + 한국어 mixed-lang)
   → T1.1·1.2 (SpecId + counter)
   → T1.4 (frontmatter parser)
@@ -167,7 +167,7 @@ File `tests/smoke.test.ts` — imports version from `package.json`, expects semv
 
 - [ ] **Step 2: Verify fails**
 
-```
+```bash
 npx vitest run tests/smoke.test.ts
 # Expected: FAIL with "Cannot find module"
 ```
@@ -184,7 +184,7 @@ npx vitest run tests/smoke.test.ts
 
 - [ ] **Step 4: Verify passes**
 
-```
+```bash
 npm install
 npx vitest run tests/smoke.test.ts
 # Expected: PASS (1 test)
@@ -194,7 +194,7 @@ npm run typecheck
 
 - [ ] **Step 5: Commit**
 
-```
+```bash
 git add package.json tsconfig.json .gitignore .nvmrc tests/smoke.test.ts
 git commit -m "chore: init Node.js + Vitest + TypeScript project (ADR-3)"
 ```
@@ -223,7 +223,7 @@ Status: BLOCKED.
 
 - [ ] **Step 2: Verify fails**
 
-```
+```md
 grep "Status: BLOCKED" spikes/a1-cc-subagent/spike.md
 # Expected: 매치 1건 (spike 시작 전)
 ```
@@ -234,7 +234,7 @@ Main session에서 Agent tool로 test-task.md prompt invoke. Subagent가 `expect
 
 - [ ] **Step 4: Verify passes**
 
-```
+```md
 grep -E "^- \[x\]" spikes/a1-cc-subagent/spike.md | wc -l
 # Expected: 4 (acceptance 4개 모두 통과)
 grep -E "^## Status" spikes/a1-cc-subagent/spike.md
@@ -243,7 +243,7 @@ grep -E "^## Status" spikes/a1-cc-subagent/spike.md
 
 - [ ] **Step 5: Commit**
 
-```
+```bash
 git add spikes/a1-cc-subagent/
 git commit -m "spike(a1): verify CC subagent fresh ctx + BLOCKED escalation (RISK-1·2)"
 ```
@@ -260,7 +260,7 @@ git commit -m "spike(a1): verify CC subagent fresh ctx + BLOCKED escalation (RIS
 
 - [ ] **Step 2: Verify fails**
 
-```
+```bash
 npx vitest run tests/state-machine.test.ts
 # Expected: FAIL with "Cannot find module"
 ```
@@ -271,7 +271,7 @@ npx vitest run tests/state-machine.test.ts
 
 - [ ] **Step 4: Verify passes**
 
-```
+```bash
 npx vitest run tests/state-machine.test.ts
 # Expected: PASS (4 tests)
 npm run typecheck
@@ -280,7 +280,7 @@ npm run typecheck
 
 - [ ] **Step 5: Commit**
 
-```
+```bash
 git add src/state/machine.ts tests/state-machine.test.ts spikes/adr-8/
 git commit -m "feat(state): explicit phase state machine (ADR-8, INV-3, SM-Phase-Lifecycle)"
 ```
@@ -336,7 +336,7 @@ Commit: `spike(h1): unified/remark 한국어+영어 mixed parse 검증 (NFR-I18N
 
 - [ ] **Step 2: Verify fails**
 
-```
+```bash
 npx vitest run tests/spec-id.test.ts
 # Expected: FAIL with "Cannot find module"
 ```
@@ -351,7 +351,7 @@ npx vitest run tests/spec-id.test.ts
 
 - [ ] **Step 4: Verify passes**
 
-```
+```bash
 npx vitest run tests/spec-id.test.ts
 # Expected: PASS (5 tests)
 npm run typecheck
@@ -360,7 +360,7 @@ npm run typecheck
 
 - [ ] **Step 5: Commit**
 
-```
+```bash
 git add src/spec/id.ts tests/spec-id.test.ts
 git commit -m "feat(spec): SpecId parser + formatter (Phase 4 type, INV-1)"
 ```
@@ -380,7 +380,7 @@ git commit -m "feat(spec): SpecId parser + formatter (Phase 4 type, INV-1)"
 
 - [ ] **Step 2: Verify fails**
 
-```
+```bash
 npx vitest run tests/id-counter.test.ts
 # Expected: FAIL with "Cannot find module"
 ```
@@ -396,7 +396,7 @@ npx vitest run tests/id-counter.test.ts
 
 - [ ] **Step 4: Verify passes**
 
-```
+```bash
 npx vitest run tests/id-counter.test.ts
 # Expected: PASS (3 tests)
 npm run typecheck
@@ -405,7 +405,7 @@ npm run typecheck
 
 - [ ] **Step 5: Commit**
 
-```
+```bash
 git add src/spec/counter.ts tests/id-counter.test.ts
 git commit -m "feat(spec): sequential ID counter w/ persistence (F1.3, ADR-5, INV-1, TC-3·30)"
 ```
@@ -442,7 +442,7 @@ Files: `schemas/phase-01.json` 외 12개 (phase-02 ~ phase-13) + `schemas/common
 
 - [ ] **Step 2: Verify fails**
 
-```
+```bash
 npx vitest run tests/transition-gate.test.ts
 # Expected: FAIL with "Cannot find module"
 ```
@@ -460,7 +460,7 @@ npx vitest run tests/transition-gate.test.ts
 
 - [ ] **Step 4: Verify passes**
 
-```
+```bash
 npx vitest run tests/transition-gate.test.ts
 # Expected: PASS (3 tests)
 npm run typecheck
@@ -469,7 +469,7 @@ npm run typecheck
 
 - [ ] **Step 5: Commit**
 
-```
+```bash
 git add src/skill/gate.ts tests/transition-gate.test.ts
 git commit -m "feat(skill): phase transition gate (F2.2, AC-R2-2, INV-3, TC-5·32)"
 ```
@@ -523,7 +523,7 @@ Files: `tests/edge-15-first-spec.test.ts`. RED: 빈 docs/spec에서 R1 부여 �
 
 - [ ] **Step 2: Verify fails**
 
-```
+```bash
 npx vitest run tests/graph-builder.test.ts
 # Expected: FAIL with "Cannot find module"
 ```
@@ -542,7 +542,7 @@ npx vitest run tests/graph-builder.test.ts
 
 - [ ] **Step 4: Verify passes**
 
-```
+```bash
 npx vitest run tests/graph-builder.test.ts
 # Expected: PASS (2 tests)
 npm run typecheck
@@ -553,7 +553,7 @@ npx tsx spikes/adr-9/bench.ts
 
 - [ ] **Step 5: Commit**
 
-```
+```bash
 git add src/graph/builder.ts tests/graph-builder.test.ts
 git commit -m "feat(graph): dependency graph builder (F4.1, INV-1·2, ADR-4·9, TC-7·8·31)"
 ```
@@ -687,7 +687,7 @@ Files: `src/lint/r7-history.ts`. RED: git log에 "legacy example 참조" 흔적 
 
 - [ ] **Step 2: Verify fails**
 
-```
+```bash
 npx vitest run tests/subagent-wrapper.test.ts
 # Expected: FAIL with "Cannot find module"
 ```
@@ -702,7 +702,7 @@ npx vitest run tests/subagent-wrapper.test.ts
 
 - [ ] **Step 4: Verify passes**
 
-```
+```bash
 npx vitest run tests/subagent-wrapper.test.ts
 # Expected: PASS (2 tests)
 npm run typecheck
@@ -711,7 +711,7 @@ npm run typecheck
 
 - [ ] **Step 5: Commit**
 
-```
+```bash
 git add src/subagent/invoke.ts tests/subagent-wrapper.test.ts
 git commit -m "feat(subagent): CC Agent wrapper (F8.1·8.2, AC-R8-1, TC-18, ADR-6)"
 ```
@@ -743,7 +743,7 @@ Files: `src/telemetry/consent.ts`. RED: install 시 default opt-in (privacy 위�
 
 - [ ] **Step 2: Verify fails**
 
-```
+```bash
 npx vitest run tests/telemetry-client.test.ts
 # Expected: FAIL with "Cannot find module"
 ```
@@ -760,7 +760,7 @@ npx vitest run tests/telemetry-client.test.ts
 
 - [ ] **Step 4: Verify passes**
 
-```
+```bash
 npx vitest run tests/telemetry-client.test.ts
 # Expected: PASS (3 tests)
 npm run typecheck
@@ -769,7 +769,7 @@ npm run typecheck
 
 - [ ] **Step 5: Commit**
 
-```
+```bash
 git add src/telemetry/client.ts tests/telemetry-client.test.ts
 git commit -m "feat(telemetry): Plausible client + INV-8·9 enforce (F13.2, ADR-7, AC-R13-2, TC-22·37)"
 ```
@@ -924,7 +924,7 @@ Commit: `e2e(s1+s2): Greenfield 13-phase + DELTA + INV-4 (TC-12·13·33, S2 revi
 
 이 plan을 Claude Code에 던질 때:
 
-```
+```text
 @.claude/skills/superpowers/skills/subagent-driven-development/SKILL.md 참조.
 fresh subagent per task + 2-stage review (spec compliance → code quality).
 docs/spec/examples/13-implementation-plan.md §9 모든 task 순서대로 실행.
@@ -963,7 +963,7 @@ Constraint:
 
 ## Self-Check
 
-```
+```md
 # Placeholder 검출
 grep -iE "TBD|TODO|implement later|fill in details|handle edge cases|add validation|Add appropriate error" docs/spec/examples/13-implementation-plan.md
 
@@ -1013,7 +1013,7 @@ Self-check 통과 + 사용자 승인. 그 후 Claude Code에 던짐.
 
 ## Implementation 시작 전 마지막 검증 (2026-05-13 reviewer 반영)
 
-```
+```text
 모든 ADR-CAND가 ADR로 결정됨? ✅ (Phase 12 self-check — 10/10 ADR Accepted, ADR-9 conditional)
 모든 Blocking Open Question 답변됨? 🟡 4개 OPEN (OQ-9-1·9-2·10-1·10-2)
   → OQ-9-1 resolved by T3.10 (opt-in F)

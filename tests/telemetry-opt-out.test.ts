@@ -17,7 +17,7 @@ afterEach(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
-describe('T3.9 opt-out (F13.3, AC-R13-3, TC-23)', () => {
+describe('T3.9 opt-out (F13.3, AC-R13-3, TC-23, NFR-PRIV-4)', () => {
   it('revokes from OptedIn — status becomes OptedOut with revokedAt', async () => {
     await recordConsent(dir, 'yes');
     const before = new Date();
