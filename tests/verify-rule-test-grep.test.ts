@@ -78,8 +78,8 @@ describe('test-grep rule (US-V04)', () => {
     );
     await writeTest(
       'a.test.ts',
-      "import { describe, it } from 'vitest';\n" +
-        "describe('AC-R1-2: given x when y then z', () => { it('runs', () => {}); });\n",
+      "import { describe, it, expect } from 'vitest';\n" +
+        "describe('AC-R1-2: given x when y then z', () => { it('runs', () => { expect(1).toBe(1); }); });\n",
     );
 
     const r = await verify(dir, { skipTests: true });

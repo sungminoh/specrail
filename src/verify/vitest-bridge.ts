@@ -210,11 +210,36 @@ export async function scanTestFilesForIds(
       ts.ScriptKind.TSX,
     );
 
+    // Architect round-N+1 attack vector: locally-defined
+    // `function test()` or `import { test } from 'node:test'` could
+    // credit IDs even though vitest never runs those tests.
+    //
+    // Pre-pass: build the set of identifier names that come from
+    // `vitest` imports. If the file has NO vitest import, it isn't a
+    // vitest test file — skip it. If the file ALSO declares a local
+    // function with one of the framework names (shadowing), treat the
+    // file as poisoned and skip — we cannot tell at AST scope whether
+    // a given call resolves to vitest or the shadow.
+    const frameworkNames = collectVitestImportedNames(sf);
+    if (frameworkNames.size === 0) continue;
+    if (hasLocalFrameworkShadow(sf)) continue;
+
     const visit = (node: ts.Node): void => {
-      if (ts.isCallExpression(node) && isFrameworkTestCall(node) && !isSkippedCall(node)) {
+      if (
+        ts.isCallExpression(node) &&
+        isFrameworkTestCall(node, frameworkNames) &&
+        !isSkippedCall(node)
+      ) {
         const firstArg = node.arguments[0];
         const name = stringLiteralValue(firstArg);
-        if (name) extractIdsFromString(name, rel, out);
+        // Architect round-N+1 attack vector AV2: a test named after
+        // an AC with no body assertion still credited Built. Require
+        // at least one descendant `expect(...)` call before granting
+        // coverage. `describe` blocks satisfy this via any nested
+        // it/test body; bare `it` blocks must assert themselves.
+        if (name && callHasAssertion(node)) {
+          extractIdsFromString(name, rel, out);
+        }
       }
       ts.forEachChild(node, visit);
     };
@@ -225,19 +250,109 @@ export async function scanTestFilesForIds(
 }
 
 /**
- * Recognise the names the test framework uses to register a test or
- * suite. Direct identifier (`it`, `test`, `describe`) AND any property
- * access chain ending in those names (`it.each`, `describe.skip`,
- * `it.concurrent.each(...)`, ...). Skip/only/todo are handled by
- * `isSkippedCall` so they don't reach this allow-list as false negatives.
+ * True when the call expression's tree contains at least one
+ * `expect(...)` invocation. Walks the second argument (test body or
+ * suite body) and any nested calls. This is intentionally conservative
+ * — `assert`, `chai.expect`, `should.*` style helpers are NOT counted.
+ * Spec convention pins specrail to vitest's `expect`; loosening to other
+ * assertion DSLs is a deliberate future extension.
  */
-function isFrameworkTestCall(node: ts.CallExpression): boolean {
-  return getCallRootName(node.expression) !== null;
+function callHasAssertion(call: ts.CallExpression): boolean {
+  let found = false;
+  const visit = (n: ts.Node): void => {
+    if (found) return;
+    if (ts.isCallExpression(n)) {
+      const root = getCallRootName(n.expression);
+      if (root === 'expect') {
+        found = true;
+        return;
+      }
+    }
+    ts.forEachChild(n, visit);
+  };
+  for (const arg of call.arguments) ts.forEachChild(arg, visit);
+  return found;
+}
+
+/**
+ * Walk top-level import declarations and return the set of LOCAL names
+ * bound by `import {...} from 'vitest'`. Aliasing is honoured:
+ *   `import { describe as desc } from 'vitest'` → set contains `desc`.
+ */
+function collectVitestImportedNames(sf: ts.SourceFile): Set<string> {
+  const names = new Set<string>();
+  for (const stmt of sf.statements) {
+    if (!ts.isImportDeclaration(stmt)) continue;
+    if (!ts.isStringLiteral(stmt.moduleSpecifier)) continue;
+    if (stmt.moduleSpecifier.text !== 'vitest') continue;
+    const clause = stmt.importClause;
+    if (!clause) continue;
+    if (clause.namedBindings && ts.isNamedImports(clause.namedBindings)) {
+      for (const el of clause.namedBindings.elements) {
+        // `import { it as foo }`: el.propertyName === 'it', el.name === 'foo'
+        // `import { it }`:        el.propertyName undefined, el.name === 'it'
+        const importedName = (el.propertyName ?? el.name).text;
+        if (importedName === 'it' || importedName === 'test' || importedName === 'describe') {
+          names.add(el.name.text);
+        }
+      }
+    }
+    if (clause.namedBindings && ts.isNamespaceImport(clause.namedBindings)) {
+      // `import * as v from 'vitest'` — calls reach via property access
+      // `v.it(...)` / `v.test(...)`. Treat the namespace local name as
+      // a root the call-walker accepts; getCallRootName already chases
+      // PropertyAccess so `v.it.skip(...)` resolves to `v`.
+      names.add(clause.namedBindings.name.text);
+    }
+  }
+  return names;
+}
+
+/**
+ * True when the file declares a top-level function named `it`, `test`,
+ * or `describe`. Such shadowing is rare in real test files but is an
+ * obvious lie-vector (drop in `function test(){...}` and the AST scan
+ * cannot tell which `test(...)` call resolves to vitest). Treat the
+ * whole file as untrusted in that case.
+ */
+function hasLocalFrameworkShadow(sf: ts.SourceFile): boolean {
+  const shadowed = new Set(['it', 'test', 'describe']);
+  for (const stmt of sf.statements) {
+    if (ts.isFunctionDeclaration(stmt) && stmt.name && shadowed.has(stmt.name.text)) {
+      return true;
+    }
+    if (ts.isVariableStatement(stmt)) {
+      for (const decl of stmt.declarationList.declarations) {
+        if (ts.isIdentifier(decl.name) && shadowed.has(decl.name.text)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Recognise the names the test framework uses to register a test or
+ * suite. Direct identifier (`it`, `test`, `describe`, or whatever local
+ * alias they're imported under) AND any property access chain ending
+ * in those names (`it.each`, `describe.skip`, ...). The allowed root
+ * names come from the file's own `import {...} from 'vitest'` clause,
+ * not a hardcoded list — aliasing is honoured. Skip/only/todo are
+ * handled by `isSkippedCall` so they don't reach this allow-list as
+ * false negatives.
+ */
+function isFrameworkTestCall(
+  node: ts.CallExpression,
+  allowedRootNames: ReadonlySet<string>,
+): boolean {
+  const root = getCallRootName(node.expression);
+  return root !== null && allowedRootNames.has(root);
 }
 
 function getCallRootName(expr: ts.Expression): string | null {
   if (ts.isIdentifier(expr)) {
-    return ['it', 'test', 'describe'].includes(expr.text) ? expr.text : null;
+    return expr.text;
   }
   if (ts.isPropertyAccessExpression(expr)) {
     return getCallRootName(expr.expression);
