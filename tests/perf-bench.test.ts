@@ -1,3 +1,4 @@
+// TC-55: EDGE-16 5000-ID graph timeout
 // T4.4 Performance benchmarks — NFR-PERF-1~7, TC-70~77
 // Thresholds are 10x the NFR target to tolerate CI environment variance.
 // console.log prints actual measurements for user visibility.

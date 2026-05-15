@@ -1,3 +1,4 @@
+// TC-38: INV-9 default consent = OptedOut
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';

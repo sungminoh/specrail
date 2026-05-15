@@ -1,3 +1,4 @@
+// TC-43: EDGE-4 multi-project ID counter
 import { describe, it, expect, beforeEach } from 'vitest';
 import { mkdtemp, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';

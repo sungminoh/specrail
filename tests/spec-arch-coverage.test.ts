@@ -1,3 +1,4 @@
+// TC-33: INV-4 P0 spec coverage
 import { describe, it, expect } from 'vitest';
 import { buildGraph } from '../src/graph/builder.js';
 import { fileURLToPath } from 'node:url';

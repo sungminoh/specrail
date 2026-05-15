@@ -1,3 +1,4 @@
+// TC-37: INV-8 TelemetryEvent payload privacy
 // telemetry-wire: createSenderFromEnv production boot helper (US-11.7, M11)
 //
 // M8 architect C3: loadConfigFromEnv exists but was never invoked from the

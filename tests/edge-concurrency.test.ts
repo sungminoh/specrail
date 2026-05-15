@@ -1,3 +1,4 @@
+// TC-44 EDGE-5 concurrent commit; TC-45 EDGE-6 telemetry queue
 // US-10.2 — EDGE-4·5·6 concurrency surface tests (M10)
 //
 // Purpose: verify that ID counter + telemetry behave correctly (or document known

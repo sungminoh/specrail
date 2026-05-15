@@ -1,3 +1,4 @@
+// TC-35: INV-6 Change.affectedPhases
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtemp, writeFile, mkdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';

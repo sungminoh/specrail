@@ -1,3 +1,4 @@
+// TC-53: EDGE-14 empty docs/spec directory
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtemp, writeFile, mkdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';

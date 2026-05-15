@@ -1,3 +1,4 @@
+// TC-40 EDGE-1 TZ; TC-42 EDGE-3 midnight rollover
 // US-10.1 — EDGE-1·2·3 timestamp/TZ boundary tests (M10)
 // Verifies frontmatter ISO 8601 UTC behavior: approve() writes Z-suffix,
 // lexicographic sort = chronological, date roll-over, midnight, same-second tiebreak.

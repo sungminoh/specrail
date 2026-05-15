@@ -1,3 +1,4 @@
+// TC-34 INV-5 AC schema; TC-37 INV-8 telemetry payload
 import { describe, it, expect, beforeEach } from 'vitest';
 import { validateFrontmatter, getSchemaPath, _resetValidatorCache } from '../src/schema/validator.js';
 

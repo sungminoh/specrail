@@ -1,3 +1,4 @@
+// TC-50: EDGE-11 --no-verify detection
 // EDGE-11·12·13 hook bypass + cache corruption (US-10.4, M10)
 //
 // EDGE-11: hook missing recovery — install, delete .git/hooks/pre-commit, reinstall

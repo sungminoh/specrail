@@ -1,3 +1,4 @@
+// TC-57: EDGE-18 empty frontmatter rejection
 import { describe, it, expect } from 'vitest';
 import { parseFrontmatter } from '../src/markdown/frontmatter.js';
 
