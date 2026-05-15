@@ -59,7 +59,26 @@ function buildAggregator(ruleId: string): IdRule {
 
       const allLines = raw.split('\n');
       const start = Math.max(0, loc.line - 1);
-      const end = Math.min(allLines.length, loc.line + WINDOW_LINES);
+      // Table-row defs: cited IDs are this row's cells only. Bound the
+      // window at the row terminator (blank line, next heading, or a
+      // line not starting with `|`). Round-N architect would call this
+      // out otherwise — without the bound, PAIN-1's window includes
+      // PAIN-2..5's rows and false-positively reports those as cited.
+      const firstLine = allLines[start] ?? '';
+      const isTableRow = firstLine.startsWith('|');
+      const hardEnd = Math.min(allLines.length, loc.line + WINDOW_LINES);
+      let end = hardEnd;
+      if (isTableRow) {
+        end = Math.min(end, start + 1); // single-row scope
+      } else {
+        for (let i = start + 1; i < hardEnd; i++) {
+          const l = allLines[i] ?? '';
+          if (l.trim() === '' || l.startsWith('#') || l.startsWith('|')) {
+            end = i;
+            break;
+          }
+        }
+      }
       const window = allLines.slice(start, end).join('\n');
 
       const refs = new Set<string>();
@@ -115,16 +134,23 @@ export function applyCrossRefAggregation(
     }
     if (refEvidence.length === 0) continue;
 
-    let reality: RealityState = 'NotBuilt';
+    // Honesty: if every cited child is itself ManualReview (no signal),
+    // the parent inherits ManualReview — claiming NotBuilt would lie.
+    // Only roll up to NotBuilt when at least one child is concretely
+    // NotBuilt with positive evidence-of-absence.
+    let reality: RealityState = 'ManualReview';
     let anyBuilt = false;
     let anyPartial = false;
+    let anyNotBuilt = false;
     for (const re of refEvidence) {
       if (re.reality === 'Built') anyBuilt = true;
       else if (re.reality === 'Partial') anyPartial = true;
+      else if (re.reality === 'NotBuilt') anyNotBuilt = true;
     }
     if (anyBuilt) reality = 'Built';
     else if (anyPartial) reality = 'Partial';
-    else reality = 'NotBuilt';
+    else if (anyNotBuilt) reality = 'NotBuilt';
+    else reality = 'ManualReview';
 
     out.set(id, {
       ...ev,
