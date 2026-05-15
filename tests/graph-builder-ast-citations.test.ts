@@ -137,12 +137,18 @@ describe('graph builder — ignore annotation state machine (US-005)', () => {
     expect(edges.length).toBe(1);
   });
 
-  it('def extractors run as separate AST passes — ignore state does NOT suppress definitions', async () => {
-    // Architect follow-up: the citation walker and the def visitors are
-    // separate visit() passes. Ignore-state is per-walker state, so a
-    // heading inside an ignore block IS still extracted as a definition
-    // (citation suppression and definition extraction are independent).
-    // This is the behaviour the Appendix stub strategy depends on.
+  it('ignore-start/end registers defs as illustrative (still in definedIds for INV-2, but excluded from verifier)', async () => {
+    // Real semantics used by the dogfood spec (12-adr-risks.md
+    // illustrative section): an ID declared inside an ignore block
+    //
+    //   - MUST still resolve INV-2 citations from elsewhere (otherwise
+    //     every external `R0` mention would dangle), so it lives in
+    //     `definedIds`.
+    //   - MUST be excluded from the verifier's intent-vs-reality
+    //     matrix (otherwise it's NotBuilt → false-positive lie), so
+    //     it also lives in `illustrativeIds` and the runner skips it.
+    //   - Citations INSIDE the block are themselves not citations
+    //     (they're examples).
     await write(
       '04-mixed.md',
       [
@@ -152,9 +158,9 @@ describe('graph builder — ignore annotation state machine (US-005)', () => {
         '',
         '<!-- specrail:ignore-start -->',
         '',
-        '### ENT-Stub: defined inside ignore — still extracted',
+        '### ENT-Stub: illustrative — referenced from elsewhere',
         '',
-        'ENT-Stub mention here is suppressed for citation purposes.',
+        'ENT-Stub mention here is suppressed (illustrative context).',
         '',
         '<!-- specrail:ignore-end -->',
         '',
@@ -163,10 +169,38 @@ describe('graph builder — ignore annotation state machine (US-005)', () => {
 
     const g = await buildGraph(dir);
 
-    // Definition extracted despite ignore block.
+    // Defined for INV-2 cross-file citation resolution.
     expect(g.definedIds.has('ENT-Stub')).toBe(true);
-    // Citation inside the ignore block is suppressed.
+    // Marked illustrative so the verifier excludes it.
+    expect(g.illustrativeIds.has('ENT-Stub')).toBe(true);
+    // Citation inside the ignore block is still suppressed.
     expect(g.edges.some((e) => e.from === '04' && e.to === 'ENT-Stub')).toBe(false);
+  });
+
+  it('definitions OUTSIDE an ignore block are still extracted normally', async () => {
+    // Regression guard: the ignore-range pre-pass must not affect
+    // content outside the matched start/end pair.
+    await write(
+      '04-mixed.md',
+      [
+        '---',
+        'phase: 4',
+        '---',
+        '',
+        '<!-- specrail:ignore-start -->',
+        '',
+        '### ENT-Stub: illustrative',
+        '',
+        '<!-- specrail:ignore-end -->',
+        '',
+        '### ENT-Real: this one IS a real definition',
+      ].join('\n'),
+    );
+
+    const g = await buildGraph(dir);
+    expect(g.illustrativeIds.has('ENT-Stub')).toBe(true);
+    expect(g.illustrativeIds.has('ENT-Real')).toBe(false);
+    expect(g.definedIds.has('ENT-Real')).toBe(true);
   });
 
   it('unclosed ignore-start warns to stderr and suppresses to EOF', async () => {

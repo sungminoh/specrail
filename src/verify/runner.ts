@@ -136,6 +136,10 @@ export async function verify(
 
   for (const id of graph.definedIds) {
     if (filter && !filter.test(id)) continue;
+    // Skip illustrative IDs (authored inside <!-- specrail:ignore-* -->).
+    // They live in definedIds so INV-2 citations resolve, but the
+    // verifier has nothing real to classify them against.
+    if (graph.illustrativeIds.has(id)) continue;
     const idType = classifyId(id);
     const rule = resolveRule(idType);
     const ev = await rule.apply({ id, idType, ctx });

@@ -83,6 +83,13 @@ export interface DependencyGraph {
   readonly danglingCitations: { from: string; to: string }[];
   readonly definedIds: Set<string>;
   /**
+   * IDs declared inside `<!-- specrail:ignore-start --> ... ignore-end -->`
+   * blocks. These are included in `definedIds` so INV-2 citation checks
+   * don't dangle, but the verifier skips them when classifying intent vs
+   * reality — they're authoring examples, not real spec definitions.
+   */
+  readonly illustrativeIds: ReadonlySet<string>;
+  /**
    * True when docs/spec/ exists and was successfully read (even if empty).
    * False when docs/spec/ is missing — distinguishes 'project not initialized'
    * from 'initialized but empty' (US-T6.3, M6 silent failure fix).
@@ -226,7 +233,14 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
   } catch {
     // docs/spec not initialized — return explicit signal so consumers can
     // distinguish 'not initialized' from 'initialized but empty' (vacuous truth)
-    return { nodes: [], edges: [], danglingCitations: [], definedIds: new Set(), initialized: false };
+    return {
+      nodes: [],
+      edges: [],
+      danglingCitations: [],
+      definedIds: new Set(),
+      illustrativeIds: new Set(),
+      initialized: false,
+    };
   }
 
   const processor = unified()
@@ -235,11 +249,45 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
     .use(remarkFrontmatter, ['yaml']);
   const nodes: GraphNode[] = [];
   const edgesAll: GraphEdge[] = [];
+  // IDs defined inside `<!-- specrail:ignore-start --> ... ignore-end -->`
+  // blocks. Kept registered so INV-2 (citation must resolve) passes when
+  // these IDs are referenced from other files, but excluded from the
+  // verifier's intent-vs-reality matrix — they're authoring examples,
+  // not real spec definitions.
+  const illustrativeIds = new Set<string>();
 
   for (const entry of files) {
     const { file, phaseId, absPath } = entry;
     const raw = await readFile(absPath, 'utf8');
     const tree = processor.parse(raw);
+
+    // Pre-pass: collect line ranges wrapped by `<!-- specrail:ignore-start -->`
+    // ... `<!-- specrail:ignore-end -->` so def extractors can skip
+    // illustrative entries (architecture-spec authors deliberately wrap
+    // example IDs like ENT-Foo / R0 / KPI-5 in these blocks to keep them
+    // out of the verifier's intent-vs-reality matrix). Previously only
+    // the citation walker honoured these annotations — def extractors
+    // captured them anyway, producing false-positive lies in the
+    // honesty check.
+    const ignoreRanges: Array<[number, number]> = [];
+    {
+      const stack: number[] = [];
+      visit(tree, 'html', (n) => {
+        const node = n as unknown as MdNode;
+        const val = node.value ?? '';
+        const line = node.position?.start.line ?? 0;
+        if (IGNORE_START_RE.test(val)) stack.push(line);
+        else if (IGNORE_END_RE.test(val) && stack.length > 0) {
+          ignoreRanges.push([stack.pop() as number, line]);
+        }
+      });
+    }
+    const isInIgnoreRange = (line: number): boolean => {
+      for (const [start, end] of ignoreRanges) {
+        if (line >= start && line <= end) return true;
+      }
+      return false;
+    };
 
     // 1a. Defined IDs (heading form): heading text starting with "ID:"
     visit(tree, 'heading', (n) => {
@@ -247,10 +295,15 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
       const m = getNodeText(node).match(HEADING_DEF);
       if (!m) return;
       if (!isValidSpecId(m[1])) return; // phantom-ID guard
+      const line = node.position?.start.line ?? 0;
+      if (isInIgnoreRange(line)) {
+        illustrativeIds.add(m[1]); // still registered so INV-2 doesn't dangle
+        return;
+      }
       nodes.push({
         specId: m[1],
         phaseId,
-        definedAt: { file, line: node.position?.start.line ?? 0 },
+        definedAt: { file, line },
       });
     });
 
@@ -268,6 +321,10 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
       const m = text.match(BOLD_PREFIX_DEF);
       if (!m) return;
       if (!isValidSpecId(m[1])) return; // phantom-ID guard (rejects bold prose like **Status:** Open)
+      if (isInIgnoreRange(line)) {
+        illustrativeIds.add(m[1]);
+        return;
+      }
       nodes.push({ specId: m[1], phaseId, definedAt: { file, line } });
     };
     visit(tree, 'listItem', (item) => {
@@ -304,11 +361,12 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
         const m = text.match(BULLET_LEADING_DEF_RE);
         if (!m) continue;
         if (isReservedId(m[1])) continue;
-        nodes.push({
-          specId: m[1],
-          phaseId,
-          definedAt: { file, line: item.position?.start.line ?? 0 },
-        });
+        const line = item.position?.start.line ?? 0;
+        if (isInIgnoreRange(line)) {
+          illustrativeIds.add(m[1]);
+          continue;
+        }
+        nodes.push({ specId: m[1], phaseId, definedAt: { file, line } });
       }
     });
 
@@ -334,11 +392,12 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
           const m = text.match(CELL_DEF_RE);
           if (!m) continue;
           if (isReservedId(m[1])) continue;
-          nodes.push({
-            specId: m[1],
-            phaseId,
-            definedAt: { file, line: row.position?.start.line ?? 0 },
-          });
+          const line = row.position?.start.line ?? 0;
+          if (isInIgnoreRange(line)) {
+            illustrativeIds.add(m[1]);
+            continue;
+          }
+          nodes.push({ specId: m[1], phaseId, definedAt: { file, line } });
         }
       }
     });
@@ -433,7 +492,13 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
     }
   }
 
-  const definedIds = new Set(nodes.map((n) => n.specId));
+  // Union of real defs and illustrative defs — INV-2 must see both
+  // (a citation `R0` in another file should resolve even though R0 lives
+  // inside an ignore-block and is excluded from the verifier).
+  const definedIds = new Set<string>([
+    ...nodes.map((n) => n.specId),
+    ...illustrativeIds,
+  ]);
 
   // Edges: 인용 중에서 같은 file에 정의 안 됨 + 정의된 ID 있음 — 즉 cross-phase refs
   // dangling: 어디에도 정의 안 됨 (INV-2 위반)
@@ -450,5 +515,5 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
     }
   }
 
-  return { nodes, edges, danglingCitations, definedIds, initialized: true };
+  return { nodes, edges, danglingCitations, definedIds, illustrativeIds, initialized: true };
 }
