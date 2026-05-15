@@ -1000,7 +1000,7 @@ Phase 13 Milestone hint:
 ### R0: illustrative — synthetic test fixture (graph builder fixture)
 ### R10: deferred — EXPANSION cherry-pick (timeline) not yet promoted to a real Requirement
 ### KPI-5: illustrative — deferred to next cycle (dashboard)
-### AC-R3-1: illustrative — archived R3 detail
+### AC-R3-1 (illustrative — archived R3 detail)
 ### ENT-Foo: illustrative — placeholder 명
 ### SEC-5: illustrative — NFR-SEC-N 단축 표기 단편
 ### T2.5: illustrative — earlier cycle task

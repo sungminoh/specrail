@@ -144,10 +144,10 @@ Users can install this plugin directly from GitHub without going through any mar
 
 ```bash
 # Add this repo as a marketplace source
-claude plugin marketplace add sungminoh/myharness
+claude plugin marketplace add sungminoh/specrail
 
 # Then install the plugin by name (once .claude-plugin/plugin.json exists)
-/plugin install <plugin-name>@myharness
+/plugin install specrail@specrail
 ```
 
 Or for one-session local testing during development:
@@ -185,7 +185,7 @@ Before any marketplace step, `.claude-plugin/plugin.json` must exist. Minimum vi
   "author": {
     "name": "specrail contributors"
   },
-  "repository": "https://github.com/<owner>/myharness"
+  "repository": "https://github.com/sungminoh/specrail"
 }
 ```
 
