@@ -415,7 +415,7 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
       // html nodes: adjust annotation state if applicable. CommonMark folds
       // trailing same-line prose INTO an html block, so non-annotated html
       // values may still contain real citation content (e.g.
-      // `<!-- TODO --> Cites R1.`). Scan the comment-stripped remainder.
+      // `<!-- note --> Cites R1.`). Scan the comment-stripped remainder.
       if (n.type === 'html') {
         const val = n.value ?? '';
         let isAnnotated = false;

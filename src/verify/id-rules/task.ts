@@ -26,8 +26,18 @@ import { pathExists } from '../evidence/fs.js';
 
 const PATH_TOKEN_RE =
   /(?<![A-Za-z0-9_-])((?:src|tests|docs|dist|schemas|\.github|skills)\/[\w./-]+)/g;
-const TASK_WINDOW_LINES = 6;
+// Hard upper bound on how many lines to scan past the definition. We
+// stop earlier when the next heading boundary is hit (see
+// `boundedWindow` below) — this constant is the safety net for tasks
+// with no following heading (last entry in a phase).
+const TASK_WINDOW_LINES = 12;
 const TODO_RE = /\b(TODO|TBD|FIXME)\b/;
+// Bound the task body window at the next sibling heading. Without this
+// the window would bleed into the next task's Files line and credit
+// (or blame) the wrong T-ID for those paths. The architect flagged
+// this when T1.4 reported missing `schemas/phase-` / `schemas/common.json`
+// that actually belonged to T1.5.
+const NEXT_HEADING_RE = /^#{3,4}\s+T\d/;
 
 async function scanForTodos(filePath: string): Promise<number> {
   const content = await readFile(filePath, 'utf8').catch(() => null);
@@ -72,7 +82,16 @@ export const taskRule: IdRule = {
     }
     const allLines = raw.split('\n');
     const start = Math.max(0, loc.line - 1);
-    const end = Math.min(allLines.length, loc.line + TASK_WINDOW_LINES);
+    const hardEnd = Math.min(allLines.length, loc.line + TASK_WINDOW_LINES);
+    let end = hardEnd;
+    // Bound the scan at the next `#### TX.Y` / `### TX.Y` heading so
+    // path tokens from the NEXT task aren't attributed here.
+    for (let i = start + 1; i < hardEnd; i++) {
+      if (NEXT_HEADING_RE.test(allLines[i] ?? '')) {
+        end = i;
+        break;
+      }
+    }
     const window = allLines.slice(start, end).join('\n');
 
     const paths = new Set<string>();
