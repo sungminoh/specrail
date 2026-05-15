@@ -485,9 +485,18 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
     });
 
     if (ignoreDepth > 0) {
-      process.stderr.write(
-        `[graph] warning: unclosed <!-- specrail:ignore-start --> in ${file} ` +
-          `— citations suppressed through end of file.\n`,
+      // Architect round-N P2: unclosed ignore-start was silently swallowing
+      // ALL evidence from the offending line onward and only writing a
+      // stderr warning the hook never read. A malicious author could
+      // wrap the top of a spec file in <!-- specrail:ignore-start -->
+      // and ship anything — the verifier saw no IDs, the hook saw no
+      // violations. Promote to hard error so the hook and CLI both
+      // fail loudly.
+      throw new Error(
+        `[graph] unclosed <!-- specrail:ignore-start --> in ${file}. ` +
+          `Add a matching <!-- specrail:ignore-end -->, or remove the ` +
+          `ignore-start marker. The verifier refuses to build a graph ` +
+          `whose evidence boundary is undefined.`,
       );
     }
   }

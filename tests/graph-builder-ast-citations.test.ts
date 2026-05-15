@@ -203,7 +203,10 @@ describe('graph builder — ignore annotation state machine (US-005)', () => {
     expect(g.definedIds.has('ENT-Real')).toBe(true);
   });
 
-  it('unclosed ignore-start warns to stderr and suppresses to EOF', async () => {
+  it('unclosed ignore-start is a HARD ERROR (round-N P2 fix — was silent stderr)', async () => {
+    // Architect round-N: leaving an unclosed `<!-- specrail:ignore-start -->`
+    // used to swallow all evidence to EOF and only emit a stderr warning
+    // the hook never read. Promoted to throw so commits / CI fail loud.
     await write('01-def.md', '---\nphase: 1\n---\n## R1: x\n');
     await write(
       '05-cite.md',
@@ -222,12 +225,8 @@ describe('graph builder — ignore annotation state machine (US-005)', () => {
       ].join('\n'),
     );
 
-    const spy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
-    const g = await buildGraph(dir);
-    const stderrCalls = spy.mock.calls.map((c) => String(c[0])).join('');
-    spy.mockRestore();
-
-    expect(g.edges.some((e) => e.from === '05' && e.to === 'R1')).toBe(false);
-    expect(stderrCalls).toMatch(/unclosed.*specrail:ignore-start.*05-cite\.md/);
+    await expect(buildGraph(dir)).rejects.toThrow(
+      /unclosed.*specrail:ignore-start.*05-cite\.md/,
+    );
   });
 });
