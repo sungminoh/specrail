@@ -1,19 +1,29 @@
 /**
- * Pre-commit hook: enforce honesty between spec author intent and
- * verifier-derived reality.
+ * Pre-commit hook: enforce the full honesty matrix at commit time.
  *
- * Two-axis enforcement (matches `specrail verify --check-honesty`):
- *   - Only spec items whose phase status is `Approved` are gated. Items
- *     in `Draft` or `Empty` phases are work-in-progress and exempt.
- *   - For Approved items: if the evidence shows a `file-missing` for
- *     a path the spec claims exists, the author is asserting something
- *     that isn't true, so the hook fails.
+ * Architect round-N audit found the previous version gated on
+ * `file-missing` only while the CLI's `--check-honesty` flagged
+ * NotBuilt / Partial / content-stale ManualReview-Stale. The docstring
+ * claimed "matches --check-honesty" but the matrix was strictly
+ * narrower — an author could land a commit with AC-R5-99 Approved +
+ * `no-test-ref` NotBuilt (hook silent), then CI's --check-honesty
+ * would fail.
  *
- * Independent architect review (round 9, P0) flagged the prior version:
- * it filtered on `file-missing` evidence regardless of `intent`, which
- * blocked commits for Draft-phase work-in-progress and broke the entire
- * point of the IntentIndex. This file now reads `ev.intent` and gates
- * the violation push.
+ * Honest semantic: the hook uses the same predicate set as the CLI:
+ *
+ *   intent === Approved AND reality ∈ {
+ *     NotBuilt,
+ *     Partial,
+ *     ManualReview-Stale (content-drift only, not infra-stale)
+ *   }
+ *
+ * Infrastructure-stale (test-ref-no-run from skipTests, propagated
+ * through rfs-aggregate via `isInfraStale`) is NOT a lie at commit
+ * time — the hook runs with skipTests=true by design so commits stay
+ * fast. Content-stale (ADR sha-mismatch) IS a lie and blocks.
+ *
+ * Draft / Empty phases continue to be exempt — IntentIndex gates
+ * the matrix to Approved items.
  *
  * Returns the same `{ok, message}` shape as the other pre-commit hooks
  * (id-consistency, schema-validate) so the .git/hooks/pre-commit chain
@@ -21,6 +31,7 @@
  */
 
 import { verify } from '../verify/index.js';
+import { isInfraStale } from '../verify/honesty.js';
 
 export async function runHook(
   projectRoot: string,
@@ -30,17 +41,18 @@ export async function runHook(
     return { ok: true, message: 'verify-status skipped: docs/spec not initialized' };
   }
 
-  const violations: string[] = [];
+  const violations: Array<{ id: string; rule: string; reality: string }> = [];
   let approvedSeen = 0;
   for (const ev of result.results.values()) {
     if (ev.intent !== 'Approved') continue;
     approvedSeen++;
-    const brokenPaths = ev.evidence
-      .filter((e) => e.kind === 'file-missing')
-      .map((e) => e.path)
-      .filter((p): p is string => Boolean(p));
-    if (brokenPaths.length > 0) {
-      violations.push(`${ev.id}: missing path(s) ${brokenPaths.join(', ')}`);
+    if (ev.reality === 'NotBuilt' || ev.reality === 'Partial') {
+      violations.push({ id: ev.id, rule: ev.rule, reality: ev.reality });
+      continue;
+    }
+    if (ev.reality === 'ManualReview-Stale') {
+      if (isInfraStale(ev, result.results)) continue;
+      violations.push({ id: ev.id, rule: ev.rule, reality: ev.reality });
     }
   }
 
@@ -49,14 +61,19 @@ export async function runHook(
       ok: true,
       message:
         `verify-status OK: ${result.results.size} ids classified ` +
-        `(${approvedSeen} Approved gated, 0 broken-evidence)`,
+        `(${approvedSeen} Approved gated, 0 lies)`,
     };
   }
   const lines = [
-    `verify-status violation: ${violations.length} broken evidence pointer(s):`,
-    ...violations.slice(0, 20).map((v) => `  - ${v}`),
+    `verify-status violation: ${violations.length} Approved ID(s) with insufficient evidence:`,
+    ...violations
+      .slice(0, 20)
+      .map((v) => `  - ${v.id} [${v.reality}] (rule=${v.rule})`),
   ];
   if (violations.length > 20)
     lines.push(`  ... and ${violations.length - 20} more`);
+  lines.push(
+    'Fix: implement the missing work, drop the phase back to Draft, or remove the ID.',
+  );
   return { ok: false, message: lines.join('\n') };
 }

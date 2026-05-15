@@ -45,10 +45,10 @@ describe('verify-status pre-commit hook (US-V17)', () => {
 
     const r = await runHook(dir);
     expect(r.ok).toBe(true);
-    expect(r.message).toMatch(/0 broken-evidence/);
+    expect(r.message).toMatch(/0 lies/);
   });
 
-  it('fails when an ARCH spec references a missing path', async () => {
+  it('fails when an ARCH spec references a missing path (NotBuilt is a lie)', async () => {
     await writeFile(
       join(dir, 'docs', 'spec', '08-arch.md'),
       [
@@ -67,10 +67,14 @@ describe('verify-status pre-commit hook (US-V17)', () => {
     const r = await runHook(dir);
     expect(r.ok).toBe(false);
     expect(r.message).toContain('ARCH-99');
-    expect(r.message).toContain('src/never/exists.ts');
+    expect(r.message).toContain('NotBuilt');
   });
 
-  it('does NOT fail on plain NotBuilt items without broken evidence', async () => {
+  it('FAILS on Approved + NotBuilt items (hook matches --check-honesty matrix, round-N P0 fix)', async () => {
+    // Architect round-N P0: the hook used to gate only on file-missing,
+    // strictly weaker than --check-honesty. Author could land a commit
+    // with NotBuilt from no-test-ref, then CI would fail. Now the hook
+    // enforces the full matrix.
     await writeFile(
       join(dir, 'docs', 'spec', '03-features.md'),
       [
@@ -87,13 +91,12 @@ describe('verify-status pre-commit hook (US-V17)', () => {
     );
 
     const r = await runHook(dir);
-    expect(r.ok).toBe(true);
+    expect(r.ok).toBe(false);
+    expect(r.message).toContain('AC-R1-1');
   });
 
-  it('DRAFT phase with a broken evidence path does NOT fail the hook (P0 fix)', async () => {
-    // The architect's round-9 P0 finding: prior to this fix, the hook
-    // gated every file-missing regardless of intent, blocking commits
-    // for work-in-progress Draft phases. The IntentIndex is now read.
+  it('DRAFT phase with NotBuilt evidence does NOT fail the hook (intent gate)', async () => {
+    // Draft phases are work-in-progress; the hook stays exempt.
     await writeFile(
       join(dir, 'docs', 'spec', '08-arch.md'),
       [
@@ -111,7 +114,7 @@ describe('verify-status pre-commit hook (US-V17)', () => {
 
     const r = await runHook(dir);
     expect(r.ok).toBe(true);
-    expect(r.message).toMatch(/0 broken-evidence/);
+    expect(r.message).toMatch(/0 lies/);
   });
 
   it('EMPTY phase is exempt too', async () => {
