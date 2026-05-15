@@ -139,16 +139,22 @@ export async function runVerifyCli(
     //     positives (R1-R8, R13) caused by that propagation gap.
     const lies: Array<{ id: string; rule: string; reality: string }> = [];
     const unknownApproved: string[] = [];
+    const blindManualReview: Array<{ id: string; rule: string; reason: string }> = [];
     for (const ev of result.results.values()) {
       if (ev.intent !== 'Approved') continue;
-      // Surface the skeleton-rule blind spot — any Approved ID that
-      // hits the skeleton rule has no evidence either way and is not a
-      // lie. Round-11 architect feedback: keying on `rule === 'skeleton'`
-      // alone (not `&& idType === 'unknown'`) catches future taxonomy
-      // additions where an IdType is added to classifyId without a
-      // matching rule registration.
+      // Surface ALL Approved+ManualReview, not just skeleton-rule.
+      // Round-N architect: 160 entries silently sat at ManualReview
+      // (no-path-tokens, oq-status-unknown, unparseable-entity-name,
+      // no-signoff, ...) and the warning only mentioned the
+      // ~30 skeleton-rule subset. The honest report must surface the
+      // full pool so reviewers know what the verifier couldn't classify.
       if (ev.rule === 'skeleton') {
         unknownApproved.push(ev.id);
+      } else if (ev.reality === 'ManualReview') {
+        // First evidence kind is the rule's primary signal — surface it
+        // so reviewers see WHY classification failed.
+        const reason = ev.evidence[0]?.kind ?? 'unknown-manual-review-reason';
+        blindManualReview.push({ id: ev.id, rule: ev.rule, reason });
       }
       if (ev.reality === 'NotBuilt' || ev.reality === 'Partial') {
         lies.push({ id: ev.id, rule: ev.rule, reality: ev.reality });
@@ -174,14 +180,27 @@ export async function runVerifyCli(
         `\n--- honesty check: OK ` +
         `(no Approved+NotBuilt/Partial/ManualReview-Stale lies) ---\n`;
     }
-    if (unknownApproved.length > 0) {
+    if (unknownApproved.length > 0 || blindManualReview.length > 0) {
+      honestyReport += `\n--- honesty check: warning ---\n`;
+      if (unknownApproved.length > 0) {
+        honestyReport +=
+          `\n${unknownApproved.length} Approved ID(s) have no registered rule ` +
+          `(skeleton fallback — verifier cannot classify):\n` +
+          unknownApproved.map((id) => `  ? ${id}`).join('\n') + '\n';
+      }
+      if (blindManualReview.length > 0) {
+        honestyReport +=
+          `\n${blindManualReview.length} Approved ID(s) classified ManualReview ` +
+          `(rule ran but found no signal — human review required):\n` +
+          blindManualReview
+            .map((b) => `  ? ${b.id} (rule=${b.rule}, reason=${b.reason})`)
+            .join('\n') + '\n';
+      }
       honestyReport +=
-        `\n--- honesty check: warning ---\n` +
-        `${unknownApproved.length} Approved ID(s) have no registered rule ` +
-        `and were not audited:\n` +
-        unknownApproved.map((id) => `  ? ${id}`).join('\n') +
-        `\nThese are not lies — the verifier has no rule to evaluate them.\n` +
-        `Add an idType taxonomy entry or rename the ID to a known prefix.\n`;
+        `\nThese are not lies — the verifier punts to humans. To shrink ` +
+        `this pool: add the missing rule, fix the spec to provide concrete ` +
+        `evidence (path tokens / sign-off / resolution), or wrap deferred items ` +
+        `in <!-- specrail:ignore-start/end -->.\n`;
     }
   }
   // Round-11/12 architect P1: human-format diagnostic text MUST NOT

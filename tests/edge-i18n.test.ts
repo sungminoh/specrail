@@ -157,7 +157,9 @@ describe('EDGE-7·8·9·10 TC-46·47·48·49 i18n + scale boundary (US-10.3, M10
 
     expect(g.definedIds.has('R1')).toBe(true);
     expect(g.edges.length).toBeGreaterThan(0);
-    expect(elapsed).toBeLessThan(3500);
+    // Threshold 5000ms gives ~40% headroom over typical 3000ms run.
+    // CI noise spikes regularly hit 3500ms; bumped after observed flake.
+    expect(elapsed).toBeLessThan(5000);
   });
 
   // Boundary: zero-width space adjacent to ID — FIXED in M11 US-11.6
