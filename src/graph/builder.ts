@@ -22,6 +22,19 @@ import {
 // end-of-heading (bare-ID headings like `### ENT-Project`).
 const HEADING_DEF = /^([A-Z][A-Za-z0-9.\-_]+)(?::|\s+\(|\s*$)/;
 
+// Validate that a captured token actually matches a known ID pattern.
+// Prevents the verifier from accruing phantom "defined IDs" out of
+// section headings like `## Status` or `## Decision` (architect review
+// flagged 70+ such false positives in the dogfood baseline).
+const VALID_ID_RE = new RegExp(
+  `^(?:${ID_PATTERN_SOURCE}|${USER_NAMESPACE_PATTERN})$`,
+);
+
+function isValidSpecId(token: string): boolean {
+  if (isReservedId(token)) return false;
+  return VALID_ID_RE.test(token);
+}
+
 // US-002: cell-content ID pattern. The leading token must be a clean ID;
 // optional `(...)` annotation immediately after is allowed so cells like
 // `TC-63 (NFR-SEC-12)` extract `TC-63`. Cells with descriptive prose
@@ -233,6 +246,7 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
       const node = n as unknown as MdNode;
       const m = getNodeText(node).match(HEADING_DEF);
       if (!m) return;
+      if (!isValidSpecId(m[1])) return; // phantom-ID guard
       nodes.push({
         specId: m[1],
         phaseId,
@@ -253,7 +267,7 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
       const text = getNodeText(strong).trim();
       const m = text.match(BOLD_PREFIX_DEF);
       if (!m) return;
-      if (isReservedId(m[1])) return;
+      if (!isValidSpecId(m[1])) return; // phantom-ID guard (rejects bold prose like **Status:** Open)
       nodes.push({ specId: m[1], phaseId, definedAt: { file, line } });
     };
     visit(tree, 'listItem', (item) => {
@@ -387,9 +401,13 @@ export async function buildGraph(projectRoot: string): Promise<DependencyGraph> 
 
       // Definition headings are not citations of themselves (INV-6).
       // Non-definition headings still allow citation extraction inside.
+      // Only treat as a real def-heading when the leading token validates
+      // as a spec ID — phantom matches like `## Status:` must NOT skip
+      // the heading's citations.
       if (n.type === 'heading') {
         const headingText = getNodeText(n);
-        if (HEADING_DEF.test(headingText)) return SKIP;
+        const m = headingText.match(HEADING_DEF);
+        if (m && isValidSpecId(m[1])) return SKIP;
       }
 
       // ID extraction happens at leaf text / inlineCode nodes only.
