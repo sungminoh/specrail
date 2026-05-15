@@ -89,4 +89,70 @@ describe('verify-status pre-commit hook (US-V17)', () => {
     const r = await runHook(dir);
     expect(r.ok).toBe(true);
   });
+
+  it('DRAFT phase with a broken evidence path does NOT fail the hook (P0 fix)', async () => {
+    // The architect's round-9 P0 finding: prior to this fix, the hook
+    // gated every file-missing regardless of intent, blocking commits
+    // for work-in-progress Draft phases. The IntentIndex is now read.
+    await writeFile(
+      join(dir, 'docs', 'spec', '08-arch.md'),
+      [
+        '---',
+        'phase: 8',
+        'status: Draft',
+        '---',
+        '',
+        '## ARCH-9: still being designed',
+        '',
+        '`src/not/yet/exists.ts` will host this once we build it.',
+      ].join('\n'),
+      'utf8',
+    );
+
+    const r = await runHook(dir);
+    expect(r.ok).toBe(true);
+    expect(r.message).toMatch(/0 broken-evidence/);
+  });
+
+  it('EMPTY phase is exempt too', async () => {
+    await writeFile(
+      join(dir, 'docs', 'spec', '08-arch.md'),
+      [
+        '---',
+        'phase: 8',
+        'status: Empty',
+        '---',
+        '',
+        '## ARCH-100: placeholder',
+        '',
+        '`src/never/here.ts` is reserved.',
+      ].join('\n'),
+      'utf8',
+    );
+
+    const r = await runHook(dir);
+    expect(r.ok).toBe(true);
+  });
+
+  it('OK message reports the Approved gated count', async () => {
+    await mkdir(join(dir, 'src'), { recursive: true });
+    await writeFile(join(dir, 'src', 'real.ts'), 'export const ok = true;', 'utf8');
+    await writeFile(
+      join(dir, 'docs', 'spec', '08-arch.md'),
+      [
+        '---',
+        'phase: 8',
+        'status: Approved',
+        '---',
+        '',
+        '## ARCH-1: shipped',
+        '',
+        '`src/real.ts` is the entry.',
+      ].join('\n'),
+      'utf8',
+    );
+    const r = await runHook(dir);
+    expect(r.ok).toBe(true);
+    expect(r.message).toMatch(/Approved gated/);
+  });
 });

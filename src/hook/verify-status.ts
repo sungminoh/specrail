@@ -2,14 +2,18 @@
  * Pre-commit hook: enforce honesty between spec author intent and
  * verifier-derived reality.
  *
- * For each spec item:
- *   - If the item has an explicit `Evidence:` annotation pointing at a
- *     path that does NOT exist in the repo, fail. (Broken evidence
- *     pointer = the author is asserting something that isn't true.)
+ * Two-axis enforcement (matches `specrail verify --check-honesty`):
+ *   - Only spec items whose phase status is `Approved` are gated. Items
+ *     in `Draft` or `Empty` phases are work-in-progress and exempt.
+ *   - For Approved items: if the evidence shows a `file-missing` for
+ *     a path the spec claims exists, the author is asserting something
+ *     that isn't true, so the hook fails.
  *
- * The hook does NOT fail on plain NotBuilt / Partial states — those are
- * informational. Authors are allowed to work-in-progress; what they may
- * not do is claim a reality that isn't backed by evidence.
+ * Independent architect review (round 9, P0) flagged the prior version:
+ * it filtered on `file-missing` evidence regardless of `intent`, which
+ * blocked commits for Draft-phase work-in-progress and broke the entire
+ * point of the IntentIndex. This file now reads `ev.intent` and gates
+ * the violation push.
  *
  * Returns the same `{ok, message}` shape as the other pre-commit hooks
  * (id-consistency, schema-validate) so the .git/hooks/pre-commit chain
@@ -27,7 +31,10 @@ export async function runHook(
   }
 
   const violations: string[] = [];
+  let approvedSeen = 0;
   for (const ev of result.results.values()) {
+    if (ev.intent !== 'Approved') continue;
+    approvedSeen++;
     const brokenPaths = ev.evidence
       .filter((e) => e.kind === 'file-missing')
       .map((e) => e.path)
@@ -40,7 +47,9 @@ export async function runHook(
   if (violations.length === 0) {
     return {
       ok: true,
-      message: `verify-status OK: ${result.results.size} ids classified, 0 broken-evidence`,
+      message:
+        `verify-status OK: ${result.results.size} ids classified ` +
+        `(${approvedSeen} Approved gated, 0 broken-evidence)`,
     };
   }
   const lines = [
