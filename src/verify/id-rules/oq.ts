@@ -27,18 +27,30 @@ const ADR_RE = /ADR-\d+/;
 const RESOLVED_RE = /\bResolved\b/i;
 const DEFERRED_RE = /\bDEFERRED\b/i;
 const OPEN_RE = /\bOPEN\b/i;
-// Heuristic: 10+ non-whitespace chars of rationale after the keyword
-// in the same row. Catches em-dash + reason; rejects bare keyword.
-const MIN_RATIONALE_CHARS = 10;
+// Rationale heuristic (architect round-N+1 P0): the previous 10-char
+// length check passed `DEFERRED ttttttttt` and `DEFERRED later TBD`
+// — any 10 characters won. The honest check counts ALPHABETIC
+// characters (any Unicode letter), not bytes. Punctuation/digits/
+// spaces don't substitute for prose. Set the bar at 5 letters which
+// is "enough for ~1 word of rationale" while still admitting compact
+// real-world rows like `DEFERRED → 향후 cycle` (Korean letters count).
+const MIN_RATIONALE_LETTERS = 5;
+const LETTER_RE = /\p{L}/gu;
 
 function rationaleAfter(row: string, keywordRe: RegExp): string | null {
   const m = row.match(keywordRe);
   if (!m || m.index === undefined) return null;
   const tail = row.slice(m.index + m[0].length).trim();
-  // Strip leading punctuation/em-dash so the count is on actual prose.
+  // Strip leading punctuation/em-dash so the visible rationale starts
+  // at the first real character.
   const stripped = tail.replace(/^[\s\-—–:|·]+/, '');
-  if (stripped.length < MIN_RATIONALE_CHARS) return null;
-  return stripped.slice(0, 200);
+  // Strip trailing pipe / table separator so cell-end junk doesn't pad.
+  const cellOnly = stripped.replace(/[\s|]+$/, '');
+  // Count Unicode letters (handles 한국어 cycle, English, Greek…). Reject
+  // rationales padded with non-letter junk.
+  const letterCount = (cellOnly.match(LETTER_RE) ?? []).length;
+  if (letterCount < MIN_RATIONALE_LETTERS) return null;
+  return cellOnly.slice(0, 200);
 }
 
 export const oqRule: IdRule = {

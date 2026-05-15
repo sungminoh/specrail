@@ -79,6 +79,49 @@ describe('oq-resolution rule (US-V10)', () => {
     expect(r.results.get('OQ-9-1')?.reality).toBe('NotBuilt');
   });
 
+  it('ManualReview when DEFERRED + random non-letter padding (round-N+1)', async () => {
+    // Architect round-N+1: the previous 10-char check passed
+    // `DEFERRED ttttttttt` (random chars) and `DEFERRED ||||||||||||` (pipes).
+    // The honest check counts Unicode letters.
+    await writeSpec(
+      '12-adr.md',
+      [
+        '---',
+        'phase: 12',
+        'status: Approved',
+        '---',
+        '',
+        '<!-- specrail:deftable -->',
+        '| Q ID | Question | Status |',
+        '|---|---|---|',
+        '| OQ-99-1 | random padding | DEFERRED ||||||||||||||||||||||||| |',
+        '| OQ-99-2 | numeric padding | DEFERRED 12345678901234567890 |',
+      ].join('\n'),
+    );
+    const r = await verify(dir, { skipTests: true });
+    expect(r.results.get('OQ-99-1')?.reality).toBe('ManualReview');
+    expect(r.results.get('OQ-99-2')?.reality).toBe('ManualReview');
+  });
+
+  it('Built when DEFERRED rationale has Korean letters', async () => {
+    await writeSpec(
+      '12-adr.md',
+      [
+        '---',
+        'phase: 12',
+        'status: Approved',
+        '---',
+        '',
+        '<!-- specrail:deftable -->',
+        '| Q ID | Question | Status |',
+        '|---|---|---|',
+        '| OQ-99-3 | korean rationale | DEFERRED → 향후 cycle |',
+      ].join('\n'),
+    );
+    const r = await verify(dir, { skipTests: true });
+    expect(r.results.get('OQ-99-3')?.reality).toBe('Built');
+  });
+
   it('ManualReview when DEFERRED alone (self-defer attack — round-N P2 fix)', async () => {
     await writeSpec(
       '12-adr.md',
