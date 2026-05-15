@@ -1,3 +1,4 @@
+// NFR-SEC-5: .specrail-cache tampering invalidate + rebuild
 // TC-52: EDGE-13 .specrail-cache tampering
 // EDGE-19·20·21·22: Plausible network/external failure — graceful degradation (US-10.5, M10)
 //

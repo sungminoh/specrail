@@ -1,3 +1,4 @@
+// NFR-PRIV-5: plugin file system access scope (.git/hooks only)
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdtemp, writeFile, mkdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';

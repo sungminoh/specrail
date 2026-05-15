@@ -1,3 +1,4 @@
+// NFR-AVAIL-6: hook script availability (missing template fallback)
 import { describe, it, expect, beforeAll } from 'vitest';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';

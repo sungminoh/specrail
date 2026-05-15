@@ -1,3 +1,4 @@
+// NFR-PRIV-4: TelemetryConsent default OptedOut
 // TC-38: INV-9 default consent = OptedOut
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtemp, rm } from 'node:fs/promises';

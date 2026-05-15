@@ -1,3 +1,4 @@
+// NFR-SEC-9: INV-8 telemetry payload no spec content / NFR-PRIV-3 anonProjectHash
 // TC-37: INV-8 TelemetryEvent payload privacy
 // telemetry-wire: createSenderFromEnv production boot helper (US-11.7, M11)
 //

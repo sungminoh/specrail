@@ -1,3 +1,4 @@
+// NFR-SCAL-5: per-project ID counter isolation (multi-project)
 // TC-43: EDGE-4 multi-project ID counter
 import { describe, it, expect, beforeEach } from 'vitest';
 import { mkdtemp, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
