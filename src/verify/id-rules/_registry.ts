@@ -17,6 +17,7 @@ import { oqRule } from './oq.js';
 import { sLeafRule } from './spec.js';
 import { painRule, kpiRule, riskRule } from './aggregate.js';
 import { adrRule } from './adr.js';
+import { fTaskAggregateRule } from './f-task-aggregate.js';
 
 export function registerBuiltinRules(): void {
   registerRule(['AC', 'TC', 'INV', 'EDGE', 'NFR'], testGrepRule);
@@ -26,10 +27,14 @@ export function registerBuiltinRules(): void {
   registerRule(['RB'], rbRule);
   registerRule(['T'], taskRule);
   registerRule(['OQ'], oqRule);
-  // S leaves use a path-based rule (same shape as ARCH); R and F are
-  // assigned the skeleton at first and then overwritten by the
-  // applyRfsAggregation post-pass in the runner.
+  // S leaves use a path-based rule (same shape as ARCH).
+  // R is assigned the skeleton at first and then overwritten by the
+  // applyRfsAggregation post-pass in the runner (rolls up AC + F + S).
+  // F first tries reverse-task-aggregation (scan Phase-13 tasks for
+  // F-citations); rfs-aggregate post-pass still wins if F has direct
+  // AC / S children.
   registerRule(['S'], sLeafRule);
+  registerRule(['F'], fTaskAggregateRule);
   registerRule(['PAIN'], painRule);
   registerRule(['KPI'], kpiRule);
   registerRule(['RISK'], riskRule);

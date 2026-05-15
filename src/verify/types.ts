@@ -62,6 +62,7 @@ export type EvidenceKind =
   | 'no-rule-registered'
   | 'no-runbook-no-definition'
   | 'no-signoff'
+  | 'no-task-citation'
   | 'no-test-ref'
   | 'oq-open'
   | 'oq-resolved'

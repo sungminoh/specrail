@@ -19,6 +19,7 @@ import { buildIntentIndex } from './intent.js';
 import { runVitest, scanTestFilesForIds, type VitestRunResult } from './vitest-bridge.js';
 import { applyRfsAggregation } from './id-rules/spec.js';
 import { applyCrossRefAggregation } from './id-rules/aggregate.js';
+import { applyFTaskAggregation } from './id-rules/f-task-aggregate.js';
 
 /** Shared id → spec-definition location, derived once per verify() run. */
 export type LocationIndex = ReadonlyMap<string, { file: string; line: number }>;
@@ -146,12 +147,26 @@ export async function verify(
     initial.set(id, ev);
   }
 
-  // Aggregation pass: roll up R / F over their AC + child evidence,
-  // then resolve PAIN / KPI / RISK from their cited cross-references.
-  // Each step takes a ReadonlyMap snapshot and returns a fresh Map —
-  // the runner owns the only mutable handle.
+  // Aggregation passes (each takes a ReadonlyMap snapshot, returns a
+  // fresh Map — the runner owns the only mutable handle):
+  //
+  //   1. applyRfsAggregation — R / F over their AC + S children when
+  //      those children exist directly in the spec.
+  //   2. applyFTaskAggregation — F-tier reverse aggregation: when F
+  //      has no AC/S children, look up T-tasks that cite this F via
+  //      Phase 13's `#### TX.Y: title — F-id` headings and roll up.
+  //   3. applyCrossRefAggregation — PAIN / KPI / RISK from their
+  //      cited cross-references (typically S scenarios or other Fs).
+  //
+  // Order matters: F-task aggregation must run AFTER T-tasks are
+  // classified (which they are in the initial loop above) and AFTER
+  // applyRfsAggregation, so that a F with explicit S-leaf children
+  // is rolled up by rfs first; the f-task fallback only fires for
+  // F-tier entries still at `f-task-aggregate` rule (i.e. rfs found
+  // nothing to roll up).
   const afterRfs = applyRfsAggregation(initial);
-  const afterCrossRef = applyCrossRefAggregation(afterRfs);
+  const afterFTask = applyFTaskAggregation(afterRfs);
+  const afterCrossRef = applyCrossRefAggregation(afterFTask);
 
   return {
     timestamp: new Date().toISOString(),
