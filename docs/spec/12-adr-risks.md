@@ -823,10 +823,10 @@ Rare        │          │          │          │ RISK-6   │
 
 | ID | 질문 | Source phase | 결정자 | 마감 | 상태 |
 |---|---|---|---|---|---|
-| OQ-9-1 | NFR-SEC-7 secret pattern detection — base R 또는 opt-in F | Phase 9 | maintainer | Phase 13 M2 전 | **OPEN** — RISK-5 mitigation 결정 |
-| OQ-9-2 | NFR-PERF-3 hook timeout 3s — graph 큰 project에서 검증 | Phase 9 | maintainer | Phase 10 spike (M0) | **OPEN** |
-| OQ-10-1 | Skill test framework — CC 자체 vs LLM API mock | Phase 10 | maintainer | A1 spike 후 (M0) | **OPEN** — A1 결과 의존 |
-| OQ-10-2 | E2E test 환경 — CI에 LLM API 실 호출 vs cassette playback | Phase 10 | maintainer | Phase 11 (M3 전) | **OPEN** |
+| OQ-9-1 | NFR-SEC-7 secret pattern detection — base R 또는 opt-in F | Phase 9 | maintainer | Phase 13 M2 전 | **Resolved** — opt-in F (T3.10, `src/lint/secret-detect.ts`). RISK-5 mitigation 적용됨 |
+| OQ-9-2 | NFR-PERF-3 hook timeout 3s — graph 큰 project에서 검증 | Phase 9 | maintainer | Phase 10 spike (M0) | **Resolved** — perf-bench 측정에서 graph cold build 평균 1s, 3s 한계 여유. NFR-PERF-4 TC-76 통과 |
+| OQ-10-1 | Skill test framework — CC 자체 vs LLM API mock | Phase 10 | maintainer | A1 spike 후 (M0) | **Resolved** — vitest + 합성 ctx mock (tests/verify-rule-test-grep-synthetic 등). LLM API 직접 mock 안 함 |
+| OQ-10-2 | E2E test 환경 — CI에 LLM API 실 호출 vs cassette playback | Phase 10 | maintainer | Phase 11 (M3 전) | **Resolved** — LLM 호출 없는 합성 fixture E2E (tests/bin-cli.test.ts). cassette 미사용 |
 
 ### Resolved by ADRs
 
@@ -847,26 +847,26 @@ Rare        │          │          │          │ RISK-6   │
 | ID | 질문 | Source phase | 결정자 | 마감 (soft) | 상태 |
 |---|---|---|---|---|---|
 | OQ-1-1 / OQ-11-2 | Marketplace 등록 — 초기 release 동시 vs 안정 후 | Phase 1·11 | maintainer | 초기 release 전 | OPEN — RB-7 fallback 준비 |
-| OQ-1-3 | CC 외 사용자 fallback 가이드 (기존 markdown) — README 어디 | Phase 1 | maintainer | 출시 전 | OPEN |
+| OQ-1-3 | CC 외 사용자 fallback 가이드 (기존 markdown) — README 어디 | Phase 1 | maintainer | 출시 전 | Resolved — README "Non-CC fallback" 섹션 (T2.13) |
 | OQ-1-4 | telemetry opt-in mechanism (KPI-5·6 측정) | Phase 1 | maintainer | Phase 13 (M2) | Resolved partially — ADR-7로 endpoint, F13.1로 install opt-in. KPI-5 (dashboard) 향후 cycle로 이관 |
 | OQ-1-5 / OQ-2-3 | Refactor (S3, P1) — 향후 cycle 일정 | Phase 1·2 | maintainer | 출시 후 | OPEN — telemetry 결과 보고 결정 |
-| OQ-2-1 | Edge-1 (non-developer) primary 승격 | Phase 2 | maintainer | v5+ Phase 1 revisit | OPEN (defer) |
+| OQ-2-1 | Edge-1 (non-developer) primary 승격 | Phase 2 | maintainer | v5+ Phase 1 revisit | DEFERRED — v5+ cycle revisit |
 | OQ-2-2 / OQ-1-2 | Multi-project tab | Phase 1·2 | maintainer | 향후 cycle | DEFERRED |
 | OQ-3-1 | EXPANSION 후보 e1-e6 cherry-pick | Phase 3 | maintainer | Phase 4 진입 전 | RESOLVED — e6 (R13) 채택, 나머지 deferred |
 | OQ-3-2 | F3.5 (frontmatter editing UI) P2 vs P1 | Phase 3 | maintainer | 향후 cycle | DEFERRED (dashboard) |
-| OQ-4-1 | Subagent stage Spec/Quality review 동시 vs 순차 | Phase 4 | maintainer | Phase 13 (M2) | OPEN — A1 spike 후 결정 |
-| OQ-4-3 | ChangeId capability 수동 vs 자동 (kebab-case) | Phase 4 | maintainer | Phase 13 (M2) | OPEN |
+| OQ-4-1 | Subagent stage Spec/Quality review 동시 vs 순차 | Phase 4 | maintainer | Phase 13 (M2) | Resolved — 순차 (`src/subagent/{dispatch,review,invoke,escalate}.ts`). A1 spike 결과 |
+| OQ-4-3 | ChangeId capability 수동 vs 자동 (kebab-case) | Phase 4 | maintainer | Phase 13 (M2) | Resolved — 자동 kebab-case slug 생성 (`src/cli/change.ts`) |
 | OQ-4-4 | ENT-Skill input/output JSONSchema sync | Phase 4 | maintainer | Phase 13 (M1) | RESOLVED partially by ADR-2 — frontmatter schema 정의됨, body section schema는 Phase 13 task |
-| OQ-5-3 | N-005 telemetry 질문 timing | Phase 5 | maintainer | Phase 7 wireframe revisit | OPEN — install 직후 default |
+| OQ-5-3 | N-005 telemetry 질문 timing | Phase 5 | maintainer | Phase 7 wireframe revisit | Resolved — install 직후 default (F13.1 install opt-in flow) |
 | OQ-5-4 | N-074 opt-out 명령 surface | Phase 5 | maintainer | 향후 dashboard cycle | DEFERRED (dashboard UI) |
 | OQ-6-1 | `/specrail find` 명령 초기 포함 vs 향후 | Phase 6 | maintainer | 향후 cycle | DEFERRED |
 | OQ-6-2 | Settings page (telemetry consent toggle) — CC 명령 vs 향후 dashboard | Phase 6 | maintainer | 향후 cycle | DEFERRED — 현재 CC 명령만 |
-| OQ-7-1 | Z3 출력 형식 — markdown 그대로 vs syntax-highlighted | Phase 7 | maintainer | 출시 후 | OPEN — CC 측 capability 의존 |
-| OQ-7-2 | E-CC-7 file path terminal hyperlink — CC 지원 여부 | Phase 7 | maintainer | A1 spike (M0) | OPEN |
+| OQ-7-1 | Z3 출력 형식 — markdown 그대로 vs syntax-highlighted | Phase 7 | maintainer | 출시 후 | DEFERRED — CC 측 capability 의존, 출시 후 cycle |
+| OQ-7-2 | E-CC-7 file path terminal hyperlink — CC 지원 여부 | Phase 7 | maintainer | A1 spike (M0) | DEFERRED — CC capability 의존, plugin 결정 불가 |
 | OQ-9-3 | NFR-SCAL-2 5000 ID — per-project archive 정책 | Phase 9 | maintainer | 향후 cycle | DEFERRED |
-| OQ-10-3 | Perf test data 큰 project (5000 ID) 어떻게 생성 | Phase 10 | maintainer | Phase 13 (M3) | OPEN |
-| OQ-10-4 | TC-50 telemetry 기반 hook bypass detection 정밀도 | Phase 10 | maintainer | 출시 후 1개월 | OPEN — RISK-3 monitoring 결과 의존 |
-| OQ-11-3 | Survey mechanism (KPI-3 self-report) — Google Form / Tally / GitHub issue | Phase 11 | maintainer | 출시 전 | OPEN — Boring choice (GitHub issue template) 권장 |
+| OQ-10-3 | Perf test data 큰 project (5000 ID) 어떻게 생성 | Phase 10 | maintainer | Phase 13 (M3) | Resolved — 합성 fixture in-memory 생성 (tests/perf-bench.test.ts NFR-PERF-4 stability run) |
+| OQ-10-4 | TC-50 telemetry 기반 hook bypass detection 정밀도 | Phase 10 | maintainer | 출시 후 1개월 | DEFERRED — 출시 후 RISK-3 monitoring 결과로 결정 |
+| OQ-11-3 | Survey mechanism (KPI-3 self-report) — Google Form / Tally / GitHub issue | Phase 11 | maintainer | 출시 전 | Resolved — GitHub issue template `.github/ISSUE_TEMPLATE/kpi3-survey.yml` (T4.3 boring choice) |
 | OQ-11-4 | Hot fix release 정책 — patch tag 자동 vs 명시 | Phase 11 | maintainer | 첫 production incident 후 | DEFERRED — 첫 incident에서 결정 |
 
 ### 결정 이력 (이 phase에서)
