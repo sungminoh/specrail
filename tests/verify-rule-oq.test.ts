@@ -79,6 +79,46 @@ describe('oq-resolution rule (US-V10)', () => {
     expect(r.results.get('OQ-9-1')?.reality).toBe('NotBuilt');
   });
 
+  it('ManualReview when DEFERRED alone (self-defer attack — round-N P2 fix)', async () => {
+    await writeSpec(
+      '12-adr.md',
+      [
+        '---',
+        'phase: 12',
+        'status: Approved',
+        '---',
+        '',
+        '<!-- specrail:deftable -->',
+        '| Q ID | Question | Status |',
+        '|---|---|---|',
+        '| OQ-8-1 | bare deferral | DEFERRED |',
+      ].join('\n'),
+    );
+    const r = await verify(dir, { skipTests: true });
+    const ev = r.results.get('OQ-8-1');
+    expect(ev?.reality).toBe('ManualReview');
+    expect(ev?.evidence[0]?.note).toContain('keyword without rationale');
+  });
+
+  it('Built when DEFERRED has substantive rationale (10+ chars)', async () => {
+    await writeSpec(
+      '12-adr.md',
+      [
+        '---',
+        'phase: 12',
+        'status: Approved',
+        '---',
+        '',
+        '<!-- specrail:deftable -->',
+        '| Q ID | Question | Status |',
+        '|---|---|---|',
+        '| OQ-8-2 | needs deferral with reason | DEFERRED — v5+ cycle revisit |',
+      ].join('\n'),
+    );
+    const r = await verify(dir, { skipTests: true });
+    expect(r.results.get('OQ-8-2')?.reality).toBe('Built');
+  });
+
   it('ManualReview when no status keyword recognised', async () => {
     await writeSpec(
       '12-adr.md',
