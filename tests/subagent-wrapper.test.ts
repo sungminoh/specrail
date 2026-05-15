@@ -1,3 +1,4 @@
+// TC-62: EDGE-23 subagent timeout escalation AC-R8-3
 import { describe, it, expect, vi } from 'vitest';
 import { invokeSubagent, type AgentTool, type SubagentTask } from '../src/subagent/invoke.js';
 

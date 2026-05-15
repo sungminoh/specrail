@@ -1,3 +1,4 @@
+// TC-48: EDGE-9 NFR-SCAL-1 50KB body limit
 // NFR-SEC-10: graph build memory/timeout for 5000 nodes
 // TC-55: EDGE-16 5000-ID graph timeout
 // T4.4 Performance benchmarks — NFR-PERF-1~7, TC-70~77

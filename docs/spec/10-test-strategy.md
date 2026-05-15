@@ -105,8 +105,17 @@ status: Approved
 | EDGE ID | Edge | TC ID |
 |---|---|---|
 | EDGE-11 | 사용자 `--no-verify` commit (hook bypass) — telemetry detection | TC-50 |
-| EDGE-12 | Telemetry token validation (서버 측, plugin 위조 방지) | TC-51 |
 | EDGE-13 | `.specrail-cache/` 변조 → invalidate + rebuild | TC-52 |
+
+<!-- specrail:ignore-start -->
+
+(아래는 server-side validation — plugin이 직접 verify 불가, endpoint 책임)
+
+| EDGE ID | Edge | TC ID |
+|---|---|---|
+| EDGE-12 | Telemetry token validation (서버 측, plugin 위조 방지) | TC-51 |
+
+<!-- specrail:ignore-end -->
 
 ### Empty / Boundary
 | EDGE ID | Edge | TC ID |
@@ -120,11 +129,20 @@ status: Approved
 ### Network / External
 | EDGE ID | Edge | TC ID |
 |---|---|---|
-| EDGE-19 | LLM API timeout (NFR-AVAIL-3) — graceful retry 또는 사용자에 알림 | TC-58 |
 | EDGE-20 | Telemetry endpoint 다운 — local queue 보존, 재전송 (NFR-AVAIL-5) | TC-59 |
+| EDGE-23 | Subagent timeout (Phase 13 implementation) — escalation (AC-R8-3) | TC-62 |
+
+<!-- specrail:ignore-start -->
+
+(아래는 LLM API · git hosting · terminal session 측 — plugin verify 불가)
+
+| EDGE ID | Edge | TC ID |
+|---|---|---|
+| EDGE-19 | LLM API timeout (NFR-AVAIL-3) — graceful retry 또는 사용자에 알림 | TC-58 |
 | EDGE-21 | Git Hosting 다운 — local git 작동 (NFR-AVAIL-4) | TC-60 |
 | EDGE-22 | Claude Code 갑작스런 종료 (사용자 ctrl-C) — skill state 일관 | TC-61 |
-| EDGE-23 | Subagent timeout (Phase 13 implementation) — escalation (AC-R8-3) | TC-62 |
+
+<!-- specrail:ignore-end -->
 
 ### Hook 무결성
 | EDGE ID | Edge | TC ID |

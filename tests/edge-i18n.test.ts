@@ -1,3 +1,4 @@
+// TC-49: EDGE-10 NFC vs NFD normalisation
 // TC-46 EDGE-7 mixed Korean/English; TC-47 EDGE-8 emoji/unicode
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtemp, writeFile, mkdir, rm } from 'node:fs/promises';

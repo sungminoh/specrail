@@ -1,3 +1,4 @@
+// TC-64: EDGE-25 NFR-SEC-11 hook infinite loop timeout / TC-63 EDGE-24 hook tampering
 // NFR-SEC-11: hook script timeout / NFR-SEC-2 --no-verify
 // TC-50: EDGE-11 --no-verify detection
 // EDGE-11·12·13 hook bypass + cache corruption (US-10.4, M10)
