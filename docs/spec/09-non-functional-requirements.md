@@ -13,15 +13,27 @@ status: Approved
 
 ## 1. Performance (Perf)
 
+Plugin이 직접 측정·enforce 가능한 perf NFR. NFR-PERF-2 (LLM 응답)와
+NFR-PERF-7 (누적 사양화 시간 self-report)는 CC·user 측이라 별도 분리.
+
 | ID | NFR | 측정 단위 | 목표 | 측정 방법 | 위반 시 |
 |---|---|---|---|---|---|
 | NFR-PERF-1 | Skill invocation 시간 (LLM 응답 제외) | ms | <500 | log + 평균 | 사용자 phase 진행 흐름 끊김 (KPI-1 ↓) |
-| NFR-PERF-2 | LLM 응답 시간 (한 phase 산출물 생성) | s | <60 | LLM API log | 사용자 이탈 (KPI-1 ↓) |
 | NFR-PERF-3 | Pre-commit hook 실행 시간 | s | <3 | git timing | 사용자 commit 부담 — hook bypass 욕구 |
 | NFR-PERF-4 | Dependency graph 빌드 시간 (cold) | s | <2 (한 project 평균) | bench | 첫 hook·skill 실행 지연 |
 | NFR-PERF-5 | Dependency graph 빌드 시간 (incremental, file watch) | ms | <300 | bench | UI 반응 지연 |
 | NFR-PERF-6 | Schema validation 시간 (한 phase frontmatter) | ms | <100 | bench | hook 누적 지연 |
+
+<!-- specrail:ignore-start -->
+
+(아래는 plugin 외부 측정 — verifier matrix 제외)
+
+| ID | NFR | 측정 단위 | 목표 | 측정 방법 | 위반 시 |
+|---|---|---|---|---|---|
+| NFR-PERF-2 | LLM 응답 시간 (한 phase 산출물 생성) | s | <60 | LLM API log | 사용자 이탈 (KPI-1 ↓) |
 | NFR-PERF-7 | 13 phase 사양화 누적 시간 (AI 보조) | h | <6 | 사용자 self-report | KPI-3 미달 |
+
+<!-- specrail:ignore-end -->
 
 PRD KPI 직접 매핑:
 - KPI-1 (완주율) → NFR-PERF-1·2·3 모두 (지연이 누적 이탈 원인)
@@ -35,13 +47,34 @@ PRD KPI 직접 매핑:
 |---|---|---|---|---|---|
 | NFR-SCAL-1 | 한 phase 산출물 크기 한계 | KB | LLM context 한계 따름 (~50KB body) | LLM 응답 모니터 | LLM 응답 잘림 → 사용자가 phase 분할 |
 | NFR-SCAL-2 | Project 내 누적 ID 수 (Spec·Entity·INV·NFR·OPS·ADR·RISK·TC 등) | count | <5000 | dependency graph node count | graph 빌드 지연 → NFR-PERF-4 위반 |
+| NFR-SCAL-5 | 한 사용자 동시 multi-project | concurrent | 무제한 (각 docs/spec 분리) | - | ID counter 충돌 X (per-project) |
+
+<!-- specrail:ignore-start -->
+
+(아래는 scope 결정 (deferred / N-A) — verifier matrix 제외)
+
+| ID | NFR | 측정 단위 | 목표 | 측정 방법 | 위반 시 |
+|---|---|---|---|---|---|
 | NFR-SCAL-3 | DELTA changes 누적 수 (per project) | count | <500 | file system | timeline navigation 지연 (향후 cycle) |
 | NFR-SCAL-4 | 동시 사용자 (서로 다른 머신) | concurrent | 무제한 (각자 환경) | - | 무관 |
-| NFR-SCAL-5 | 한 사용자 동시 multi-project | concurrent | 무제한 (각 docs/spec 분리) | - | ID counter 충돌 X (per-project) |
+
+<!-- specrail:ignore-end -->
 
 이 product가 popular 해져도 (KPI-4: 500 stars) 인프라 비용 증가 X — passive code.
 
 ## 3. Availability (Avail)
+
+NFR-AVAIL은 대부분 plugin 외부 책임 (CC·git·LLM API·사용자 측). plugin이
+직접 enforce·test 할 수 있는 건 NFR-AVAIL-6 (hook 자체 실패) 뿐. 나머지는
+scope 결정으로 documented, verifier intent matrix 밖.
+
+| ID | NFR | 측정 단위 | 목표 | 측정 방법 | 위반 시 |
+|---|---|---|---|---|---|
+| NFR-AVAIL-6 | Hook 자체 실패 (script error) | error rate | <0.1% | hook log | 사용자가 hook bypass 욕구 — INV-3 위반 위험 |
+
+<!-- specrail:ignore-start -->
+
+(아래는 plugin 외부 책임으로 documented — verifier matrix 제외)
 
 | ID | NFR | 측정 단위 | 목표 | 측정 방법 | 위반 시 |
 |---|---|---|---|---|---|
@@ -50,9 +83,10 @@ PRD KPI 직접 매핑:
 | NFR-AVAIL-3 | EXT-2 LLM API 다운 시 | - | CC가 fallback 또는 사용자 대기 | CC 측 | phase 진행 일시 정지 |
 | NFR-AVAIL-4 | EXT-3 Git Hosting 다운 시 | - | local git 작동, push만 막힘 | git 측 | hook 작동 가능 (local git) |
 | NFR-AVAIL-5 | EXT-5 Telemetry endpoint 다운 시 | - | local queue 보존, 재전송 | local | 사용자 무관 (background) |
-| NFR-AVAIL-6 | Hook 자체 실패 (script error) | error rate | <0.1% | hook log | 사용자가 hook bypass 욕구 — INV-3 위반 위험 |
 | NFR-AVAIL-7 | RPO (사용자 spec 손실) | - | 사용자 git push 빈도 결정 | - | 사용자 책임 (가이드 README) |
 | NFR-AVAIL-8 | RTO | - | 즉시 (clone + plugin install) | - | 사용자 책임 |
+
+<!-- specrail:ignore-end -->
 
 Cognitive Pattern: **Error budgets** — 99.9% SLO = 0.1% budget. budget을 ship에 spend.
 
@@ -61,26 +95,18 @@ Cognitive Pattern: **Error budgets** — 99.9% SLO = 0.1% budget. budget을 ship
 ### Spoofing
 | ID | Threat | 완화 |
 |---|---|---|
-| NFR-SEC-1 | Malicious plugin update (사용자가 가짜 plugin 설치) | maintainer signed release, README "공식 source 확인" |
 | NFR-SEC-2 | Hook bypass (사용자가 `--no-verify`로 commit) | hook은 plugin이 enforce 못 함 — git 자체 한계. 가이드 + telemetry로 detection (R13). 진짜 enforce는 CI에서 (사용자 측). |
 
 ### Tampering
 | ID | Threat | 완화 |
 |---|---|---|
-| NFR-SEC-3 | Malicious PR로 plugin skill에 jailbreak 삽입 | PR review 강제, signed tag, marketplace verification |
 | NFR-SEC-4 | 사용자 spec 직접 변조 (frontmatter 수동 수정) | hook이 schema 검증 + ID consistency check (INV-1, INV-2) |
 | NFR-SEC-5 | `.specrail-cache/` 변조 (graph cache 위조) | hook이 cache invalidate + rebuild on commit |
-
-### Repudiation
-| ID | Threat | 완화 |
-|---|---|---|
-| NFR-SEC-6 | 사용자가 자기 spec 변경 부인 | git history (사용자 책임 — out of plugin scope) |
 
 ### Information Disclosure
 | ID | Threat | 완화 |
 |---|---|---|
 | NFR-SEC-7 | 사용자가 spec에 secret/API key/PII 적고 LLM에 paste | README + Phase 1 prompt에 경고. Pre-commit hook이 secret pattern detection (optional, opt-in F) |
-| NFR-SEC-8 | 사용자가 spec에 proprietary info 적고 public LLM에 paste (회사 정책 위반) | README "회사 환경에서 self-hosted LLM 또는 enterprise plan 권장" |
 | NFR-SEC-9 | Telemetry event에 spec 내용 누출 (R13) | INV-8 enforce. Schema validator가 metadata 검사 — 허용된 field만 |
 
 ### DoS
@@ -93,7 +119,37 @@ Cognitive Pattern: **Error budgets** — 99.9% SLO = 0.1% budget. budget을 ship
 | ID | Threat | 완화 |
 |---|---|---|
 | NFR-SEC-12 | Hook script가 임의 명령 실행 (사용자 머신에 RCE) | maintainer 자체 hook script만 install, 사용자 명시 confirm 후 install (AC-R6-3) |
+
+<!-- specrail:ignore-start -->
+
+(아래는 process · out-of-plugin · endpoint side — verifier matrix 제외)
+
+### Spoofing (process/out-of-scope)
+| ID | Threat | 완화 |
+|---|---|---|
+| NFR-SEC-1 | Malicious plugin update (사용자가 가짜 plugin 설치) | maintainer signed release, README "공식 source 확인" |
+
+### Tampering (process)
+| ID | Threat | 완화 |
+|---|---|---|
+| NFR-SEC-3 | Malicious PR로 plugin skill에 jailbreak 삽입 | PR review 강제, signed tag, marketplace verification |
+
+### Repudiation (user responsibility)
+| ID | Threat | 완화 |
+|---|---|---|
+| NFR-SEC-6 | 사용자가 자기 spec 변경 부인 | git history (사용자 책임 — out of plugin scope) |
+
+### Information Disclosure (guidance only)
+| ID | Threat | 완화 |
+|---|---|---|
+| NFR-SEC-8 | 사용자가 spec에 proprietary info 적고 public LLM에 paste (회사 정책 위반) | README "회사 환경에서 self-hosted LLM 또는 enterprise plan 권장" |
+
+### Elevation (endpoint-side)
+| ID | Threat | 완화 |
+|---|---|---|
 | NFR-SEC-13 | Telemetry payload injection (endpoint side) | endpoint validation, plugin 자체 권한 상승 X (single-user single-machine) |
+
+<!-- specrail:ignore-end -->
 
 ### Compliance 후보
 | ID | 의무 | 적용 |
@@ -107,11 +163,20 @@ PRD §3 Persona 데이터 + Phase 4 Entity 분류.
 
 | ID | 데이터 | 분류 | 처리 정책 |
 |---|---|---|---|
-| NFR-PRIV-1 | 사용자가 spec에 적는 idea·persona·시나리오·PAIN | 사용자 측 (PII 가능) | 이 product는 저장 안 함. 사용자 git repo + LLM API에만. README에 LLM 데이터 처리 정책 확인 권장. |
-| NFR-PRIV-2 | 사용자가 LLM에 paste한 prompt | 사용자 측 | LLM provider 정책 따름 (Claude Code 측 책임) |
 | NFR-PRIV-3 | Telemetry event metadata | 익명 (anonProjectHash) | INV-8 — spec 내용 0건. project root path SHA256 (irreversible) |
 | NFR-PRIV-4 | TelemetryConsent | 사용자 명시 동의 | INV-9 — default OptedOut. opt-in 명시 후만 전송. |
 | NFR-PRIV-5 | Plugin이 사용자 file system access 범위 | 최소 권한 | docs/spec/, .git/hooks/, .specrail-cache/, ~/.specrail/만 — 명시 |
+
+<!-- specrail:ignore-start -->
+
+(아래는 사용자·LLM provider 책임 — verifier matrix 제외)
+
+| ID | 데이터 | 분류 | 처리 정책 |
+|---|---|---|---|
+| NFR-PRIV-1 | 사용자가 spec에 적는 idea·persona·시나리오·PAIN | 사용자 측 (PII 가능) | 이 product는 저장 안 함. 사용자 git repo + LLM API에만. README에 LLM 데이터 처리 정책 확인 권장. |
+| NFR-PRIV-2 | 사용자가 LLM에 paste한 prompt | 사용자 측 | LLM provider 정책 따름 (Claude Code 측 책임) |
+
+<!-- specrail:ignore-end -->
 
 해당 권리:
 - 데이터 export: 사용자 git pull (사용자 책임)
@@ -121,31 +186,54 @@ PRD §3 Persona 데이터 + Phase 4 Entity 분류.
 
 ## 6. Accessibility (A11y)
 
-Plugin 자체는 terminal·markdown surface. WCAG 2.1 AA 적용:
+Plugin 자체는 terminal·markdown surface. WCAG 2.1 AA 적용. NFR-A11Y-3
+(code block fence)만 spec authoring 시 grep으로 자동 verify 가능. 나머지는
+code review·manual·terminal/IDE 측 책임 — verifier matrix 제외.
+
+| ID | NFR | 측정 방법 |
+|---|---|---|
+| NFR-A11Y-3 | Code block fence + lang 명시 | grep `^\`\`\`` |
+
+<!-- specrail:ignore-start -->
+
+(아래는 manual review 또는 terminal·IDE 측 책임 — verifier matrix 제외)
 
 | ID | NFR | 측정 방법 |
 |---|---|---|
 | NFR-A11Y-1 | 모든 status는 색 + icon + text (색만 X) | code review |
 | NFR-A11Y-2 | Markdown semantic 위계 일관 (H1/H2/H3) | grep `^##+` |
-| NFR-A11Y-3 | Code block fence + lang 명시 | grep `^\`\`\`` |
 | NFR-A11Y-4 | Mermaid 다이어그램 alt text 또는 prose 동등 설명 | 각 다이어그램 옆 prose |
 | NFR-A11Y-5 | Hyperlink descriptive ("여기 클릭" 금지) | review |
 | NFR-A11Y-6 | Terminal output screen reader 친화 (markdown native) | manual |
 | NFR-A11Y-7 | Keyboard navigation (terminal 자체 + IDE 자체) | 자동 (terminal·IDE 측) |
 
+<!-- specrail:ignore-end -->
+
 (Dashboard a11y — color contrast·focus indicator·ARIA 등 — 향후 cycle.)
 
 ## 7. Internationalization (i18n)
 
+NFR-I18N-1 (한국어 우선) 와 NFR-I18N-4/5 (UTC·ISO 8601 timestamp) 는 plugin
+이 직접 enforce. 나머지는 scope 결정 (branch 전략·사용자 자유·미지원 RTL).
+
 | ID | NFR | 정책 |
 |---|---|---|
 | NFR-I18N-1 | 기본 언어 (plugin 자체 — skill prompt) | 한국어 우선 |
-| NFR-I18N-2 | 추가 언어 | 영어 — branch 또는 디렉토리 분리  |
-| NFR-I18N-3 | 사용자 spec 언어 | 사용자 자유 — plugin 무관 |
 | NFR-I18N-4 | 시간대 (Telemetry timestamp) | UTC 저장 |
 | NFR-I18N-5 | 날짜 형식 | ISO 8601 (YYYY-MM-DD) |
+
+<!-- specrail:ignore-start -->
+
+(아래는 scope 결정으로 documented — verifier matrix 제외)
+
+| ID | NFR | 정책 |
+|---|---|---|
+| NFR-I18N-2 | 추가 언어 | 영어 — branch 또는 디렉토리 분리  |
+| NFR-I18N-3 | 사용자 spec 언어 | 사용자 자유 — plugin 무관 |
 | NFR-I18N-6 | 텍스트 길이 | 한국어/영어 차이 약 1.5x — markdown 표 자동 wrap |
 | NFR-I18N-7 | RTL 지원 | 미지원 (한국어·영어만) |
+
+<!-- specrail:ignore-end -->
 
 ## 8. NFR ↔ ARCH 매핑
 
