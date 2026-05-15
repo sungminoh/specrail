@@ -1,15 +1,18 @@
 /**
  * Filesystem existence + symbol detection helpers.
  *
- * Symbol detection is naive grep — sufficient for spec-body Type/Files
- * fields where we just need to confirm "an interface/class/function named
- * X exists somewhere in src/". For deeper semantic checks (parameter
- * types, return types) callers should layer their own AST visitor on top.
+ * Symbol detection uses the TS compiler API. We require the named
+ * declaration to have substance (interface with ≥1 member, class with
+ * ≥1 member, function with parameters or body statements, enum with
+ * ≥1 member, type alias not aliased to {}/any/never/unknown). Empty
+ * stubs like `interface User {}` are rejected — they vacuously match
+ * symbol-name without proving the entity is modelled.
  */
 
 import { stat, readFile } from 'node:fs/promises';
 import type { Dirent } from 'node:fs';
 import { join, relative } from 'node:path';
+import * as ts from 'typescript';
 
 export async function pathExists(absPath: string): Promise<boolean> {
   try {
@@ -28,14 +31,16 @@ export async function existsRelative(
 }
 
 /**
- * Look for a definition of `symbolName` in `file`. Matches any of:
- *   - `export interface X`
- *   - `export type X`
- *   - `export class X`
- *   - `export function X`
- *   - `export const X`
- *   - `interface X`, `type X`, `class X`, `function X`, `const X` (non-exported)
- * Returns the matching line number, or 0 if not found.
+ * Look for a substantive definition of `symbolName` in `file` via the
+ * TS compiler API. Returns the matching line number, or 0 if not found
+ * or the match is an empty stub.
+ *
+ * A definition counts as substantive when:
+ *   - interface: has ≥1 member
+ *   - class: has ≥1 member
+ *   - enum: has ≥1 member
+ *   - function: has parameters OR a body with ≥1 statement
+ *   - type alias: aliased type is not `any`/`never`/`unknown`/`{}`/`object`
  */
 export async function hasSymbolInFile(
   absFilePath: string,
@@ -47,20 +52,57 @@ export async function hasSymbolInFile(
   } catch {
     return 0;
   }
-  const escaped = symbolName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  // Only top-of-file (or top-of-block) declarations qualify. Exclude
-  // `const`/`let` because architect flagged that `const Project = "foo"`
-  // would false-positive on ENT-Project even when no domain entity is
-  // implemented. interface/type/class/function/enum are still allowed
-  // because they almost always represent a real definition shape.
-  const re = new RegExp(
-    `^\\s*(?:export\\s+)?(?:interface|type|class|function|enum)\\s+${escaped}\\b`,
+  const sf = ts.createSourceFile(
+    absFilePath,
+    content,
+    ts.ScriptTarget.Latest,
+    /* setParentNodes */ true,
+    /\.tsx$/.test(absFilePath) ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   );
-  const lines = content.split('\n');
-  for (let i = 0; i < lines.length; i++) {
-    if (re.test(lines[i])) return i + 1;
+  let found = 0;
+  const visit = (node: ts.Node): void => {
+    if (found > 0) return;
+    if (isSubstantiveDeclaration(node, symbolName)) {
+      const { line } = sf.getLineAndCharacterOfPosition(node.getStart(sf));
+      found = line + 1;
+      return;
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sf);
+  return found;
+}
+
+function isSubstantiveDeclaration(node: ts.Node, name: string): boolean {
+  if (ts.isInterfaceDeclaration(node) && node.name.text === name) {
+    return node.members.length > 0;
   }
-  return 0;
+  if (ts.isClassDeclaration(node) && node.name?.text === name) {
+    return node.members.length > 0;
+  }
+  if (ts.isEnumDeclaration(node) && node.name.text === name) {
+    return node.members.length > 0;
+  }
+  if (ts.isFunctionDeclaration(node) && node.name?.text === name) {
+    if (node.parameters.length > 0) return true;
+    if (node.body && node.body.statements.length > 0) return true;
+    return false;
+  }
+  if (ts.isTypeAliasDeclaration(node) && node.name.text === name) {
+    return !isTriviallyEmptyType(node.type);
+  }
+  return false;
+}
+
+function isTriviallyEmptyType(typeNode: ts.TypeNode): boolean {
+  if (typeNode.kind === ts.SyntaxKind.AnyKeyword) return true;
+  if (typeNode.kind === ts.SyntaxKind.NeverKeyword) return true;
+  if (typeNode.kind === ts.SyntaxKind.UnknownKeyword) return true;
+  if (typeNode.kind === ts.SyntaxKind.ObjectKeyword) return true;
+  if (ts.isTypeLiteralNode(typeNode) && typeNode.members.length === 0) {
+    return true;
+  }
+  return false;
 }
 
 export interface SymbolHit {

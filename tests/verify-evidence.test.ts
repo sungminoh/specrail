@@ -86,21 +86,22 @@ describe('fs helpers (US-V03)', () => {
     expect(await existsRelative(dir, 'b.txt')).toBe(false);
   });
 
-  it('hasSymbolInFile detects type-level definitions', async () => {
-    // const / let are intentionally excluded — architect flagged that
-    // `const Project = "foo"` would false-positive on ENT-Project even
-    // when no domain entity is implemented. interface/type/class/
-    // function/enum are still recognised.
+  it('hasSymbolInFile requires substantive declarations (round-N: empty stubs rejected)', async () => {
+    // Round-N audit: `interface Project {}` empty stub vacuously
+    // matched ENT-Project. New rule needs substance:
+    //   interface/class/enum → ≥1 member
+    //   function             → params OR body statements
+    //   type alias           → not {}/any/never/unknown
     const file = join(dir, 's.ts');
     await writeFile(
       file,
       [
-        'export interface Project { id: string }',
-        'function helper() {}',
-        'class Foo {}',
-        'const bar = 1;',
-        'type Alias = number;',
-        'enum Color { Red }',
+        'export interface Project { id: string }', // 1: 1 member ✓
+        'function helper(input: string) { return input; }', // 2: params + body ✓
+        'class Foo { name = "foo"; }', // 3: 1 member ✓
+        'const bar = 1;', // 4: const ignored
+        'type Alias = number;', // 5: substantive type ✓
+        'enum Color { Red }', // 6: 1 member ✓
       ].join('\n'),
       'utf8',
     );
@@ -108,10 +109,33 @@ describe('fs helpers (US-V03)', () => {
     expect(await hasSymbolInFile(file, 'Project')).toBe(1);
     expect(await hasSymbolInFile(file, 'helper')).toBe(2);
     expect(await hasSymbolInFile(file, 'Foo')).toBe(3);
-    expect(await hasSymbolInFile(file, 'bar')).toBe(0); // const excluded
+    expect(await hasSymbolInFile(file, 'bar')).toBe(0);
     expect(await hasSymbolInFile(file, 'Alias')).toBe(5);
     expect(await hasSymbolInFile(file, 'Color')).toBe(6);
     expect(await hasSymbolInFile(file, 'Missing')).toBe(0);
+  });
+
+  it('hasSymbolInFile REJECTS empty stubs', async () => {
+    const file = join(dir, 'stubs.ts');
+    await writeFile(
+      file,
+      [
+        'export interface User {}',
+        'class Empty {}',
+        'function noop() {}',
+        'type Anything = any;',
+        'type Nothing = {};',
+        'enum Void {}',
+      ].join('\n'),
+      'utf8',
+    );
+
+    expect(await hasSymbolInFile(file, 'User')).toBe(0);
+    expect(await hasSymbolInFile(file, 'Empty')).toBe(0);
+    expect(await hasSymbolInFile(file, 'noop')).toBe(0);
+    expect(await hasSymbolInFile(file, 'Anything')).toBe(0);
+    expect(await hasSymbolInFile(file, 'Nothing')).toBe(0);
+    expect(await hasSymbolInFile(file, 'Void')).toBe(0);
   });
 
   it('findSymbol walks a directory and locates the first definition', async () => {
