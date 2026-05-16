@@ -1656,7 +1656,6 @@ README → M2? ✅ (T2.13, M2 ship-able 최소 조건)
 
 Per `skills/_common/principles.md` §"Attrs Blocks Are Mandatory". T-tasks defined only in def-tables (no `#### Tn.m:` heading) aggregate here. Heading-defined tasks get inline attrs above.
 
-remaining count: 43
 <!-- specrail:attrs id=T2.5 -->
 ```yaml
 milestone: M2
