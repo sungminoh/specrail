@@ -1,0 +1,23 @@
+{
+  "name": "specrail",
+  "version": "0.2.0",
+  "description": "13-phase spec discipline for Claude Code — hook + state machine enforced phase progression, hallucination ID blocking, and verifier-based reality reporting.",
+  "author": {
+    "name": "sungminoh",
+    "email": "smoh2044@gmail.com",
+    "url": "https://github.com/sungminoh"
+  },
+  "homepage": "https://github.com/sungminoh/specrail",
+  "repository": "https://github.com/sungminoh/specrail",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "plugin",
+    "spec",
+    "planning",
+    "tdd",
+    "discipline",
+    "verifier",
+    "13-phase"
+  ]
+}

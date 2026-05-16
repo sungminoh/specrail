@@ -103,31 +103,50 @@ Pre-commit 통합: `src/hook/verify-status.ts`는 spec이 명시한 `Evidence:` 
 
 ## Install
 
-**Requirements:** Node 20+
+**Requirements:** Node 20+, Claude Code 2.1+
+
+### Claude Code plugin (recommended)
+
+specrail은 self-hosted Claude Code marketplace로 GitHub repo에서 직접 설치합니다:
 
 ```sh
-npm install specrail
+# Marketplace 등록 (한 번만)
+claude plugin marketplace add sungminoh/specrail
+
+# 플러그인 설치
+claude plugin install specrail@specrail
 ```
 
-This puts the CLI on your `PATH` (`specrail` binary) and ships the 13-phase skill collection at `node_modules/specrail/skills/`.
+Claude Code를 재시작하면 `/specrail:orchestrator` (및 13개 phase skill)이 사용 가능합니다.
 
-### After install — wire skills into Claude Code
-
-Claude Code's plugin loader scans `~/.claude/plugins/<name>/`, not `node_modules/`. Copy or symlink the shipped `skills/` directory into your plugin cache:
+업데이트:
 
 ```sh
-# Symlink (recommended — auto-updates on npm upgrade)
-mkdir -p ~/.claude/plugins
-ln -sfn "$(npm root -g)/specrail/skills" ~/.claude/plugins/specrail
-# (or, for a local install: ln -sfn "$(pwd)/node_modules/specrail/skills" ~/.claude/plugins/specrail)
-
-# Or copy (stable snapshot)
-cp -r "$(npm root -g)/specrail/skills" ~/.claude/plugins/specrail
+claude plugin marketplace update specrail
+claude plugin update specrail
 ```
 
-Restart Claude Code; the orchestrator skill is now invokable as `/specrail`.
+### CLI도 함께 사용하려면 (선택)
 
-> A formal `.claude-plugin/plugin.json` manifest + marketplace listing is deferred to a future release. Until then, the skill drop-in above is the canonical install path. See [docs/MARKETPLACE.md](docs/MARKETPLACE.md) for context.
+플러그인은 skill만 제공합니다. `specrail init`, `specrail verify` 같은 **CLI 명령**을 쓰려면 npm 설치가 별도로 필요합니다:
+
+```sh
+npm install -g specrail   # npm publish 후 (현재 0.2.0 미발행)
+# 또는 개발 환경에서: git clone + npm link
+```
+
+CLI와 plugin은 분리된 surface입니다. CLI는 git hook integration·verifier 등 build/runtime 검증을, plugin은 13-phase prompting을 담당.
+
+### Local development install
+
+마켓플레이스 거치지 않고 본인 checkout으로 테스트:
+
+```sh
+claude plugin marketplace add /path/to/specrail
+claude plugin install specrail@specrail
+```
+
+자세한 conformance 문서: [docs/MARKETPLACE.md](docs/MARKETPLACE.md).
 
 **Telemetry config (optional):** see [docs/TELEMETRY.md](docs/TELEMETRY.md).
 

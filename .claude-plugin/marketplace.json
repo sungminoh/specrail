@@ -1,0 +1,32 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "specrail",
+  "description": "specrail marketplace — 13-phase spec discipline plugin for Claude Code",
+  "owner": {
+    "name": "sungminoh",
+    "email": "smoh2044@gmail.com",
+    "url": "https://github.com/sungminoh"
+  },
+  "plugins": [
+    {
+      "name": "specrail",
+      "source": "./",
+      "description": "13-phase spec discipline for Claude Code. Hook + state machine enforced phase progression, hallucination ID blocking, and verifier-based reality reporting.",
+      "version": "0.2.0",
+      "author": {
+        "name": "sungminoh",
+        "email": "smoh2044@gmail.com"
+      },
+      "homepage": "https://github.com/sungminoh/specrail",
+      "category": "productivity",
+      "tags": [
+        "spec",
+        "planning",
+        "tdd",
+        "discipline",
+        "verifier",
+        "13-phase"
+      ]
+    }
+  ]
+}
