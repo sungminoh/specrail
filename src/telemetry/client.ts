@@ -183,6 +183,10 @@ export function createTelemetryClient(cfg: ClientConfig): TelemetryClient {
     };
     if (anonProjectHash !== undefined) payload.anonProjectHash = anonProjectHash;
     if (pluginVersion !== undefined) payload.pluginVersion = pluginVersion;
+    // T-CSA.13: attrs schema-version (semver, no PII per NFR-CSA-PRIV-1).
+    // Hardcoded for now — ADR-13 says schema v1.0 first published at plugin
+    // 0.2.0. Future minor bumps update this constant.
+    payload['schema-version'] = '1.0';
 
     await trySend(payload);
   }

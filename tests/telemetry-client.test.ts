@@ -22,6 +22,20 @@ describe('T3.8 Telemetry client (F13.2, AC-R13-2, INV-8·9, ADR-7, TC-22·37·45
     expect(payload.anonProjectHash).toBe('abc');
   });
 
+  it('T-CSA.13: payload includes schema-version (semver, NFR-CSA-PRIV-1)', async () => {
+    const mockSend = vi.fn().mockResolvedValue({ ok: true });
+    const c = createTelemetryClient({
+      consent: ConsentStatus.OptedIn,
+      send: mockSend,
+      anonProjectHash: 'abc',
+    });
+    await c.emit({ eventType: 'PhaseApproved', phaseId: 1 });
+    const payload = mockSend.mock.calls[0][0] as Record<string, unknown>;
+    expect(payload['schema-version']).toBe('1.0');
+    // PII guard: semver number-only, no path / identifier / free-text leakage
+    expect(payload['schema-version']).toMatch(/^\d+\.\d+(?:\.\d+)?$/);
+  });
+
   it('TC-37: INV-9 — OptedOut → send not called', async () => {
     const mockSend = vi.fn().mockResolvedValue({ ok: true });
     const c = createTelemetryClient({
