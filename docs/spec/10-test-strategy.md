@@ -241,7 +241,7 @@ Per `skills/_common/principles.md` §"Attrs Blocks Are Mandatory". TC and EDGE e
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R1-1"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -250,7 +250,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R1-2"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -259,7 +259,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R1-3"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -268,7 +268,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R2-1"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -277,7 +277,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R2-2"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -286,7 +286,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R2-3"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -295,7 +295,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R4-1"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -304,7 +304,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R4-2"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -313,7 +313,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R5-1"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -322,7 +322,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R5-2"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -331,7 +331,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R5-3"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -340,7 +340,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R6-1"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -349,7 +349,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R6-2"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -358,7 +358,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R6-3"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -367,7 +367,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R7-1"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -376,7 +376,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R7-2"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -385,7 +385,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R7-3"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -394,7 +394,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R8-1"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -403,7 +403,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R8-2"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -412,7 +412,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R8-3"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -421,7 +421,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R13-1"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -430,7 +430,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R13-2"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -439,7 +439,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["AC-R13-3"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -448,7 +448,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["INV-1"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -457,7 +457,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["INV-2"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -466,7 +466,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["INV-3"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -475,7 +475,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["INV-4"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -484,7 +484,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["INV-5"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -493,7 +493,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["INV-6"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -502,7 +502,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["INV-7"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -511,7 +511,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["INV-8"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -520,7 +520,7 @@ last-modified: 2026-05-16
 ```yaml
 status: Approved
 level: unit
-linked-ac: []
+linked-ac: ["INV-9"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -825,7 +825,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-1 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-40"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -833,7 +833,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-2 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-41"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -841,7 +841,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-3 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-42"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -849,7 +849,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-4 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-43"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -857,7 +857,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-5 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-44"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -865,7 +865,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-6 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-45"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -873,7 +873,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-7 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-46"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -881,7 +881,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-8 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-47"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -889,7 +889,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-9 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-48"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -897,7 +897,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-10 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-49"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -905,7 +905,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-11 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-50"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -913,7 +913,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-12 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-51"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -921,7 +921,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-13 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-52"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -929,7 +929,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-14 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-53"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -937,7 +937,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-15 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-54"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -945,7 +945,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-16 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-55"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -953,7 +953,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-17 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-56"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -961,7 +961,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-18 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-57"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -969,7 +969,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-19 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-58"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -977,7 +977,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-20 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-59"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -985,7 +985,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-21 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-60"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -993,7 +993,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-22 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-61"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -1001,7 +1001,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-23 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-62"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -1009,7 +1009,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-24 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-63"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -1017,7 +1017,7 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=EDGE-25 -->
 ```yaml
 status: Approved
-linked-ac: []
+linked-ac: ["TC-64"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
