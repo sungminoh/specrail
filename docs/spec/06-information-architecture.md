@@ -35,6 +35,156 @@ status: Approved
 | P-CC-14 | Telemetry opt-in 질문 | N-071 | install 첫 사용 | 1 |
 | P-CC-15 | Escalation prompt (BLOCKED) | N-049 | subagent 막힘 시 | 3 |
 
+<!-- specrail:attrs id=P-CC-1 -->
+```yaml
+surface: cli
+trigger: "GitHub URL 또는 Claude Code marketplace"
+parent-section: SEC-1
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-2 -->
+```yaml
+surface: cli
+trigger: "install 직후 자동 출력"
+parent-section: SEC-1
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-3 -->
+```yaml
+surface: cli
+trigger: "/specrail init 또는 trigger phrase"
+parent-section: SEC-2
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-4 -->
+```yaml
+surface: cli
+trigger: "skill chain 자동 (13 phase 동일 layout)"
+parent-section: SEC-2
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-5 -->
+```yaml
+surface: cli
+trigger: "git commit 시 자동"
+parent-section: SEC-2
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-6 -->
+```yaml
+surface: cli
+trigger: "사용자 approve 명령"
+parent-section: SEC-2
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-7 -->
+```yaml
+surface: cli
+trigger: "/specrail change <topic>"
+parent-section: SEC-3
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-8 -->
+```yaml
+surface: cli
+trigger: "DELTA 진행 중 영향 phase 별"
+parent-section: SEC-3
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-9 -->
+```yaml
+surface: cli
+trigger: "자동 (Approved -> Applied)"
+parent-section: SEC-3
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-10 -->
+```yaml
+surface: cli
+trigger: "Phase 13 후 자동 또는 명령"
+parent-section: SEC-4
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-11 -->
+```yaml
+surface: cli
+trigger: "task별 자동"
+parent-section: SEC-4
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-12 -->
+```yaml
+surface: cli
+trigger: "task별 자동"
+parent-section: SEC-4
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-13 -->
+```yaml
+surface: cli
+trigger: "자동 (implementation 완료)"
+parent-section: SEC-4
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-14 -->
+```yaml
+surface: cli
+trigger: "install 첫 사용"
+parent-section: SEC-6
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=P-CC-15 -->
+```yaml
+surface: cli
+trigger: "subagent 막힘 시"
+parent-section: SEC-4
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### 산출물 검토 surface (passive — markdown rendered)
 
 현재 인터랙티브 dashboard 없음. 산출물 검토는 사용자 환경의 markdown rendered:
