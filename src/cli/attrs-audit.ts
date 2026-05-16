@@ -3,7 +3,7 @@
 // Linked KPI: KPI-7 (attrs coverage %)
 // Linked NFR: NFR-CSA-A11Y-1 (CLI output colour-blind safe — no colour-only signal)
 
-import { readFile, readdir, stat } from 'node:fs/promises';
+import { readFile, readdir, stat, writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { lintAttrs } from '../lint/attrs-lint.js';
 import { parseAttrsBlocks } from '../markdown/attrs.js';
@@ -107,6 +107,61 @@ function countEntityHeadings(raw: string): number {
     if (ENTITY_HEADING_RE.test(line)) n++;
   }
   return n;
+}
+
+/**
+ * T-CSA.10 `--accept-codemod-conflict`: strip every
+ * `<!-- specrail:attrs-review-required reason="..." -->` marker from
+ * spec files and append an "accepted-at" entry to migrate-report.json.
+ *
+ * Returns the number of markers stripped.
+ */
+const REVIEW_MARKER_LINE_RE = /<!--\s*specrail:attrs-review-required\s+reason="[^"]+"\s*-->\s*\n?/g;
+
+export async function acceptCodemodConflicts(projectRoot: string): Promise<{ stripped: number; files: string[] }> {
+  const specDir = join(projectRoot, 'docs', 'spec');
+  let entries: string[];
+  try {
+    entries = await readdir(specDir);
+  } catch {
+    return { stripped: 0, files: [] };
+  }
+  let stripped = 0;
+  const touched: string[] = [];
+  for (const e of entries) {
+    if (!e.endsWith('.md')) continue;
+    const full = join(specDir, e);
+    const original = await readFile(full, 'utf8');
+    const updated = original.replace(REVIEW_MARKER_LINE_RE, (match) => {
+      stripped++;
+      return '';
+    });
+    if (updated !== original) {
+      await writeFile(full, updated);
+      touched.push(e);
+    }
+  }
+  if (stripped > 0) {
+    const reportDir = join(projectRoot, '.specrail');
+    await mkdir(reportDir, { recursive: true });
+    const reportPath = join(reportDir, 'migrate-report.json');
+    let existing: Record<string, unknown> = {};
+    try {
+      existing = JSON.parse(await readFile(reportPath, 'utf8')) as Record<string, unknown>;
+    } catch {
+      // first-run write
+    }
+    const acceptedRaw = (existing as { acceptedConflicts?: unknown[] }).acceptedConflicts;
+    const accepted: unknown[] = Array.isArray(acceptedRaw) ? acceptedRaw : [];
+    accepted.push({
+      stripped,
+      files: touched,
+      ts: new Date().toISOString(),
+    });
+    (existing as { acceptedConflicts?: unknown[] }).acceptedConflicts = accepted;
+    await writeFile(reportPath, JSON.stringify(existing, null, 2) + '\n');
+  }
+  return { stripped, files: touched };
 }
 
 export function renderAttrsAuditMarkdown(r: AttrsAuditReport): string {

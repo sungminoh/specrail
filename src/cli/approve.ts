@@ -5,10 +5,20 @@
 import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseFrontmatter } from '../markdown/frontmatter.js';
-import { PhaseStatus, assertTransition } from '../state/machine.js';
+import { PhaseStatus, assertTransition, checkApprovedAttrsGate } from '../state/machine.js';
 import { runHook as runIdHook } from '../hook/id-consistency.js';
 import { runHook as runSchemaHook } from '../hook/schema-validate.js';
 import { tryEmit } from '../telemetry/client.js';
+
+async function getPluginVersion(projectRoot: string): Promise<string> {
+  try {
+    const raw = await readFile(join(projectRoot, 'package.json'), 'utf8');
+    const pkg = JSON.parse(raw) as { version?: string };
+    return pkg.version ?? '0.0.0';
+  } catch {
+    return '0.0.0';
+  }
+}
 
 export interface ApproveResult {
   approved: boolean;
@@ -46,6 +56,22 @@ export async function approve(projectRoot: string, phaseN: number): Promise<Appr
   const idResult = await runIdHook(projectRoot);
   if (!idResult.ok) {
     throw new Error(`INV-2 check FAILED before approve:\n${idResult.message}`);
+  }
+
+  // T-CSA.9 wire-up: INV-3 attrs gate. v0.2.0~v0.4.x → WARN (transition
+  // allowed, surface message); v0.5.0+ → ERROR (block). Review-required
+  // markers always block regardless of version (OQ-CSA-10).
+  const pluginVersion = await getPluginVersion(projectRoot);
+  const gate = checkApprovedAttrsGate(raw, pluginVersion);
+  if (gate.level === 'error') {
+    throw new Error(`INV-3 attrs gate FAILED before approve:\n${gate.message}\n${gate.missing.map((f) => `  - ${f.kind} @line ${f.line}: ${f.message}`).join('\n')}`);
+  }
+  if (gate.level === 'warn') {
+    console.warn(`⚠ ${gate.message}`);
+    for (const f of gate.missing.slice(0, 5)) {
+      console.warn(`  - ${f.kind} @line ${f.line}: ${f.message}`);
+    }
+    if (gate.missing.length > 5) console.warn(`  ... ${gate.missing.length - 5} more`);
   }
 
   // 5. Write status: Approved + approvedAt

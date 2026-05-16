@@ -12,6 +12,7 @@
 
 import { readFile, writeFile, mkdir, readdir, stat } from 'node:fs/promises';
 import { join, relative } from 'node:path';
+import { parseAttrsBlocks } from '../markdown/attrs.js';
 
 export interface MigrateOptions {
   readonly projectRoot: string;
@@ -134,6 +135,45 @@ export async function runMigrate(options: MigrateOptions): Promise<MigrateReport
     for (const r of renames) {
       renamed.push({ file: rel, from: r.from, to: r.to, kind: r.kind });
     }
+
+    // T-CSA.5 conflict detection (review-pass fix):
+    // After rename, check whether two distinct old IDs would collapse to the
+    // same new ID (ambiguous-id-mapping), or whether an existing attrs block
+    // for a renamed entity carries `status: legacy` that the codemod would
+    // overwrite (yaml-conflict). The current rename map is mechanical (strip
+    // zero-pad), so ambiguous-id-mapping only triggers if author wrote
+    // both `N-001` and `N-1` referring to different concepts — defensive.
+    const renameMap = new Map<string, string>();
+    for (const r of renames) {
+      const existing = renameMap.get(r.to);
+      if (existing !== undefined && existing !== r.from) {
+        conflicts.push({
+          file: rel,
+          line: 0,
+          entityId: r.to,
+          reason: 'ambiguous-id-mapping',
+          ts: new Date().toISOString(),
+        });
+      }
+      renameMap.set(r.to, r.from);
+    }
+
+    // yaml-conflict: existing attrs block targets a renamed entity with
+    // a status payload disagreeing with codemod default ('legacy').
+    const { blocks: existingBlocks } = parseAttrsBlocks(original, rel);
+    const renameTargets = new Set(renames.map((r) => r.to));
+    for (const b of existingBlocks) {
+      if (renameTargets.has(b.entityId) && b.payload.status === 'legacy') {
+        conflicts.push({
+          file: rel,
+          line: b.lineRange.start,
+          entityId: b.entityId,
+          reason: 'yaml-conflict',
+          ts: new Date().toISOString(),
+        });
+      }
+    }
+
     if (options.apply && rewritten !== original) {
       await writeFile(file, rewritten);
     }

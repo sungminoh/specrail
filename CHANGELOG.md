@@ -28,7 +28,9 @@ M-CSA milestone shipped. Attrs schema migration per `docs/spec/changes/2026-05-1
 
 ### Tests
 
-- 98 test files, 853 pass, 9 skip. +98 tests added across T-CSA.1~13.
+- 100 test files, 859 pass, 9 skip. +112 tests added across T-CSA.1~16
+  (parser 8 + schema 19 + patterns 28 + edges 17 + migrate 10 + lint 8 +
+  state gate 4 + audit 4 + teach 5 + telemetry 1 + e2e 3 + perf 3).
 
 ### Breaking changes
 
@@ -36,9 +38,9 @@ M-CSA milestone shipped. Attrs schema migration per `docs/spec/changes/2026-05-1
 
 ### Known limitations
 
-- **Spec attrs blocks not yet present in dogfood**: `specrail audit` reports 0% coverage on `docs/spec/` because the 13 phase files don't yet contain attrs blocks (only Phase 5 ID rename was applied as part of T-CSA.6). Author migration of attrs blocks is a follow-up workstream — the codemod scaffolds them mechanically once invoked per phase.
+- **Spec attrs blocks not yet present in dogfood**: `specrail audit` reports 0% coverage on `docs/spec/` because the 13 phase files don't yet contain attrs blocks (only Phase 5 ID rename was applied as part of T-CSA.6). Bulk attrs scaffolding from delta parameter tables is a future codemod pass — current codemod only renames IDs.
 - **JSON output for `specrail audit`** deferred — OQ-CSA-6 resolution favored markdown-only for 0.2.0; JSON flag tracked for 0.2.x patch.
-- **TC-86 E2E** end-to-end migration test deferred to 0.2.1 — coverage covered by per-module tests (parser, validator, codemod, lint, audit) for 0.2.0.
+- **Codemod conflict detection is minimal**: emits `yaml-conflict` (legacy attrs block disagrees with codemod intent) and `ambiguous-id-mapping` (two old IDs collapse to same new ID). `partial-cross-ref` reserved for future passes.
 
 ### Upgrade from 0.1.0
 
@@ -49,9 +51,9 @@ M-CSA milestone shipped. Attrs schema migration per `docs/spec/changes/2026-05-1
 
 ### Next release (planned — 0.3.0)
 
-- TC-86 full-chain E2E test
 - JSON output mode for `specrail audit`
 - Bulk attrs scaffolding from delta parameter tables (currently codemod handles ID rename only; attrs scaffolding from `deltas/phase-NN-*.md` parameter tables is a future codemod pass).
+- `partial-cross-ref` conflict detection in codemod.
 
 [0.2.0]: https://github.com/sungminoh/specrail/releases/tag/v0.2.0
 

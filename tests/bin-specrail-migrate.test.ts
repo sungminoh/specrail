@@ -140,6 +140,28 @@ describe('runMigrate — report shape (T-CSA.5, TC-82)', () => {
       });
     }
   });
+
+  it('emits yaml-conflict when existing attrs block for renamed entity has status:legacy', async () => {
+    writeFixture(
+      'docs/spec/05-user-flow.md',
+      [
+        '### FLN-1: pre-existing',
+        '<!-- specrail:attrs id=FLN-1 -->',
+        '```yaml',
+        'status: legacy',
+        'scenario: SCEN-1',
+        'step-order: 1',
+        'surface: cli',
+        '```',
+        '<!-- /specrail:attrs -->',
+        '',
+        '| N-001 | references this |',
+      ].join('\n'),
+    );
+    const r = await runMigrate({ projectRoot: tmpRoot, apply: true });
+    expect(r.conflicts.length).toBeGreaterThan(0);
+    expect(r.conflicts.some((c) => c.reason === 'yaml-conflict' && c.entityId === 'FLN-1')).toBe(true);
+  });
 });
 
 describe('runMigrate — multi-file (T-CSA.5)', () => {

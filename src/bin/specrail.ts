@@ -74,7 +74,13 @@ async function main() {
       exit(exitCode);
     }
     case 'audit': {
-      const { runAttrsAudit, renderAttrsAuditMarkdown } = await import('../cli/attrs-audit.js');
+      const { runAttrsAudit, renderAttrsAuditMarkdown, acceptCodemodConflicts } = await import('../cli/attrs-audit.js');
+      if (args.includes('--accept-codemod-conflict')) {
+        const r = await acceptCodemodConflicts(process.cwd());
+        console.log(`[accepted] markers stripped: ${r.stripped} across ${r.files.length} file(s)`);
+        for (const f of r.files) console.log(`  ${f}`);
+        exit(0);
+      }
       const r = await runAttrsAudit({ projectRoot: process.cwd() });
       const md = renderAttrsAuditMarkdown(r);
       process.stdout.write(md);

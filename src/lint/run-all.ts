@@ -9,6 +9,9 @@ import { join } from 'node:path';
 import { scanProject } from './anti-sycophancy.js';
 import { checkAcCoverage } from './ac-traceability.js';
 import { checkInv7File, checkInv5 } from './inv-enforce.js';
+import { lintAttrs } from './attrs-lint.js';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
 
 export interface SingleLintReport {
   name: string;
@@ -126,6 +129,48 @@ async function runInv5(files: string[]): Promise<SingleLintReport> {
   };
 }
 
+async function getPluginVersion(projectRoot: string): Promise<string> {
+  try {
+    const raw = await readFile(join(projectRoot, 'package.json'), 'utf8');
+    const pkg = JSON.parse(raw) as { version?: string };
+    return pkg.version ?? '0.0.0';
+  } catch {
+    return '0.0.0';
+  }
+}
+
+async function runAttrsCheck(projectRoot: string, files: string[]): Promise<SingleLintReport> {
+  if (files.length === 0) {
+    return { name: 'attrs', status: 'PASS', details: 'no spec file' };
+  }
+  const pluginVersion = await getPluginVersion(projectRoot);
+  let warns = 0;
+  let errors = 0;
+  for (const file of files) {
+    const text = await readFile(file, 'utf8');
+    const r = lintAttrs(text, { pluginVersion, file });
+    for (const f of r.findings) {
+      if (f.level === 'error') errors++;
+      else if (f.level === 'warn') warns++;
+    }
+  }
+  // T-CSA.8 wire-up: WARN window (pre-v0.5.0) → status WARN, never FAIL.
+  // ERROR window (v0.5.0+) or review-required markers → status FAIL.
+  let status: 'PASS' | 'WARN' | 'FAIL';
+  if (errors > 0) status = 'FAIL';
+  else if (warns > 0) status = 'WARN';
+  else status = 'PASS';
+  return {
+    name: 'attrs',
+    status,
+    details:
+      errors === 0 && warns === 0
+        ? `PASS (${files.length} files, v${pluginVersion})`
+        : `${errors} error(s) · ${warns} warn(s) across ${files.length} files (v${pluginVersion})`,
+    count: errors + warns,
+  };
+}
+
 export async function runAllChecks(
   projectRoot: string,
   options: { strict?: boolean } = {},
@@ -138,6 +183,8 @@ export async function runAllChecks(
   reports.push(await runInv7(scan.adrFiles));
   reports.push(await runAcTraceability(projectRoot));
   reports.push(await runInv5(scan.acFiles));
+  // T-CSA.8 wire-up: attrs lint over both ADR and AC spec files.
+  reports.push(await runAttrsCheck(projectRoot, [...new Set([...scan.adrFiles, ...scan.acFiles])]));
 
   const strict = options.strict ?? false;
   const overall = reports.some((r) => r.status === 'FAIL' || (strict && r.status === 'WARN'))
