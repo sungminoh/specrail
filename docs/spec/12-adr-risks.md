@@ -1147,45 +1147,45 @@ Per  §"Attrs Blocks Are Mandatory". RISK-N entries are table-defined (no indivi
 
 <!-- specrail:attrs id=RISK-1 -->
 ```yaml
-severity: M
-probability: M
-mitigation: "see RISK body"
+severity: H
+probability: H
+mitigation: "ADR-8 spike Phase 13 M0 task. 미통과 시 ADR-6b (hybrid) 설계. 초기 release 지연 가능"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
 
 <!-- specrail:attrs id=RISK-2 -->
 ```yaml
-severity: M
-probability: M
-mitigation: "see RISK body"
+severity: H
+probability: H
+mitigation: "이번 작업 자체 검증. 미통과 시 R8 scope 축소 (Phase 13 후 implementation은 사용자 수동)"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
 
 <!-- specrail:attrs id=RISK-3 -->
 ```yaml
-severity: M
+severity: H
 probability: M
-mitigation: "see RISK body"
+mitigation: "README 가이드 (CI에서 enforce 권장), R13 telemetry detection (HookBlock 후 PhaseApproved 패턴), OPS-12 KPI-1<60% 분석"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
 
 <!-- specrail:attrs id=RISK-4 -->
 ```yaml
-severity: M
+severity: L
 probability: M
-mitigation: "see RISK body"
+mitigation: "PR review 강제 (signed tag, marketplace verification), maintainer 1인 시 자체 review 한계 — co-maintainer 모집 (KPI-4 이후)"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
 
 <!-- specrail:attrs id=RISK-5 -->
 ```yaml
-severity: M
+severity: H
 probability: M
-mitigation: "see RISK body"
+mitigation: "README + Phase 1 prompt 경고, OQ-9-1 base 또는 opt-in F로 결정 후 구현"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -1194,7 +1194,7 @@ last-modified: 2026-05-16
 ```yaml
 severity: M
 probability: M
-mitigation: "see RISK body"
+mitigation: "maintainer signed only, 사용자 confirm 후 install (AC-R6-3), 24h response policy"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -1202,8 +1202,8 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=RISK-7 -->
 ```yaml
 severity: M
-probability: M
-mitigation: "see RISK body"
+probability: L
+mitigation: "Local queue 보존·재전송 (NFR-AVAIL-5), ADR-7 Trigger to Re-evaluate (Plausible shutdown 시 endpoint 교체)"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -1212,7 +1212,7 @@ last-modified: 2026-05-16
 ```yaml
 severity: M
 probability: M
-mitigation: "see RISK body"
+mitigation: "dogfood 통과 = mitigation 1차. 통과 후 sample test (Phase 10 TC-LLM-quality)"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -1220,17 +1220,17 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=RISK-9 -->
 ```yaml
 severity: M
-probability: M
-mitigation: "see RISK body"
+probability: H
+mitigation: "RB-6 (PhaseStarted vs PhaseApproved 분석), 약점 phase 식별 후 prompt 개선, phase 분할 검토"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
 
 <!-- specrail:attrs id=RISK-10 -->
 ```yaml
-severity: M
+severity: L
 probability: M
-mitigation: "see RISK body"
+mitigation: "per-project archive 정책 (향후 cycle), Phase 11 OPS-15 storage alert"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
