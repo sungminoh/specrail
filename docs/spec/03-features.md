@@ -19,6 +19,17 @@ status: Approved
 
 ## R1: Structured I/O between phases
 
+<!-- specrail:attrs id=R1 -->
+```yaml
+status: Approved
+importance: P0
+owner: PERSONA-1
+solves-pains: [PAIN-1, PAIN-2]
+linked-features: [F1.1, F1.2, F1.3, F1.4]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **Description:** 각 phase 산출물의 ID·status·refs를 frontmatter로 structured. 다음 phase skill이 자동 input으로 받음. 환각 ID 0건.
 
 **해결하는 PAIN:** PAIN-1 (환각 ID), PAIN-2 (사용자 기억 의존)
@@ -33,20 +44,59 @@ status: Approved
 - **AC-R1-3:** GIVEN ID 정의 시점, WHEN ID 부여, THEN plugin이 unique ID 자동 generation (사용자가 자유 작명 X — 충돌 방지).
 
 ### F1.1: Frontmatter schema per phase
+<!-- specrail:attrs id=F1.1 -->
+```yaml
+status: Approved
+parent-r: R1
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 13개 phase 별 YAML frontmatter schema 정의. ID·status·refs 표준화.
 
 ### F1.2: Input auto-inject
+<!-- specrail:attrs id=F1.2 -->
+```yaml
+status: Approved
+parent-r: R1
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 다음 phase skill 호출 시 이전 phase frontmatter parse → input.
 
 ### F1.3: ID auto-generation
+<!-- specrail:attrs id=F1.3 -->
+```yaml
+status: Approved
+parent-r: R1
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 정의 시점에 plugin이 unique ID 할당 (R1·F1.1·S1.1.1·ENT-Foo 등).
 
 ### F1.4: ID resolver (selectable list)
+<!-- specrail:attrs id=F1.4 -->
+```yaml
+status: Approved
+parent-r: R1
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 인용 시점에 사용자/LLM이 valid ID list에서만 선택. 자유 입력 X.
 
 ---
 
 ## R2: Hook validation
+
+<!-- specrail:attrs id=R2 -->
+```yaml
+status: Approved
+importance: P0
+owner: PERSONA-1
+solves-pains: [PAIN-3, PAIN-5]
+linked-features: [F2.1, F2.2, F2.3, F2.4]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Description:** Self-check이 hook으로 자동 강제. 사용자가 grep 잊어도 commit 차단. HARD-GATE이 plugin tool로 enforce — 양심 의존 0.
 
@@ -62,13 +112,55 @@ status: Approved
 - **AC-R2-3:** GIVEN frontmatter schema 위반, WHEN commit 시도, THEN hook이 violation 표시 + 차단.
 
 ### F2.1: Pre-commit hook (self-check 자동)
+<!-- specrail:attrs id=F2.1 -->
+```yaml
+status: Approved
+parent-r: R2
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F2.2: Phase transition gate (skill tool에서 enforce)
+<!-- specrail:attrs id=F2.2 -->
+```yaml
+status: Approved
+parent-r: R2
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F2.3: ID consistency hook (정의 vs 인용 diff)
+<!-- specrail:attrs id=F2.3 -->
+```yaml
+status: Approved
+parent-r: R2
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F2.4: Frontmatter schema validation hook
+<!-- specrail:attrs id=F2.4 -->
+```yaml
+status: Approved
+parent-r: R2
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 ---
 
 ## R3: 로컬 웹 대시보드 — DEFERRED (별 cycle)
+
+<!-- specrail:attrs id=R3 -->
+```yaml
+status: Deferred
+importance: P1
+owner: PERSONA-1
+solves-pains: [PAIN-4]
+last-modified: 2026-05-16
+note: "Deferred to separate repo (specrail/dashboard) per ADR-15"
+```
+<!-- /specrail:attrs -->
 
 **Status:** Deferred (별 cycle)
 **Reason:** Boil the Lake 정확한 응용 — 단일 product 한 cycle. Dashboard는 별 cycle. plugin의 frontmatter schema는 미래 dashboard read 호환 design 보장.
@@ -84,6 +176,17 @@ status: Approved
 
 ## R4: 영향 phase 자동 식별 (DELTA mode)
 
+<!-- specrail:attrs id=R4 -->
+```yaml
+status: Approved
+importance: P0
+owner: PERSONA-1
+solves-pains: [PAIN-8]
+linked-features: [F4.1, F4.2, F4.3]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **Description:** 변경 요청 시 plugin이 ID dependency graph로 영향 phase 자동 추출. 사용자 수동 판단 X.
 
 **해결하는 PAIN:** PAIN-DELTA-scope
@@ -97,12 +200,46 @@ status: Approved
 - **AC-R4-2:** GIVEN 변경된 ID set, WHEN downstream 분석, THEN 그 ID에 직간접 의존하는 phase 모두 식별 (transitively).
 
 ### F4.1: ID dependency graph 빌드
+<!-- specrail:attrs id=F4.1 -->
+```yaml
+status: Approved
+parent-r: R4
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F4.2: Downstream 자동 추출 (transitive)
+<!-- specrail:attrs id=F4.2 -->
+```yaml
+status: Approved
+parent-r: R4
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F4.3: Proposal 자동 draft (skill로)
+<!-- specrail:attrs id=F4.3 -->
+```yaml
+status: Approved
+parent-r: R4
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 ---
 
 ## R5: Phase 진행 강제 + Forcing questions
+
+<!-- specrail:attrs id=R5 -->
+```yaml
+status: Approved
+importance: P0
+owner: PERSONA-1
+solves-pains: [PAIN-9]
+linked-features: [F5.1, F5.2, F5.3, F5.4]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Description:** 13 phase 순차 진행 + Phase 0 reframing. plugin이 도구로 강제.
 
@@ -118,13 +255,55 @@ status: Approved
 - **AC-R5-3:** GIVEN 모든 phase, WHEN skill 작동, THEN 00-common 원칙 (Anti-Sycophancy·HARD-GATE·No Placeholders) 자동 상속.
 
 ### F5.1: 13 skill orchestration
+<!-- specrail:attrs id=F5.1 -->
+```yaml
+status: Approved
+parent-r: R5
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F5.2: 6 forcing questions skill (Phase 0)
+<!-- specrail:attrs id=F5.2 -->
+```yaml
+status: Approved
+parent-r: R5
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F5.3: AskUserQuestion ONE-AT-A-TIME enforce
+<!-- specrail:attrs id=F5.3 -->
+```yaml
+status: Approved
+parent-r: R5
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F5.4: 00-common 자동 상속 mechanism
+<!-- specrail:attrs id=F5.4 -->
+```yaml
+status: Approved
+parent-r: R5
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 ---
 
 ## R6: 단일 명령 install·setup
+
+<!-- specrail:attrs id=R6 -->
+```yaml
+status: Approved
+importance: P0
+owner: PERSONA-1
+solves-pains: [PAIN-10]
+linked-features: [F6.1, F6.2, F6.4]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Description:** Plugin install 마찰 최소. 첫 trigger 시 docs/spec 자동 생성, hook 자동 install.
 
@@ -140,13 +319,47 @@ status: Approved
 - **AC-R6-3:** GIVEN git repo + 기존 pre-commit hook 존재 가능 (husky·lefthook·plain script), WHEN plugin 첫 setup, THEN (a) 기존 hook 감지 (`.husky/`, `lefthook.yml`, `.git/hooks/pre-commit` plain), (b) **chain 방식** install — specrail hook이 기존 hook을 먼저 호출 후 자체 검증 실행, (c) 사용자 명시 confirm 후 적용. 기존 hook 덮어쓰기 절대 금지 — INV 등급 보호.
 
 ### F6.1: Claude Code plugin install (1 명령)
+<!-- specrail:attrs id=F6.1 -->
+```yaml
+status: Approved
+parent-r: R6
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F6.2: 첫 trigger 시 자동 bootstrap
+<!-- specrail:attrs id=F6.2 -->
+```yaml
+status: Approved
+parent-r: R6
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F6.3: ~~대시보드 server 자동 spawn~~ → Deferred (별 cycle — R3와 함께)
+
 ### F6.4: Hook 자동 install (git 감지)
+<!-- specrail:attrs id=F6.4 -->
+```yaml
+status: Approved
+parent-r: R6
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 ---
 
 ## R7: 도메인 무관성
+
+<!-- specrail:attrs id=R7 -->
+```yaml
+status: Approved
+importance: P0
+owner: PERSONA-1
+linked-features: [F7.1, F7.2]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Description:** 메인 prompt 도메인 무관 placeholder. self-application example로 dogfood (specrail 자체).
 
@@ -162,11 +375,36 @@ status: Approved
 - **AC-R7-3:** GIVEN self-application example (specrail 작업 자체), WHEN 작업 진행, THEN legacy example 참조 X (chicken-and-egg 방지).
 
 ### F7.1: 메인 14 prompt (skill 형태로)
+<!-- specrail:attrs id=F7.1 -->
+```yaml
+status: Approved
+parent-r: R7
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F7.2: specrail 자체가 example (작업 산출물이 곧 example)
+<!-- specrail:attrs id=F7.2 -->
+```yaml
+status: Approved
+parent-r: R7
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 ---
 
 ## R8: Implementation 핸드오프
+
+<!-- specrail:attrs id=R8 -->
+```yaml
+status: Approved
+importance: P0
+owner: PERSONA-1
+linked-features: [F8.1, F8.2, F8.3, F8.4]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Description:** Phase 13 승인 후 atomic task를 Superpowers 패턴 subagent로 자동 실행. 2-stage review.
 
@@ -182,13 +420,54 @@ status: Approved
 - **AC-R8-3:** GIVEN BLOCKED 또는 ambiguity, WHEN subagent 만남, THEN main session에 escalate (자동 진행 X).
 
 ### F8.1: Phase 13 → Implementation skill chain
+<!-- specrail:attrs id=F8.1 -->
+```yaml
+status: Approved
+parent-r: R8
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F8.2: Atomic task별 fresh subagent (Superpowers)
+<!-- specrail:attrs id=F8.2 -->
+```yaml
+status: Approved
+parent-r: R8
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F8.3: 2-stage review (compliance + quality)
+<!-- specrail:attrs id=F8.3 -->
+```yaml
+status: Approved
+parent-r: R8
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F8.4: BLOCKED escalation
+<!-- specrail:attrs id=F8.4 -->
+```yaml
+status: Approved
+parent-r: R8
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 ---
 
 ## R13: Telemetry opt-in (e6 cherry-pick)
+
+<!-- specrail:attrs id=R13 -->
+```yaml
+status: Approved
+importance: P0
+owner: PERSONA-1
+linked-features: [F13.1, F13.2, F13.3]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Description:** 사용자 동의 시 plugin 사용 metric 익명 수집. PRD KPI-6 측정 mechanism + KPI-1 완주율 부분 데이터 (PhaseStarted vs PhaseApproved 비율). Privacy first — opt-in only, default off. (KPI-5 dashboard 사용 빈도는 dashboard cycle로 이동됨.)
 
@@ -204,8 +483,31 @@ status: Approved
 - **AC-R13-3:** GIVEN 사용자, WHEN opt-out 명령 anytime, THEN 즉시 전송 중단 + 기존 데이터 삭제 요청 가능.
 
 ### F13.1: Install 시 opt-in 질문 (default off)
+<!-- specrail:attrs id=F13.1 -->
+```yaml
+status: Approved
+parent-r: R13
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F13.2: 익명 metric 전송 (사용자/spec 정보 제외, 단순 phase 실행 카운트·시간만)
+<!-- specrail:attrs id=F13.2 -->
+```yaml
+status: Approved
+parent-r: R13
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### F13.3: Opt-out anytime + 데이터 삭제 요청
+<!-- specrail:attrs id=F13.3 -->
+```yaml
+status: Approved
+parent-r: R13
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 ---
 

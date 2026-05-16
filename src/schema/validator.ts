@@ -113,6 +113,7 @@ export const ATTRS_ENTITY_KINDS: readonly AttrsEntityKind[] = [
  */
 export function classifyEntityKind(id: string): AttrsEntityKind | null {
   if (/^F-R(?:-[A-Z]+[A-Z0-9]*|\d+)\.\d+$/.test(id)) return 'F';
+  if (/^F\d+\.\d+$/.test(id)) return 'F';
   if (/^P-CC-\d+$/.test(id)) return 'P-CC';
   if (/^ENT-[A-Za-z][A-Za-z0-9_-]*$/.test(id)) return 'ENT';
   if (/^INV-\d+$/.test(id)) return 'INV';
