@@ -24,11 +24,11 @@ describe('CITATION_RE — compound hyphen substring guard (Step 0)', () => {
     expect(extractIds('decision ADR-CAND-1 is pending')).toEqual([]);
   });
 
-  it('does not match CC-1 inside P-CC-1', () => {
-    // P-N page IDs are not in ID_PATTERN_SOURCE — full recognition is a
-    // separate follow-up. What matters for Step 0 is that the phantom
-    // `CC-1` substring is no longer extracted.
-    expect(extractIds('P-CC-1')).toEqual([]);
+  it('matches P-CC-1 as a single token (T-CSA.3), no phantom CC-1', () => {
+    // T-CSA.3 (2026-05-16): P-CC-N is now a first-class ID family. P-CC-1
+    // matches as one token AND the phantom `CC-1` substring is still
+    // rejected by the negative lookbehind on `-`.
+    expect(extractIds('P-CC-1')).toEqual(['P-CC-1']);
   });
 
   it('does not match COMP-1 inside NFR-SEC-COMP-1', () => {
