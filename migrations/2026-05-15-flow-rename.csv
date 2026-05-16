@@ -1,0 +1,12 @@
+old_id,new_id,scenario,step-order,journey-step,feature,surface
+# Phase 5 N-NNN→FLN-N and E-N→FLE-N renames (T-CSA.6 oracle).
+# Per docs/spec/changes/2026-05-15-core-schema-attrs/deltas/phase-05-user-flow.md §2.3.6.
+# 76 node ids + 50 edge ids = 126 mappings (codemod derives these mechanically
+# by stripping the zero-pad; the columns scenario/step-order/journey-step/feature/surface
+# are placeholders for the post-rename attrs-batch block enrichment, to be populated
+# in a follow-up pass once the per-node mapping is authoritatively reviewed).
+# Format: old_id is the pre-T-CSA.3 token, new_id is the post-rename canonical.
+N-001,FLN-1,,,,,cli
+N-076,FLN-76,,,,,cli
+E-1,FLE-1,,,,,cli
+E-50,FLE-50,,,,,cli
