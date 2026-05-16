@@ -21,10 +21,10 @@ status: Approved
 
 <!-- specrail:attrs id=ADR-1 -->
 ```yaml
-status: Approved
-decision: "see ADR body"
-consequences: "see ADR body"
-alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+status: Accepted
+decision: "**Claude Code official skill spec 차용.** Frontmatter (`name`, `description`, `inputs-from`, `trigger-words`, `mode`) + markdown body. Plugin install은 marketplace 또는 GitHub install 명령 — Claude Code SDK 표준."
+consequences: "##### 긍정 - Claude Code marketplace 등록 가능 (KPI-4 stars 성장 기여) - Skill discovery 자동 (trigger-words frontmatter)  ##### 부정 (수용 가능)"
+alternatives-considered: ["옵션 A (선택됨): Claude Code official skill spec", "옵션 B (거절됨): 자체 plugin loader"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -88,10 +88,10 @@ Plugin은 Claude Code 안에서 작동하는 skill 모음 (ARCH-2). Skill을 Cla
 
 <!-- specrail:attrs id=ADR-2 -->
 ```yaml
-status: Approved
-decision: "see ADR body"
-consequences: "see ADR body"
-alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+status: Accepted
+decision: "**JSON Schema (Draft 2020-12).** Frontmatter는 YAML 그대로 (사용자 친화) + 검증은 JSON Schema로. 각 phase별 schema 파일 (`schemas/phase-{N}.json`)."
+consequences: "##### 긍정 - 표준 ecosystem 활용 (ajv, IDE plugins) - Schema 자체가 문서 역할 (사용자가 frontmatter 어떻게 쓰는지 schema 보면 앎)  ##### 부정 (수용 가능)"
+alternatives-considered: ["옵션 A (선택됨): JSON Schema", "옵션 B (거절됨): Custom YAML manifest", "옵션 C (거절됨): TypeScript types"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -159,10 +159,10 @@ last-modified: 2026-05-16
 
 <!-- specrail:attrs id=ADR-3 -->
 ```yaml
-status: Approved
-decision: "see ADR body"
-consequences: "see ADR body"
-alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+status: Accepted
+decision: "**Node.js.** Plugin 자체가 Node.js 환경 (Claude Code SDK 표준)이므로 dependency 일관. Hook script는 Node.js 실행 (`#!/usr/bin/env node` shebang + .js)."
+consequences: "##### 긍정 - Plugin 전체 단일 stack — maintainer 부담 감소 - ajv·remark·기타 npm 라이브러리 hook에서 차용  ##### 부정 (수용 가능)"
+alternatives-considered: ["옵션 A (선택됨): Node.js", "옵션 B (거절됨): bash", "옵션 C (거절됨): Python"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -231,10 +231,10 @@ Pre-commit hook (ARCH-3)이 schema validation·ID consistency check·transition 
 
 <!-- specrail:attrs id=ADR-4 -->
 ```yaml
-status: Approved
-decision: "see ADR body"
-consequences: "see ADR body"
-alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+status: Accepted
+decision: "**unified/remark + remark-frontmatter + remark-parse.** AST 기반 정확 처리. Plugin 풍부."
+consequences: "##### 긍정 - AST 일관 처리 — graph·schema 둘 다 차용 - Plugin (remark-frontmatter) 그대로 사용  ##### 부정 (수용 가능)"
+alternatives-considered: ["옵션 A (선택됨): unified/remark", "옵션 B (거절됨): marked", "옵션 C (거절됨): 자체 regex"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -302,10 +302,10 @@ ARCH-4 (Graph Builder)와 ARCH-5 (Schema Validator)가 markdown 파싱 — front
 
 <!-- specrail:attrs id=ADR-5 -->
 ```yaml
-status: Approved
-decision: "see ADR body"
-consequences: "see ADR body"
-alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+status: Accepted
+decision: "**Per-phase per-project sequential counter.** `.specrail-cache/id-counter.json`에 phase별 다음 번호 저장. Counter는 git ignore (rebuild 가능 — graph builder가 max(used) + 1).  ID 형식: phase 마다 prefix (R{n}, F{n}.{m}, S{n}.{m}.{k}, ENT-{Name}, INV-{n}, NFR-{Domain}-{n}, ARCH-{n}, EXT-{n}, OPS-{n}, ADR-{n}, RISK-{n}, T{n}.{m}). 초기 README §126-150 그대로 차용."
+consequences: "##### 긍정 - 초기 README §126-150 그대로 차용 (도메인 무관성 R7 일관) - 사용자가 ID grep 가능 (`grep -r 'S1.2.3' docs/spec/`)  ##### 부정 (수용 가능)"
+alternatives-considered: ["옵션 A (선택됨): Sequential counter", "옵션 B (거절됨): UUID", "옵션 C (거절됨): Hash-based (description 해시)"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -377,10 +377,10 @@ ID 형식: phase 마다 prefix (R{n}, F{n}.{m}, S{n}.{m}.{k}, ENT-{Name}, INV-{n
 
 <!-- specrail:attrs id=ADR-6 -->
 ```yaml
-status: Approved
-decision: "see ADR body"
-consequences: "see ADR body"
-alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+status: Accepted
+decision: "**Claude Code subagent 기능 사용** (예: `Agent` tool 또는 SDK의 sub-task spawn). Fresh context guarantee + main session escalation API + 사용자 LLM 비용 일관 (CC 통한 API call).  **Conditional:** A1 spike (Claude Code SDK가 subagent BLOCKED escalation 지원하는가) 결과로 fallback 가능. 미지원 시 hybrid (subagent main 일부 LLM API direct)."
+consequences: "##### 긍정 - Persona 흐름 자연 (CC 안에서 모든 것) - LLM cost 사용자 plan으로 자동 처리  ##### 부정 (수용 가능)"
+alternatives-considered: ["옵션 A (선택됨): Claude Code 자체 subagent", "옵션 B (거절됨): LLM API direct call", "옵션 C (거절됨): Hybrid (CC main + API direct subagent)"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -472,10 +472,10 @@ T0.2 A1 spike 실패 시 (CC SDK가 subagent 미지원 또는 BLOCKED escalation
 
 <!-- specrail:attrs id=ADR-7 -->
 ```yaml
-status: Approved
-decision: "see ADR body"
-consequences: "see ADR body"
-alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+status: Accepted
+decision: "**Plausible cloud (EU region).** Privacy-first 평판, GDPR 자동 (EU host), 익명 event 표준, $20/월 (Phase 11 §9 cost model 일치)."
+consequences: "##### 긍정 - GDPR (NFR-SEC-COMP-2) 자동 — 사용자 EU 환경에서 안내 단순 - OPS-3 deploy 단순 (계정 + API token만) - KPI-1·2·6 측정 endpoint 즉시 가용 "
+alternatives-considered: ["옵션 A (선택됨): Plausible cloud", "옵션 B (거절됨): PostHog cloud", "옵션 C (거절됨): Self-hosted minimal (자체 Express + Postgres on small VPS)", "옵션 D (거절됨): 자체 build from scratch"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -555,10 +555,10 @@ R13 Telemetry opt-in metric 수집 endpoint. 후보: Plausible cloud, PostHog cl
 
 <!-- specrail:attrs id=ADR-8 -->
 ```yaml
-status: Approved
-decision: "see ADR body"
-consequences: "see ADR body"
-alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+status: Accepted
+decision: "**Explicit state machine (deterministic).** Plugin이 state machine 유지 — Phase N status가 `Approved`일 때만 Phase N+1 skill invoke 허용. AskUserQuestion 등은 LLM이 진행하나 phase 경계는 plugin code가 enforce.  **State source-of-truth (3-reviewer 합의로 결정):**"
+consequences: "##### 긍정 - KPI-2 (환각 0) 도구로 보장 - KPI-6 (정당 차단 >85%) 측정 의미 있음 (deterministic이라 false positive 적음)  ##### 부정 (수용 가능)"
+alternatives-considered: ["옵션 A (선택됨): Explicit state machine", "옵션 B (거절됨): LLM-driven tool call chain", "옵션 C (거절됨): Hybrid (LLM-driven + post-hoc check)"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -636,10 +636,10 @@ last-modified: 2026-05-16
 
 <!-- specrail:attrs id=ADR-9 -->
 ```yaml
-status: Approved
-decision: "see ADR body"
-consequences: "see ADR body"
-alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+status: Accepted
+decision: "**In-memory only (옵션 D 채택).** Graph는 skill·hook 호출 시 매번 rebuild. `graph.json` 또는 persistent cache 파일 없음. `.specrail-cache/graph.json` 작성 안 함.  - File watch X (CC plugin runtime 미보장)"
+consequences: "##### 긍정 - Hook 빠름 (NFR-PERF-3) - CC runtime 의존성 최소  ##### 부정 (수용 가능)"
+alternatives-considered: ["옵션 A (거절됨): On-demand + incremental on commit", "옵션 B (거절됨): File watch (always live)", "옵션 C (거절됨): Manual refresh (사용자 명령)", "옵션 D (채택됨): In-memory only — no on-disk cache"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -718,10 +718,10 @@ ARCH-4 (Dependency Graph Builder)가 markdown parse → ID 정의·인용 그래
 
 <!-- specrail:attrs id=ADR-10 -->
 ```yaml
-status: Approved
-decision: "see ADR body"
-consequences: "see ADR body"
-alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+status: Accepted
+decision: "**Single file default + 디렉토리 (phase 7, 12, 13).** 초기 README §174-196 패턴 그대로:  ```text"
+consequences: "##### 긍정 - 초기 README §174-196 그대로 — 도메인 무관성 (R7) 일관 - 큰 phase scale (NFR-SCAL-1 cover)  ##### 부정 (수용 가능)"
+alternatives-considered: ["옵션 A (선택됨): Single + directory mixed (기존 패턴 차용)", "옵션 B (거절됨): 모두 디렉토리", "옵션 C (거절됨): 모두 단일 파일"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -807,10 +807,10 @@ docs/spec/
 
 <!-- specrail:attrs id=ADR-11 -->
 ```yaml
-status: Approved
-decision: "see ADR body"
-consequences: "see ADR body"
-alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+status: Accepted
+decision: "**Manual trigger with optional auto-chain via `/specrail continue`.**  - Phase N approve 후 plugin은 \"Phase N+1 진행 권장\" 안내만 반환"
+consequences: "##### 긍정 - User Sovereignty (00-common §3) 보장 — 사용자가 phase 사이 검토·휴식 선택 가능 - BLOCKED escalation pattern과 충돌 X (사용자가 명시 결정 후 continue) - 향후 auto-chain opt-in 경로 확보 "
+alternatives-considered: ["옵션 A (선택됨): Manual trigger with optional auto-chain", "옵션 B (거절됨): Full auto-chain (approve → 즉시 N+1 invoke)", "옵션 C (거절됨): No chain — phase별 독립 호출 강제"]
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
