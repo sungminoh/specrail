@@ -230,3 +230,794 @@ Phase 11 (Operations)에:
 Phase 13 (Implementation)에:
 - 모든 TC ID + 시나리오 — 각 task에 RED test
 - TC priority order: TC-30·31 (INV-1·2) → TC-1~3 (R1) → TC-4~6 (R2) → 등
+
+---
+
+## Appendix: TC + EDGE attrs (M-CSA — schema v1.0)
+
+Per `skills/_common/principles.md` §"Attrs Blocks Are Mandatory". TC and EDGE entities are table-defined; attrs blocks aggregate here. level defaults to `unit` (per-TC classification deferred to 0.3.0 codemod that parses §1 Test Pyramid). linked-ac left empty for bulk pass — per-row AC linkage from §2 AC↔TC Mapping table is 0.3.0 codemod work.
+
+<!-- specrail:attrs id=TC-1 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-2 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-3 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-4 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-5 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-6 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-7 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-8 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-9 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-10 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-11 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-12 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-13 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-14 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-15 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-16 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-17 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-18 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-19 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-20 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-21 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-22 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-23 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-30 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-31 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-32 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-33 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-34 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-35 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-36 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-37 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-38 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-40 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-41 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-42 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-43 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-44 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-45 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-46 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-47 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-48 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-49 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-50 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-51 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-52 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-53 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-54 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-55 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-56 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-57 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-58 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-59 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-60 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-61 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-62 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-63 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-64 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-70 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-71 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-72 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-73 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-74 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-75 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-76 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=TC-77 -->
+```yaml
+status: Approved
+level: unit
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-1 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-2 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-3 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-4 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-5 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-6 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-7 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-8 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-9 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-10 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-11 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-12 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-13 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-14 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-15 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-16 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-17 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-18 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-19 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-20 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-21 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-22 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-23 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-24 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EDGE-25 -->
+```yaml
+status: Approved
+linked-ac: []
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
