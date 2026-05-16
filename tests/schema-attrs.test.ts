@@ -173,10 +173,88 @@ describe('validateEdgeKind — closed enum 8 (T-CSA.2, AC-R-CSA-4)', () => {
   });
 });
 
+describe('classifyEntityKind — flow/wireframe families (post-0.2.1 schema extension)', () => {
+  it('classifies FLN-N flow nodes', () => {
+    expect(classifyEntityKind('FLN-1')).toBe('FLN');
+    expect(classifyEntityKind('FLN-76')).toBe('FLN');
+  });
+  it('classifies FLE-N flow edges', () => {
+    expect(classifyEntityKind('FLE-1')).toBe('FLE');
+    expect(classifyEntityKind('FLE-50')).toBe('FLE');
+  });
+  it('classifies W-CC-{NAME} wireframe patterns', () => {
+    expect(classifyEntityKind('W-CC-PAT')).toBe('W');
+    expect(classifyEntityKind('W-CC-MOBILE')).toBe('W');
+  });
+  it('classifies E-CC-N element entries', () => {
+    expect(classifyEntityKind('E-CC-1')).toBe('E-CC');
+    expect(classifyEntityKind('E-CC-8')).toBe('E-CC');
+  });
+});
+
+describe('validateAttrs — FLN/FLE/W/E-CC kinds (post-0.2.1)', () => {
+  it('accepts valid FLN payload (status, scenario, step-order)', async () => {
+    const r = await validateAttrs(
+      { status: 'Approved', scenario: 'SCEN-1', 'step-order': 1, 'journey-step': 'JNY-1.1', feature: 'F-R6.1', surface: 'cli' },
+      'FLN',
+    );
+    expect(r.valid).toBe(true);
+  });
+  it('rejects FLN missing required step-order', async () => {
+    const r = await validateAttrs(
+      { status: 'Approved', scenario: 'SCEN-1' },
+      'FLN',
+    );
+    expect(r.valid).toBe(false);
+  });
+
+  it('accepts valid FLE payload (status, from, to, trigger)', async () => {
+    const r = await validateAttrs(
+      { status: 'Approved', from: 'FLN-1', to: 'FLN-2', trigger: 'install command', guard: '' },
+      'FLE',
+    );
+    expect(r.valid).toBe(true);
+  });
+  it('rejects FLE missing required from/to', async () => {
+    const r = await validateAttrs(
+      { status: 'Approved', trigger: 'install command' },
+      'FLE',
+    );
+    expect(r.valid).toBe(false);
+  });
+
+  it('accepts valid W wireframe-pattern payload (status, surface)', async () => {
+    const r = await validateAttrs(
+      { status: 'Approved', surface: 'cli', 'zone-count': 6, 'element-count': 8, 'inherited-by': ['P-CC-1', 'P-CC-2'] },
+      'W',
+    );
+    expect(r.valid).toBe(true);
+  });
+
+  it('accepts valid E-CC element payload', async () => {
+    const r = await validateAttrs(
+      { status: 'Approved', kind: 'header', 'parent-zone': 'ZN-CC-PAT-1', 'source-data': 'ENT-Phase.id' },
+      'E-CC',
+    );
+    expect(r.valid).toBe(true);
+  });
+  it('rejects E-CC missing required parent-zone', async () => {
+    const r = await validateAttrs(
+      { status: 'Approved', kind: 'header' },
+      'E-CC',
+    );
+    expect(r.valid).toBe(false);
+  });
+});
+
 describe('ATTRS_ENTITY_KINDS export (T-CSA.2)', () => {
-  it('lists all 21 entity kinds per proposal §5', () => {
-    expect(ATTRS_ENTITY_KINDS.length).toBe(21);
+  it('lists all 25 entity kinds (21 original + FLN/FLE/W/E-CC)', () => {
+    expect(ATTRS_ENTITY_KINDS.length).toBe(25);
     expect(ATTRS_ENTITY_KINDS).toContain('R');
+    expect(ATTRS_ENTITY_KINDS).toContain('FLN');
+    expect(ATTRS_ENTITY_KINDS).toContain('FLE');
+    expect(ATTRS_ENTITY_KINDS).toContain('W');
+    expect(ATTRS_ENTITY_KINDS).toContain('E-CC');
     expect(ATTRS_ENTITY_KINDS).toContain('F');
     expect(ATTRS_ENTITY_KINDS).toContain('S');
     expect(ATTRS_ENTITY_KINDS).toContain('ENT');
@@ -197,5 +275,7 @@ describe('ATTRS_ENTITY_KINDS export (T-CSA.2)', () => {
     expect(ATTRS_ENTITY_KINDS).toContain('KPI');
     expect(ATTRS_ENTITY_KINDS).toContain('P-CC');
     expect(ATTRS_ENTITY_KINDS).toContain('T');
+    // Original 21 still present after extension
+    expect(ATTRS_ENTITY_KINDS.length).toBeGreaterThanOrEqual(21);
   });
 });

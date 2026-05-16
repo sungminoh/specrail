@@ -325,6 +325,63 @@
         "linked-tc": { "$ref": "#/$defs/idRefList" },
         "last-modified": { "$ref": "#/$defs/dateString" }
       }
+    },
+
+    "FLN": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "scenario", "step-order"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "scenario": { "$ref": "#/$defs/idRef" },
+        "step-order": { "type": "integer" },
+        "journey-step": { "$ref": "#/$defs/idRef" },
+        "feature": { "$ref": "#/$defs/idRef" },
+        "surface": { "type": "string" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "FLE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "from", "to"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "from": { "$ref": "#/$defs/idRef" },
+        "to": { "$ref": "#/$defs/idRef" },
+        "trigger": { "type": "string" },
+        "guard": { "type": "string" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "W": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "surface"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "surface": { "type": "string" },
+        "inherits-from": { "$ref": "#/$defs/idRefList" },
+        "inherited-by": { "$ref": "#/$defs/idRefList" },
+        "zone-count": { "type": "integer" },
+        "element-count": { "type": "integer" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "E-CC": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "kind", "parent-zone"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "kind": { "type": "string" },
+        "parent-zone": { "$ref": "#/$defs/idRef" },
+        "source-data": { "type": "string" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
     }
   }
 }

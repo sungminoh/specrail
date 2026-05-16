@@ -97,12 +97,15 @@ export type AttrsEntityKind =
   | 'R' | 'F' | 'S'
   | 'ENT' | 'INV' | 'NFR' | 'ARCH' | 'EXT' | 'OPS'
   | 'ADR' | 'RISK' | 'TC' | 'EDGE' | 'OQ'
-  | 'PERSONA' | 'SCEN' | 'JNY' | 'ZN' | 'KPI' | 'P-CC' | 'T';
+  | 'PERSONA' | 'SCEN' | 'JNY' | 'ZN' | 'KPI' | 'P-CC' | 'T'
+  // 0.2.1 schema extension — flow & wireframe families
+  | 'FLN' | 'FLE' | 'W' | 'E-CC';
 
 export const ATTRS_ENTITY_KINDS: readonly AttrsEntityKind[] = [
   'R', 'F', 'S', 'ENT', 'INV', 'NFR', 'ARCH', 'EXT', 'OPS',
   'ADR', 'RISK', 'TC', 'EDGE', 'OQ',
   'PERSONA', 'SCEN', 'JNY', 'ZN', 'KPI', 'P-CC', 'T',
+  'FLN', 'FLE', 'W', 'E-CC',
 ];
 
 /**
@@ -114,6 +117,10 @@ export const ATTRS_ENTITY_KINDS: readonly AttrsEntityKind[] = [
 export function classifyEntityKind(id: string): AttrsEntityKind | null {
   if (/^F-R(?:-[A-Z]+[A-Z0-9]*|\d+)\.\d+$/.test(id)) return 'F';
   if (/^F\d+\.\d+$/.test(id)) return 'F';
+  if (/^FLN-\d+$/.test(id)) return 'FLN';
+  if (/^FLE-\d+$/.test(id)) return 'FLE';
+  if (/^W-CC-[A-Z][A-Z0-9]*(?:-\d+)?$/.test(id)) return 'W';
+  if (/^E-CC-\d+$/.test(id)) return 'E-CC';
   if (/^P-CC-\d+$/.test(id)) return 'P-CC';
   if (/^ENT-[A-Za-z][A-Za-z0-9_-]*$/.test(id)) return 'ENT';
   if (/^INV-\d+$/.test(id)) return 'INV';

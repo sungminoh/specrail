@@ -59,6 +59,7 @@ export const ID_PATTERN_SOURCE =
   '|ZN-[A-Z][A-Z0-9-]*-\\d+' +
   '|P-CC-\\d+' +
   '|E-CC-\\d+' +
+  '|W-CC-[A-Z][A-Z0-9]*(?:-\\d+)?' +
   '|KPI-\\d+';
 
 /**

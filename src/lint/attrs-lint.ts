@@ -72,6 +72,11 @@ const REQUIRED_FIELDS_BY_KIND: Record<string, readonly string[]> = {
   KPI: ['target', 'unit', 'measure-when'],
   'P-CC': ['surface', 'trigger'],
   T: ['milestone', 'status', 'red-test', 'commit-msg-stub'],
+  // 0.2.1 schema extension — flow & wireframe families
+  FLN: ['status', 'scenario', 'step-order'],
+  FLE: ['status', 'from', 'to'],
+  W: ['status', 'surface'],
+  'E-CC': ['status', 'kind', 'parent-zone'],
 };
 
 export function lintAttrs(raw: string, options: AttrsLintOptions): AttrsLintResult {
