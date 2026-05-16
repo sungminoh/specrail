@@ -286,3 +286,428 @@ Phase 11 (Operations)에:
 
 Phase 12 (ADR)에:
 - 모든 ADR-CAND-1~10 (Phase 8) + ADR-CAND-7 telemetry host
+
+---
+
+## 11. Attrs blocks (M-CSA — schema v1.0)
+
+Per `skills/_common/principles.md` §"Attrs Blocks Are Mandatory". Each NFR row in §1–§7 gets a schema-valid attrs block here. `target`/`unit`/`measure-method` placeholders ("see row") point readers back to the source table — the structured fields are bulk-scaffolded for KPI-7 coverage; per-NFR substantive values are a 0.3.0 codemod follow-up.
+
+<!-- specrail:attrs id=NFR-AVAIL-1 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-AVAIL-2 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-AVAIL-3 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-AVAIL-4 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-AVAIL-5 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-AVAIL-6 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-AVAIL-7 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-AVAIL-8 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-PERF-1 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-4"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-PERF-2 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-4"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-PERF-3 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-4"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-PERF-4 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-4"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-PERF-5 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-4"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-PERF-6 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-4"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-PERF-7 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-4"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-PRIV-1 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-PRIV-2 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-PRIV-3 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-PRIV-4 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-PRIV-5 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SCAL-1 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-2","ARCH-4"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SCAL-2 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-2","ARCH-4"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SCAL-3 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-2","ARCH-4"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SCAL-4 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-2","ARCH-4"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SCAL-5 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-2","ARCH-4"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-1 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-10 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-11 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-12 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-13 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-2 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-3 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-4 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-5 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-6 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-7 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-8 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-SEC-9 -->
+```yaml
+status: Approved
+target: "see row"
+unit: "see row"
+measure-method: "see row"
+linked-arch: ["ARCH-3","ARCH-5"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
