@@ -296,10 +296,11 @@ Per `skills/_common/principles.md` §"Attrs Blocks Are Mandatory". Each NFR row 
 <!-- specrail:attrs id=NFR-AVAIL-1 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "fork 후 사용자 측 책임"
+unit: "%"
+measure-method: "사용자 측"
 linked-arch: ["ARCH-3"]
+violates-action: "무관 (passive code)"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -307,10 +308,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-AVAIL-2 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "의존 (필수)"
+unit: "-"
+measure-method: "CC 측"
 linked-arch: ["ARCH-3"]
+violates-action: "plugin 무용 — Persona가 다른 시간 사용"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -318,10 +320,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-AVAIL-3 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "CC가 fallback 또는 사용자 대기"
+unit: "-"
+measure-method: "CC 측"
 linked-arch: ["ARCH-3"]
+violates-action: "phase 진행 일시 정지"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -329,10 +332,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-AVAIL-4 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "local git 작동, push만 막힘"
+unit: "-"
+measure-method: "git 측"
 linked-arch: ["ARCH-3"]
+violates-action: "hook 작동 가능 (local git)"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -340,10 +344,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-AVAIL-5 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "local queue 보존, 재전송"
+unit: "-"
+measure-method: "local"
 linked-arch: ["ARCH-3"]
+violates-action: "사용자 무관 (background)"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -351,10 +356,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-AVAIL-6 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "<0.1%"
+unit: "error rate"
+measure-method: "hook log"
 linked-arch: ["ARCH-3"]
+violates-action: "사용자가 hook bypass 욕구 — INV-3 위반 위험"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -362,10 +368,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-AVAIL-7 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "사용자 git push 빈도 결정"
+unit: "-"
+measure-method: "-"
 linked-arch: ["ARCH-3"]
+violates-action: "사용자 책임 (가이드 README)"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -373,10 +380,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-AVAIL-8 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "즉시 (clone + plugin install)"
+unit: "-"
+measure-method: "-"
 linked-arch: ["ARCH-3"]
+violates-action: "사용자 책임"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -384,10 +392,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-PERF-1 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "<500"
+unit: "ms"
+measure-method: "log + 평균"
 linked-arch: ["ARCH-3","ARCH-4"]
+violates-action: "사용자 phase 진행 흐름 끊김 (KPI-1 ↓)"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -395,10 +404,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-PERF-2 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "<60"
+unit: "s"
+measure-method: "LLM API log"
 linked-arch: ["ARCH-3","ARCH-4"]
+violates-action: "사용자 이탈 (KPI-1 ↓)"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -406,10 +416,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-PERF-3 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "<3"
+unit: "s"
+measure-method: "git timing"
 linked-arch: ["ARCH-3","ARCH-4"]
+violates-action: "사용자 commit 부담 — hook bypass 욕구"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -417,10 +428,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-PERF-4 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "<2 (한 project 평균)"
+unit: "s"
+measure-method: "bench"
 linked-arch: ["ARCH-3","ARCH-4"]
+violates-action: "첫 hook·skill 실행 지연"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -428,10 +440,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-PERF-5 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "<300"
+unit: "ms"
+measure-method: "bench"
 linked-arch: ["ARCH-3","ARCH-4"]
+violates-action: "UI 반응 지연"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -439,10 +452,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-PERF-6 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "<100"
+unit: "ms"
+measure-method: "bench"
 linked-arch: ["ARCH-3","ARCH-4"]
+violates-action: "hook 누적 지연"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -450,10 +464,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-PERF-7 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "<6"
+unit: "h"
+measure-method: "사용자 self-report"
 linked-arch: ["ARCH-3","ARCH-4"]
+violates-action: "KPI-3 미달"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -516,10 +531,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-SCAL-1 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "LLM context 한계 따름 (~50KB body)"
+unit: "KB"
+measure-method: "LLM 응답 모니터"
 linked-arch: ["ARCH-2","ARCH-4"]
+violates-action: "LLM 응답 잘림 → 사용자가 phase 분할"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -527,10 +543,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-SCAL-2 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "<5000"
+unit: "count"
+measure-method: "dependency graph node count"
 linked-arch: ["ARCH-2","ARCH-4"]
+violates-action: "graph 빌드 지연 → NFR-PERF-4 위반"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -538,10 +555,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-SCAL-3 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "<500"
+unit: "count"
+measure-method: "file system"
 linked-arch: ["ARCH-2","ARCH-4"]
+violates-action: "timeline navigation 지연 (향후 cycle)"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -549,10 +567,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-SCAL-4 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "무제한 (각자 환경)"
+unit: "concurrent"
+measure-method: "-"
 linked-arch: ["ARCH-2","ARCH-4"]
+violates-action: "무관"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
@@ -560,10 +579,11 @@ last-modified: 2026-05-16
 <!-- specrail:attrs id=NFR-SCAL-5 -->
 ```yaml
 status: Approved
-target: "see row"
-unit: "see row"
-measure-method: "see row"
+target: "무제한 (각 docs/spec 분리)"
+unit: "concurrent"
+measure-method: "-"
 linked-arch: ["ARCH-2","ARCH-4"]
+violates-action: "ID counter 충돌 X (per-project)"
 last-modified: 2026-05-16
 ```
 <!-- /specrail:attrs -->
