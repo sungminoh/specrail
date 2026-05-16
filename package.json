@@ -14,7 +14,7 @@
     "lint:sycophancy": "npx --yes tsx src/lint/anti-sycophancy.ts .",
     "check:ac": "npx --yes tsx src/lint/ac-traceability.ts .",
     "lint:plan": "npx --yes tsx src/lint/run-all.ts .",
-    "prepack": "rm -rf dist && tsc --project tsconfig.build.json"
+    "prepublishOnly": "rm -rf dist && tsc --project tsconfig.build.json"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

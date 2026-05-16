@@ -83,7 +83,7 @@ last-modified: 2026-05-15
 | EDGE-32 | review-required marker 안 ` reason=" "` (empty reason) | AC-R-CSA-5 | empty quote |
 | EDGE-33 | YAML field name typo (`solv-pains` instead of `solves-pains`) | AC-R-CSA-4 | typo |
 | EDGE-34 | attrs YAML indentation 4-space vs 2-space mix | AC-R-CSA-2 | indent inconsistency |
-| EDGE-35 | schema-version mismatch — v0.1.0 spec read by v0.4.0 validator | AC-R-CSA-1, AC-R-CSA-6 | version skew |
+| EDGE-35 | schema-version mismatch — v0.2.0 spec read by v0.5.0 validator | AC-R-CSA-1, AC-R-CSA-6 | version skew |
 | EDGE-36 | codemod이 mermaid fenced block 내부 ID rename — false-positive (mermaid label text) | — | OQ-5-CSA-2 |
 | EDGE-37 | attrs-batch entry id 중복 (FLN-3 두 번) | AC-R-CSA-2 | duplicate batch row |
 

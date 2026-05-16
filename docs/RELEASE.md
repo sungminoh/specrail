@@ -11,7 +11,11 @@
 ## Publish a release
 
 1. Bump version: `npm version <patch|minor|major>` (creates tag `v<version>`)
-2. Push tag: `git push --follow-tags`
+2. Push branch and the **specific release tag explicitly** (do NOT use `--follow-tags` — it can push unrelated local tags like archive markers):
+   ```bash
+   git push origin main
+   git push origin v<version>
+   ```
 3. GitHub Actions auto-runs `.github/workflows/release.yml`
 4. Verify: `npm view specrail`
 

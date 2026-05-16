@@ -229,7 +229,7 @@ last-modified: 2026-05-15
 attrs YAML edge kind을 v0.1.0에서 8 frozen 결정. 추가는 minor schema-version bump. 본 phase는 정책 *기록*, Phase 12가 정식 ADR. trigger: T-CSA.4 (builder typed edges) 구현 시점.
 
 **ADR-CAND-14: Schema-version policy**
-`schemas/attrs.schema.json`은 semver. v1.0 = 본 release. v0.4.0 ERROR cut 전까지 사용자 spec은 schema-version 미스매치 허용. Phase 11 telemetry가 schema-version metric 수집. trigger: T-CSA.13 (telemetry hook) 구현 시점.
+`schemas/attrs.schema.json`은 semver. v1.0 = first published schema release at plugin 0.2.0 (0.1.0 ships no schema per OQ-CSA-7). v0.5.0 ERROR cut 전까지 사용자 spec은 schema-version 미스매치 허용. Phase 11 telemetry가 schema-version metric 수집. trigger: T-CSA.13 (telemetry hook) 구현 시점.
 
 **ADR-CAND-15: Marker family formalization**
 `<!-- specrail:attrs -->`·`<!-- specrail:attrs-batch -->`·`<!-- specrail:attrs-review-required -->` 3 marker variant Phase 4 INV로 정식 등록 vs Phase 8 ARCH로 정식 등록. trigger: OQ-5-CSA-1·OQ-7-CSA-2 누적 발견 후 Phase 12 통합 결정.

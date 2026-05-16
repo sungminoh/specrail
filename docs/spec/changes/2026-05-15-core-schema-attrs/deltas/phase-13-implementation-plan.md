@@ -173,7 +173,7 @@ codemod이 §M-x milestone subsection의 표를 oracle로 attrs scaffolding (row
 | AC-R-CSA-3 (placement invariant) | T-CSA.8 (attrs-placement.ts) |
 | AC-R-CSA-4 (unknown kind ERROR) | T-CSA.2 (edge-kinds.schema.json) + T-CSA.4 (builder) |
 | AC-R-CSA-5 (review marker always ERROR) | T-CSA.5 (codemod marker emit) + T-CSA.8 (lint) |
-| AC-R-CSA-6 (WARN→ERROR transition v0.4.0) | T-CSA.8 (version-aware lint) + T-CSA.14 (release versioning) |
+| AC-R-CSA-6 (WARN→ERROR transition v0.5.0) | T-CSA.8 (version-aware lint) + T-CSA.14 (release versioning) |
 | AC-R-CSA-7 (codemod idempotency) | T-CSA.5 (codemod design) + T-CSA.6 (13 file 실행) |
 
 | NFR-CSA | T-CSA mapping |

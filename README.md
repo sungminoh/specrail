@@ -109,7 +109,25 @@ Pre-commit 통합: `src/hook/verify-status.ts`는 spec이 명시한 `Evidence:` 
 npm install specrail
 ```
 
-**Claude Code plugin install:** see [docs/MARKETPLACE.md](docs/MARKETPLACE.md).
+This puts the CLI on your `PATH` (`specrail` binary) and ships the 13-phase skill collection at `node_modules/specrail/skills/`.
+
+### After install — wire skills into Claude Code
+
+Claude Code's plugin loader scans `~/.claude/plugins/<name>/`, not `node_modules/`. Copy or symlink the shipped `skills/` directory into your plugin cache:
+
+```sh
+# Symlink (recommended — auto-updates on npm upgrade)
+mkdir -p ~/.claude/plugins
+ln -sfn "$(npm root -g)/specrail/skills" ~/.claude/plugins/specrail
+# (or, for a local install: ln -sfn "$(pwd)/node_modules/specrail/skills" ~/.claude/plugins/specrail)
+
+# Or copy (stable snapshot)
+cp -r "$(npm root -g)/specrail/skills" ~/.claude/plugins/specrail
+```
+
+Restart Claude Code; the orchestrator skill is now invokable as `/specrail`.
+
+> A formal `.claude-plugin/plugin.json` manifest + marketplace listing is deferred to a future release. Until then, the skill drop-in above is the canonical install path. See [docs/MARKETPLACE.md](docs/MARKETPLACE.md) for context.
 
 **Telemetry config (optional):** see [docs/TELEMETRY.md](docs/TELEMETRY.md).
 

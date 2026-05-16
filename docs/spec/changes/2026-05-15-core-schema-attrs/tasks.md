@@ -178,7 +178,7 @@ ordered-after: M11 (RISK-CSA-7 mitigation — core shipping 일정 보호)
 - `src/lint/run-all.ts` (register)
 - `tests/lint/*.test.ts`
 **Steps:**
-1. RED TC-83: required field 누락 → WARN (v0.1.0~0.3.0) / ERROR (v0.4.0+). Version-aware via `package.json` semver.
+1. RED TC-83: required field 누락 → WARN (v0.2.0~0.4.0) / ERROR (v0.5.0+). Version-aware via `package.json` semver.
 2. RED TC-83.b: review-required marker 존재 → 즉시 ERROR (WARN window 무관).
 3. RED TC-84: attrs YAML이 heading 직후가 아닌 위치 → ERROR.
 4. Run vitest — RED.
@@ -200,7 +200,7 @@ ordered-after: M11 (RISK-CSA-7 mitigation — core shipping 일정 보호)
 **Steps:**
 1. RED TC-85: Phase status `Proposed → Approved` 전환 시 attrs presence check. 누락 entity 있으면 transition reject.
 2. Run vitest — RED.
-3. GREEN — `validateTransition(phase, fromStatus, toStatus)`에 attrs-completeness check 추가 (v0.1.0~0.3.0 WARN, v0.4.0+ reject).
+3. GREEN — `validateTransition(phase, fromStatus, toStatus)`에 attrs-completeness check 추가 (v0.2.0~0.4.0 WARN, v0.4.0+ reject).
 4. Run test — GREEN.
 5. Commit: `feat(state): enforce attrs presence on Phase Approved transition (T-CSA.9, INV-3 확장)`
 

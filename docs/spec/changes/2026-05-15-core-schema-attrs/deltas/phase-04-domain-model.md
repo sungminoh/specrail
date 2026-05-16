@@ -176,7 +176,7 @@ last-modified: 2026-05-15
 
 기존 transition gate에 추가 조건: Phase N의 모든 first-class entity (R·F·S·ENT·INV·NFR·ARCH·EXT·OPS·ADR·RISK·TC·EDGE·OQ·KPI·T·PERSONA·SCEN·JNY·ZN·P-CC)가 valid attrs block 보유. 누락 시 state machine reject.
 
-v0.1.0~v0.3.0 dual-parse window 동안에는 lint WARN으로 surface하되 transition gate는 v0.4.0부터 enforce (proposal §3.2와 동기화).
+v0.2.0~v0.4.0 dual-parse window 동안에는 lint WARN으로 surface하되 transition gate는 v0.5.0부터 enforce (proposal §3.2와 동기화).
 ```
 
 attrs block:
@@ -248,7 +248,7 @@ stateDiagram-v2
     Approved --> Proposed: 변경 요청 (review feedback)
 ```
 
-attrs presence가 v0.1.0~v0.3.0에는 WARN으로 surface하되 v0.4.0부터 reject.
+attrs presence가 v0.2.0~v0.4.0에는 WARN으로 surface하되 v0.5.0부터 reject.
 
 ### 2.7 ADDED SM-AttrsBlock + SM-MigrateMarker
 
@@ -299,7 +299,7 @@ stateDiagram-v2
 | Check | 결과 |
 |---|---|
 | 신규 ENT 3개 attrs block 부착 | ✓ |
-| INV-3 transition gate clause 명시 | ✓ "v0.1.0~v0.3.0 WARN, v0.4.0부터 reject" (PRD §12와 동기화) |
+| INV-3 transition gate clause 명시 | ✓ "v0.2.0~v0.4.0 WARN, v0.5.0부터 reject" (PRD §12와 동기화) |
 | INV-11·INV-12 명시 enum/marker rule (INV-10 collision 회피 확인) | ✓ — live spec INV-11 미정의 확인 (`grep ^### INV-11 04-domain-model.md` empty) |
 | ER diagram mermaid valid | ✓ |
 | SM 다이어그램 2 신규 + 1 수정 = 3 mermaid block 추가 | ✓ |

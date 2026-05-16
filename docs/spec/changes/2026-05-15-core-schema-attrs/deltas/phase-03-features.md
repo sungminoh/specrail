@@ -74,7 +74,7 @@ last-modified: 2026-05-15
 - **AC-R-CSA-3:** GIVEN attrs YAML이 entity heading 직후가 아닌 위치, WHEN `attrs-placement.ts` lint, THEN ERROR (invariant; OQ-CSA-1 resolution).
 - **AC-R-CSA-4:** GIVEN attrs YAML의 `linked-*` field가 unknown edge kind 명시, WHEN `attrs-completeness.ts` lint, THEN ERROR + closed enum 8 kinds 안내 (§3.4 proposal).
 - **AC-R-CSA-5:** GIVEN codemod이 `<!-- specrail:attrs-review-required -->` marker 부착, WHEN lint, THEN WARN window 무관 즉시 ERROR.
-- **AC-R-CSA-6:** GIVEN v0.1.0~v0.3.0 plugin에서 attrs 누락 entity 정의, WHEN lint, THEN WARN (with migrate-fix suggestion). v0.4.0부터는 ERROR.
+- **AC-R-CSA-6:** GIVEN v0.2.0~v0.4.0 plugin에서 attrs 누락 entity 정의, WHEN lint, THEN WARN (with migrate-fix suggestion). v0.5.0부터는 ERROR.
 - **AC-R-CSA-7:** GIVEN 사용자가 `specrail migrate` 실행, WHEN codemod returns exit 0, THEN idempotent (재실행 시 변경 0) + 모든 conflict에 marker+JSON 발행.
 
 #### Features
@@ -269,7 +269,7 @@ proposal §5 Schema by entity type 인용. 본 Phase 3는 R·F·S에 한정:
 proposal §3.4 인용. R/F/S에서 발행 가능한 kind: `solves`·`linked-features`·`parent`·`tested-by`·`linked-arch`.
 
 ### 10.4 Backward compat
-v0.1.0~v0.3.0 WARN · v0.4.0 ERROR (PRD §12).
+v0.2.0~v0.4.0 WARN · v0.5.0 ERROR (PRD §12).
 
 ### 10.5 Validator
 - `src/lint/attrs-completeness.ts` (required field check)

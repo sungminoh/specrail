@@ -80,7 +80,7 @@ SCOPE EXPANSION의 정의("2x 노력으로 10x 더 좋아지는 것은?")가 본
 | Authoring impact | 모든 신규 phase 산출물은 attrs block 작성 강제. 기존 13 spec file은 codemod로 일괄 migration. |
 | Plugin code impact | `src/spec/`, `src/graph/`, `src/markdown/`, `src/lint/`, `src/state/`, `src/schema/`, `schemas/`, `skills/`, `tests/` 전반. |
 | Public artifact | `schemas/attrs.schema.json` (JSON Schema of attrs block, dashboard·third-party가 import) + `specrail audit` CLI + `specrail migrate` CLI. |
-| Version | 0.0.1 → 0.1.0 (pre-1.0이므로 minor bump. principles §3 ETHOS Speed calibration: two-way door, 적극). |
+| Version | M-CSA ships in **0.2.0** (OQ-CSA-7 Resolved 2026-05-15 — 0.1.0 = M0~M11 only, schema migration deferred). pre-1.0이므로 minor bump. principles §3 ETHOS Speed calibration: two-way door, 적극. |
 
 ---
 
@@ -116,14 +116,14 @@ last-modified: 2026-05-14
 - **위치 (invariant, OQ-CSA-1 resolved):** entity 정의 heading 직후, **prose 이전, next-block adjacency**. table cell 안의 entity는 cell 내부 첫 줄. 다른 위치 placement 시 **lint ERROR** (warning 아님 — heading-immediate가 parser·grep·drift 모두에서 load-bearing).
 - **Required key per entity 종류:** (§5 Schema 표 참조)
 - **List-valued field에는 typed edge가 생성됨** — `solves-pains: [PAIN-3]`은 `R3 → PAIN-3` edge with `kind: solves` (YAML field는 plural-noun, edge kind는 §3.4 closed enum의 singular-verb). 현재 builder는 plain mention 기반 edge만 — 명시 typed edge가 dashboard에 결정적.
-- **Backward compat (deprecation window, OQ-CSA-3 resolved):** plugin v0.1.0 ~ v0.3.0 동안 attrs 없는 entity는 status `legacy` 로 인식, lint **WARN**. WARN 메시지는 `specrail migrate --fix` 제안 포함 의무. v0.4.0부터 **ERROR**. (§4.3 legacy ID dual-parse window와 동기화 — 둘 다 v0.4.0 ERROR cut.)
+- **Backward compat (deprecation window, OQ-CSA-3 resolved):** plugin v0.2.0 ~ v0.4.0 동안 attrs 없는 entity는 status `legacy` 로 인식, lint **WARN**. WARN 메시지는 `specrail migrate --fix` 제안 포함 의무. v0.5.0부터 **ERROR**. (§4.3 legacy ID dual-parse window와 동기화 — 둘 다 v0.5.0 ERROR cut.)
 - **Codemod review-required marker는 항상 ERROR (OQ-CSA-10 resolved):** `<!-- specrail:attrs-review-required reason="..." -->`는 WARN window 무관 즉시 ERROR. 사용자가 attrs 보정 + marker 제거 또는 `specrail audit --accept-codemod-conflict` 로만 해소.
 
 ### 3.3 Schema (`schemas/attrs.schema.json`)
 
 JSON Schema draft 2020-12. dashboard·third-party는 npm `specrail` 또는 raw GitHub URL로 import. (T-CSA.7 참조.)
 
-### 3.4 Edge kind enum — closed, frozen at v0.1.0 (OQ-CSA-5 resolved)
+### 3.4 Edge kind enum — closed, frozen at schema-version v1.0 (first published at plugin 0.2.0, OQ-CSA-5 resolved)
 
 YAML field는 plural-noun (authoring ergonomics), edge kind는 singular-verb. 둘은 의도된 별도 register. 추가는 ADR 경유 minor schema-version bump (1.0 → 1.1) + codemod.
 
@@ -167,7 +167,7 @@ Unknown kind = validator ERROR.
 ### 4.3 충돌·역호환
 
 - `S1` → `SCEN-1` 의 cross-ref도 모두 rewrite. 누락 검출은 `specrail audit`의 dangling-citation report로.
-- v0.1.0 ~ v0.3.0 dual-parse window: legacy `S\d` (1-2 part)가 보이면 deprecation warning. v0.4.0 ERROR.
+- v0.2.0 ~ v0.4.0 dual-parse window: legacy `S\d` (1-2 part)가 보이면 deprecation warning. v0.5.0 ERROR.
 
 ---
 
@@ -197,7 +197,7 @@ Unknown kind = validator ERROR.
 | `P-CC-N` (Page) | `surface`, `trigger` | `parent-section` |
 | `T{n}.{m}` (Task) | `milestone`, `status`, `red-test`, `commit-msg-stub` | `depends-on` |
 
-> required key 누락 entity = lint ERROR (v0.4.0+) / WARN (v0.1.0~0.3.0).
+> required key 누락 entity = lint ERROR (v0.5.0+) / WARN (v0.2.0~0.4.0).
 
 ---
 
@@ -207,7 +207,7 @@ Unknown kind = validator ERROR.
 
 ### Phase 1 — PRD
 
-- **ADDED §11 Schema commitment:** "본 spec의 모든 first-class entity는 `<!-- specrail:attrs -->` block을 가진다. v0.4.0부터 lint ERROR."
+- **ADDED §11 Schema commitment:** "본 spec의 모든 first-class entity는 `<!-- specrail:attrs -->` block을 가진다. v0.5.0부터 lint ERROR."
 - **ADDED §12 Repo layout:** `specrail/core` (이 repo) · `specrail/dashboard` (별 repo, optional). PRD §10 "별 cycle" → "**별 repo로 재해석**" 추가. **Reverse 아님** — 원 결정 보존.
 - **MODIFIED §4 KPI table:** 각 KPI row에 attrs block (target·unit·measure-when).
 - **ADDED §13 Out-of-scope:** dashboard product 자체. (별 repo 자기 13-phase pass.)
@@ -304,7 +304,7 @@ Unknown kind = validator ERROR.
 
 ### 7.5 src/lint/
 
-- **`attrs-completeness.ts` (new)**: required attrs 누락 검출. v0.1.0~0.3.0 WARN / v0.4.0+ ERROR. WARN 메시지에 `specrail migrate --fix` 제안 의무. (OQ-CSA-3 resolved.)
+- **`attrs-completeness.ts` (new)**: required attrs 누락 검출. v0.2.0~0.4.0 WARN / v0.5.0+ ERROR. WARN 메시지에 `specrail migrate --fix` 제안 의무. (OQ-CSA-3 resolved.)
 - **`attrs-completeness.ts` review-marker rule (OQ-CSA-10 resolved):** `<!-- specrail:attrs-review-required -->` marker 발견 시 **WARN window 무관 즉시 ERROR**. resolution = marker 수동 제거 또는 `specrail audit --accept-codemod-conflict`.
 - **`attrs-placement.ts` (new, OQ-CSA-1 resolved):** attrs block이 entity heading 직후가 아닌 경우 ERROR (invariant).
 - **`run-all.ts`**: 위 3 check 등록.
@@ -427,7 +427,7 @@ flowchart TB
 |---|---|---|---|---|---|
 | OQ-CSA-1 | attrs YAML 위치: heading 직후 vs section 끝? | maintainer | 2026-05-22 | Y (T-CSA.1) | **Resolved 2026-05-15** — heading 직후 (§3.2). 9/10. |
 | OQ-CSA-2 | Flow Node ID naming (`FLN-N`/`N-N`/`FN-N`) | maintainer | 2026-05-22 | Y (T-CSA.3) | **Resolved 2026-05-15** — `FLN-N`/`FLE-N` (§4.2). 9/10. |
-| OQ-CSA-3 | required attrs 위반 severity 타이밍 | maintainer | 2026-05-22 | Y (T-CSA.8) | **Resolved 2026-05-15** — v0.1.0~0.3.0 WARN / v0.4.0 ERROR (§3.2·§7.5). 8/10. |
+| OQ-CSA-3 | required attrs 위반 severity 타이밍 | maintainer | 2026-05-22 | Y (T-CSA.8) | **Resolved 2026-05-15** — v0.2.0~0.4.0 WARN / v0.5.0 ERROR (§3.2·§7.5). 8/10. |
 | OQ-CSA-4 | PAIN family 추가? | maintainer | 2026-05-29 | N | Open |
 | OQ-CSA-5 | typed edge kind enum | maintainer | 2026-05-22 | Y (T-CSA.4) | **Resolved 2026-05-15** — closed enum 8 kinds frozen v0.1.0 (§3.4). 7/10 (closedness 9/10, 이름 6/10). |
 | OQ-CSA-6 | `specrail audit` 출력 format | maintainer | 2026-05-29 | N | Open |
@@ -448,7 +448,7 @@ flowchart TB
 | ID | Severity | Prob | Description | Mitigation |
 |---|---|---|---|---|
 | RISK-CSA-1 | H | M | 기존 13 spec file migration이 의미 보존 실패 (잘못된 attrs auto-fill) | T-CSA.6 manual review 단계 명시 · idempotent codemod · git diff review · attr 값 보수적 자동 채움(`status: legacy`) |
-| RISK-CSA-2 | M | M | 사용자 hand-written spec이 attrs 없이 v0.4.0 upgrade 시 break | dual-parse window 3 minor version · migrate codemod 제공 · CHANGELOG 명시 |
+| RISK-CSA-2 | M | M | 사용자 hand-written spec이 attrs 없이 v0.5.0 upgrade 시 break | dual-parse window 3 minor version · migrate codemod 제공 · CHANGELOG 명시 |
 | RISK-CSA-3 | M | L | typed edge enum이 dashboard view와 mismatch | OQ-CSA-5 결정을 dashboard repo와 align. schema-version 도입으로 평행 진화 가능. |
 | RISK-CSA-4 | M | L | `<!-- specrail:attrs -->` HTML-comment marker가 markdown 렌더러에서 깨짐 | 기존 동형 marker가 이미 동작 중 (`deftable`, `def-list`) — empirical 안전 |
 | RISK-CSA-5 | L | M | YAML 안에 indentation 실수 → silent parse 오류 | ajv strict mode + line-precise error 보고 + lint pre-commit |

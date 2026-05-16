@@ -90,7 +90,7 @@ last-modified: 2026-05-15
 **Status:** Accepted
 **Date:** 2026-05-15
 **Context:** `schemas/attrs.schema.json`은 시간에 따라 진화. Consumer (dashboard·third-party)와 producer (specrail/core)의 version 호환성 필요.
-**Decision:** semver — v1.0 = 본 release (0.1.0 plugin version과 별개 schema-version). Minor bump (v1.0 → v1.1) = closed enum 추가 (backward-compat). Major bump (v1.0 → v2.0) = breaking change (field rename, kind 제거).
+**Decision:** semver — schema-version v1.0 = **first published schema release at plugin 0.2.0** (0.1.0 ships no schema per OQ-CSA-7; M-CSA shipping in 0.2.0 cuts schema v1.0). Minor bump (v1.0 → v1.1) = closed enum 추가 (backward-compat). Major bump (v1.0 → v2.0) = breaking change (field rename, kind 제거).
 **Consequences:**
 - + Consumer가 명시 version 선언으로 안정성 보장.
 - + Telemetry (OPS-5 schema-version key, Phase 11 delta)가 사용자 spec version 추적.
@@ -234,7 +234,7 @@ codemod이 §A Part A의 11 ADR을 oracle로 attrs scaffolding (row-based, Phase
 | ID | Severity | Prob | Description | Mitigation |
 |---|---|---|---|---|
 | RISK-CSA-1 | H | M | 기존 13 spec file migration 의미 보존 실패 (잘못된 attrs auto-fill) | T-CSA.6 manual review · idempotent codemod · git diff review · `status: legacy` 보수적 자동 채움 |
-| RISK-CSA-2 | M | M | 사용자 hand-written spec이 attrs 없이 v0.4.0 upgrade 시 break | dual-parse window 3 minor · migrate codemod 제공 · CHANGELOG 명시 |
+| RISK-CSA-2 | M | M | 사용자 hand-written spec이 attrs 없이 v0.5.0 upgrade 시 break | dual-parse window 3 minor · migrate codemod 제공 · CHANGELOG 명시 |
 | RISK-CSA-3 | M | L | typed edge enum이 dashboard view와 mismatch | OQ-CSA-5 → ADR-16 frozen · schema-version 도입으로 평행 진화 |
 | RISK-CSA-4 | M | L | `<!-- specrail:attrs -->` marker가 markdown renderer에서 깨짐 | 기존 동형 marker(`deftable`·`def-list`) 동작 중 — empirical 안전. Phase 9 A6 검증 |
 | RISK-CSA-5 | L | M | YAML indentation 실수 → silent parse 오류 | ajv strict mode + line-precise error + lint pre-commit |

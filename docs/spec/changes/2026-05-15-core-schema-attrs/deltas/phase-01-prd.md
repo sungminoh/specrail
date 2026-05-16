@@ -40,7 +40,7 @@ PRD가 capability `core-schema-attrs`를 dogfood하려면:
 1. **§6 Non-Goals — dashboard line 의미 명확화.** "별 cycle"은 본 plugin 안에서 미해석 → 사용자 혼동 + 이전 spec-visualizer proposal 같은 잘못된 reverse 시도 유발. "별 cycle = 별 repo `specrail/dashboard`"로 명시 재해석. PRD §10(2026-05-12) Mode 결정 보존.
 2. **§7 KPI — schema dogfood.** attrs block을 KPI row에 직접 부착해 본 plugin spec이 자기 schema를 첫 사용자.
 3. **§7 KPI — 신규 KPI-7 추가.** schema attrs coverage를 측정 가능한 KPI로 등재 (audit verdict "45-55%" → 추적가능한 지표화).
-4. **§12 신설 — Schema commitment.** attrs block 의무 + v0.4.0 ERROR cut 시점을 PRD 차원에 못 박음. 향후 phase·plugin code가 인용할 anchor.
+4. **§12 신설 — Schema commitment.** attrs block 의무 + v0.5.0 ERROR cut 시점을 PRD 차원에 못 박음. 향후 phase·plugin code가 인용할 anchor.
 5. **§13 신설 — Repo layout.** specrail/core + specrail/dashboard (companion, optional) 명시.
 
 ---
