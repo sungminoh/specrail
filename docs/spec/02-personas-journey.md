@@ -11,6 +11,21 @@ status: Approved
 
 ## 1. Primary Persona Card
 
+### PERSONA-1: Builder
+
+<!-- specrail:attrs id=PERSONA-1 -->
+```yaml
+alias: Builder
+role: "Claude Code 사용자 (solo founder · small team lead · advanced student · 사이드 프로젝트 professional)"
+primary-pain: PAIN-3
+tech-fluency: 9
+daily-context: "데스크톱 작업 (집·사무실·카페) + markdown 검토 (GitHub UI·VS Code preview) + 모바일 메모"
+status: Approved
+since: 2026-05-10
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### 기본
 - **별칭:** Builder (Claude Code 사용자)
 - **나이대:** 25-50
@@ -44,19 +59,66 @@ status: Approved
 
 ## 2. Edge Personas
 
-### Edge-1: Non-developer maker (디자이너·PM이 Claude Code로 vibe coding)
+### PERSONA-EDGE-1: Non-developer maker (디자이너·PM이 Claude Code로 vibe coding)
+
+<!-- specrail:attrs id=PERSONA-EDGE-1 -->
+```yaml
+alias: Non-developer maker
+role: "디자이너·PM이 Claude Code로 vibe coding"
+primary-pain: PAIN-9
+status: Approved
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 - **왜 무시되기 쉬운가:** Phase 4 Domain Model·Phase 8 Architecture가 코딩 배경 가정. plugin UI도 dev 친화 default.
 - **무시했을 때 깨지는 것:** AI 시대 가장 큰 신규 사용자층. 진입 장벽 높으면 잃음.
 
-### Edge-2: Multiple parallel projects (한 사람이 여러 product 동시 진행) — 향후 cycle
+### PERSONA-EDGE-2: Multiple parallel projects (한 사람이 여러 product 동시 진행) — 향후 cycle
+
+<!-- specrail:attrs id=PERSONA-EDGE-2 -->
+```yaml
+alias: Multi-project parallel user
+role: "한 사람이 여러 product 동시 진행"
+primary-pain: PAIN-6
+status: Deferred
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 - **왜 무시되기 쉬운가:** 초기 release는 단일 project 가정. Multi-project switching UI (dashboard tab 등)는 향후 cycle로 deferred.
 - **무시했을 때 깨지는 것:** 사이드 프로젝트 다수 보유 builder가 핵심 사용자층. project switching 부담이면 plugin 안 씀.
 
-### Edge-3: Brownfield maintainer (S3 P1 — 향후 cycle 후보)
+### PERSONA-EDGE-3: Brownfield maintainer (S3 P1 — 향후 cycle 후보)
+
+<!-- specrail:attrs id=PERSONA-EDGE-3 -->
+```yaml
+alias: Brownfield maintainer
+role: "기존 레거시 spec 역설계 + 보수 사용자"
+primary-pain: PAIN-7
+status: Deferred
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 - **왜 무시되기 쉬운가:** Greenfield 가정 강함.
 - **무시했을 때 깨지는 것:** 가장 큰 시장 (existing software 유지·확장).
 
 ## 3. Journey Map: 시나리오 1 — Greenfield
+
+### SCEN-1: Greenfield
+
+<!-- specrail:attrs id=SCEN-1 -->
+```yaml
+name: Greenfield
+personas: [PERSONA-1]
+triggers: "사용자가 새 product spec을 처음부터 시작"
+outcome: "13 phase 완주 + docs/spec/ produced"
+status: Approved
+priority: P0
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 ### 컨텍스트
 - 시간: 토요일 오전 10시
@@ -103,6 +165,20 @@ status: Approved
 
 ## 4. Journey Map: 시나리오 2 — DELTA (결제 추가 예시)
 
+### SCEN-2: DELTA
+
+<!-- specrail:attrs id=SCEN-2 -->
+```yaml
+name: DELTA (기존 spec에 기능 추가)
+personas: [PERSONA-1]
+triggers: "기존 product spec에 새 capability 추가 요청"
+outcome: "changes/{date}-{topic}/proposal.md + 영향 phase deltas merged"
+status: Approved
+priority: P0
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ### 컨텍스트
 - 시간: 평일 오후 2시
 - 장소 / 상황: 사무실. 무료 → 유료 전환 압박.
@@ -127,6 +203,20 @@ status: Approved
 - **Magic moment:** Step 2 자체. 사용자 수동 판단했던 가장 부담스런 부분.
 
 ## 5. Journey Map: 시나리오 3 — Refactor (P1 — 향후 cycle 후보)
+
+### SCEN-3: Refactor
+
+<!-- specrail:attrs id=SCEN-3 -->
+```yaml
+name: Refactor (brownfield 역설계)
+personas: [PERSONA-EDGE-3]
+triggers: "기존 레거시 codebase에 spec 역설계 부착"
+outcome: "13-phase spec backfilled from existing implementation"
+status: Deferred
+priority: P1
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 ### 컨텍스트
 - 시간: sprint 사이 빈 주
