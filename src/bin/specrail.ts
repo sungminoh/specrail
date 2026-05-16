@@ -73,6 +73,25 @@ async function main() {
       process.stdout.write(output + (output.endsWith('\n') ? '' : '\n'));
       exit(exitCode);
     }
+    case 'migrate': {
+      const { runMigrate } = await import('../migrate/codemod.js');
+      const apply = args.includes('--apply');
+      const dryRun = args.includes('--dry-run') || !apply;
+      const phaseArg = args.find((a) => a.startsWith('--phase='));
+      const phase = phaseArg ? parseInt(phaseArg.slice('--phase='.length), 10) : undefined;
+      const r = await runMigrate({
+        projectRoot: process.cwd(),
+        apply: !dryRun,
+        phase: Number.isFinite(phase as number) ? (phase as number) : undefined,
+      });
+      const mode = r.dryRun ? '[dry-run]' : '[applied]';
+      console.log(`${mode} files=${r.filesScanned} renamed=${r.renamed.length} conflicts=${r.conflicts.length}`);
+      for (const x of r.renamed.slice(0, 20)) {
+        console.log(`  ${x.kind}: ${x.from} → ${x.to}  (${x.file})`);
+      }
+      if (r.renamed.length > 20) console.log(`  ... ${r.renamed.length - 20} more`);
+      exit(r.conflicts.length > 0 ? 1 : 0);
+    }
     default: {
       // Usage: stdout if user asked (no command); stderr if command was unknown
       const out = command ? console.error : console.log;
@@ -87,6 +106,7 @@ async function main() {
       out('  check [--strict]              Run all lint checks');
       out('  install-hook                  Install git pre-commit hook');
       out('  verify [--json|--md] [...]   Auto-derived implementation status report');
+      out('  migrate [--apply] [--phase=N] T-CSA codemod (Phase 5 FLN/FLE rename + report)');
       exit(command ? 1 : 0);
     }
   }
