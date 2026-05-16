@@ -77,6 +77,92 @@ export interface GraphEdge {
   readonly citedAt: { file: string; line: number };
 }
 
+// -----------------------------------------------------------------------------
+// T-CSA.4 — typed edges from attrs blocks
+// Per docs/spec/changes/2026-05-15-core-schema-attrs/proposal.md §3.4 (ADR-16
+// closed enum of 8 kinds, frozen at schema v1.0). Maps author-facing YAML
+// field names (plural-noun) to edge kinds (singular-verb) and emits edges
+// from each block's payload.
+// -----------------------------------------------------------------------------
+
+export type EdgeKind =
+  | 'solves'
+  | 'linked-features'
+  | 'parent'
+  | 'tested-by'
+  | 'covers-ac'
+  | 'mitigates'
+  | 'linked-arch'
+  | 'depends-on';
+
+export interface TypedEdge {
+  readonly from: string;
+  readonly to: string;
+  readonly kind: EdgeKind;
+  readonly sourceFile?: string;
+  readonly line?: number;
+}
+
+/**
+ * YAML field name (plural-noun, authoring ergonomics) → edge kind
+ * (singular-verb, closed-enum 8). Fields not in this map produce NO typed
+ * edges — they are scalar metadata (e.g. ENT-* `linked-r`) or non-edge
+ * payload (e.g. `status`, `importance`).
+ *
+ * Per proposal §3.4 register split: enum membership is the canonical
+ * vocabulary; field names exist to read naturally in YAML.
+ */
+export const FIELD_TO_KIND_MAP: Readonly<Record<string, EdgeKind>> = Object.freeze({
+  'solves-pains': 'solves',
+  'linked-features': 'linked-features',
+  'linked-tests': 'tested-by',
+  'linked-ac': 'covers-ac',
+  'mitigates-risks': 'mitigates',
+  'linked-arch': 'linked-arch',
+  'parent-r': 'parent',
+  'parent-f': 'parent',
+  'parent-t': 'parent',
+  'depends-on': 'depends-on',
+});
+
+/**
+ * Build typed edges from a list of parsed attrs blocks.
+ *
+ * Each block's `entityId` becomes the edge `from`. For every payload field
+ * present in FIELD_TO_KIND_MAP, the value is interpreted as either a string
+ * (scalar reference) or string[] (list of references), and one TypedEdge
+ * is emitted per target. Non-string array items are defensively skipped.
+ */
+export function buildTypedEdges(blocks: ReadonlyArray<AttrsBlockLike>): TypedEdge[] {
+  const edges: TypedEdge[] = [];
+  for (const b of blocks) {
+    for (const [field, raw] of Object.entries(b.payload)) {
+      const kind = FIELD_TO_KIND_MAP[field];
+      if (!kind) continue;
+      const targets: unknown[] = Array.isArray(raw) ? raw : [raw];
+      for (const t of targets) {
+        if (typeof t !== 'string' || t.length === 0) continue;
+        edges.push({
+          from: b.entityId,
+          to: t,
+          kind,
+          sourceFile: b.sourceFile,
+          line: b.lineRange?.start,
+        });
+      }
+    }
+  }
+  return edges;
+}
+
+/** Minimal structural subset of AttrsBlock — avoids hard import cycle. */
+interface AttrsBlockLike {
+  readonly entityId: string;
+  readonly payload: Record<string, unknown>;
+  readonly sourceFile?: string;
+  readonly lineRange?: { start: number; end: number };
+}
+
 export interface DependencyGraph {
   readonly nodes: GraphNode[];
   readonly edges: GraphEdge[];
