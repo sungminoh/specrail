@@ -159,6 +159,17 @@ M0 spike 후 동시:
 
 #### T0.1: Node.js project init
 
+<!-- specrail:attrs id=T0.1 -->
+```yaml
+milestone: M0
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 **Files:** Create: `package.json`, `tsconfig.json`, `.gitignore`, `.nvmrc`
 
 - [ ] **Step 1: Failing test**
@@ -202,6 +213,17 @@ git commit -m "chore: init Node.js + Vitest + TypeScript project (ADR-3)"
 ---
 
 #### T0.2: A1 Spike — CC subagent fresh context + BLOCKED escalation + frontmatter inject 검증 (확장)
+
+<!-- specrail:attrs id=T0.2 -->
+```yaml
+milestone: M0
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Goal:** RISK-1·2 mitigation. CC SDK가 (a) subagent를 fresh context로 spawn, (b) BLOCKED escalation 가능, (c) **skill manifest `inputs-from` 필드로 이전 phase frontmatter 자동 inject 지원** (reviewer H1 추가). F1.2 기반 가정.
 
@@ -252,6 +274,17 @@ git commit -m "spike(a1): verify CC subagent fresh ctx + BLOCKED escalation (RIS
 
 #### T0.3: ADR-8 Spike — state machine pattern
 
+<!-- specrail:attrs id=T0.3 -->
+```yaml
+milestone: M0
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 **Files:** Create: `src/state/machine.ts`, `tests/state-machine.test.ts`, `spikes/adr-8/spike.md`.
 
 - [ ] **Step 1: Failing test**
@@ -289,6 +322,17 @@ git commit -m "feat(state): explicit phase state machine (ADR-8, INV-3, SM-Phase
 
 #### T0.4: ADR-9 Spike — graph incremental vs full-rebuild 비교 (reviewer H2 확장)
 
+<!-- specrail:attrs id=T0.4 -->
+```yaml
+milestone: M0
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Condensed: `spikes/adr-9/bench.ts` + `spike.md` hypothesis. RED: bench script 부재.
 GREEN: 1000 ID across 13 file generator + (a) cold full-rebuild 측정, (b) 1 file change incremental rebuild 측정.
 **판정 로직:** Full rebuild가 3s 이내 (NFR-PERF-3 충족) → **옵션 D 채택 (incremental 회수, innovation token 회수)** → Phase 12 ADR-9 옵션 D로 update + H1 spike 결과에 token 재할당 검토. Full rebuild 3s 초과 → 옵션 A (incremental) 유지.
@@ -296,17 +340,61 @@ Commit: `spike(adr-9): incremental vs full-rebuild 비교 + token decision (RISK
 
 #### T0.5: NFR-PERF-3 hook timeout spike
 
+<!-- specrail:attrs id=T0.5 -->
+```yaml
+milestone: M0
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Condensed: `spikes/nfr-perf-3/bench.sh`. RED: hook bench 측정 없음. GREEN: 큰 spec (1000 ID)에 hook 5회 평균 측정 + 3s 한계 적정성 결론. Commit: `bench(nfr-perf-3): hook timeout 측정 (OQ-9-2)`
 
 #### T0.6: GitHub Actions CI setup
+
+<!-- specrail:attrs id=T0.6 -->
+```yaml
+milestone: M0
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 Files: `.github/workflows/ci.yml`. RED: PR에서 status check 없음. GREEN: workflow가 `npm install && npm test && npm run typecheck` 실행. Commit: `ci: GitHub Actions test+typecheck on PR (OPS-1)`
 
 #### T0.7: JSON Schema infra + ajv wrapper
 
+<!-- specrail:attrs id=T0.7 -->
+```yaml
+milestone: M0
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Files: `src/schema/validator.ts`, `schemas/common-frontmatter.json`. RED: validator 미구현 시 frontmatter check skip. GREEN: ajv wrapper + common schema (id, status, refs). Commit: `feat(schema): ajv-based frontmatter validator (ADR-2, F1.1)`
 
 #### T0.8: Windows hook shebang spike (reviewer H1)
+
+<!-- specrail:attrs id=T0.8 -->
+```yaml
+milestone: M0
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 Files: `spikes/h1-windows-hook/spike.md`, `spikes/h1-windows-hook/test-hook.js`.
 RED: Windows MINGW shell (Git for Windows)에서 `#!/usr/bin/env node` shebang 작동 검증 부재.
@@ -315,6 +403,17 @@ Acceptance: (a) hook이 Windows에서 exit code 정상, (b) NFR-PERF-3 (<3s)도 
 Commit: `spike(h1): Windows hook shebang 호환 검증 (NFR-AVAIL-6, OQ-8-3)`
 
 #### T0.9: 한국어 mixed-lang remark parse spike (reviewer H1)
+
+<!-- specrail:attrs id=T0.9 -->
+```yaml
+milestone: M0
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 Files: `spikes/h1-i18n-parse/spike.md`, `spikes/h1-i18n-parse/test-fixture.md`.
 RED: NFR-I18N-1 한국어 우선 + EDGE-7·8 (한국어/영어 mix, 한자, emoji)에서 unified+remark+remark-frontmatter가 정확 parse하는지 미검증.
@@ -327,6 +426,17 @@ Commit: `spike(h1): unified/remark 한국어+영어 mixed parse 검증 (NFR-I18N
 ### M1: Foundation (R1 + R2 base — T1.1 ~ T1.10)
 
 #### T1.1: SpecId type + parser
+
+<!-- specrail:attrs id=T1.1 -->
+```yaml
+milestone: M1
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Files:** Create: `src/spec/id.ts`, `tests/spec-id.test.ts`.
 
@@ -368,6 +478,17 @@ git commit -m "feat(spec): SpecId parser + formatter (Phase 4 type, INV-1)"
 ---
 
 #### T1.2: ID counter module — F1.3, AC-R1-3, INV-1
+
+<!-- specrail:attrs id=T1.2 -->
+```yaml
+milestone: M1
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Files:** Create: `src/spec/counter.ts`, `tests/id-counter.test.ts`.
 
@@ -414,6 +535,17 @@ git commit -m "feat(spec): sequential ID counter w/ persistence (F1.3, ADR-5, IN
 
 #### T1.3: ID Resolver (file-scan stub, M2에서 graph 기반으로 교체) — F1.4, AC-R1-2, TC-2
 
+<!-- specrail:attrs id=T1.3 -->
+```yaml
+milestone: M1
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 **Reviewer C6 — 2-pass 전략:** M1에서 graph builder (T2.1) 부재이므로 file-scan stub으로 작동, M2 T2.1 후 graph 기반으로 교체.
 
 Files: `src/spec/resolver.ts`. RED: `getValidIds(scanRoot, tier?)` 미구현.
@@ -423,13 +555,46 @@ Commit: `feat(spec): ID resolver file-scan stub (F1.4, AC-R1-2, TC-2, M2 graph �
 
 #### T1.4: Frontmatter parser — F1.1, F1.2, AC-R1-1, TC-1
 
+<!-- specrail:attrs id=T1.4 -->
+```yaml
+milestone: M1
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Files: `src/markdown/frontmatter.ts`. RED: parser 부재로 inject 실패. GREEN: unified + remark-parse + remark-frontmatter wrapper, returns `{ frontmatter, body }`. Commit: `feat(markdown): frontmatter parser via remark (ADR-4, F1.1, F1.2, TC-1)`
 
 #### T1.5: Phase-별 frontmatter schema 13개 — F1.1, INV-5
 
+<!-- specrail:attrs id=T1.5 -->
+```yaml
+milestone: M1
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Files: `schemas/phase-01.json` 외 12개 (phase-02 ~ phase-13) + `schemas/common-frontmatter.json`. RED: schema 부재 validator skip. GREEN: 각 phase별 schema (status·refs·id list). Commit: `feat(schema): 13 phase frontmatter schemas (F1.1, INV-5, TC-34)`
 
 #### T1.6: Phase status 필드 + transition gate — F2.2, AC-R2-2, INV-3, TC-5·32
+
+<!-- specrail:attrs id=T1.6 -->
+```yaml
+milestone: M1
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Files:** Create: `src/skill/gate.ts`, `tests/transition-gate.test.ts`.
 
@@ -478,6 +643,17 @@ git commit -m "feat(skill): phase transition gate (F2.2, AC-R2-2, INV-3, TC-5·3
 
 #### T1.7: Pre-commit hook installer (chain 방식, 기존 hook 보존) — F2.1, F6.4, AC-R6-3, RISK-3, TC-14
 
+<!-- specrail:attrs id=T1.7 -->
+```yaml
+milestone: M1
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 **Reviewer C5 — 기존 hook 보존 필수.** T2.12 (hook auto-install on git detect)와 통합 — 한 task로.
 
 Files: `src/cli/hook-install.ts` (installer + chain logic), `src/hook/id-consistency.ts`, `src/hook/schema-validate.ts`, `src/hook/verify-status.ts`. RED: 기존 사용자 hook (`.husky/`, `lefthook.yml`, plain `.git/hooks/pre-commit`) 있는 환경에서 specrail install이 덮어쓰지 않는지 검증 부재.
@@ -492,6 +668,17 @@ Commit: `feat(hook): pre-commit installer chain 방식 + 기존 hook 보존 (F2.
 
 #### T1.8: ID consistency hook (file-scan stub, M2에서 graph 기반으로 교체) — F2.3, INV-2, TC-31
 
+<!-- specrail:attrs id=T1.8 -->
+```yaml
+milestone: M1
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 **Reviewer C6 — 2-pass 전략 (T1.3과 동일).** M1에서 graph builder 부재 → file-scan stub. M2 T2.1 후 graph 기반으로 교체.
 
 Files: `src/hook/id-consistency.ts`. RED: 환각 ID 포함 commit 통과.
@@ -501,9 +688,31 @@ Commit: `feat(hook): ID consistency file-scan stub (F2.3, INV-2, TC-31, M2 graph
 
 #### T1.9: Schema validation hook — F2.4, AC-R2-3, TC-6·34
 
+<!-- specrail:attrs id=T1.9 -->
+```yaml
+milestone: M1
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Files: `src/hook/schema-validate.ts`. RED: invalid frontmatter commit 통과. GREEN: ajv validate (T0.7 활용) + violation 표시 + exit 1. Commit: `feat(hook): frontmatter schema validation (F2.4, AC-R2-3, TC-6·34)`
 
 #### T1.10: First-spec edge regression — EDGE-15, TC-54
+
+<!-- specrail:attrs id=T1.10 -->
+```yaml
+milestone: M1
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 Files: `tests/edge-15-first-spec.test.ts`. RED: 빈 docs/spec에서 R1 부여 시 R0 또는 error. GREEN: counter empty → R1 보장. Commit: `test(edge): TC-54 first ID = R1 (EDGE-15)`
 
@@ -512,6 +721,17 @@ Files: `tests/edge-15-first-spec.test.ts`. RED: 빈 docs/spec에서 R1 부여 �
 ### M2: MVP (R4 + R5 + R6 — T2.1 ~ T2.12)
 
 #### T2.1: Dependency graph builder — F4.1, AC-R4-2, TC-7·8·31
+
+<!-- specrail:attrs id=T2.1 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Files:** Create: `src/graph/builder.ts`, `tests/graph-builder-ast-citations.test.ts` (한 묶음 — bold-defs / recursive / table-defs / phantom-id 도 동일 디렉토리).
 
@@ -578,6 +798,17 @@ Commit: `refactor(spec,hook): T1.3·T1.8 stub → graph 기반 교체 (F1.4·F2.
 
 #### T2.2: Graph incremental rebuild — ADR-9, NFR-PERF-5, TC-74 **(Conditional — DEFERRED via ADR-9 옵션 D)**
 
+<!-- specrail:attrs id=T2.2 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 **⚠️ T0.4 결과 옵션 D 채택 → SKIP.** Full rebuild every commit이 NFR-PERF-3 충족 (perf-bench 평균 ~1s). TC-74 도 deferred (incremental 추가 시 부활). 이 task는 verifier intent matrix에서 제외 — `specrail:ignore-start/end` 로 wrap. §10 coverage matrix F4.1 → T2.1만 유지.
 
 Condensed (옵션 A 시, 미실행): `src/graph/cache.ts`. RED: cache 없으면 매 hook full rebuild → NFR-PERF-3 위반 위험. GREEN: changed file modtime 비교 + diff parse + cache merge.
@@ -586,9 +817,31 @@ Condensed (옵션 A 시, 미실행): `src/graph/cache.ts`. RED: cache 없으면 
 
 #### T2.3: Transitive downstream extractor — F4.2, AC-R4-2, TC-8
 
+<!-- specrail:attrs id=T2.3 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Condensed: `src/graph/downstream.ts` — BFS on edges. RED: change 영향 phase list 못 뽑음. GREEN: changed ID set → 직간접 cite phase 모두 반환. Commit: `feat(graph): transitive downstream extraction (F4.2, AC-R4-2, TC-8)`
 
 #### T2.4: Change skill — DELTA proposal auto-draft — F4.3, AC-R4-1, TC-7
+
+<!-- specrail:attrs id=T2.4 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 Files: `src/cli/change.ts`. RED: change 명령 → proposal 부재. GREEN: T2.3로 영향 phase 추출 + `changes/{date}-{topic}/proposal.md` template 작성. Commit: `feat(skill): specrail change auto-draft (F4.3, AC-R4-1)`
 
@@ -617,33 +870,121 @@ Commit: `refactor(spec): manual instructions → auto-enforced annotations (arch
 
 #### T2.6: 00-common 자동 상속 — F5.4, AC-R5-3, TC-11
 
+<!-- specrail:attrs id=T2.6 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Files: `src/skill/inheritance.ts`. RED: 각 phase가 00-common 안 읽으면 Anti-Sycophancy 미적용. GREEN: 모든 skill SKILL.md가 `applies-to: every phase` 자동 prepend. Commit: `feat(skill): 00-common inheritance auto-inject (F5.4, AC-R5-3, TC-11)`
 
 #### T2.7: AskUserQuestion ONE-AT-A-TIME wrapper — F5.3
+
+<!-- specrail:attrs id=T2.7 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 Files: `src/skill/ask.ts`. RED: batch 질문 가능. GREEN: wrapper가 한 질문씩 강제 + STOP after each. Commit: `feat(skill): AskUserQuestion ONE-AT-A-TIME wrapper (F5.3)`
 
 #### T2.8: 6 forcing questions skill (Phase 0) — F5.2, AC-R5-1, TC-9
 
+<!-- specrail:attrs id=T2.8 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Files: `src/skill/forcing-questions.ts` + `skills/phase-01-prd/SKILL.md` (Phase 1 SKILL embedded Q1-Q6 prompts). RED: Phase 1 진입 시 곧바로 작성 시작. GREEN: T2.7 wrapper로 Q1~Q6 순차. Commit: `feat(skill): Phase 0 6 forcing questions (F5.2, AC-R5-1, TC-9)`
 
 #### T2.9: Smart Routing — AC-R5-1, TC-9
+
+<!-- specrail:attrs id=T2.9 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 Files: `src/skill/smart-routing.ts`. RED: 모든 사용자에 6개 다 물음. GREEN: 단계 분류 (pre-product / has users / paying) → Q sub-set. Commit: `feat(skill): Phase 0 smart routing (AC-R5-1)`
 
 #### T2.10: Forcing pushback patterns 5종 — AC-R5-2, TC-10
 
+<!-- specrail:attrs id=T2.10 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Files: `src/skill/pushback.ts`. RED: vague answer 통과. GREEN: 5 패턴 (vague target / social proof / big vision / tailwind / undefined terms) 매칭 → forcing prompt. Commit: `feat(skill): 5 forcing pushback patterns (AC-R5-2, TC-10)`
 
 #### T2.11: Plugin install bootstrap — F6.2, AC-R6-2, TC-13
+
+<!-- specrail:attrs id=T2.11 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 Files: `src/cli/install.ts`. RED: 첫 trigger 시 docs/spec 부재 → fail. GREEN: mkdir docs/spec, schema files copy, phase-1 skill auto-invoke. Commit: `feat(cli): install bootstrap docs/spec + Phase 1 (F6.2, AC-R6-2, TC-13)`
 
 #### T2.12: ~~Hook auto-install on git detect~~ — **T1.7로 통합 (reviewer planner)**
 
+<!-- specrail:attrs id=T2.12 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 T1.7 (chain 방식 installer)이 git detect + auto-install + 사용자 confirm 모두 포함. 별도 task 불필요. Coverage matrix는 T1.7로 매핑.
 
 #### T2.13: README + non-CC fallback guide (reviewer planner — M4 → M2 이동) — OQ-1-3 resolved
+
+<!-- specrail:attrs id=T2.13 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Reviewer planner — README가 M4였으나 M2 ship-able 주장의 최소 조건이라 M2 끝으로 이동.**
 
@@ -665,17 +1006,61 @@ Commit: `docs(README): install + usage + non-CC fallback + state source (OQ-1-3,
 
 #### T3.1: B2B 표현 lint — AC-R7-1, TC-15
 
+<!-- specrail:attrs id=T3.1 -->
+```yaml
+milestone: M3
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Files: `src/lint/r7-b2b.ts`, `tests/lint-r7-b2b.test.ts`. RED: "직책", "분기 OKR" 같은 B2B 단어 통과. GREEN: keyword regex (회사·승진·해고·KPI 등) → fail. Commit: `feat(lint): R7 B2B expression detector (AC-R7-1, TC-15)`
 
 #### T3.2: 단일 도메인 inline lint — AC-R7-2, TC-16
+
+<!-- specrail:attrs id=T3.2 -->
+```yaml
+milestone: M3
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 Files: `src/lint/r7-domain.ts`. RED: prompt 안에 "Booking", "Stripe", "PostgreSQL" 같은 구체 entity. GREEN: domain-specific term blocklist + warning. Commit: `feat(lint): R7 domain entity inline detector (AC-R7-2, TC-16)`
 
 #### T3.3: legacy example 참조 history check — AC-R7-3, TC-17
 
+<!-- specrail:attrs id=T3.3 -->
+```yaml
+milestone: M3
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Files: `src/lint/r7-history.ts`. RED: git log에 "legacy example 참조" 흔적 있어도 통과. GREEN: 작업 commit이 legacy examples/ 파일 read history 검사 (best-effort static). Commit: `feat(lint): legacy example reference history check (AC-R7-3, TC-17)`
 
 #### T3.4: Subagent invocation wrapper — F8.1, F8.2, AC-R8-1, TC-18
+
+<!-- specrail:attrs id=T3.4 -->
+```yaml
+milestone: M3
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Files:** Create: `src/subagent/invoke.ts`, `tests/subagent-wrapper.test.ts`.
 
@@ -720,17 +1105,61 @@ git commit -m "feat(subagent): CC Agent wrapper (F8.1·8.2, AC-R8-1, TC-18, ADR-
 
 #### T3.5: Subagent 2-stage review — F8.3, AC-R8-2, TC-19
 
+<!-- specrail:attrs id=T3.5 -->
+```yaml
+milestone: M3
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Condensed: `src/subagent/review.ts`. RED: 1-stage만 — spec 준수만 검사. GREEN: T3.4 wrapper 2회 호출 (SpecReview → QualityReview). Commit: `feat(subagent): 2-stage review chain (F8.3, AC-R8-2, TC-19)`
 
 #### T3.6: BLOCKED escalation handler — F8.4, AC-R8-3, TC-20·62
+
+<!-- specrail:attrs id=T3.6 -->
+```yaml
+milestone: M3
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 Condensed: `src/subagent/escalate.ts`. RED: BLOCKED 시 자동 다음 task 진행 (잘못). GREEN: status=Blocked → main session interrupt + 사용자 결정 대기. Commit: `feat(subagent): BLOCKED escalation interrupt (F8.4, AC-R8-3, TC-20·62)`
 
 #### T3.7: Telemetry consent install flow — F13.1, AC-R13-1, INV-9, TC-21·38
 
+<!-- specrail:attrs id=T3.7 -->
+```yaml
+milestone: M3
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Files: `src/telemetry/consent.ts`. RED: install 시 default opt-in (privacy 위반). GREEN: 명시 yes/no 질문 + default OptedOut + `~/.specrail/consent.json`. Commit: `feat(telemetry): install opt-in default OptedOut (F13.1, INV-9, AC-R13-1, TC-21·38)`
 
 #### T3.8: Telemetry client (Plausible) — F13.2, AC-R13-2, INV-8, TC-22·37·45·59
+
+<!-- specrail:attrs id=T3.8 -->
+```yaml
+milestone: M3
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Files:** Create: `src/telemetry/client.ts`, `tests/telemetry-client.test.ts`.
 
@@ -778,9 +1207,31 @@ git commit -m "feat(telemetry): Plausible client + INV-8·9 enforce (F13.2, ADR-
 
 #### T3.9: Telemetry opt-out command — F13.3, AC-R13-3, TC-23
 
+<!-- specrail:attrs id=T3.9 -->
+```yaml
+milestone: M3
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Condensed: `src/cli/opt-out.ts`. RED: opt-out 명령 부재. GREEN: consent.json status=OptedOut + 데이터 삭제 요청 mailto 안내. Commit: `feat(cli): specrail opt-out command (F13.3, AC-R13-3, TC-23)`
 
 #### T3.10: Secret pattern detection — RISK-5, OQ-9-1 resolved (opt-in F)
+
+<!-- specrail:attrs id=T3.10 -->
+```yaml
+milestone: M3
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **OQ-9-1 결정:** opt-in F (default off). 기본 R 강제 시 false positive 부담. 사용자가 회사 정책 따라 enable.
 
@@ -792,21 +1243,76 @@ Files: `src/lint/secret-detect.ts`. RED: API key 형식 spec에 commit 통과. G
 
 #### T4.1: ~~README~~ — **T2.13으로 이동 (reviewer planner)**
 
+<!-- specrail:attrs id=T4.1 -->
+```yaml
+milestone: M4
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 T2.13이 README + fallback guide 처리. M2 ship-able 조건이라 M4 → M2 이동. Coverage matrix는 T2.13으로 매핑.
 
 #### T4.2: Marketplace publish workflow + RB-7 fallback
+
+<!-- specrail:attrs id=T4.2 -->
+```yaml
+milestone: M4
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 Files: `.github/workflows/release.yml`. RED: tag push 시 release artifact 없음. GREEN: tag → npm pack + GitHub release + telemetry "ReleasePublished" event. RB-7 fallback 명시 (manual `gh release create`). Commit: `ci(release): tag-based release + RB-7 fallback (Phase 11 OPS-1)`
 
 #### T4.3: Survey mechanism — OQ-11-3 resolved (GitHub issue template)
 
+<!-- specrail:attrs id=T4.3 -->
+```yaml
+milestone: M4
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Files: `.github/ISSUE_TEMPLATE/kpi3-survey.yml`. Boring choice — KPI-3 self-report 수집. Commit: `docs(issue): KPI-3 survey template (OQ-11-3 resolved)`
 
 #### T4.4: Performance benchmarks — NFR-PERF-1~7, TC-70~77
 
+<!-- specrail:attrs id=T4.4 -->
+```yaml
+milestone: M4
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 Files: `bench/perf-suite.ts`. RED: bench harness 부재. GREEN: NFR-PERF-1~7 시나리오 모두 (skill invoke·LLM·hook·graph cold·incremental·schema validate·E2E user). Commit: `bench: NFR-PERF-1~7 suite (TC-70~77)`
 
 #### T4.5: E2E S1 + S2 시나리오 + INV-4 검증 — TC-12·13·33 + S2 신규 (reviewer H6)
+
+<!-- specrail:attrs id=T4.5 -->
+```yaml
+milestone: M4
+status: Approved
+red-test: "see task body"
+commit-msg-stub: "see task body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Reviewer H6 — S2 DELTA E2E TC 누락 보강.**
 
@@ -1140,3 +1646,443 @@ README → M2? ✅ (T2.13, M2 ship-able 최소 조건)
 - T11.7 Plausible flush + loadConfigFromEnv wire-up
 
 5번째는 특히 흥미: plugin 자체가 spec→task coverage check를 자동으로 하면 Phase 13 self-check가 단순해짐. 즉 plugin이 자신을 더 빨리 작성 가능하게 만듦 — 재귀 효율 향상.
+
+---
+
+
+---
+
+## Appendix: Table-only task attrs (M-CSA — schema v1.0)
+
+Per `skills/_common/principles.md` §"Attrs Blocks Are Mandatory". T-tasks defined only in def-tables (no `#### Tn.m:` heading) aggregate here. Heading-defined tasks get inline attrs above.
+
+remaining count: 43
+<!-- specrail:attrs id=T2.5 -->
+```yaml
+milestone: M2
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T5.1 -->
+```yaml
+milestone: M5
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T5.2 -->
+```yaml
+milestone: M5
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T5.3 -->
+```yaml
+milestone: M5
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T5.4 -->
+```yaml
+milestone: M5
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T5.5 -->
+```yaml
+milestone: M5
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T5.6 -->
+```yaml
+milestone: M5
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T6.2 -->
+```yaml
+milestone: M6
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T6.3 -->
+```yaml
+milestone: M6
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T6.4 -->
+```yaml
+milestone: M6
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T6.5 -->
+```yaml
+milestone: M6
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T7.1 -->
+```yaml
+milestone: M7
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T7.2 -->
+```yaml
+milestone: M7
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T7.3 -->
+```yaml
+milestone: M7
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T7.4 -->
+```yaml
+milestone: M7
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T7.5 -->
+```yaml
+milestone: M7
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T8.1 -->
+```yaml
+milestone: M8
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T8.2 -->
+```yaml
+milestone: M8
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T8.3 -->
+```yaml
+milestone: M8
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T8.4 -->
+```yaml
+milestone: M8
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T8.5 -->
+```yaml
+milestone: M8
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T8.6 -->
+```yaml
+milestone: M8
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T9.1 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T9.2 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T9.3 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T9.4 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T9.5 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T9.6 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T10.1 -->
+```yaml
+milestone: M10
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T10.2 -->
+```yaml
+milestone: M10
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T10.3 -->
+```yaml
+milestone: M10
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T10.4 -->
+```yaml
+milestone: M10
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T10.5 -->
+```yaml
+milestone: M10
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T10.6 -->
+```yaml
+milestone: M10
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T10.7 -->
+```yaml
+milestone: M10
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T10.8 -->
+```yaml
+milestone: M10
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T11.1 -->
+```yaml
+milestone: M11
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T11.2 -->
+```yaml
+milestone: M11
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T11.3 -->
+```yaml
+milestone: M11
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T11.4 -->
+```yaml
+milestone: M11
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T11.5 -->
+```yaml
+milestone: M11
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T11.6 -->
+```yaml
+milestone: M11
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=T11.7 -->
+```yaml
+milestone: M11
+status: Approved
+red-test: "see task table"
+commit-msg-stub: "see task table"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
