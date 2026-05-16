@@ -27,6 +27,7 @@
   "files": [
     "dist",
     "skills",
+    "schemas",
     "README.md",
     "package.json",
     "LICENSE"

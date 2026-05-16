@@ -50,3 +50,22 @@ describe('T4.2 Release workflow (Phase 11 OPS-1, RB-7)', () => {
     expect(yaml).toContain('contents: write');
   });
 });
+
+describe('T-CSA.7 — package.json files array publishes attrs schema', () => {
+  it('package.json files includes "schemas"', async () => {
+    const pkg = JSON.parse(await readFile('package.json', 'utf8')) as { files: string[] };
+    expect(pkg.files).toContain('schemas');
+  });
+
+  it('package.json files also includes "skills" (already shipped 0.1.0)', async () => {
+    const pkg = JSON.parse(await readFile('package.json', 'utf8')) as { files: string[] };
+    expect(pkg.files).toContain('skills');
+  });
+
+  it('schemas/attrs.schema.json + schemas/edge-kinds.schema.json exist on disk', async () => {
+    const attrs = await readFile('schemas/attrs.schema.json', 'utf8');
+    const edges = await readFile('schemas/edge-kinds.schema.json', 'utf8');
+    expect(attrs).toContain('attrs block payload');
+    expect(edges).toContain('edge kind enum');
+  });
+});
