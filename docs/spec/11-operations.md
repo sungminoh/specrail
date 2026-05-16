@@ -238,3 +238,178 @@ Phase 13 (Implementation)에:
 - OPS-5·11·12 telemetry instrumentation (R13 task)
 - OPS-2 hook auto-install (R6 task)
 - RB-1~8 runbook은 incident 발생 시 작성 (P1 — 출시 후)
+
+---
+
+## 13. Attrs blocks (M-CSA — schema v1.0)
+
+Per `skills/_common/principles.md` §"Attrs Blocks Are Mandatory". Each OPS row in §1–§10 gets a schema-valid attrs block here. `env` is uniformly `maintainer-ci` (Phase 11 operations are maintainer-side per PRD §6 boundary); future codemod pass can parse per-row env classification.
+
+<!-- specrail:attrs id=OPS-1 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-2 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-3 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-4 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-5 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-6 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-7 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-8 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-9 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-10 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-11 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-12 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-13 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-14 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-15 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-16 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-17 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-18 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-19 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-20 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=OPS-21 -->
+```yaml
+status: Approved
+env: maintainer-ci
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
