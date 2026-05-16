@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sungminoh/specrail/schemas/edge-kinds.schema.json",
+  "title": "specrail edge kind enum (closed, frozen at schema v1.0)",
+  "description": "Closed enum of 8 typed edge kinds per proposal §3.4 (OQ-CSA-5 resolved, ADR-16). Additions require minor schema-version bump and a new ADR. Schema v1.0 first published at plugin 0.2.0.",
+  "type": "string",
+  "enum": [
+    "solves",
+    "linked-features",
+    "parent",
+    "tested-by",
+    "covers-ac",
+    "mitigates",
+    "linked-arch",
+    "depends-on"
+  ]
+}

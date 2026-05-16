@@ -1,0 +1,330 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sungminoh/specrail/schemas/attrs.schema.json",
+  "title": "specrail attrs block payload — per-entity-type schemas",
+  "description": "JSON Schema 2020-12 covering 21 first-class entity kinds per proposal §5. Caller resolves entity kind from ID (classifyEntityKind) then validates against $defs/<kind>. Schema v1.0 frozen at plugin 0.2.0.",
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": ["Draft", "Proposed", "Reviewed", "Approved", "Applied", "Deferred", "Superseded", "Accepted", "legacy"]
+    },
+    "importance": { "type": "string", "enum": ["P0", "P1", "P2", "P3"] },
+    "mode": { "type": "string", "enum": ["EXPANSION", "SELECTIVE", "HOLD", "REDUCTION"] },
+    "severity": { "type": "string", "enum": ["L", "M", "H"] },
+    "idRef": { "type": "string", "minLength": 1 },
+    "idRefList": { "type": "array", "items": { "$ref": "#/$defs/idRef" } },
+    "dateString": { "type": "string", "minLength": 1 },
+
+    "R": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "importance", "owner"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "importance": { "$ref": "#/$defs/importance" },
+        "owner": { "$ref": "#/$defs/idRef" },
+        "solves-pains": { "$ref": "#/$defs/idRefList" },
+        "linked-features": { "$ref": "#/$defs/idRefList" },
+        "linked-tests": { "$ref": "#/$defs/idRefList" },
+        "mode": { "$ref": "#/$defs/mode" },
+        "since": { "$ref": "#/$defs/dateString" },
+        "last-modified": { "$ref": "#/$defs/dateString" },
+        "note": { "type": "string" }
+      }
+    },
+
+    "F": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "parent-r"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "parent-r": { "$ref": "#/$defs/idRef" },
+        "acceptance-criteria": { "$ref": "#/$defs/idRefList" },
+        "linked-zones": { "$ref": "#/$defs/idRefList" },
+        "linked-tests": { "$ref": "#/$defs/idRefList" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "S": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "parent-f"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "parent-f": { "$ref": "#/$defs/idRef" },
+        "linked-zones": { "$ref": "#/$defs/idRefList" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "ENT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "aggregate-root"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "aggregate-root": { "type": "boolean" },
+        "linked-r": { "$ref": "#/$defs/idRefList" },
+        "state-machine": { "$ref": "#/$defs/idRef" },
+        "linked-features": { "$ref": "#/$defs/idRefList" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "INV": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "applies-to"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "applies-to": { "$ref": "#/$defs/idRefList" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "NFR": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "target", "unit", "measure-method"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "target": {},
+        "unit": { "type": "string" },
+        "measure-method": { "type": "string" },
+        "violates-action": { "type": "string" },
+        "linked-arch": { "$ref": "#/$defs/idRefList" },
+        "linked-r": { "$ref": "#/$defs/idRefList" },
+        "linked-ext": { "$ref": "#/$defs/idRefList" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "ARCH": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "c4-level"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "c4-level": { "type": "integer", "enum": [1, 2, 3] },
+        "linked-ext": { "$ref": "#/$defs/idRefList" },
+        "linked-r": { "$ref": "#/$defs/idRefList" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "EXT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "protocol", "failure-mode"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "protocol": { "type": "string" },
+        "failure-mode": { "type": "string" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "OPS": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "env"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "env": { "type": "string" },
+        "linked-arch": { "$ref": "#/$defs/idRefList" },
+        "linked-r": { "$ref": "#/$defs/idRefList" },
+        "linked-ext": { "$ref": "#/$defs/idRefList" },
+        "linked-nfr": { "$ref": "#/$defs/idRefList" },
+        "note": { "type": "string" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "ADR": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "decision", "consequences"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "decision": { "type": "string" },
+        "consequences": { "type": "string" },
+        "supersedes": { "$ref": "#/$defs/idRefList" },
+        "superseded-by": { "$ref": "#/$defs/idRefList" },
+        "alternatives-considered": { "type": "array", "items": { "type": "string" } },
+        "linked-r": { "$ref": "#/$defs/idRefList" },
+        "linked-arch": { "$ref": "#/$defs/idRefList" },
+        "linked-ext": { "$ref": "#/$defs/idRefList" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "RISK": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["severity", "probability", "mitigation"],
+      "properties": {
+        "severity": { "$ref": "#/$defs/severity" },
+        "probability": { "$ref": "#/$defs/severity" },
+        "mitigation": { "type": "string" },
+        "linked-arch": { "$ref": "#/$defs/idRefList" },
+        "linked-nfr": { "$ref": "#/$defs/idRefList" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "TC": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "level", "linked-ac"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "level": { "type": "string", "enum": ["unit", "integ", "e2e"] },
+        "linked-ac": { "$ref": "#/$defs/idRefList" },
+        "linked-nfr": { "$ref": "#/$defs/idRefList" },
+        "flaky": { "type": "boolean" },
+        "last-run": { "$ref": "#/$defs/dateString" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "EDGE": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "linked-ac"],
+      "properties": {
+        "status": { "$ref": "#/$defs/status" },
+        "linked-ac": { "$ref": "#/$defs/idRefList" },
+        "repro-steps": { "type": "string" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "OQ": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decider", "due", "blocking"],
+      "properties": {
+        "decider": { "type": "string" },
+        "due": { "type": "string" },
+        "blocking": { "type": "boolean" },
+        "resolved-by": { "type": "string" },
+        "resolved-at": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "PERSONA": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alias", "role", "primary-pain"],
+      "properties": {
+        "alias": { "type": "string" },
+        "role": { "type": "string" },
+        "primary-pain": { "$ref": "#/$defs/idRef" },
+        "tech-fluency": { "type": ["integer", "string"] },
+        "daily-context": { "type": "string" },
+        "status": { "$ref": "#/$defs/status" },
+        "in-scope": { "type": ["boolean", "string"] },
+        "since": { "$ref": "#/$defs/dateString" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "SCEN": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "personas", "triggers"],
+      "properties": {
+        "name": { "type": "string" },
+        "personas": { "$ref": "#/$defs/idRefList" },
+        "triggers": { "type": "string" },
+        "outcome": { "type": "string" },
+        "status": { "$ref": "#/$defs/status" },
+        "in-scope": { "type": ["boolean", "string"] },
+        "priority": { "$ref": "#/$defs/importance" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "JNY": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenario", "step-order", "surface"],
+      "properties": {
+        "scenario": { "$ref": "#/$defs/idRef" },
+        "step-order": { "type": "integer" },
+        "surface": { "type": "string" },
+        "pain-touched": { "$ref": "#/$defs/idRefList" },
+        "linked-features": { "$ref": "#/$defs/idRefList" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "ZN": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["page", "purpose", "visible-to-state"],
+      "properties": {
+        "page": { "$ref": "#/$defs/idRef" },
+        "purpose": { "type": "string" },
+        "visible-to-state": { "type": "array", "items": { "type": "string" } },
+        "linked-feature": { "$ref": "#/$defs/idRef" },
+        "cta-target": { "type": ["string", "null"] },
+        "mapped-element": { "$ref": "#/$defs/idRef" },
+        "zone-order": { "type": "integer" },
+        "status": { "$ref": "#/$defs/status" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "KPI": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "unit", "measure-when"],
+      "properties": {
+        "target": {},
+        "target-secondary": {},
+        "unit": { "type": "string" },
+        "measure-when": { "type": "string" },
+        "linked-r": { "$ref": "#/$defs/idRefList" },
+        "linked-arch": { "$ref": "#/$defs/idRefList" },
+        "status": { "$ref": "#/$defs/status" },
+        "note": { "type": "string" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "P-CC": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["surface", "trigger"],
+      "properties": {
+        "surface": { "type": "string" },
+        "trigger": { "type": "string" },
+        "parent-section": { "$ref": "#/$defs/idRef" },
+        "flow-node": { "$ref": "#/$defs/idRef" },
+        "features": { "$ref": "#/$defs/idRefList" },
+        "zones": { "$ref": "#/$defs/idRefList" },
+        "status": { "$ref": "#/$defs/status" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    },
+
+    "T": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["milestone", "status", "red-test", "commit-msg-stub"],
+      "properties": {
+        "milestone": { "type": "string" },
+        "status": { "$ref": "#/$defs/status" },
+        "red-test": { "type": "string" },
+        "commit-msg-stub": { "type": "string" },
+        "depends-on": { "$ref": "#/$defs/idRefList" },
+        "linked-ac": { "$ref": "#/$defs/idRefList" },
+        "linked-tc": { "$ref": "#/$defs/idRefList" },
+        "last-modified": { "$ref": "#/$defs/dateString" }
+      }
+    }
+  }
+}
