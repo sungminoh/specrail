@@ -73,6 +73,13 @@ async function main() {
       process.stdout.write(output + (output.endsWith('\n') ? '' : '\n'));
       exit(exitCode);
     }
+    case 'audit': {
+      const { runAttrsAudit, renderAttrsAuditMarkdown } = await import('../cli/attrs-audit.js');
+      const r = await runAttrsAudit({ projectRoot: process.cwd() });
+      const md = renderAttrsAuditMarkdown(r);
+      process.stdout.write(md);
+      exit(r.reviewRequiredCount > 0 ? 1 : 0);
+    }
     case 'migrate': {
       const { runMigrate } = await import('../migrate/codemod.js');
       const apply = args.includes('--apply');
@@ -107,6 +114,7 @@ async function main() {
       out('  install-hook                  Install git pre-commit hook');
       out('  verify [--json|--md] [...]   Auto-derived implementation status report');
       out('  migrate [--apply] [--phase=N] T-CSA codemod (Phase 5 FLN/FLE rename + report)');
+      out('  audit                         Attrs coverage report (KPI-7) — markdown to stdout');
       exit(command ? 1 : 0);
     }
   }
