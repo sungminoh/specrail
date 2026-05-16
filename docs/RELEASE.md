@@ -26,6 +26,36 @@
 
 ---
 
+## Release notes — 0.2.0 (2026-05-16)
+
+M-CSA milestone shipped. See `CHANGELOG.md` for full diff.
+
+### Install
+```bash
+npm install specrail@0.2.0
+```
+
+### Highlights
+- Attrs schema migration: `<!-- specrail:attrs id=X -->` block convention now first-class
+- 21 entity kinds × strict JSON Schema validation (`schemas/attrs.schema.json`)
+- 8 closed-enum typed edges (`schemas/edge-kinds.schema.json`)
+- `specrail migrate` codemod (Phase 5 FLN/FLE rename, idempotent)
+- `specrail audit` CLI (KPI-7 coverage measurement)
+- Attrs-completeness + attrs-placement lints
+- Telemetry payload gains `schema-version: '1.0'` field (opt-in only)
+- Published artifact: `schemas/` directory now ships in npm tarball (EXT-6 contract for dashboard consumers)
+
+### Breaking changes
+- Phase 5 IDs: `N-001..N-076` → `FLN-1..FLN-76`, `E-1..E-50` → `FLE-1..FLE-50`. Run `specrail migrate --phase=5 --apply` on your own spec to migrate.
+
+### Upgrade path
+- From 0.1.0: `npm install specrail@0.2.0`, then `specrail migrate --phase=5 --apply`, then `specrail audit` to see coverage status.
+
+### Next release (0.3.0 — planned)
+TC-86 full-chain E2E test, JSON output for `specrail audit`, bulk attrs scaffolding from delta parameter tables.
+
+---
+
 ## Release notes — 0.1.0 (2026-05-15)
 
 First published release. See `CHANGELOG.md` for full diff.

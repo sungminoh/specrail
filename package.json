@@ -1,6 +1,6 @@
 {
   "name": "specrail",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "specrail — Claude Code plugin for 13-phase spec discipline",
   "type": "module",
   "engines": {

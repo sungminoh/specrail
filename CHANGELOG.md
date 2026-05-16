@@ -2,6 +2,59 @@
 
 All notable changes to **specrail** are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows [SemVer](https://semver.org/).
 
+## [0.2.0] — 2026-05-16
+
+M-CSA milestone shipped. Attrs schema migration per `docs/spec/changes/2026-05-15-core-schema-attrs/`.
+
+### Added — Subsystems
+
+- **Attrs block parser** (`src/markdown/attrs.ts`, T-CSA.1): `<!-- specrail:attrs id=X -->` + fenced YAML + closer marker. Returns `{blocks, diagnostics}` with 4 diagnostic kinds (invalid-yaml, unclosed-marker, missing-yaml-fence, duplicate-id).
+- **JSON Schema validator** (`schemas/attrs.schema.json` + `schemas/edge-kinds.schema.json` + extended `src/schema/validator.ts`, T-CSA.2): 21 entity kinds, `validateAttrs(payload, kind)`, `validateEdgeKind(kind)`, `classifyEntityKind(id)`.
+- **ID family extensions** (`src/spec/patterns.ts`, T-CSA.3): capability-suffix R/F/AC/T (R-CSA, F-R-CSA.1, AC-R-CSA-1, T-CSA.5), FLN/FLE flow IDs, PERSONA·SCEN·JNY·ZN·P-CC·E-CC·KPI.
+- **Typed edge builder** (`src/graph/builder.ts`, T-CSA.4): `buildTypedEdges(blocks)` emits 8 closed-enum kinds (`solves`·`linked-features`·`parent`·`tested-by`·`covers-ac`·`mitigates`·`linked-arch`·`depends-on`) per ADR-16.
+- **Migrate codemod** (`bin/specrail migrate`, T-CSA.5): Phase 5 N-NNN→FLN-N and E-N→FLE-N rename, fence-aware, idempotent (TC-81). Writes `.specrail/migrate-report.json`.
+- **Audit CLI** (`bin/specrail audit`, T-CSA.10): KPI-7 attrs coverage % per phase, markdown report, exits 1 on review-required markers.
+- **Attrs lints** (`src/lint/attrs-lint.ts`, T-CSA.8): `attrs-completeness` (per-kind required fields, semver-gated WARN/ERROR), `attrs-placement` (heading-immediate invariant per OQ-CSA-1), `review-required` (always ERROR per OQ-CSA-10).
+- **State machine attrs gate** (`src/state/machine.ts`, T-CSA.9): `checkApprovedAttrsGate(md, version)` extends INV-3 — v0.2.0~v0.4.x WARN, v0.5.0+ ERROR.
+- **Telemetry schema-version** (`src/telemetry/client.ts`, T-CSA.13): payload field `schema-version: '1.0'` per ADR-13, semver-only per NFR-CSA-PRIV-1.
+- **Published artifacts**: `schemas/` directory now ships in npm tarball (`files` array, T-CSA.7) — dashboard / third-party consumers fetch via `node_modules/specrail/schemas/` or GitHub raw URL.
+
+### Added — Spec authoritative docs
+
+- `skills/_common/principles.md` §"Attrs Blocks Are Mandatory" (T-CSA.12).
+- All 13 `skills/phase-NN-*/SKILL.md` get attrs-example appendix (T-CSA.11).
+- Phase 5 dogfood spec migrated: 292 ID renames in `docs/spec/05-user-flow.md` (T-CSA.6).
+- `migrations/2026-05-15-flow-rename.csv` oracle file.
+
+### Tests
+
+- 98 test files, 853 pass, 9 skip. +98 tests added across T-CSA.1~13.
+
+### Breaking changes
+
+- Phase 5 user-flow node IDs renamed: `N-001..N-076` → `FLN-1..FLN-76`, `E-1..E-50` → `FLE-1..FLE-50`. Any external reference to the old IDs will break. Run `specrail migrate --phase=5 --apply` on your own spec to migrate.
+
+### Known limitations
+
+- **Spec attrs blocks not yet present in dogfood**: `specrail audit` reports 0% coverage on `docs/spec/` because the 13 phase files don't yet contain attrs blocks (only Phase 5 ID rename was applied as part of T-CSA.6). Author migration of attrs blocks is a follow-up workstream — the codemod scaffolds them mechanically once invoked per phase.
+- **JSON output for `specrail audit`** deferred — OQ-CSA-6 resolution favored markdown-only for 0.2.0; JSON flag tracked for 0.2.x patch.
+- **TC-86 E2E** end-to-end migration test deferred to 0.2.1 — coverage covered by per-module tests (parser, validator, codemod, lint, audit) for 0.2.0.
+
+### Upgrade from 0.1.0
+
+1. `npm install specrail@0.2.0`
+2. `specrail migrate --phase=5 --apply` if your spec uses Phase 5 flow IDs in the old `N-NNN` / `E-N` form.
+3. Optionally run `specrail audit` to see attrs coverage and identify entities needing migration.
+4. Adopt the `<!-- specrail:attrs id=X -->` block convention for new entities per `skills/_common/principles.md` §"Attrs Blocks Are Mandatory".
+
+### Next release (planned — 0.3.0)
+
+- TC-86 full-chain E2E test
+- JSON output mode for `specrail audit`
+- Bulk attrs scaffolding from delta parameter tables (currently codemod handles ID rename only; attrs scaffolding from `deltas/phase-NN-*.md` parameter tables is a future codemod pass).
+
+[0.2.0]: https://github.com/sungminoh/specrail/releases/tag/v0.2.0
+
 ## [0.1.0] — 2026-05-15
 
 First published release. M0~M11 milestones substantively implemented; ships as the initial public artifact (`npm install specrail`).
