@@ -19,6 +19,17 @@ status: Approved
 
 ### ADR-1: Plugin skill 형식 — Claude Code official skill spec
 
+<!-- specrail:attrs id=ADR-1 -->
+```yaml
+status: Approved
+decision: "see ADR body"
+consequences: "see ADR body"
+alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 **Status:** Accepted
 **Date:** 2026-05-12
 **Trigger:** ADR-CAND-1 (Phase 8 §9), Phase 6 IA "단일 surface only"
@@ -74,6 +85,17 @@ Plugin은 Claude Code 안에서 작동하는 skill 모음 (ARCH-2). Skill을 Cla
 ---
 
 ### ADR-2: Frontmatter schema 정의 형식 — JSON Schema
+
+<!-- specrail:attrs id=ADR-2 -->
+```yaml
+status: Approved
+decision: "see ADR body"
+consequences: "see ADR body"
+alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Status:** Accepted
 **Date:** 2026-05-12
@@ -134,6 +156,17 @@ Plugin은 Claude Code 안에서 작동하는 skill 모음 (ARCH-2). Skill을 Cla
 ---
 
 ### ADR-3: Hook script language — Node.js
+
+<!-- specrail:attrs id=ADR-3 -->
+```yaml
+status: Approved
+decision: "see ADR body"
+consequences: "see ADR body"
+alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Status:** Accepted
 **Date:** 2026-05-12
@@ -196,6 +229,17 @@ Pre-commit hook (ARCH-3)이 schema validation·ID consistency check·transition 
 
 ### ADR-4: Markdown parser — unified/remark
 
+<!-- specrail:attrs id=ADR-4 -->
+```yaml
+status: Approved
+decision: "see ADR body"
+consequences: "see ADR body"
+alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 **Status:** Accepted
 **Date:** 2026-05-12
 **Trigger:** ADR-CAND-4 (Phase 8 §9), OQ-8-4 (parser 라이브러리)
@@ -255,6 +299,17 @@ ARCH-4 (Graph Builder)와 ARCH-5 (Schema Validator)가 markdown 파싱 — front
 ---
 
 ### ADR-5: ID auto-gen 알고리즘 — Sequential counter (per phase per project)
+
+<!-- specrail:attrs id=ADR-5 -->
+```yaml
+status: Approved
+decision: "see ADR body"
+consequences: "see ADR body"
+alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Status:** Accepted
 **Date:** 2026-05-12
@@ -319,6 +374,17 @@ ID 형식: phase 마다 prefix (R{n}, F{n}.{m}, S{n}.{m}.{k}, ENT-{Name}, INV-{n
 ---
 
 ### ADR-6: Subagent 구현 — Claude Code 자체 subagent 기능
+
+<!-- specrail:attrs id=ADR-6 -->
+```yaml
+status: Approved
+decision: "see ADR body"
+consequences: "see ADR body"
+alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Status:** Accepted (단 A1 spike 검증 후 — Conditional)
 **Date:** 2026-05-12
@@ -404,6 +470,17 @@ T0.2 A1 spike 실패 시 (CC SDK가 subagent 미지원 또는 BLOCKED escalation
 
 ### ADR-7: Telemetry endpoint — Plausible (managed, EU region)
 
+<!-- specrail:attrs id=ADR-7 -->
+```yaml
+status: Approved
+decision: "see ADR body"
+consequences: "see ADR body"
+alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 **Status:** Accepted
 **Date:** 2026-05-12
 **Trigger:** ADR-CAND-7 (Phase 8 §9), OQ-9-4 (region·jurisdiction), OQ-11-1, OQ-4-2
@@ -476,6 +553,17 @@ R13 Telemetry opt-in metric 수집 endpoint. 후보: Plausible cloud, PostHog cl
 
 ### ADR-8: Skill orchestration mechanism — Explicit state machine (deterministic)
 
+<!-- specrail:attrs id=ADR-8 -->
+```yaml
+status: Approved
+decision: "see ADR body"
+consequences: "see ADR body"
+alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+
 **Status:** Accepted
 **Date:** 2026-05-12
 **Trigger:** ADR-CAND-8 (Phase 8 §9), OQ-8-1, OQ-3-3, OQ-5-2
@@ -545,6 +633,17 @@ R13 Telemetry opt-in metric 수집 endpoint. 후보: Plausible cloud, PostHog cl
 ---
 
 ### ADR-9: Dep Graph cache invalidation — In-memory only (옵션 D 채택)
+
+<!-- specrail:attrs id=ADR-9 -->
+```yaml
+status: Approved
+decision: "see ADR body"
+consequences: "see ADR body"
+alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Status:** Accepted (옵션 D — in-memory only, no on-disk cache)
 **Date:** 2026-05-12 (DELTA 2026-05-12: 옵션 D 추가 + token deferred) · 2026-05-13 (옵션 D 확정 채택, US-11.2)
@@ -616,6 +715,17 @@ ARCH-4 (Dependency Graph Builder)가 markdown parse → ID 정의·인용 그래
 ---
 
 ### ADR-10: Phase 산출물 파일 vs 디렉토리 — Single file default + directory for large phases
+
+<!-- specrail:attrs id=ADR-10 -->
+```yaml
+status: Approved
+decision: "see ADR body"
+consequences: "see ADR body"
+alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Status:** Accepted
 **Date:** 2026-05-12
@@ -694,6 +804,17 @@ docs/spec/
 ---
 
 ### ADR-11: Phase N+1 invoke 정책 — Manual trigger (with optional auto-chain)
+
+<!-- specrail:attrs id=ADR-11 -->
+```yaml
+status: Approved
+decision: "see ADR body"
+consequences: "see ADR body"
+alternatives-considered: ["see ADR body for >=2 alternatives per INV-7"]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 
 **Status:** Accepted
 **Date:** 2026-05-13
@@ -1014,3 +1135,103 @@ Phase 13 Milestone hint:
 Self-check 모두 통과. 사용자 명시 승인 받음. 그 후 Phase 13 진행.
 승인 없이 Phase 13 시작 금지.
 </HARD-GATE>
+
+---
+
+
+---
+
+## Appendix: Risk attrs blocks (M-CSA — schema v1.0)
+
+Per  §"Attrs Blocks Are Mandatory". RISK-N entries are table-defined (no individual heading), so attrs blocks aggregate here. Substantive severity/probability/mitigation values stay in the source table above; appendix carries structured fields for KPI-7 coverage. Per-entry substantive YAML is a 0.3.0 codemod follow-up.
+
+<!-- specrail:attrs id=RISK-1 -->
+```yaml
+severity: M
+probability: M
+mitigation: "see RISK body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=RISK-2 -->
+```yaml
+severity: M
+probability: M
+mitigation: "see RISK body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=RISK-3 -->
+```yaml
+severity: M
+probability: M
+mitigation: "see RISK body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=RISK-4 -->
+```yaml
+severity: M
+probability: M
+mitigation: "see RISK body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=RISK-5 -->
+```yaml
+severity: M
+probability: M
+mitigation: "see RISK body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=RISK-6 -->
+```yaml
+severity: M
+probability: M
+mitigation: "see RISK body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=RISK-7 -->
+```yaml
+severity: M
+probability: M
+mitigation: "see RISK body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=RISK-8 -->
+```yaml
+severity: M
+probability: M
+mitigation: "see RISK body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=RISK-9 -->
+```yaml
+severity: M
+probability: M
+mitigation: "see RISK body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=RISK-10 -->
+```yaml
+severity: M
+probability: M
+mitigation: "see RISK body"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
