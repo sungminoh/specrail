@@ -28,7 +28,7 @@ M-CSA milestone shipped. Attrs schema migration per `docs/spec/changes/2026-05-1
 
 ### Tests
 
-- 100 test files, 859 pass, 9 skip. +112 tests added across T-CSA.1~16
+- 100 test files, 860 pass, 9 skip. +113 tests added across T-CSA.1~16
   (parser 8 + schema 19 + patterns 28 + edges 17 + migrate 10 + lint 8 +
   state gate 4 + audit 4 + teach 5 + telemetry 1 + e2e 3 + perf 3).
 

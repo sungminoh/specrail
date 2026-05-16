@@ -1,5 +1,6 @@
 // lint:plan — project-time orchestrator (architect M9 condition C2).
-// Runs 4 static checks: anti-sycophancy, INV-7, AC traceability, INV-5.
+// Runs 5 static checks: anti-sycophancy, INV-7, AC traceability, INV-5,
+// attrs (T-CSA.8 — attrs-completeness, attrs-placement, review-required).
 // atomic-commit is NOT bundled here — it is a commit-time check requiring
 // git staged-files context. Invoke separately: see src/lint/atomic-commit.ts
 // for pre-commit hook wiring instructions.
@@ -10,8 +11,7 @@ import { scanProject } from './anti-sycophancy.js';
 import { checkAcCoverage } from './ac-traceability.js';
 import { checkInv7File, checkInv5 } from './inv-enforce.js';
 import { lintAttrs } from './attrs-lint.js';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
+import { readProjectPluginVersion } from '../config/plugin-version.js';
 
 export interface SingleLintReport {
   name: string;
@@ -129,21 +129,11 @@ async function runInv5(files: string[]): Promise<SingleLintReport> {
   };
 }
 
-async function getPluginVersion(projectRoot: string): Promise<string> {
-  try {
-    const raw = await readFile(join(projectRoot, 'package.json'), 'utf8');
-    const pkg = JSON.parse(raw) as { version?: string };
-    return pkg.version ?? '0.0.0';
-  } catch {
-    return '0.0.0';
-  }
-}
-
 async function runAttrsCheck(projectRoot: string, files: string[]): Promise<SingleLintReport> {
   if (files.length === 0) {
     return { name: 'attrs', status: 'PASS', details: 'no spec file' };
   }
-  const pluginVersion = await getPluginVersion(projectRoot);
+  const pluginVersion = await readProjectPluginVersion(projectRoot);
   let warns = 0;
   let errors = 0;
   for (const file of files) {
