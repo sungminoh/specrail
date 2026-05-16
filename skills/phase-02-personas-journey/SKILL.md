@@ -293,3 +293,23 @@ Self-check 통과. 사용자 명시 승인. 그 후 Phase 3.
 ### Hooks
 - Pre-commit: F2.3 ID consistency + F2.4 schema validation
 - Phase transition: F2.2 gate (frontmatter primary)
+
+---
+
+## Attrs Block Required (M-CSA — schema v1.0)
+
+산출물의 모든 first-class entity (R·F·S·ENT·INV·NFR·ARCH·EXT·OPS·ADR·RISK·TC·EDGE·OQ·KPI·T·PERSONA·SCEN·JNY·ZN·P-CC)는 정의 heading 직후 attrs block을 갖는다. 누락 → `specrail check`의 `attrs-completeness` finding (v0.5.0+ ERROR).
+
+```markdown
+### R1: Title
+
+<!-- specrail:attrs id=R1 -->
+\`\`\`yaml
+status: Approved
+importance: P0
+owner: PERSONA-1
+\`\`\`
+<!-- /specrail:attrs -->
+```
+
+Per-kind required fields: `schemas/attrs.schema.json` $defs/<kind>. Closed-enum edge kinds (8): `solves`·`linked-features`·`parent`·`tested-by`·`covers-ac`·`mitigates`·`linked-arch`·`depends-on`. 자세한 규칙은 `_common/principles.md` §"Attrs Blocks Are Mandatory" 참조.
