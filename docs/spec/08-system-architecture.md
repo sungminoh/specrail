@@ -93,6 +93,72 @@ flowchart TB
 | ARCH-spec | 사용자 docs/spec/ | data (사용자 측) | spec markdown 파일 | 본 product 책임 외 |
 | ARCH-git | Git repo | infra (사용자 측) | version control | 본 product 책임 외 |
 
+<!-- specrail:attrs id=ARCH-1 -->
+```yaml
+status: Approved
+c4-level: 1
+linked-r: [R5]
+linked-ext: [EXT-1]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=ARCH-2 -->
+```yaml
+status: Approved
+c4-level: 1
+linked-r: [R5, R8]
+linked-ext: [EXT-1]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=ARCH-3 -->
+```yaml
+status: Approved
+c4-level: 1
+linked-r: [R2]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=ARCH-4 -->
+```yaml
+status: Approved
+c4-level: 1
+linked-r: [R4]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=ARCH-5 -->
+```yaml
+status: Approved
+c4-level: 1
+linked-r: [R1, R2]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=ARCH-6 -->
+```yaml
+status: Approved
+c4-level: 1
+linked-r: [R1]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=ARCH-7 -->
+```yaml
+status: Approved
+c4-level: 1
+linked-r: [R13]
+linked-ext: [EXT-5]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 ## 4. External Integrations
 
 | ID | 이름 | 카테고리 | 보내는 데이터 | 받는 데이터 | 분류 | Fallback |
@@ -102,6 +168,51 @@ flowchart TB
 | EXT-3 | Git Hosting | VCS | 파일 + commit | repo content | public OSS / private 가능 | local git 작동 (push만 막힘) |
 | EXT-4 | Editor·IDE | 도구 (사용자 측) | - | - | - | text editor 어떤 것이든 |
 | EXT-5 | Telemetry endpoint | metrics | 익명 event | (응답 없음 — fire-and-forget) | 사용자 식별 X (anonProjectHash) | local queue 보존, 재전송 |
+
+<!-- specrail:attrs id=EXT-1 -->
+```yaml
+status: Approved
+protocol: "Claude Code skill host"
+failure-mode: "plugin 작동 불가 (필수)"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EXT-2 -->
+```yaml
+status: Approved
+protocol: "LLM API (via Claude Code)"
+failure-mode: "사용자가 다른 LLM (CC 통해) 시도"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EXT-3 -->
+```yaml
+status: Approved
+protocol: "git protocol (push/fetch)"
+failure-mode: "local git 작동, push만 막힘"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EXT-4 -->
+```yaml
+status: Approved
+protocol: "none (passive markdown render)"
+failure-mode: "text editor 어떤 것이든"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=EXT-5 -->
+```yaml
+status: Approved
+protocol: "HTTPS POST (fire-and-forget)"
+failure-mode: "local queue 보존, 재전송"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 각 EXT의 구체 vendor 선정은 ADR-CAND.
 
@@ -284,6 +395,15 @@ Phase 12 (ADR)에:
 
 ### ARCH-8: State Machine Container
 
+<!-- specrail:attrs id=ARCH-8 -->
+```yaml
+status: Approved
+c4-level: 2
+linked-r: [R1, R2]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **Responsibility**: Phase lifecycle, change lifecycle, consent, subagent state machines (SM-Phase-Lifecycle, SM-Change-Lifecycle, SM-Consent, SM-Subagent).
 
 **Interfaces**:
@@ -294,6 +414,15 @@ Phase 12 (ADR)에:
 
 ### ARCH-9: Subagent Dispatch Container
 
+<!-- specrail:attrs id=ARCH-9 -->
+```yaml
+status: Approved
+c4-level: 2
+linked-r: [R8]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **Responsibility**: 2-stage runWithReview pattern, BLOCKED escalation, audit trail preservation.
 
 **Interfaces**:
@@ -303,6 +432,15 @@ Phase 12 (ADR)에:
 **Dependencies**: Claude Code host container (skill), Telemetry Client container
 
 ### ARCH-10: CLI Commands Container
+
+<!-- specrail:attrs id=ARCH-10 -->
+```yaml
+status: Approved
+c4-level: 2
+linked-r: [R4, R6]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Responsibility**: User-facing CLI entry points — change, approve, hook-install, orchestrator status/nextPhase.
 
@@ -316,6 +454,15 @@ Phase 12 (ADR)에:
 
 ### ARCH-11: Lint Module Container
 
+<!-- specrail:attrs id=ARCH-11 -->
+```yaml
+status: Approved
+c4-level: 2
+linked-r: [R2]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **Responsibility**: Plan self-check automation — anti-sycophancy, atomic-commit, ac-traceability, inv-7, inv-5 invariant enforcement.
 
 **Interfaces**:
@@ -328,6 +475,15 @@ Phase 12 (ADR)에:
 **Dependencies**: Hook Scripts container (frontmatter), Dependency Graph Builder container (schema validator)
 
 ### ARCH-12: Markdown Utilities Container
+
+<!-- specrail:attrs id=ARCH-12 -->
+```yaml
+status: Approved
+c4-level: 2
+linked-r: [R1, R4]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Responsibility**: Markdown parsing primitives — frontmatter, YAML safe-load, leading HTML comment strip.
 
