@@ -13,6 +13,15 @@ status: Approved
 
 ### ENT-Project
 
+<!-- specrail:attrs id=ENT-Project -->
+```yaml
+status: Approved
+aggregate-root: true
+linked-r: [R6]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **Description:** plugin이 관리하는 한 사용자 product 사양화 단위. docs/spec/ 디렉토리 = 1 Project.
 **Aggregate root:** Yes
 **Source spec:** R6 (install·setup)
@@ -25,6 +34,16 @@ status: Approved
 | name | string | N | AC-R6-2 | 사용자 명시 또는 directory name |
 
 ### ENT-Phase
+
+<!-- specrail:attrs id=ENT-Phase -->
+```yaml
+status: Approved
+aggregate-root: false
+linked-r: [R1, R5]
+state-machine: SM-Phase-Lifecycle
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Description:** 13단계 중 하나. 각 phase는 skill 1개 + 산출물 file 1개.
 **Aggregate root:** No (Project에 속함)
@@ -41,6 +60,16 @@ status: Approved
 | approvedAt | ISODateTime | N | AC-R5-3 | 명시 승인 timestamp |
 
 ### ENT-Spec
+
+<!-- specrail:attrs id=ENT-Spec -->
+```yaml
+status: Approved
+aggregate-root: false
+linked-r: [R1, R5]
+state-machine: SM-Spec-Status
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Description:** 산출물 안의 한 결정 단위 (R/F/S 3-tier).
 **Aggregate root:** No (Phase에 속함)
@@ -59,6 +88,15 @@ status: Approved
 
 ### ENT-AcceptanceCriteria
 
+<!-- specrail:attrs id=ENT-AcceptanceCriteria -->
+```yaml
+status: Approved
+aggregate-root: false
+linked-r: [R1, R2]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **Description:** Requirement 수준 testable 조건. plugin이 frontmatter parse → structured.
 **Aggregate root:** No
 **Source spec:** R1 (frontmatter), R2 (hook validation)
@@ -72,6 +110,15 @@ status: Approved
 | then | string | Y | spec | 기대 결과 |
 
 ### ENT-DependencyGraph
+
+<!-- specrail:attrs id=ENT-DependencyGraph -->
+```yaml
+status: Approved
+aggregate-root: true
+linked-r: [R2, R4]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Description:** Phase 간 ID 인용 관계 그래프. R4 영향 phase 자동 식별 + INV-2 환각 ID 검증의 source. (dashboard 시각화도 동일 graph 소비.)
 **Aggregate root:** Yes (per Project)
@@ -100,6 +147,16 @@ status: Approved
 
 ### ENT-Hook
 
+<!-- specrail:attrs id=ENT-Hook -->
+```yaml
+status: Approved
+aggregate-root: false
+linked-r: [R2]
+state-machine: SM-Hook
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **Description:** Plugin이 install·관리하는 검증 hook 정의.
 **Aggregate root:** No (Project에 속함)
 **Source spec:** R2 (모든 F)
@@ -113,6 +170,16 @@ status: Approved
 | status | HookStatus | Y | SM-Hook | Installed / Failed / Disabled |
 
 ### ENT-Change (DELTA mode)
+
+<!-- specrail:attrs id=ENT-Change -->
+```yaml
+status: Approved
+aggregate-root: true
+linked-r: [R4]
+state-machine: SM-Change-Lifecycle
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Description:** 기존 spec 위 변경 단위. ADDED/MODIFIED/REMOVED + 영향 phase 자동 식별 결과.
 **Aggregate root:** Yes
@@ -133,6 +200,15 @@ status: Approved
 
 ### ENT-Skill
 
+<!-- specrail:attrs id=ENT-Skill -->
+```yaml
+status: Approved
+aggregate-root: false
+linked-r: [R5, R8]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **Description:** Claude Code skill 정의. plugin install 시 13개 skill + orchestrator 1개 등록.
 **Aggregate root:** No (plugin 자체 속함, project-independent)
 **Source spec:** R5 (orchestration), R8 (implementation)
@@ -148,6 +224,16 @@ status: Approved
 
 ### ENT-Subagent (Phase 13 implementation)
 
+<!-- specrail:attrs id=ENT-Subagent -->
+```yaml
+status: Approved
+aggregate-root: false
+linked-r: [R8]
+state-machine: SM-Subagent
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **Description:** Superpowers 패턴 fresh subagent. Phase 13 atomic task별.
 **Aggregate root:** No (Project·Implementation session 속함)
 **Source spec:** R8 (모든)
@@ -161,6 +247,15 @@ status: Approved
 | escalationReason | string | N | F8.4 | BLOCKED 사유 |
 
 ### ENT-TelemetryEvent (R13)
+
+<!-- specrail:attrs id=ENT-TelemetryEvent -->
+```yaml
+status: Approved
+aggregate-root: true
+linked-r: [R13]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Description:** opt-in 사용자의 익명 metric event.
 **Aggregate root:** Yes (telemetry stream 자체)
@@ -176,6 +271,16 @@ status: Approved
 | metadata | json | N | spec | event-specific (phase number, duration 등 — spec 내용 제외) |
 
 ### ENT-TelemetryConsent
+
+<!-- specrail:attrs id=ENT-TelemetryConsent -->
+```yaml
+status: Approved
+aggregate-root: true
+linked-r: [R13]
+state-machine: SM-Consent
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Description:** 사용자 opt-in 동의 상태. Local storage.
 **Aggregate root:** Yes
@@ -346,17 +451,41 @@ stateDiagram-v2
 
 ### INV-1: Spec ID는 Project 내 unique
 
+<!-- specrail:attrs id=INV-1 -->
+```yaml
+status: Approved
+applies-to: [ENT-Spec]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **규칙:** 같은 Project의 모든 Spec.id는 unique. 두 Phase에서 같은 ID 정의 X.
 **위반 시:** ID 인용 ambiguous → cross-reference 깨짐.
 **검증:** plugin auto-generation (F1.3)이 unique 보장. hook이 commit 시 verify.
 
 ### INV-2: 인용 ID는 정의된 ID set 안
 
+<!-- specrail:attrs id=INV-2 -->
+```yaml
+status: Approved
+applies-to: [ENT-Spec, ENT-AcceptanceCriteria, ENT-DependencyGraph]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **규칙:** 모든 Spec/AC의 본문에서 인용된 ID는 같은 Project에 정의되어 있어야.
 **위반 시:** 환각 ID — dangling reference.
 **검증:** F2.3 ID consistency hook (commit 차단). 또는 LLM 작성 시점에 F1.4 resolver가 valid list만 노출.
 
 ### INV-3: Phase N+1 진입 시 Phase N status=Approved
+
+<!-- specrail:attrs id=INV-3 -->
+```yaml
+status: Approved
+applies-to: [ENT-Phase]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **규칙:** PhaseStatus enum 순서 강제. Empty→Draft→Approved 외 전이 X.
 **예외:** Phase 1은 predecessor 없음 — `canInvokePhase(target=1)`은 항상 allowed (다른 검증 부재).
@@ -366,11 +495,27 @@ stateDiagram-v2
 
 ### INV-4: 모든 P0 Spec은 PRD 시나리오 cover
 
+<!-- specrail:attrs id=INV-4 -->
+```yaml
+status: Approved
+applies-to: [ENT-Spec]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **규칙:** Importance=P0 set이 PRD §3.3 시나리오 cover.
 **위반 시:** MVP 출시 후 핵심 시나리오 깨짐.
 **검증:** Phase 13 self-check matrix.
 
 ### INV-5: AC는 R-tier만, GIVEN/WHEN/THEN 형식
+
+<!-- specrail:attrs id=INV-5 -->
+```yaml
+status: Approved
+applies-to: [ENT-AcceptanceCriteria]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **규칙:** AcceptanceCriteria.requirementId는 항상 R-tier Spec.id. F·S tier에 AC 부여 X. 모든 AC는 given/when/then 모두 비어있지 않음.
 **위반 시:** 검증 ambiguous 또는 중복.
@@ -378,11 +523,27 @@ stateDiagram-v2
 
 ### INV-6: 모든 Change에 affectedPhases ≥ 1
 
+<!-- specrail:attrs id=INV-6 -->
+```yaml
+status: Approved
+applies-to: [ENT-Change]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **규칙:** Change.affectedPhases 빈 배열 X. plugin이 자동 추출.
 **위반 시:** delta 영향 미식별 — 모순 spec.
 **검증:** AC-R4-1 plugin enforce.
 
 ### INV-7: ADR alternatives ≥ 2 + 거절 이유
+
+<!-- specrail:attrs id=INV-7 -->
+```yaml
+status: Approved
+applies-to: [ENT-Spec]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **규칙:** Phase 12에서 만들 ADR은 alternatives 길이 ≥ 2, 각 거절은 이유 포함.
 **위반 시:** 단일 옵션만 검토 — 더 좋은 길 놓침.
@@ -390,17 +551,41 @@ stateDiagram-v2
 
 ### INV-8: Telemetry는 anonProjectHash·spec 내용 제외 (R13 privacy)
 
+<!-- specrail:attrs id=INV-8 -->
+```yaml
+status: Approved
+applies-to: [ENT-TelemetryEvent]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **규칙:** TelemetryEvent.anonProjectHash는 SHA256 (irreversible). metadata에 spec 내용·사용자 식별자 0건.
 **위반 시:** Privacy 위반 — opt-in 신뢰 깨짐.
 **검증:** F13.2 schema hook + 코드 review.
 
 ### INV-9: TelemetryConsent default = NotAsked → OptedOut (default off)
 
+<!-- specrail:attrs id=INV-9 -->
+```yaml
+status: Approved
+applies-to: [ENT-TelemetryConsent]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
 **규칙:** 사용자 명시 yes 없이 OptedIn 전이 X.
 **위반 시:** opt-in 정신 위반.
 **검증:** F13.1 install flow.
 
 ### INV-10: 기존 사용자 pre-commit hook 보존 (analyst 재검토 — 정식 INV 등재)
+
+<!-- specrail:attrs id=INV-10 -->
+```yaml
+status: Approved
+applies-to: [ENT-Hook]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **규칙:** Plugin install 시 기존 `.git/hooks/pre-commit` (husky·lefthook·plain script)을 절대 덮어쓰지 않음. Chain 방식으로 기존 hook을 backup + sequential 실행.
 **위반 시:** 사용자 기존 lint·format·CI pipeline 파괴 — R6 install이 사용자 환경 손상시키는 결정적 결함.
