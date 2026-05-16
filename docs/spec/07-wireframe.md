@@ -13,7 +13,18 @@ status: Approved
 
 ---
 
-# W-CC-pattern: Claude Code 응답 표준 zone
+# W-CC-PAT: Claude Code 응답 표준 zone
+
+<!-- specrail:attrs id=W-CC-PAT -->
+```yaml
+status: Approved
+surface: cli
+zone-count: 6
+element-count: 8
+inherited-by: [P-CC-1, P-CC-2, P-CC-3, P-CC-4, P-CC-5, P-CC-6, P-CC-7, P-CC-8, P-CC-9, P-CC-10, P-CC-11, P-CC-12, P-CC-13, P-CC-14, P-CC-15]
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
 
 **Page:** P-CC-1 ~ P-CC-15 (15개 inheritance)
 **Surface:** Claude Code session (terminal text)
@@ -152,7 +163,7 @@ grep -A1 "^| E-CC" 07-wireframe.md | grep -cE "ENT-|F[0-9]|UI state|system|stati
 ```
 
 체크리스트:
-- [x] W-CC-pattern은 P-CC-* 15에 inheritance
+- [x] W-CC-PAT은 P-CC-* 15에 inheritance
 - [x] Primary device 명시 (terminal+desktop)
 - [x] 모든 element가 Source 인용
 - [x] 5 component states (Loading/Empty/HookBlock/Success/Escalation)
@@ -179,3 +190,89 @@ Phase 9 (NFR)에:
 
 Phase 10 (Test):
 - Wireframe 5 state 검증 (skill 응답 sample test)
+
+---
+
+## 11. Element attrs blocks (M-CSA — schema v1.0)
+
+E-CC-1..8 are table-defined in §"Element Spec" (lines 67-77) and aggregated here. parent-zone derives from the §"Layout" box (Z1..Z6 → ZN-CC-PAT-1..6); kind reflects the table's "종류" column.
+
+<!-- specrail:attrs id=E-CC-1 -->
+```yaml
+status: Approved
+kind: header
+parent-zone: ZN-CC-PAT-1
+source-data: ENT-Phase.id, ENT-Phase.name
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=E-CC-2 -->
+```yaml
+status: Approved
+kind: indicator
+parent-zone: ZN-CC-PAT-1
+source-data: ENT-Phase.mode
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=E-CC-3 -->
+```yaml
+status: Approved
+kind: indicator
+parent-zone: ZN-CC-PAT-1
+source-data: SM-Phase + SM-Hook
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=E-CC-4 -->
+```yaml
+status: Approved
+kind: list
+parent-zone: ZN-CC-PAT-2
+source-data: previous-phase frontmatter (F1.2)
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=E-CC-5 -->
+```yaml
+status: Approved
+kind: markdown
+parent-zone: ZN-CC-PAT-3
+source-data: LLM generation (per phase)
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=E-CC-6 -->
+```yaml
+status: Approved
+kind: checklist
+parent-zone: ZN-CC-PAT-4
+source-data: grep + frontmatter validation (F2.1, F2.3, F2.4)
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=E-CC-7 -->
+```yaml
+status: Approved
+kind: link
+parent-zone: ZN-CC-PAT-5
+source-data: static file path + GitHub/VS Code preview
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=E-CC-8 -->
+```yaml
+status: Approved
+kind: prompt
+parent-zone: ZN-CC-PAT-6
+source-data: F5.4 HARD-GATE
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->

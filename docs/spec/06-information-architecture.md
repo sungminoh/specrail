@@ -327,7 +327,7 @@ Phase 7 (Wireframe)에:
 - Page Catalog 15개 (P-CC-* 만)
 - Page Tree (위계)
 - Navigation Strategy (명령어 entry)
-- Markdown zone 구조 wireframe (단일 W-CC-pattern)
+- Markdown zone 구조 wireframe (단일 W-CC-PAT)
 - Empty / Error states list
 
 Phase 8 (Architecture)에:

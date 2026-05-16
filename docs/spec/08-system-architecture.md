@@ -299,7 +299,7 @@ sequenceDiagram
     Sk->>Schema: validate output frontmatter
     Schema-->>Sk: pass / fail
     Sk->>Spec: write {NN-name}.md
-    Sk->>CC: display W-CC-pattern (산출물)
+    Sk->>CC: display W-CC-PAT (산출물)
     Builder->>Builder: 검수 + 수정 사이클
     Builder->>CC: git commit
     CC->>Hook: trigger pre-commit

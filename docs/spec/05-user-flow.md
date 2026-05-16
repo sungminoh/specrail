@@ -374,3 +374,1016 @@ Phase 8 (Architecture):
 
 Phase 10 (Test):
 - 시나리오 path E2E test
+
+
+---
+
+## 11. Attrs blocks (M-CSA - schema v1.0)
+
+Per skills/_common/principles.md FLN nodes (section 2) and FLE edges (section 3) are table-defined; attrs blocks aggregate here. scenario derived from SEC heading; step-order is per-section running count; feature extracted from Spec column when present.
+
+<!-- specrail:attrs id=FLN-1 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-2 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 2
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-3 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 3
+feature: F6.1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-4 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 4
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-5 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 5
+feature: F13.1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-6 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 6
+feature: F6.2
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-10 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 1
+feature: F5.1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-11 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 2
+feature: F6.2
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-12 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 3
+feature: F5.2
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-13 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 4
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-14 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 5
+feature: F1.1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-15 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 6
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-16 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 7
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-17 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 8
+feature: F2.1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-18 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 9
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-19 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 10
+feature: F2.1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-20 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 11
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-21 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 12
+feature: F5.4
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-22 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 13
+feature: F2.2
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-23 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 14
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-30 -->
+```yaml
+status: Approved
+scenario: SCEN-2
+step-order: 1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-31 -->
+```yaml
+status: Approved
+scenario: SCEN-2
+step-order: 2
+feature: F4.3
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-32 -->
+```yaml
+status: Approved
+scenario: SCEN-2
+step-order: 3
+feature: F4.1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-33 -->
+```yaml
+status: Approved
+scenario: SCEN-2
+step-order: 4
+feature: F4.3
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-34 -->
+```yaml
+status: Approved
+scenario: SCEN-2
+step-order: 5
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-35 -->
+```yaml
+status: Approved
+scenario: SCEN-2
+step-order: 6
+feature: F1.2
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-36 -->
+```yaml
+status: Approved
+scenario: SCEN-2
+step-order: 7
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-37 -->
+```yaml
+status: Approved
+scenario: SCEN-2
+step-order: 8
+feature: F8.1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-38 -->
+```yaml
+status: Approved
+scenario: SCEN-2
+step-order: 9
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-39 -->
+```yaml
+status: Approved
+scenario: SCEN-2
+step-order: 10
+feature: F4.3
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-40 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-41 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 2
+feature: F8.1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-42 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 3
+feature: F8.2
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-43 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 4
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-44 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 5
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-45 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 6
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-46 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 7
+feature: F8.3
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-47 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 8
+feature: F8.3
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-48 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 9
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-49 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 10
+feature: F8.4
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-50 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 11
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-51 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 12
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-70 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-71 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 2
+feature: F13.1
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-72 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 3
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-73 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 4
+feature: F13.2
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-74 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 5
+feature: F13.3
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLN-75 -->
+```yaml
+status: Approved
+scenario: SCEN-1
+step-order: 6
+feature: F13.3
+surface: cli
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-1 -->
+```yaml
+status: Approved
+from: FLN-1
+to: FLN-2
+trigger: "정보 탐색"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-2 -->
+```yaml
+status: Approved
+from: FLN-2
+to: FLN-3
+trigger: "install 의사"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-3 -->
+```yaml
+status: Approved
+from: FLN-3
+to: FLN-4
+trigger: "명령 실행"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-4 -->
+```yaml
+status: Approved
+from: FLN-4
+to: FLN-5
+trigger: "install 성공"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-5 -->
+```yaml
+status: Approved
+from: FLN-5
+to: FLN-6
+trigger: "telemetry 응답 완료"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-6 -->
+```yaml
+status: Approved
+from: FLN-6
+to: FLN-10
+trigger: "\"Phase 1 시작\" trigger"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-7 -->
+```yaml
+status: Approved
+from: FLN-11
+to: FLN-12
+trigger: "skill 호출 완료"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-8 -->
+```yaml
+status: Approved
+from: FLN-12
+to: FLN-13
+trigger: "forcing question 출력"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-9 -->
+```yaml
+status: Approved
+from: FLN-13
+to: FLN-12
+trigger: "다음 forcing question"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-10 -->
+```yaml
+status: Approved
+from: FLN-13
+to: FLN-14
+trigger: "모든 forcing 답변 완료 (또는 Smart Routing skip)"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-11 -->
+```yaml
+status: Approved
+from: FLN-14
+to: FLN-15
+trigger: "산출물 파일 작성 완료"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-12 -->
+```yaml
+status: Approved
+from: FLN-15
+to: FLN-14
+trigger: "사용자 수정 요청"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-13 -->
+```yaml
+status: Approved
+from: FLN-15
+to: FLN-16
+trigger: "검수 완료, commit 의사"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-14 -->
+```yaml
+status: Approved
+from: FLN-16
+to: FLN-17
+trigger: "git pre-commit trigger"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-15 -->
+```yaml
+status: Approved
+from: FLN-17
+to: FLN-18
+trigger: "hook pass"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-16 -->
+```yaml
+status: Approved
+from: FLN-17
+to: FLN-19
+trigger: "hook fail"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-17 -->
+```yaml
+status: Approved
+from: FLN-19
+to: FLN-20
+trigger: "사용자 수정"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-18 -->
+```yaml
+status: Approved
+from: FLN-20
+to: FLN-15
+trigger: "재검수"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-19 -->
+```yaml
+status: Approved
+from: FLN-18
+to: FLN-21
+trigger: "commit 후 사용자 명시 승인"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-20 -->
+```yaml
+status: Approved
+from: FLN-21
+to: FLN-22
+trigger: "Phase N<13"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-21 -->
+```yaml
+status: Approved
+from: FLN-22
+to: FLN-10
+trigger: "다음 phase trigger"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-22 -->
+```yaml
+status: Approved
+from: FLN-21
+to: FLN-23
+trigger: "Phase N=13"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-23 -->
+```yaml
+status: Approved
+from: FLN-23
+to: FLN-40
+trigger: "Implementation 진입"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-30 -->
+```yaml
+status: Approved
+from: FLN-30
+to: FLN-31
+trigger: "변경 결정"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-31 -->
+```yaml
+status: Approved
+from: FLN-31
+to: FLN-32
+trigger: "명령 실행"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-32 -->
+```yaml
+status: Approved
+from: FLN-32
+to: FLN-33
+trigger: "영향 식별 완료"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-33 -->
+```yaml
+status: Approved
+from: FLN-33
+to: FLN-34
+trigger: "proposal draft 출력"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-34 -->
+```yaml
+status: Approved
+from: FLN-34
+to: FLN-33
+trigger: "수정 요청"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-35 -->
+```yaml
+status: Approved
+from: FLN-34
+to: FLN-35
+trigger: "검수 완료"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-36 -->
+```yaml
+status: Approved
+from: FLN-35
+to: FLN-36
+trigger: "delta 작성 완료"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-37 -->
+```yaml
+status: Approved
+from: FLN-36
+to: FLN-35
+trigger: "수정"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-38 -->
+```yaml
+status: Approved
+from: FLN-36
+to: FLN-37
+trigger: "승인"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-39 -->
+```yaml
+status: Approved
+from: FLN-37
+to: FLN-38
+trigger: "tasks.md 완료"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-40 -->
+```yaml
+status: Approved
+from: FLN-38
+to: FLN-40
+trigger: "implementation 진입 (loop SEC-4)"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-41 -->
+```yaml
+status: Approved
+from: (SEC-4 끝)
+to: FLN-39
+trigger: "모든 task Done, current/ 머지"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-42 -->
+```yaml
+status: Approved
+from: FLN-40
+to: FLN-41
+trigger: "Phase 13 Approved 도달"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-43 -->
+```yaml
+status: Approved
+from: FLN-41
+to: FLN-42
+trigger: "task 1"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-44 -->
+```yaml
+status: Approved
+from: FLN-42
+to: FLN-43
+trigger: "subagent 시작"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-45 -->
+```yaml
+status: Approved
+from: FLN-43
+to: FLN-44
+trigger: "RED 확인"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-46 -->
+```yaml
+status: Approved
+from: FLN-44
+to: FLN-45
+trigger: "impl 완료"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-47 -->
+```yaml
+status: Approved
+from: FLN-45
+to: FLN-46
+trigger: "GREEN 확인"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-48 -->
+```yaml
+status: Approved
+from: FLN-46
+to: FLN-47
+trigger: "spec review pass"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-49 -->
+```yaml
+status: Approved
+from: FLN-46
+to: FLN-49
+trigger: "spec review fail"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-50 -->
+```yaml
+status: Approved
+from: FLN-47
+to: FLN-48
+trigger: "quality review pass"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-51 -->
+```yaml
+status: Approved
+from: FLN-47
+to: FLN-49
+trigger: "quality review fail"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-52 -->
+```yaml
+status: Approved
+from: FLN-49
+to: FLN-50
+trigger: "escalation 결정"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-53 -->
+```yaml
+status: Approved
+from: FLN-50
+to: FLN-42
+trigger: "재시도 (다른 subagent)"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-54 -->
+```yaml
+status: Approved
+from: FLN-48
+to: FLN-42
+trigger: "다음 task"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-55 -->
+```yaml
+status: Approved
+from: FLN-48
+to: FLN-51
+trigger: "마지막 task 완료"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=FLE-71 -->
+```yaml
+status: Approved
+from: (anytime)
+to: FLN-74
+trigger: "opt-out 명령"
+last-modified: 2026-05-16
+```
+<!-- /specrail:attrs -->
