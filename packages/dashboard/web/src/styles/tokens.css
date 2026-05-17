@@ -1,0 +1,110 @@
+/* DESIGN.md "Reading Room" tokens. */
+
+:root[data-theme='dark'] {
+  --bg: #0e0f11;
+  --surface: #16181b;
+  --surface-2: #1e2125;
+  --border: #2a2d31;
+  --text: #e6e1d5;
+  --text-mute: #8b8680;
+  --text-dim: #5c5853;
+  --accent: #c9a961;
+  --accent-mute: #6b5832;
+  --success: #65b98a;
+  --warning: #d4a04e;
+  --error: #d46b6b;
+  --info: #6b9fd4;
+}
+
+:root[data-theme='light'] {
+  --bg: #f4f1eb;
+  --surface: #ebe7de;
+  --surface-2: #dfdad0;
+  --border: #c8c2b5;
+  --text: #1a1a1a;
+  --text-mute: #5a554f;
+  --text-dim: #8a8580;
+  --accent: #8b6914;
+  --accent-mute: #4a3808;
+  --success: #2f7f4e;
+  --warning: #8a6118;
+  --error: #9f3a3a;
+  --info: #2d5c8a;
+}
+
+:root {
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --dur-micro: 80ms;
+  --dur-short: 120ms;
+  --dur-medium: 200ms;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Literata', Georgia, serif;
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+.display {
+  font-family: 'Fraunces', Georgia, serif;
+  letter-spacing: -0.01em;
+}
+.mono,
+code,
+pre {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-feature-settings: 'tnum';
+}
+button {
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--accent-mute);
+}
+a:hover {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+input,
+textarea,
+select {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+}
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
