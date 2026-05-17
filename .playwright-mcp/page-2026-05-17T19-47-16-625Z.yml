@@ -1,8 +1,0 @@
-- generic [ref=e3]:
-  - banner [ref=e4]:
-    - heading "Add a specrail project" [level=1] [ref=e5]
-  - generic [ref=e6]:
-    - generic [ref=e7]: Absolute project root path
-    - textbox "/Users/you/Development/your-spec-project" [active] [ref=e8]
-    - paragraph [ref=e9]: docs/spec/01-prd.md must exist at that path.
-    - button "Add project" [ref=e11] [cursor=pointer]

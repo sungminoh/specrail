@@ -82,22 +82,35 @@ function collectPreview(lines: string[], headingLineIdx: number, seed: string): 
 }
 
 function collectAttrsPreview(lines: string[], attrsLineIdx: number, id: string): string {
-  // Try: nearest non-empty preceding non-attrs line (often a table row or heading).
-  for (let i = attrsLineIdx - 1; i >= Math.max(0, attrsLineIdx - 6); i--) {
-    const line = (lines[i] ?? '').trim();
-    if (!line) continue;
-    if (line.startsWith('<!--')) continue;
-    // Use that line + first line of attrs yaml block as the preview.
-    let preview = line;
-    for (let j = attrsLineIdx + 1; j < Math.min(attrsLineIdx + 6, lines.length); j++) {
-      const next = (lines[j] ?? '').trim();
-      if (!next || next.startsWith('<!--') || next.startsWith('```')) continue;
-      preview += '\n' + next;
-      if (preview.length > 200) break;
-    }
-    return preview.length > 200 ? preview.slice(0, 197) + '…' : preview;
+  // Collect the attrs yaml body — usually the most informative part (status/target/unit/…).
+  let body = '';
+  for (let j = attrsLineIdx + 1; j < Math.min(attrsLineIdx + 16, lines.length); j++) {
+    const trimmed = (lines[j] ?? '').trim();
+    if (trimmed === '<!-- /specrail:attrs -->') break;
+    if (!trimmed) continue;
+    if (trimmed.startsWith('```')) continue; // ``` and ```yaml fences
+    body += (body ? '\n' : '') + trimmed;
+    if (body.length > 180) break;
   }
-  return `${id} (defined via attrs block at line ${attrsLineIdx + 1})`;
+
+  // Walk back past surrounding attrs-block scaffolding to find a real heading / prose line.
+  // Skips: blanks, html comments, code fences, yaml `key:` lines, list bullets that begin yaml refs.
+  let heading = '';
+  const stopAt = Math.max(0, attrsLineIdx - 60);
+  for (let i = attrsLineIdx - 1; i >= stopAt; i--) {
+    const trimmed = (lines[i] ?? '').trim();
+    if (!trimmed) continue;
+    if (trimmed.startsWith('<!--')) continue;
+    if (trimmed.startsWith('```')) continue;
+    if (/^[a-z][a-z0-9_-]*:\s*/i.test(trimmed)) continue; // yaml key:value line
+    if (/^[-*]\s/.test(trimmed) && /^[-*]\s+\[/.test(trimmed) === false && !/[a-zA-Z가-힣]{4,}/.test(trimmed)) continue;
+    heading = trimmed;
+    break;
+  }
+
+  const seed = heading || id;
+  const preview = body ? `${seed}\n${body}` : seed;
+  return preview.length > 200 ? preview.slice(0, 197) + '…' : preview;
 }
 
 function classifyKindLocal(id: string): string | null {

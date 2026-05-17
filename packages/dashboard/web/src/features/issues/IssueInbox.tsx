@@ -124,6 +124,8 @@ function SuggestedPatch({ projectId, patchId }: { projectId: string; patchId: st
       qc.invalidateQueries({ queryKey: ['patch', projectId, patchId] });
       qc.invalidateQueries({ queryKey: ['issues', projectId] });
       qc.invalidateQueries({ queryKey: ['phase', projectId] });
+      qc.invalidateQueries({ queryKey: ['id-index', projectId] });
+      qc.invalidateQueries({ queryKey: ['graph', projectId] });
     },
   });
   const reject = useMutation({

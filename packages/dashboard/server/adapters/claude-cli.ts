@@ -147,7 +147,7 @@ interface ClaudeStreamEvent {
   stop_reason?: string;
 }
 
-function parseEvent(line: string): ClaudeChunk | null {
+export function parseEvent(line: string): ClaudeChunk | null {
   const obj = JSON.parse(line) as ClaudeStreamEvent;
   if (!obj.type) return null;
 

@@ -55,10 +55,10 @@ export function IdPopover({ index, selector = '.id-chip' }: Props) {
   }, [index, selector]);
 
   if (!state) return null;
-  return <PopoverPositioned state={state} onClose={() => setState(null)} />;
+  return <PopoverPositioned state={state} />;
 }
 
-function PopoverPositioned({ state, onClose }: { state: State; onClose: () => void }) {
+function PopoverPositioned({ state }: { state: State }) {
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ left: number; top: number; below: boolean }>({ left: 0, top: 0, below: true });
   useLayoutEffect(() => {
@@ -76,7 +76,6 @@ function PopoverPositioned({ state, onClose }: { state: State; onClose: () => vo
       ref={ref}
       className={`id-popover${pos.below ? '' : ' above'}`}
       style={{ left: pos.left, top: pos.top }}
-      onMouseEnter={() => onClose}
       role="tooltip"
     >
       <div className="id-popover-header mono">

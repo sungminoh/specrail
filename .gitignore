@@ -10,3 +10,5 @@ coverage/
 .vitest-cache/
 playwright-report/
 test-results/
+.playwright-mcp/
+qa-*.png

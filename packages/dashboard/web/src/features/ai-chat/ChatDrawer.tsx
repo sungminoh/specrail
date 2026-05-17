@@ -118,6 +118,9 @@ function PatchCard({ projectId, patchId, onSettled }: { projectId: string; patch
     mutationFn: () => api.acceptPatch(projectId, patchId),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['patch', projectId, patchId] });
+      qc.invalidateQueries({ queryKey: ['id-index', projectId] });
+      qc.invalidateQueries({ queryKey: ['graph', projectId] });
+      qc.invalidateQueries({ queryKey: ['issues', projectId] });
       onSettled();
     },
   });

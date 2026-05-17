@@ -51,12 +51,15 @@ export function buildApp(deps: AppDeps): Hono {
   app.route('/api/projects', graphRoutes(projects));
   app.route('/api/projects', eventsRoutes(watchers));
 
+  // /api/* miss must 404 cleanly (don't fall through to SPA).
+  app.all('/api/*', (c) => c.json({ error: 'not found' }, 404));
+
   // Serve the Vite-built SPA in production. dist/bin/ is the bundle location,
   // dist/web/ is alongside (see build/esbuild.mjs + vite outDir).
   const webRoot = resolveWebRoot(deps.webRoot);
   if (webRoot && existsSync(webRoot)) {
     app.use('/assets/*', serveStatic({ root: webRoot, rewriteRequestPath: (p) => p }));
-    // SPA fallback: any non-API GET returns index.html so the client router handles it.
+    // SPA fallback: any non-/api GET returns index.html so the client router handles it.
     app.get('*', serveStatic({ path: 'index.html', root: webRoot }));
   }
 
