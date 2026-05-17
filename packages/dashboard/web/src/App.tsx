@@ -1,8 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { AppShell } from './shell/AppShell.js';
 import { ProjectListPage } from './features/projects/ProjectListPage.js';
 import { OnboardingPage } from './features/projects/OnboardingPage.js';
 import { PhaseRoute } from './features/phases/PhaseRoute.js';
+import { IssueRoute } from './features/issues/IssueRoute.js';
 import { ProjectRoute } from './shell/ProjectRoute.js';
 
 export function App() {
@@ -13,6 +13,7 @@ export function App() {
       <Route path="/p/:projectId/*" element={<ProjectRoute />}>
         <Route index element={<Navigate to="phase/1" replace />} />
         <Route path="phase/:n" element={<PhaseRoute />} />
+        <Route path="issues" element={<IssueRoute />} />
       </Route>
     </Routes>
   );

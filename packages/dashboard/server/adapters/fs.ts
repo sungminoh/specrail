@@ -2,7 +2,7 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import writeFileAtomic from 'write-file-atomic';
-import { parsePhaseMarkdown, extractIds, extractRefs } from '@specrail/core';
+import { parsePhaseMarkdown, extractDefinedIds, extractIds, extractRefs } from '@specrail/core';
 import type { Phase, PhaseNumber } from '@specrail/core';
 import { safeJoin } from '../lib/path-allowlist.js';
 
@@ -45,12 +45,14 @@ export async function readPhaseFile(
   const raw = await readFile(filePath, 'utf8');
   const s = await stat(filePath);
   const parsed = parsePhaseMarkdown(raw);
-  const ids = extractIds(parsed.body);
-  const refs: Array<{ from: string; to: string; line: number }> = [];
-  for (const id of ids) {
-    const out = extractRefs(parsed.body, { definedIds: new Set(ids), from: id });
-    for (const r of out) refs.push(r);
-  }
+  const definedIds = extractDefinedIds(parsed.body);
+  // Source-side: pin refs to the first defined id in the file (or a phase pseudo).
+  const anchor = definedIds[0] ?? `phase-${number}`;
+  const allRefs = extractRefs(parsed.body, { definedIds: new Set(definedIds), from: anchor });
+  // Keep all distinct (to, line) entries — these surface dangling targets even when
+  // the to-id is mentioned multiple times in the body.
+  const refs = allRefs.filter((r) => r.to !== anchor);
+  void extractIds;
   return {
     projectId,
     number,
@@ -58,7 +60,7 @@ export async function readPhaseFile(
     filePath: filePath.replace(projectRoot + '/', '').replace(/\\/g, '/'),
     frontmatter: parsed.frontmatter,
     body: raw,
-    parsedIds: ids,
+    parsedIds: definedIds,
     parsedRefs: refs,
     mtimeMs: s.mtimeMs,
   };

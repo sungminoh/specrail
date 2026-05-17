@@ -1,5 +1,5 @@
 // Typed API client. Reads CSRF cookie + includes header on mutations.
-import type { Project, Phase, PhaseNumber } from '@specrail/core';
+import type { Project, Phase, PhaseNumber, Issue, PatchProposal, Hunk } from '@specrail/core';
 
 const CSRF_HEADER = 'x-specrail-csrf';
 const CSRF_COOKIE = 'specrail_csrf';
@@ -63,4 +63,28 @@ export const api = {
     }),
 
   eventsUrl: (id: string) => `/api/projects/${id}/events`,
+
+  listIssues: (id: string) => req<Issue[]>(`/api/projects/${id}/issues`),
+  refreshIssues: (id: string) =>
+    req<{ count: number }>(`/api/projects/${id}/issues/refresh`, { method: 'POST' }),
+
+  getPatch: (id: string, pid: string) => req<PatchProposal>(`/api/projects/${id}/patches/${pid}`),
+  createPatch: (
+    id: string,
+    body: {
+      origin: 'issue-fix' | 'chat' | 'inline-rewrite';
+      phase: PhaseNumber;
+      hunks: Hunk[];
+      rationale?: string;
+      basedOnMtimeMs: number;
+    },
+  ) =>
+    req<PatchProposal>(`/api/projects/${id}/patches`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  acceptPatch: (id: string, pid: string) =>
+    req<PatchProposal>(`/api/projects/${id}/patches/${pid}/accept`, { method: 'POST' }),
+  rejectPatch: (id: string, pid: string) =>
+    req<PatchProposal>(`/api/projects/${id}/patches/${pid}/reject`, { method: 'POST' }),
 };

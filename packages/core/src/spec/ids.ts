@@ -46,6 +46,44 @@ export function extractIds(text: string): string[] {
   return out;
 }
 
+const HEADING_LINE_RE = /^(#{1,6})\s+(.+)$/gm;
+const ATTRS_ID_RE = /<!--\s*specrail:attrs\s+id=([^\s>]+)\s*-->/g;
+const ID_AT_START = new RegExp(
+  '^\\*{0,2}(' +
+    '[RFS]\\d+(?:\\.\\d+){0,2}|T\\d+(?:\\.\\d+)?|NFR-[A-Z][A-Z0-9]*-\\d+|TC-\\d+|EDGE-\\d+|AC-R\\d+-\\d+|INV-\\d+|ADR-\\d+|RISK-\\d+|OPS-\\d+|OQ-\\d+-\\d+|ARCH-\\d+|EXT-\\d+|KPI-\\d+|PAIN-[A-Z0-9_-]*\\d?|PERSONA-(?:EDGE-)?\\d+|PERSONA-[A-Z]+(?:-\\d+)?|SCEN-\\d+|JNY-\\d+\\.\\d+|ZN-[A-Z][A-Z0-9-]*-\\d+|P-CC-\\d+|E-CC-\\d+|W-CC-[A-Z][A-Z0-9_-]*|FLN-\\d+|FLE-\\d+' +
+    ')\\b',
+);
+
+/**
+ * Extract IDs that are DEFINED in this text. Definitions come from:
+ *   - Heading lines starting with the ID (e.g. "## R1: Spec view")
+ *   - <!-- specrail:attrs id=X --> markers
+ *
+ * Stricter than extractIds — used for graph build where "defined" matters.
+ */
+export function extractDefinedIds(text: string): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const m of text.matchAll(HEADING_LINE_RE)) {
+    const heading = m[2] ?? '';
+    const idMatch = heading.match(ID_AT_START);
+    if (!idMatch || !idMatch[1]) continue;
+    const id = idMatch[1];
+    if (!seen.has(id)) {
+      seen.add(id);
+      out.push(id);
+    }
+  }
+  for (const m of text.matchAll(ATTRS_ID_RE)) {
+    const id = m[1];
+    if (id && !seen.has(id)) {
+      seen.add(id);
+      out.push(id);
+    }
+  }
+  return out;
+}
+
 /** Extract refs with line numbers from text. line is 1-based. */
 export function extractRefs(
   text: string,

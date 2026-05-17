@@ -24,6 +24,11 @@ export function Sidebar({ projectId }: { projectId: string }) {
     queryFn: () => api.listPhases(projectId),
     enabled: !!projectId,
   });
+  const { data: issues = [] } = useQuery({
+    queryKey: ['issues', projectId],
+    queryFn: () => api.listIssues(projectId),
+    enabled: !!projectId,
+  });
   const params = useParams<{ n?: string }>();
   const activeN = params.n ? Number(params.n) : null;
   return (
@@ -45,6 +50,12 @@ export function Sidebar({ projectId }: { projectId: string }) {
           </NavLink>
         );
       })}
+      <div className="sidebar-section mono">Sources</div>
+      <NavLink to={`/p/${projectId}/issues`} className={({ isActive }) => `sidebar-row${isActive ? ' active' : ''}`}>
+        <span className="sidebar-num display">·</span>
+        <span className="sidebar-label">Issues</span>
+        {issues.length > 0 && <span className="sidebar-badge mono">{issues.length}</span>}
+      </NavLink>
     </aside>
   );
 }

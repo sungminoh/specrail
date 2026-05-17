@@ -21,7 +21,7 @@ async function bootstrapProject(): Promise<string> {
   );
   await writeFile(
     join(root, 'docs/spec/03-features.md'),
-    `---\nphase: 3\nstatus: Approved\n---\n# Features\nSee R1 and TC-1.\n`,
+    `---\nphase: 3\nstatus: Approved\n---\n# Features\n\n## R1: top req\n\n<!-- specrail:attrs id=TC-1 -->\nrefs F1.1 and R1\n`,
   );
   return root;
 }

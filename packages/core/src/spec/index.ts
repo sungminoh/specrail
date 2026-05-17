@@ -1,2 +1,2 @@
 export * from './types.js';
-export * from './ids.js';
+export { extractIds, extractDefinedIds, extractRefs, classifyKind } from './ids.js';
