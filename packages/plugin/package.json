@@ -1,0 +1,49 @@
+{
+  "name": "specrail",
+  "version": "0.2.0",
+  "description": "specrail — Claude Code plugin for 13-phase spec discipline",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint:sycophancy": "tsx src/lint/anti-sycophancy.ts .",
+    "check:ac": "tsx src/lint/ac-traceability.ts .",
+    "lint:plan": "tsx src/lint/run-all.ts .",
+    "prepublishOnly": "rm -rf dist && tsc --project tsconfig.build.json"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^1.6.0"
+  },
+  "bin": {
+    "specrail": "dist/bin/specrail.js"
+  },
+  "files": [
+    "dist",
+    "skills",
+    "schemas",
+    ".claude-plugin",
+    "README.md",
+    "package.json",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "ajv": "^8.12.0",
+    "ajv-formats": "^3.0.1",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.4",
+    "unist-util-visit": "^5.0.0"
+  }
+}

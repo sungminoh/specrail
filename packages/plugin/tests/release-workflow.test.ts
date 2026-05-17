@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { readFile } from 'node:fs/promises';
-import { parse as parseYaml } from 'node:path'; // unused — we do string checks
+import { fromRoot } from './_helpers/repo-root.js';
 
 describe('T4.2 Release workflow (Phase 11 OPS-1, RB-7)', () => {
   async function loadYaml(): Promise<string> {
-    return readFile('.github/workflows/release.yml', 'utf8');
+    return readFile(fromRoot('.github/workflows/release.yml'), 'utf8');
   }
 
   it('release.yml exists and has a name field', async () => {
@@ -14,7 +14,7 @@ describe('T4.2 Release workflow (Phase 11 OPS-1, RB-7)', () => {
 
   it('triggers on tag push matching v*.*.*', async () => {
     const yaml = await loadYaml();
-    expect(yaml).toContain("tags:");
+    expect(yaml).toContain('tags:');
     expect(yaml).toMatch(/['"]?v\*\.\*\.\*['"]?/);
   });
 
@@ -24,13 +24,13 @@ describe('T4.2 Release workflow (Phase 11 OPS-1, RB-7)', () => {
     expect(yaml).toContain('actions/setup-node@v4');
   });
 
-  it('runs npm test (gate) before release', async () => {
+  it('runs the test gate before release', async () => {
     const yaml = await loadYaml();
-    const testIdx = yaml.indexOf('npm test');
+    // Post-monorepo: workflow runs `pnpm test` inside packages/plugin via defaults.run.working-directory.
+    const testIdx = yaml.indexOf('pnpm test');
     const releaseIdx = yaml.indexOf('gh release create');
     expect(testIdx).toBeGreaterThan(-1);
     expect(releaseIdx).toBeGreaterThan(-1);
-    // test gate must appear before release step
     expect(testIdx).toBeLessThan(releaseIdx);
   });
 
@@ -51,20 +51,24 @@ describe('T4.2 Release workflow (Phase 11 OPS-1, RB-7)', () => {
   });
 });
 
-describe('T-CSA.7 — package.json files array publishes attrs schema', () => {
-  it('package.json files includes "schemas"', async () => {
-    const pkg = JSON.parse(await readFile('package.json', 'utf8')) as { files: string[] };
+describe('T-CSA.7 — plugin package.json files array publishes attrs schema', () => {
+  it('plugin package.json files includes "schemas"', async () => {
+    const pkg = JSON.parse(
+      await readFile(fromRoot('packages/plugin/package.json'), 'utf8'),
+    ) as { files: string[] };
     expect(pkg.files).toContain('schemas');
   });
 
-  it('package.json files also includes "skills" (already shipped 0.1.0)', async () => {
-    const pkg = JSON.parse(await readFile('package.json', 'utf8')) as { files: string[] };
+  it('plugin package.json files also includes "skills" (already shipped 0.1.0)', async () => {
+    const pkg = JSON.parse(
+      await readFile(fromRoot('packages/plugin/package.json'), 'utf8'),
+    ) as { files: string[] };
     expect(pkg.files).toContain('skills');
   });
 
   it('schemas/attrs.schema.json + schemas/edge-kinds.schema.json exist on disk', async () => {
-    const attrs = await readFile('schemas/attrs.schema.json', 'utf8');
-    const edges = await readFile('schemas/edge-kinds.schema.json', 'utf8');
+    const attrs = await readFile(fromRoot('packages/plugin/schemas/attrs.schema.json'), 'utf8');
+    const edges = await readFile(fromRoot('packages/plugin/schemas/edge-kinds.schema.json'), 'utf8');
     expect(attrs).toContain('attrs block payload');
     expect(edges).toContain('edge kind enum');
   });

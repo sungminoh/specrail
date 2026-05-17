@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node", "vite/client"],
+    "paths": {
+      "@specrail/core": ["../core/src/index.ts"],
+      "@specrail/core/*": ["../core/src/*"]
+    }
+  },
+  "include": ["server/**/*", "web/**/*", "bin/**/*", "tests/**/*", "build/**/*"],
+  "exclude": ["node_modules", "dist", ".specrail-cache", "design"]
+}

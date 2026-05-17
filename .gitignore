@@ -5,3 +5,8 @@ dist/
 .DS_Store
 coverage/
 .omc/
+*.tgz
+.vite/
+.vitest-cache/
+playwright-report/
+test-results/

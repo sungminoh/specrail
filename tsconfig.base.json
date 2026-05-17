@@ -7,10 +7,9 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "outDir": "dist",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": false,
     "lib": ["ES2022"],
     "types": ["node"]
-  },
-  "include": ["src/**/*", "tests/**/*"],
-  "exclude": ["node_modules", "dist", ".specrail-cache"]
+  }
 }
