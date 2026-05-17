@@ -7,6 +7,7 @@ import { eventsRoutes } from './routes/events.js';
 import { issuesRoutes } from './routes/issues.js';
 import { patchesRoutes } from './routes/patches.js';
 import { aiRoutes } from './routes/ai.js';
+import { graphRoutes } from './routes/graph.js';
 import { ProjectsService } from './services/projects.js';
 import { PhasesService } from './services/phases.js';
 import { IssuesService } from './services/issues.js';
@@ -41,6 +42,7 @@ export function buildApp(deps: AppDeps): Hono {
   app.route('/api/projects', issuesRoutes(issues));
   app.route('/api/projects', patchesRoutes(patches));
   app.route('/api/projects', aiRoutes(ai));
+  app.route('/api/projects', graphRoutes(projects));
   app.route('/api/projects', eventsRoutes(watchers));
 
   return app;

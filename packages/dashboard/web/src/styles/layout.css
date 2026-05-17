@@ -454,3 +454,56 @@
 .diff-add { color: var(--success); display: block; }
 .patch-rationale { font-size: 12px; color: var(--text-mute); font-style: italic; }
 .patch-actions { display: flex; gap: var(--space-sm); justify-content: flex-end; }
+
+.graph-view {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  height: calc(100vh - 50px);
+}
+.graph-filters {
+  padding: var(--space-md);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  background: var(--surface);
+}
+.graph-filter-title {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  margin: 0 0 var(--space-md);
+}
+.graph-filter-block {
+  margin-bottom: var(--space-md);
+}
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-bottom: var(--space-xs);
+}
+.filter-meta { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+.phase-chips { display: flex; gap: 4px; flex-wrap: wrap; }
+.phase-chip {
+  font-size: 10px;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  background: var(--bg);
+}
+.phase-chip.on { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.graph-canvas { position: relative; }
+.graph-status {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  font-size: 10px;
+  color: var(--text-dim);
+  background: var(--surface);
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+}

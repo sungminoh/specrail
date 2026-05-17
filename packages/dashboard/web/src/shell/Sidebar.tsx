@@ -51,6 +51,10 @@ export function Sidebar({ projectId }: { projectId: string }) {
         );
       })}
       <div className="sidebar-section mono">Sources</div>
+      <NavLink to={`/p/${projectId}/graph`} className={({ isActive }) => `sidebar-row${isActive ? ' active' : ''}`}>
+        <span className="sidebar-num display">·</span>
+        <span className="sidebar-label">Graph</span>
+      </NavLink>
       <NavLink to={`/p/${projectId}/issues`} className={({ isActive }) => `sidebar-row${isActive ? ' active' : ''}`}>
         <span className="sidebar-num display">·</span>
         <span className="sidebar-label">Issues</span>

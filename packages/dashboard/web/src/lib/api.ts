@@ -88,6 +88,12 @@ export const api = {
   rejectPatch: (id: string, pid: string) =>
     req<PatchProposal>(`/api/projects/${id}/patches/${pid}/reject`, { method: 'POST' }),
 
+  getGraph: (id: string) =>
+    req<{
+      nodes: Array<{ id: string; phase: number; kind: string | null }>;
+      edges: Array<{ from: string; to: string; phase: number; line: number }>;
+    }>(`/api/projects/${id}/graph`),
+
   // AI sessions
   listSessions: (id: string) =>
     req<Array<{ id: string; origin: string; status: string; proposedPatchIds: string[] }>>(
