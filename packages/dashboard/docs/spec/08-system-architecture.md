@@ -288,60 +288,6 @@ sequenceDiagram
 
 ## 9. ADR Candidates (Phase 12 에서 확정)
 
-<!-- specrail:attrs id=ADR-CAND-1 -->
-```yaml
-status: Proposed
-decision: "Session store 매체: SQLite vs LowDB(JSON) vs Postgres-lite"
-consequences: "결정에 따라 ARCH-8 구현·테스트 fixture·이주 도구 영향"
-alternatives-considered: "(Phase 12 expand)"
-```
-<!-- /specrail:attrs -->
-
-<!-- specrail:attrs id=ADR-CAND-2 -->
-```yaml
-status: Proposed
-decision: "API 형태: REST + SSE vs tRPC + WebSocket"
-consequences: "타입 추론·에러 처리·streaming 모델·번들 사이즈 영향"
-alternatives-considered: "(Phase 12 expand)"
-```
-<!-- /specrail:attrs -->
-
-<!-- specrail:attrs id=ADR-CAND-3 -->
-```yaml
-status: Proposed
-decision: "Layout 엔진: elkjs vs dagre vs viz.js (graph view)"
-consequences: "성능 (200ms 목표, NFR)·번들 사이즈·layout 품질"
-alternatives-considered: "(Phase 12 expand)"
-```
-<!-- /specrail:attrs -->
-
-<!-- specrail:attrs id=ADR-CAND-4 -->
-```yaml
-status: Proposed
-decision: "패키지 매니저: pnpm vs npm (monorepo 시점에)"
-consequences: "workspace 관리, CI 캐시, lockfile 차이"
-alternatives-considered: "(Phase 12 expand)"
-```
-<!-- /specrail:attrs -->
-
-<!-- specrail:attrs id=ADR-CAND-5 -->
-```yaml
-status: Proposed
-decision: "Frontmatter form 라이브러리: react-hook-form + zod resolver vs 자체 form (zod schema → field 자동 생성)"
-consequences: "코드 양·확장성·검증 UX"
-alternatives-considered: "(Phase 12 expand)"
-```
-<!-- /specrail:attrs -->
-
-<!-- specrail:attrs id=ADR-CAND-6 -->
-```yaml
-status: Proposed
-decision: "Markdown editor: CodeMirror 6 vs Lexical vs Tiptap"
-consequences: "라이브러리 사이즈·markdown 우회 라이브러리 가능 여부·복잡도"
-alternatives-considered: "(Phase 12 expand)"
-```
-<!-- /specrail:attrs -->
-
 | ADR Candidate | 영역 |
 |---|---|
 | ADR-CAND-1 | Session store 매체 |

@@ -32,9 +32,9 @@ inherited-by: [W-CC-PHASE, W-CC-GRAPH, W-CC-ISSUES, W-CC-EDIT, W-CC-CHANGES]
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│ ZN-SHELL-TOP — project switcher · refresh · AI status                │ <- top bar
+│ ZN-SHELL-TOP-1 — project switcher · refresh · AI status                │ <- top bar
 ├────────────┬─────────────────────────────────────┬───────────────────┤
-│ ZN-SHELL-  │ ZN-SHELL-MAIN                       │ ZN-SHELL-DRAWER   │
+│ ZN-SHELL-1-  │ ZN-SHELL-MAIN-1                       │ ZN-SHELL-DRAWER-1   │
 │ SIDEBAR    │                                     │ (collapsible)     │
 │            │  (route-driven content from         │                   │
 │ Phase list │   P-CC-4 / 5 / 6 / 7 / 8 / 9)       │ tabs: Issues /    │
@@ -44,12 +44,12 @@ inherited-by: [W-CC-PHASE, W-CC-GRAPH, W-CC-ISSUES, W-CC-EDIT, W-CC-CHANGES]
 │ Sources    │                                     │                   │
 │  Changes   │                                     │                   │
 └────────────┴─────────────────────────────────────┴───────────────────┘
-              ZN-SHELL-STATUS (bottom, optional — connection·SSE state)
+              ZN-SHELL-STATUS-1 (bottom, optional — connection·SSE state)
 ```
 
 ### Zones
 
-<!-- specrail:attrs id=ZN-SHELL-TOP -->
+<!-- specrail:attrs id=ZN-SHELL-TOP-1 -->
 ```yaml
 page: P-CC-3
 purpose: "프로젝트 컨텍스트·실행 중 AI 상태·새로고침 한 자리"
@@ -60,7 +60,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-SHELL-SIDEBAR -->
+<!-- specrail:attrs id=ZN-SHELL-SIDEBAR-1 -->
 ```yaml
 page: P-CC-3
 purpose: "13 phase + Changes + Issues entrypoint, status 아이콘 (clean/issue/checking/patch-pending)"
@@ -71,7 +71,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-SHELL-MAIN -->
+<!-- specrail:attrs id=ZN-SHELL-MAIN-1 -->
 ```yaml
 page: P-CC-3
 purpose: "route-driven content area"
@@ -81,7 +81,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-SHELL-DRAWER -->
+<!-- specrail:attrs id=ZN-SHELL-DRAWER-1 -->
 ```yaml
 page: P-CC-3
 purpose: "Issues/Chat/Refs 3 tab, 사용자 collapsible"
@@ -91,7 +91,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-SHELL-STATUS -->
+<!-- specrail:attrs id=ZN-SHELL-STATUS-1 -->
 ```yaml
 page: P-CC-3
 purpose: "SSE 연결 상태, 마지막 file change 시간, version"
@@ -103,29 +103,29 @@ status: Approved
 
 ### Elements (shell-wide)
 
-<!-- specrail:attrs id=E-CC-SHELL-PROJECT-SWITCHER -->
+<!-- specrail:attrs id=E-CC-1 -->
 ```yaml
 status: Approved
 kind: dropdown
-parent-zone: ZN-SHELL-TOP
+parent-zone: ZN-SHELL-TOP-1
 source-data: "ENT-Project (정렬: lastOpenedAt desc)"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-SHELL-REFRESH -->
+<!-- specrail:attrs id=E-CC-2 -->
 ```yaml
 status: Approved
 kind: icon-button
-parent-zone: ZN-SHELL-TOP
+parent-zone: ZN-SHELL-TOP-1
 source-data: "수동 invalidate"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-SHELL-AI-STATUS -->
+<!-- specrail:attrs id=E-CC-3 -->
 ```yaml
 status: Approved
 kind: badge
-parent-zone: ZN-SHELL-TOP
+parent-zone: ZN-SHELL-TOP-1
 source-data: "ENT-AiSession.status (idle/streaming/error)"
 ```
 <!-- /specrail:attrs -->
@@ -156,9 +156,9 @@ element-count: 3
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ ZN-PLIST-HEADER  Title "Your projects"  [+ Add project]  │
+│ ZN-PLIST-HEADER-1  Title "Your projects"  [+ Add project]  │
 ├──────────────────────────────────────────────────────────┤
-│ ZN-PLIST-CARDS                                            │
+│ ZN-PLIST-CARDS-1                                            │
 │  ┌────────────────────────────────────────────────────┐  │
 │  │ specrail (~/Dev/specrail)                           │  │
 │  │ last opened 2 min ago · 5 issues                    │  │
@@ -170,7 +170,7 @@ element-count: 3
 └──────────────────────────────────────────────────────────┘
 ```
 
-<!-- specrail:attrs id=ZN-PLIST-HEADER -->
+<!-- specrail:attrs id=ZN-PLIST-HEADER-1 -->
 ```yaml
 page: P-CC-1
 purpose: "title + add CTA"
@@ -180,7 +180,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-PLIST-CARDS -->
+<!-- specrail:attrs id=ZN-PLIST-CARDS-1 -->
 ```yaml
 page: P-CC-1
 purpose: "registered projects card list"
@@ -213,16 +213,16 @@ element-count: 4
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ ZN-ADD-HEADER  "Add a specrail project"                  │
+│ ZN-ADD-HEADER-1  "Add a specrail project"                  │
 ├──────────────────────────────────────────────────────────┤
-│ ZN-ADD-FORM                                               │
+│ ZN-ADD-FORM-1                                               │
 │  [Path: ____________________________________] [Browse…]  │
 │  ⓘ docs/spec/01-prd.md 존재 검증 후 등록                  │
 │  [Cancel]                              [Add project]     │
 └──────────────────────────────────────────────────────────┘
 ```
 
-<!-- specrail:attrs id=ZN-ADD-HEADER -->
+<!-- specrail:attrs id=ZN-ADD-HEADER-1 -->
 ```yaml
 page: P-CC-2
 purpose: "title + helper text"
@@ -232,7 +232,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-ADD-FORM -->
+<!-- specrail:attrs id=ZN-ADD-FORM-1 -->
 ```yaml
 page: P-CC-2
 purpose: "path 입력 + validation + actions"
@@ -265,15 +265,15 @@ element-count: 6
 <!-- /specrail:attrs -->
 
 ```
-ZN-SHELL-MAIN 안:
+ZN-SHELL-MAIN-1 안:
 ┌──────────────────────────────────────────────────────────┐
-│ ZN-PHASE-TOOLBAR  Phase 03 — Features  status: Approved  │
+│ ZN-PHASE-TOOLBAR-1  Phase 03 — Features  status: Approved  │
 │   [Read]/[Edit] toggle · [Run check] · [AI review section]│
 ├──────────────────────────────────────────────────────────┤
-│ ZN-PHASE-FRONTMATTER (collapsible)                       │
+│ ZN-PHASE-FRONTMATTER-1 (collapsible)                       │
 │   phase: 3 · status: Approved · …                        │
 ├──────────────────────────────────────────────────────────┤
-│ ZN-PHASE-BODY                                             │
+│ ZN-PHASE-BODY-1                                             │
 │   # Features                                              │
 │   ## R1: Spec view & navigation                           │
 │   - F1.2 의존 [R1](▾ R1: …)  ← ID hover popover           │
@@ -282,7 +282,7 @@ ZN-SHELL-MAIN 안:
 └──────────────────────────────────────────────────────────┘
 ```
 
-<!-- specrail:attrs id=ZN-PHASE-TOOLBAR -->
+<!-- specrail:attrs id=ZN-PHASE-TOOLBAR-1 -->
 ```yaml
 page: P-CC-4
 purpose: "phase 메타 + 모드 toggle + 일괄 액션"
@@ -293,7 +293,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-PHASE-FRONTMATTER -->
+<!-- specrail:attrs id=ZN-PHASE-FRONTMATTER-1 -->
 ```yaml
 page: P-CC-4
 purpose: "frontmatter zod-validated form"
@@ -304,7 +304,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-PHASE-BODY -->
+<!-- specrail:attrs id=ZN-PHASE-BODY-1 -->
 ```yaml
 page: P-CC-4
 purpose: "markdown body — remark/rehype 렌더 또는 CodeMirror editor"
@@ -315,38 +315,38 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-PHASE-RUN-CHECK -->
+<!-- specrail:attrs id=E-CC-4 -->
 ```yaml
 status: Approved
 kind: button
-parent-zone: ZN-PHASE-TOOLBAR
+parent-zone: ZN-PHASE-TOOLBAR-1
 source-data: "POST /api/projects/:id/issues/refresh — plugin self-check + cross-phase"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-PHASE-AI-REVIEW -->
+<!-- specrail:attrs id=E-CC-5 -->
 ```yaml
 status: Approved
 kind: button
-parent-zone: ZN-PHASE-TOOLBAR
+parent-zone: ZN-PHASE-TOOLBAR-1
 source-data: "POST /api/projects/:id/ai/sessions origin=review-scan phase=N"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-PHASE-ID-POPOVER -->
+<!-- specrail:attrs id=E-CC-6 -->
 ```yaml
 status: Approved
 kind: hover-popover
-parent-zone: ZN-PHASE-BODY
+parent-zone: ZN-PHASE-BODY-1
 source-data: "core.spec.lookupById(id) → 첫 200자"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-PHASE-FLOATING-MENU -->
+<!-- specrail:attrs id=E-CC-7 -->
 ```yaml
 status: Approved
 kind: floating-menu
-parent-zone: ZN-PHASE-BODY
+parent-zone: ZN-PHASE-BODY-1
 source-data: "selection event → AI rewrite / verify / ask 옵션"
 ```
 <!-- /specrail:attrs -->
@@ -375,9 +375,9 @@ element-count: 4
 <!-- /specrail:attrs -->
 
 ```
-ZN-SHELL-MAIN 안:
+ZN-SHELL-MAIN-1 안:
 ┌────────────────┬─────────────────────────────────────────┐
-│ ZN-GRAPH-FILT  │ ZN-GRAPH-CANVAS                          │
+│ ZN-GRAPH-FILT-1  │ ZN-GRAPH-CANVAS-1                          │
 │                │                                          │
 │ Phases ☑ all   │     ┌──┐    ┌──┐                         │
 │ Prefix         │     │R1│───▶│F1│                         │
@@ -389,7 +389,7 @@ ZN-SHELL-MAIN 안:
 └────────────────┴─────────────────────────────────────────┘
 ```
 
-<!-- specrail:attrs id=ZN-GRAPH-FILT -->
+<!-- specrail:attrs id=ZN-GRAPH-FILT-1 -->
 ```yaml
 page: P-CC-5
 purpose: "filter (phase/prefix/N-hop/orphan/dangling)"
@@ -400,7 +400,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-GRAPH-CANVAS -->
+<!-- specrail:attrs id=ZN-GRAPH-CANVAS-1 -->
 ```yaml
 page: P-CC-5
 purpose: "React Flow + elkjs layered layout"
@@ -411,20 +411,20 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-GRAPH-NHOP -->
+<!-- specrail:attrs id=E-CC-8 -->
 ```yaml
 status: Approved
 kind: slider
-parent-zone: ZN-GRAPH-FILT
+parent-zone: ZN-GRAPH-FILT-1
 source-data: "core.graph.nhop(selectedId, n)"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-GRAPH-NODE -->
+<!-- specrail:attrs id=E-CC-9 -->
 ```yaml
 status: Approved
 kind: graph-node
-parent-zone: ZN-GRAPH-CANVAS
+parent-zone: ZN-GRAPH-CANVAS-1
 source-data: "core.graph.nodes() — SpecId 라벨, severity 색"
 ```
 <!-- /specrail:attrs -->
@@ -453,12 +453,12 @@ element-count: 5
 <!-- /specrail:attrs -->
 
 ```
-ZN-SHELL-MAIN 안:
+ZN-SHELL-MAIN-1 안:
 ┌──────────────────────────────────────────────────────────┐
-│ ZN-ISSUES-FILTER  [All ▾] [Source ▾] [Severity ▾]        │
+│ ZN-ISSUES-FILTER-1  [All ▾] [Source ▾] [Severity ▾]        │
 │                   [Phase ▾]            [Run AI review]   │
 ├──────────────────────────────────────────────────────────┤
-│ ZN-ISSUES-LIST                                            │
+│ ZN-ISSUES-LIST-1                                            │
 │  ⚠ NFR-12 has no measurable acceptance criterion         │
 │     source: ai-quality   phase: 09  ▸ Suggested patch    │
 │  ✖ F1.2 references R3 not defined in phase 1             │
@@ -467,7 +467,7 @@ ZN-SHELL-MAIN 안:
 └──────────────────────────────────────────────────────────┘
 ```
 
-<!-- specrail:attrs id=ZN-ISSUES-FILTER -->
+<!-- specrail:attrs id=ZN-ISSUES-FILTER-1 -->
 ```yaml
 page: P-CC-6
 purpose: "필터 + AI review trigger"
@@ -478,7 +478,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-ISSUES-LIST -->
+<!-- specrail:attrs id=ZN-ISSUES-LIST-1 -->
 ```yaml
 page: P-CC-6
 purpose: "Issue rows w/ source-label, expand to patch preview"
@@ -489,29 +489,29 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-ISSUES-ROW -->
+<!-- specrail:attrs id=E-CC-10 -->
 ```yaml
 status: Approved
 kind: list-row
-parent-zone: ZN-ISSUES-LIST
+parent-zone: ZN-ISSUES-LIST-1
 source-data: "ENT-Issue (sort: severity desc, source group)"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-ISSUES-RUN-AI -->
+<!-- specrail:attrs id=E-CC-11 -->
 ```yaml
 status: Approved
 kind: button
-parent-zone: ZN-ISSUES-FILTER
+parent-zone: ZN-ISSUES-FILTER-1
 source-data: "POST /api/projects/:id/ai/sessions origin=review-scan"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-ISSUES-PATCH-PREVIEW -->
+<!-- specrail:attrs id=E-CC-12 -->
 ```yaml
 status: Approved
 kind: inline-diff
-parent-zone: ZN-ISSUES-LIST
+parent-zone: ZN-ISSUES-LIST-1
 source-data: "ENT-PatchProposal.hunks → unified diff view"
 ```
 <!-- /specrail:attrs -->
@@ -538,31 +538,31 @@ element-count: 3
 ```
 <!-- /specrail:attrs -->
 
-P-CC-4 와 동일 layout, ZN-PHASE-BODY 가 CodeMirror editor 로 교체. Toolbar 의 [Edit] 강조 + Save 버튼 노출.
+P-CC-4 와 동일 layout, ZN-PHASE-BODY-1 가 CodeMirror editor 로 교체. Toolbar 의 [Edit] 강조 + Save 버튼 노출.
 
-<!-- specrail:attrs id=E-CC-EDIT-CODEMIRROR -->
+<!-- specrail:attrs id=E-CC-13 -->
 ```yaml
 status: Approved
 kind: editor
-parent-zone: ZN-PHASE-BODY
+parent-zone: ZN-PHASE-BODY-1
 source-data: "ENT-Phase.body (raw markdown)"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-EDIT-FRONTMATTER-FORM -->
+<!-- specrail:attrs id=E-CC-14 -->
 ```yaml
 status: Approved
 kind: form
-parent-zone: ZN-PHASE-FRONTMATTER
+parent-zone: ZN-PHASE-FRONTMATTER-1
 source-data: "ENT-Phase.frontmatter (zod schema/phase)"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-EDIT-SAVE -->
+<!-- specrail:attrs id=E-CC-15 -->
 ```yaml
 status: Approved
 kind: button
-parent-zone: ZN-PHASE-TOOLBAR
+parent-zone: ZN-PHASE-TOOLBAR-1
 source-data: "PUT /api/projects/:id/phases/:n {content, basedOnMtimeMs}"
 ```
 <!-- /specrail:attrs -->
@@ -592,13 +592,13 @@ element-count: 3
 <!-- /specrail:attrs -->
 
 ```
-ZN-SHELL-DRAWER (우측) 안 Chat tab:
+ZN-SHELL-DRAWER-1 (우측) 안 Chat tab:
 ┌─────────────────────┐
-│ ZN-CHAT-HEADER       │
+│ ZN-CHAT-HEADER-1       │
 │ Session #abc · phase │
 │ Sessions ▾    [×]    │
 ├─────────────────────┤
-│ ZN-CHAT-MESSAGES    │
+│ ZN-CHAT-MESSAGES-1    │
 │ U: 이 NFR 의 측정… │
 │ A: 측정 단위 누락…  │
 │    ┌─patch card─┐   │
@@ -607,13 +607,13 @@ ZN-SHELL-DRAWER (우측) 안 Chat tab:
 │    │ [Accept]   │   │
 │    └────────────┘   │
 ├─────────────────────┤
-│ ZN-CHAT-INPUT       │
+│ ZN-CHAT-INPUT-1       │
 │ [_____________]Send │
 │              [Stop] │
 └─────────────────────┘
 ```
 
-<!-- specrail:attrs id=ZN-CHAT-HEADER -->
+<!-- specrail:attrs id=ZN-CHAT-HEADER-1 -->
 ```yaml
 page: P-CC-8
 purpose: "session selector + close"
@@ -623,7 +623,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-CHAT-MESSAGES -->
+<!-- specrail:attrs id=ZN-CHAT-MESSAGES-1 -->
 ```yaml
 page: P-CC-8
 purpose: "AiMessage stream, inline diff card 포함"
@@ -634,7 +634,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-CHAT-INPUT -->
+<!-- specrail:attrs id=ZN-CHAT-INPUT-1 -->
 ```yaml
 page: P-CC-8
 purpose: "user message + send/stop"
@@ -645,29 +645,29 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-CHAT-MESSAGE -->
+<!-- specrail:attrs id=E-CC-16 -->
 ```yaml
 status: Approved
 kind: message-bubble
-parent-zone: ZN-CHAT-MESSAGES
+parent-zone: ZN-CHAT-MESSAGES-1
 source-data: "ENT-AiMessage (markdown 렌더)"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-CHAT-PATCH-CARD -->
+<!-- specrail:attrs id=E-CC-17 -->
 ```yaml
 status: Approved
 kind: inline-diff
-parent-zone: ZN-CHAT-MESSAGES
+parent-zone: ZN-CHAT-MESSAGES-1
 source-data: "ENT-PatchProposal — accept/reject 메커니즘 issues inbox 와 공통"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-CHAT-SEND -->
+<!-- specrail:attrs id=E-CC-18 -->
 ```yaml
 status: Approved
 kind: button
-parent-zone: ZN-CHAT-INPUT
+parent-zone: ZN-CHAT-INPUT-1
 source-data: "POST /api/projects/:id/ai/sessions/:sid/messages"
 ```
 <!-- /specrail:attrs -->
@@ -697,7 +697,7 @@ element-count: 1
 
 DELTA changes/ 폴더 read-only 표시. RO 명시 — edit UI 없음.
 
-<!-- specrail:attrs id=ZN-CHANGES-LIST -->
+<!-- specrail:attrs id=ZN-CHANGES-LIST-1 -->
 ```yaml
 page: P-CC-9
 purpose: "changes/{date-topic}/ entries, status 표시"
@@ -707,7 +707,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-CHANGES-PROPOSAL -->
+<!-- specrail:attrs id=ZN-CHANGES-PROPOSAL-1 -->
 ```yaml
 page: P-CC-9
 purpose: "selected change 의 proposal.md rendered"
@@ -717,11 +717,11 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-CHANGES-ROW -->
+<!-- specrail:attrs id=E-CC-19 -->
 ```yaml
 status: Approved
 kind: list-row
-parent-zone: ZN-CHANGES-LIST
+parent-zone: ZN-CHANGES-LIST-1
 source-data: "fs.readdir(<projectRoot>/docs/spec/changes/)"
 ```
 <!-- /specrail:attrs -->
@@ -750,7 +750,7 @@ element-count: 4
 ```
 [modal overlay]
 ┌──────────────────────────────────────────────────────────┐
-│ ZN-CONFLICT-DIALOG                                        │
+│ ZN-CONFLICT-DIALOG-1                                        │
 │ ⚠ 파일이 외부에서 변경되었습니다 (mtime mismatch)         │
 │                                                            │
 │  Last seen mtime: 2026-05-17T14:23:11Z                    │
@@ -767,7 +767,7 @@ element-count: 4
 └──────────────────────────────────────────────────────────┘
 ```
 
-<!-- specrail:attrs id=ZN-CONFLICT-DIALOG -->
+<!-- specrail:attrs id=ZN-CONFLICT-DIALOG-1 -->
 ```yaml
 page: P-CC-10
 purpose: "외부 변경 인지 + 해결 선택"
@@ -778,38 +778,38 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-CONFLICT-DIFF -->
+<!-- specrail:attrs id=E-CC-20 -->
 ```yaml
 status: Approved
 kind: inline-diff
-parent-zone: ZN-CONFLICT-DIALOG
+parent-zone: ZN-CONFLICT-DIALOG-1
 source-data: "사용자 in-memory body vs server fs body"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-CONFLICT-FORCE -->
+<!-- specrail:attrs id=E-CC-21 -->
 ```yaml
 status: Approved
 kind: button
-parent-zone: ZN-CONFLICT-DIALOG
+parent-zone: ZN-CONFLICT-DIALOG-1
 source-data: "PUT /api/projects/:id/phases/:n {basedOnMtimeMs: <current>}"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-CONFLICT-DISCARD -->
+<!-- specrail:attrs id=E-CC-22 -->
 ```yaml
 status: Approved
 kind: button
-parent-zone: ZN-CONFLICT-DIALOG
+parent-zone: ZN-CONFLICT-DIALOG-1
 source-data: "client state discard → re-fetch ENT-Phase"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-CONFLICT-COMPARE -->
+<!-- specrail:attrs id=E-CC-23 -->
 ```yaml
 status: Approved
 kind: link
-parent-zone: ZN-CONFLICT-DIALOG
+parent-zone: ZN-CONFLICT-DIALOG-1
 source-data: "open external diff tool (system git-mergetool 또는 link to GitHub compare)"
 ```
 <!-- /specrail:attrs -->
@@ -833,10 +833,10 @@ element-count: 2
 ```
 [modal overlay, cmd+k]
 ┌─────────────────────────────────────────┐
-│ ZN-CMDK-INPUT                            │
+│ ZN-CMDK-INPUT-1                            │
 │ > _____________________________________  │
 ├─────────────────────────────────────────┤
-│ ZN-CMDK-RESULTS                          │
+│ ZN-CMDK-RESULTS-1                          │
 │  Phase 03 — Features                     │
 │  R3 Deterministic quality checks         │
 │  NFR-PERF-2 graph layout time            │
@@ -844,7 +844,7 @@ element-count: 2
 └─────────────────────────────────────────┘
 ```
 
-<!-- specrail:attrs id=ZN-CMDK-INPUT -->
+<!-- specrail:attrs id=ZN-CMDK-INPUT-1 -->
 ```yaml
 page: P-CC-11
 purpose: "fuzzy query input"
@@ -855,7 +855,7 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=ZN-CMDK-RESULTS -->
+<!-- specrail:attrs id=ZN-CMDK-RESULTS-1 -->
 ```yaml
 page: P-CC-11
 purpose: "match list, keyboard nav (↑↓⏎)"
@@ -866,20 +866,20 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-CMDK-RESULT -->
+<!-- specrail:attrs id=E-CC-24 -->
 ```yaml
 status: Approved
 kind: list-row
-parent-zone: ZN-CMDK-RESULTS
+parent-zone: ZN-CMDK-RESULTS-1
 source-data: "fuse.js index (phases + parsedIds)"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-CMDK-INPUT-FIELD -->
+<!-- specrail:attrs id=E-CC-25 -->
 ```yaml
 status: Approved
 kind: input
-parent-zone: ZN-CMDK-INPUT
+parent-zone: ZN-CMDK-INPUT-1
 source-data: "query string"
 ```
 <!-- /specrail:attrs -->
@@ -911,7 +911,7 @@ element-count: 1
 └──────────────────────────────────────────────────────────┘
 ```
 
-<!-- specrail:attrs id=ZN-NOTFOUND -->
+<!-- specrail:attrs id=ZN-NOTFOUND-1 -->
 ```yaml
 page: P-CC-404
 purpose: "fallback for unknown route or missing project"
@@ -921,11 +921,11 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-NOTFOUND-GO -->
+<!-- specrail:attrs id=E-CC-26 -->
 ```yaml
 status: Approved
 kind: link
-parent-zone: ZN-NOTFOUND
+parent-zone: ZN-NOTFOUND-1
 source-data: "router.navigate('/')"
 ```
 <!-- /specrail:attrs -->
@@ -951,7 +951,7 @@ element-count: 2
 └──────────────────────────────────────────────────────────┘
 ```
 
-<!-- specrail:attrs id=ZN-ERROR -->
+<!-- specrail:attrs id=ZN-ERROR-1 -->
 ```yaml
 page: P-CC-500
 purpose: "uncaught 5xx 또는 client unhandled"
@@ -961,20 +961,20 @@ status: Approved
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-ERROR-RELOAD -->
+<!-- specrail:attrs id=E-CC-27 -->
 ```yaml
 status: Approved
 kind: button
-parent-zone: ZN-ERROR
+parent-zone: ZN-ERROR-1
 source-data: "window.location.reload()"
 ```
 <!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=E-CC-ERROR-LOG -->
+<!-- specrail:attrs id=E-CC-28 -->
 ```yaml
 status: Approved
 kind: button
-parent-zone: ZN-ERROR
+parent-zone: ZN-ERROR-1
 source-data: "clipboard.write(env-paths log path)"
 ```
 <!-- /specrail:attrs -->
@@ -1005,7 +1005,7 @@ blocking: false
 
 | Q ID | 질문 | 결정자 | Blocking? |
 |---|---|---|---|
-| OQ-7-1 | E-CC-CONFLICT-COMPARE 의 "open external diff tool" 가 실제로 가능? (browser 에서 native git mergetool 호출은 불가) — alternative: dashboard 안 내장 side-by-side diff view | maintainer | Y |
+| OQ-7-1 | E-CC-23 의 "open external diff tool" 가 실제로 가능? (browser 에서 native git mergetool 호출은 불가) — alternative: dashboard 안 내장 side-by-side diff view | maintainer | Y |
 | OQ-7-2 | W-CC-CMDK 의 cmd+k 가 OS 단축키와 충돌 (Spotlight)? Linux/Windows 는 ctrl+k 사용? | maintainer | N |
 
 ## 다음 phase 인풋
