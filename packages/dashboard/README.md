@@ -1,41 +1,74 @@
-# specrail dashboard
+# @specrail/dashboard
 
-Local OSS web app for viewing, relating, and AI-reviewing specrail 13-phase markdown specs.
+> Local web app for viewing, relating, and AI-reviewing the specrail 13-phase markdown spec.
 
-> **Status:** spec-complete (Phase 1-13 Approved), design-complete (DESIGN.md v0). Implementation not yet started. v0.1.0 ship plan in `docs/spec/13-implementation-plan.md`.
+Status: **v0.1.0** — first public release. Implementation milestones M0–M8 complete; visual design system ("Reading Room") applied per [`DESIGN.md`](./DESIGN.md).
 
-## What this is
+## Install + run
 
-A reading room for software specs. Phase markdown rendered with editorial typography, cross-reference IDs as click-jump links, graph view (React Flow + elkjs) for dependency exploration, unified issue inbox (plugin self-check + cross-phase deterministic + AI quality review), and direct edit mode with atomic write.
+```bash
+# From inside a specrail project (one with docs/spec/01-prd.md):
+npx -y @specrail/dashboard@^0.1 --project "$(pwd)"
 
-- **Local** (npx + localhost, no auth, single user)
-- **AI = Claude Code CLI** subprocess (no API key management)
-- **Multi-project registry** with `~/.specrail-dashboard/registry.json`
+# Open the printed URL (default: http://127.0.0.1:<random>/) in a browser.
+```
 
-PRD §10 of the specrail plugin reserved this as a separate cycle; this package is its implementation.
+Or, if you have the [`specrail`](https://www.npmjs.com/package/specrail) plugin installed in Claude Code:
 
-## Directory
+```text
+/specrail dashboard
+```
 
-| Path | Contents |
-|------|----------|
-| [`docs/spec/`](./docs/spec/) | 13-phase specrail spec — source of truth |
-| [`DESIGN.md`](./DESIGN.md) | Design system (codename "Reading Room") |
-| [`design/preview.html`](./design/preview.html) | Visual preview — open in browser |
-| [`CLAUDE.md`](./CLAUDE.md) | Working notes for AI agents |
-| [`tests/`](./tests/) | AC stubs (becomes real test suite during M0+) |
+## What it does
 
-## Spec snapshot
+| Feature | Screenshot path |
+|---------|------------------|
+| 13-phase markdown view with ID auto-linkify + hover-popover + click-jump | `design/preview.html` |
+| Cross-phase graph (React Flow + elkjs) with phase/kind/orphan/dangling filters + N-hop slider | (graph view) |
+| Issue inbox: plugin self-check + cross-phase deterministic checks + AI-quality review (3-tier with color-coded source chips) | (issues view) |
+| Edit mode (CodeMirror 6 + atomic write + mtime-guarded 409 conflict dialog) | (edit toggle) |
+| AI chat drawer with Claude Code CLI subprocess streaming + inline patch cards (accept/reject) | (chat drawer) |
+| Per-project SSE channel for file/issue/patch/ai events; file watcher (`docs/spec/`, `changes/` allowlist) | — |
+| Multi-project registry (`<env-paths>/registry.json`) | (project switcher) |
 
-- Phase 1 PRD — HOLD SCOPE, Spec-Driven Builder persona, 7 Non-Goals, 5 KPIs
-- Phase 3 Features — 6 R / 19 F / 52 S (43 P0 + 9 P1)
-- Phase 4 Domain — 8 ENT, 3 SM, 6 INV
-- Phase 8 Architecture — Vite SPA + Hono + core domain (hexagonal), Claude CLI subprocess, SQLite sessions
-- Phase 10 Test — 28 TC + 10 EDGE + 5 PT, 70/20/10 pyramid
-- Phase 12 — 9 ADRs (Boring by default, 2/3 innovation tokens), 9 RISKs
-- Phase 13 — 9 milestones (M0-M8), 36+ atomic tasks, ~53h AI-assisted
+## CLI flags
 
-Run `specrail check` from this directory to verify spec invariants.
+```text
+specrail-dashboard [options]
 
-## Status quo
+--project <path>       auto-register this project root
+--port <n>             HTTP port (0 = random free, default 0)
+--host <addr>          bind address (default 127.0.0.1)
+--no-open              don't auto-open browser
+--no-update-check      skip npm registry update ping at startup
+-h, --help             show help
+-v, --version          show version
+```
 
-Implementation lives in milestones M0 (monorepo migration) → M8 (npm distribution + plugin `/specrail dashboard` slash command). Before then this package is **spec + design only**. See `docs/spec/13-implementation-plan.md` for the sequence.
+## Architecture
+
+See [`docs/spec/08-system-architecture.md`](./docs/spec/08-system-architecture.md). High-level:
+
+- `@specrail/core` (pure domain, 0 fs/net/process imports) — frontmatter parse, patch apply, graph/checks/IDs.
+- `@specrail/dashboard/server` — Hono HTTP + SSE, adapters for filesystem (chokidar), Claude CLI (execa stream-json), registry, SQLite session store.
+- `@specrail/dashboard/web` — Vite + React 19 + TanStack Query + React Flow + CodeMirror 6.
+
+## Design
+
+["Reading Room"](./DESIGN.md): Fraunces (display) + Literata (body serif) + JetBrains Mono (mono IDs/code). Antique gold (#C9A961) sole accent. Warm dark mode default; parchment light mode toggle.
+
+## Security
+
+- 127.0.0.1 only by default; `--host=0.0.0.0` prints a warning and waits 5s before binding externally.
+- CSRF double-submit cookie on every mutation route (INV-CSRF-1).
+- Path allowlist limits server fs reads/writes to `<projectRoot>/docs/spec/` and `<projectRoot>/changes/` (INV-WATCH-1).
+- Subprocess spawns use `execa({ shell: false })` with `cwd = projectRoot` (INV-AI-1).
+- No external telemetry. No update auto-install. Hold the user in control.
+
+## Spec
+
+The dashboard is itself specified using specrail — [`docs/spec/`](./docs/spec/) contains all 13 phases (Approved). Run `specrail check` from this directory to verify spec invariants.
+
+## License
+
+MIT — see [LICENSE](./LICENSE).

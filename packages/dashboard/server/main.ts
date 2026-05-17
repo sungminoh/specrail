@@ -26,8 +26,4 @@ export async function start(opts: StartOptions = {}): Promise<{ url: string; clo
   });
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  start({ port: Number(process.env.PORT ?? 0) }).then(({ url }) => {
-    process.stdout.write(`specrail-dashboard listening on ${url}\n`);
-  });
-}
+// dev-mode entrypoint removed; use bin/specrail-dashboard.ts instead.
