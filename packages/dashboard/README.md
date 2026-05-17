@@ -1,13 +1,41 @@
-# specrail dashboard (product cycle, pre-implementation)
+# specrail dashboard
 
-이 디렉토리는 **specrail dashboard** 라는 별 product 의 13-phase spec 이 들어갈 자리입니다. PRD §10 에서 plugin cycle 과 분리·예고된 cycle.
+Local OSS web app for viewing, relating, and AI-reviewing specrail 13-phase markdown specs.
 
-## 현재 상태
+> **Status:** spec-complete (Phase 1-13 Approved), design-complete (DESIGN.md v0). Implementation not yet started. v0.1.0 ship plan in `docs/spec/13-implementation-plan.md`.
 
-- `docs/spec/` : 비어 있음. `specrail:orchestrator` 의 산출물이 채울 예정 (phase 01~13).
-- monorepo 구조는 아직 적용되지 않음. plugin source 는 여전히 repo root 의 `src/`, `skills/`, `schemas/` 등에 있음. monorepo migration 은 **dashboard 의 phase 13 implementation plan** 의 한 task 로 편입.
+## What this is
 
-## 입력 자료
+A reading room for software specs. Phase markdown rendered with editorial typography, cross-reference IDs as click-jump links, graph view (React Flow + elkjs) for dependency exploration, unified issue inbox (plugin self-check + cross-phase deterministic + AI quality review), and direct edit mode with atomic write.
 
-- `docs/superpowers/specs/2026-05-16-specrail-dashboard-design.md` — superpowers brainstorming 으로 작성된 사전 design 노트. **권위적 spec 이 아니라** phase 1 PRD 작성 시 input 재료.
-- `docs/spec/` (repo root) — specrail plugin 자체의 spec. dashboard PRD §2 (status quo) 참조.
+- **Local** (npx + localhost, no auth, single user)
+- **AI = Claude Code CLI** subprocess (no API key management)
+- **Multi-project registry** with `~/.specrail-dashboard/registry.json`
+
+PRD §10 of the specrail plugin reserved this as a separate cycle; this package is its implementation.
+
+## Directory
+
+| Path | Contents |
+|------|----------|
+| [`docs/spec/`](./docs/spec/) | 13-phase specrail spec — source of truth |
+| [`DESIGN.md`](./DESIGN.md) | Design system (codename "Reading Room") |
+| [`design/preview.html`](./design/preview.html) | Visual preview — open in browser |
+| [`CLAUDE.md`](./CLAUDE.md) | Working notes for AI agents |
+| [`tests/`](./tests/) | AC stubs (becomes real test suite during M0+) |
+
+## Spec snapshot
+
+- Phase 1 PRD — HOLD SCOPE, Spec-Driven Builder persona, 7 Non-Goals, 5 KPIs
+- Phase 3 Features — 6 R / 19 F / 52 S (43 P0 + 9 P1)
+- Phase 4 Domain — 8 ENT, 3 SM, 6 INV
+- Phase 8 Architecture — Vite SPA + Hono + core domain (hexagonal), Claude CLI subprocess, SQLite sessions
+- Phase 10 Test — 28 TC + 10 EDGE + 5 PT, 70/20/10 pyramid
+- Phase 12 — 9 ADRs (Boring by default, 2/3 innovation tokens), 9 RISKs
+- Phase 13 — 9 milestones (M0-M8), 36+ atomic tasks, ~53h AI-assisted
+
+Run `specrail check` from this directory to verify spec invariants.
+
+## Status quo
+
+Implementation lives in milestones M0 (monorepo migration) → M8 (npm distribution + plugin `/specrail dashboard` slash command). Before then this package is **spec + design only**. See `docs/spec/13-implementation-plan.md` for the sequence.

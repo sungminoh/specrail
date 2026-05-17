@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>specrail dashboard — Design Preview (Reading Room)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600;7..72,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root[data-theme="dark"] {
+    --bg: #0E0F11; --surface: #16181B; --surface-2: #1E2125;
+    --border: #2A2D31; --text: #E6E1D5; --text-mute: #8B8680; --text-dim: #5C5853;
+    --accent: #C9A961; --accent-mute: #6B5832;
+    --success: #65B98A; --warning: #D4A04E; --error: #D46B6B; --info: #6B9FD4;
+    --shadow: none;
+  }
+  :root[data-theme="light"] {
+    --bg: #F4F1EB; --surface: #EBE7DE; --surface-2: #DFDAD0;
+    --border: #C8C2B5; --text: #1A1A1A; --text-mute: #5A554F; --text-dim: #8A8580;
+    --accent: #8B6914; --accent-mute: #4A3808;
+    --success: #2F7F4E; --warning: #8A6118; --error: #9F3A3A; --info: #2D5C8A;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); }
+  body {
+    font-family: 'Literata', Georgia, serif;
+    font-feature-settings: 'tnum' 0;
+    font-size: 15px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .display, h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; font-weight: 500; letter-spacing: -0.01em; }
+  .mono, code, pre { font-family: 'JetBrains Mono', ui-monospace, monospace; font-feature-settings: 'tnum'; font-size: 0.92em; }
+  h1 { font-size: 32px; line-height: 1.2; margin: 0 0 8px; font-variation-settings: 'opsz' 80, 'SOFT' 30; }
+  h2 { font-size: 22px; line-height: 1.3; margin: 32px 0 12px; font-variation-settings: 'opsz' 40; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  h3 { font-size: 16px; line-height: 1.3; margin: 24px 0 8px; color: var(--text); }
+  .layout { max-width: 1280px; margin: 0 auto; padding: 32px 40px 80px; }
+  .toggle { position: fixed; top: 16px; right: 24px; background: var(--surface); color: var(--text); border: 1px solid var(--border); padding: 6px 12px; border-radius: 2px; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.04em; }
+  .toggle:hover { background: var(--surface-2); }
+  .hero { padding: 48px 0 64px; border-bottom: 1px solid var(--border); }
+  .hero .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
+  .hero .thesis { font-family: 'Fraunces', Georgia, serif; font-size: 19px; line-height: 1.5; max-width: 720px; color: var(--text-mute); margin-top: 16px; font-style: italic; font-variation-settings: 'opsz' 24, 'SOFT' 50; }
+  .meta { display: flex; gap: 32px; margin-top: 24px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); }
+  .meta span b { color: var(--text-mute); font-weight: 500; margin-right: 6px; }
+
+  /* Typography specimens */
+  .spec { background: var(--surface); border: 1px solid var(--border); padding: 24px 28px; margin: 16px 0; }
+  .spec .role { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+  .spec .name { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-mute); margin-bottom: 18px; }
+  .spec-display { font-family: 'Fraunces', Georgia, serif; font-size: 40px; line-height: 1.1; font-weight: 500; font-variation-settings: 'opsz' 144, 'SOFT' 30, 'wonk' 1; }
+  .spec-body { font-family: 'Literata', Georgia, serif; font-size: 16px; line-height: 1.65; max-width: 640px; }
+  .spec-body .id { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: var(--accent); border-bottom: 1px dotted var(--accent-mute); cursor: pointer; padding: 0 2px; }
+  .spec-mono { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; color: var(--text); }
+  .spec-mono .key { color: var(--info); }
+  .spec-mono .val { color: var(--text); }
+  .spec-mono .com { color: var(--text-dim); }
+
+  /* Palette swatches */
+  .palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+  .sw { background: var(--surface); border: 1px solid var(--border); padding: 12px 14px; }
+  .sw .chip { width: 100%; height: 56px; margin-bottom: 10px; border: 1px solid var(--border); }
+  .sw .name { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text); }
+  .sw .hex { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+
+  /* Components */
+  .btn { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.04em; padding: 8px 14px; border-radius: 2px; cursor: pointer; border: 1px solid var(--border); }
+  .btn-primary { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+  .btn-primary:hover { background: var(--accent-mute); color: var(--text); }
+  .btn-secondary { background: var(--surface); color: var(--text); }
+  .btn-secondary:hover { background: var(--surface-2); }
+  .btn-ghost { background: transparent; color: var(--text-mute); border-color: transparent; }
+  .btn-ghost:hover { color: var(--text); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+  .input { font-family: 'JetBrains Mono', monospace; font-size: 13px; background: var(--surface); color: var(--text); border: 1px solid var(--border); padding: 8px 12px; border-radius: 2px; width: 320px; }
+  .input:focus { outline: none; border-color: var(--accent); }
+  .alert { padding: 12px 16px; border-left: 2px solid; background: var(--surface); margin: 8px 0; font-size: 13px; display: flex; gap: 12px; align-items: flex-start; }
+  .alert .dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+  .alert.s { border-color: var(--success); } .alert.s .dot { background: var(--success); }
+  .alert.w { border-color: var(--warning); } .alert.w .dot { background: var(--warning); }
+  .alert.e { border-color: var(--error); } .alert.e .dot { background: var(--error); }
+  .alert.i { border-color: var(--info); } .alert.i .dot { background: var(--info); }
+
+  /* Dashboard mockup */
+  .mock { display: grid; grid-template-columns: 200px 1fr 280px; border: 1px solid var(--border); background: var(--surface); height: 540px; overflow: hidden; }
+  .mock-side { background: var(--bg); border-right: 1px solid var(--border); padding: 18px 0; overflow-y: auto; }
+  .mock-side .sec { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; padding: 14px 18px 6px; }
+  .mock-side .ph { display: flex; align-items: baseline; gap: 10px; padding: 5px 18px; cursor: pointer; border-left: 2px solid transparent; font-size: 13px; color: var(--text-mute); }
+  .mock-side .ph:hover { color: var(--text); }
+  .mock-side .ph.active { color: var(--text); border-left-color: var(--accent); background: var(--surface); }
+  .mock-side .ph .num { font-family: 'Fraunces', Georgia, serif; font-style: italic; font-size: 11px; color: var(--text-dim); width: 18px; font-variation-settings: 'opsz' 24; }
+  .mock-side .ph .label { font-family: 'Literata', serif; }
+  .mock-side .ph .st { width: 4px; height: 4px; border-radius: 50%; margin-left: auto; }
+  .mock-side .ph .st.ok { background: var(--success); }
+  .mock-side .ph .st.warn { background: var(--warning); }
+  .mock-side .ph .st.err { background: var(--error); }
+
+  .mock-main { padding: 22px 28px; overflow-y: auto; background: var(--surface); }
+  .mock-main .top { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+  .mock-main .title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500; font-variation-settings: 'opsz' 36; }
+  .mock-main .title .pn { color: var(--text-dim); font-style: italic; margin-right: 12px; }
+  .mock-main .topmeta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.05em; }
+  .mock-main .topmeta .stat-ok { color: var(--success); }
+  .mock-main h3.h { font-family: 'Fraunces', serif; font-size: 17px; margin: 18px 0 6px; }
+  .mock-main p { margin: 0 0 14px; max-width: 64ch; }
+  .mock-main .id { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: var(--accent); border-bottom: 1px dotted var(--accent-mute); padding: 0 2px; }
+  .mock-main pre { background: var(--bg); border: 1px solid var(--border); padding: 12px 14px; margin: 8px 0 16px; overflow-x: auto; font-size: 11px; line-height: 1.55; }
+  .mock-main pre .key { color: var(--info); } .mock-main pre .val { color: var(--text); } .mock-main pre .com { color: var(--text-dim); }
+
+  .mock-draw { background: var(--bg); border-left: 1px solid var(--border); overflow-y: auto; }
+  .mock-draw .tabs { display: flex; border-bottom: 1px solid var(--border); }
+  .mock-draw .tabs button { flex: 1; background: transparent; border: 0; padding: 10px 0; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--text-dim); text-transform: uppercase; cursor: pointer; border-bottom: 1px solid transparent; }
+  .mock-draw .tabs button.on { color: var(--accent); border-bottom-color: var(--accent); }
+  .mock-draw .iss { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .mock-draw .iss .src { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 1px 6px; letter-spacing: 0.06em; margin-right: 6px; }
+  .mock-draw .iss .src.plug { background: var(--surface-2); color: var(--text-mute); }
+  .mock-draw .iss .src.cross { background: rgba(107, 159, 212, 0.15); color: var(--info); }
+  .mock-draw .iss .src.ai { background: rgba(201, 169, 97, 0.12); color: var(--accent); }
+  .mock-draw .iss .sev { color: var(--warning); margin-right: 6px; }
+  .mock-draw .iss .msg { color: var(--text); line-height: 1.5; margin-top: 4px; }
+  .mock-draw .iss .ref { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); margin-top: 6px; }
+
+  /* Graph mockup */
+  .graph-mock { background: var(--surface); border: 1px solid var(--border); padding: 20px; position: relative; height: 280px; overflow: hidden; }
+  .gnode { position: absolute; padding: 6px 12px; border: 1px solid var(--border); background: var(--bg); font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text); }
+  .gnode.r { color: var(--accent); border-color: var(--accent-mute); }
+  .gnode.f { color: var(--info); }
+  .gnode.s { color: var(--text-mute); }
+  .gnode.nfr { color: var(--success); }
+  .ge { position: absolute; height: 1px; background: var(--border); transform-origin: 0 0; }
+
+  /* Edit mock */
+  .edit-mock { display: grid; grid-template-columns: 1fr 280px; border: 1px solid var(--border); background: var(--surface); height: 320px; }
+  .edit-cm { padding: 16px 18px; background: var(--bg); border-right: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6; overflow-y: auto; }
+  .edit-cm .ln { color: var(--text-dim); display: inline-block; width: 28px; text-align: right; margin-right: 12px; font-variant-numeric: tabular-nums; }
+  .edit-cm .h { color: var(--accent); }
+  .edit-cm .b { color: var(--text); font-weight: 600; }
+  .edit-form { padding: 16px 18px; }
+  .edit-form label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px; margin-top: 14px; }
+  .edit-form label:first-child { margin-top: 0; }
+  .edit-form input, .edit-form select { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--bg); color: var(--text); border: 1px solid var(--border); padding: 6px 10px; width: 100%; border-radius: 2px; }
+  .edit-form input:focus, .edit-form select:focus { outline: none; border-color: var(--accent); }
+
+  .grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .small { font-size: 12px; color: var(--text-mute); }
+  .footer { text-align: left; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em; padding-top: 48px; border-top: 1px solid var(--border); margin-top: 48px; }
+</style>
+</head>
+<body>
+<button class="toggle" onclick="toggle()">DARK / LIGHT</button>
+<div class="layout">
+
+  <header class="hero">
+    <div class="eyebrow">DESIGN SYSTEM · v0</div>
+    <h1>specrail dashboard</h1>
+    <p class="thesis">A reading room for software specs — editorial typography meets instrument-grade precision. The information density of a dashboard, the legibility of a book.</p>
+    <div class="meta">
+      <span><b>AESTHETIC</b>Editorial × Industrial</span>
+      <span><b>DENSITY</b>Comfortable</span>
+      <span><b>MOTION</b>Minimal-functional</span>
+      <span><b>ACCENT</b>Antique gold</span>
+    </div>
+  </header>
+
+  <h2>Typography</h2>
+  <div class="spec">
+    <div class="role">Display · phase heading · top bar</div>
+    <div class="name">Fraunces — Google Fonts (variable: opsz, SOFT, wonk)</div>
+    <div class="spec-display">Phase 03 — Features</div>
+  </div>
+  <div class="spec">
+    <div class="role">Body · markdown prose · descriptions</div>
+    <div class="name">Literata — Google Fonts (variable: opsz)</div>
+    <div class="spec-body">사용자가 phase 13 task <span class="id">T13.7</span> 를 정의하다가 그 task 가 어떤 NFR 을 만족하는지 추적해야 한다. Dashboard 의 phase view 에서 ID <span class="id">NFR-PERF-2</span> 를 클릭하면 정의처로 즉시 점프하고, 우측 Refs 탭에 in/out refs 가 표시된다. The information density of a dashboard, the legibility of a book.</div>
+  </div>
+  <div class="spec">
+    <div class="role">Mono · IDs · code · tables · CodeMirror</div>
+    <div class="name">JetBrains Mono — Google Fonts</div>
+    <div class="spec-mono">
+<span class="com"># frontmatter</span><br>
+<span class="key">phase:</span> <span class="val">3</span><br>
+<span class="key">status:</span> <span class="val">Approved</span><br>
+<span class="key">mode:</span> <span class="val">HOLD_SCOPE</span><br>
+<span class="com"># IDs render with tnum: R1 → F1.2 → S1.2.3 → NFR-PERF-2</span>
+    </div>
+  </div>
+
+  <h2>Color — Dark mode (primary)</h2>
+  <div class="palette">
+    <div class="sw"><div class="chip" style="background:#0E0F11"></div><div class="name">bg</div><div class="hex">#0E0F11</div></div>
+    <div class="sw"><div class="chip" style="background:#16181B"></div><div class="name">surface</div><div class="hex">#16181B</div></div>
+    <div class="sw"><div class="chip" style="background:#1E2125"></div><div class="name">surface-2</div><div class="hex">#1E2125</div></div>
+    <div class="sw"><div class="chip" style="background:#2A2D31"></div><div class="name">border</div><div class="hex">#2A2D31</div></div>
+    <div class="sw"><div class="chip" style="background:#E6E1D5"></div><div class="name">text</div><div class="hex">#E6E1D5</div></div>
+    <div class="sw"><div class="chip" style="background:#8B8680"></div><div class="name">text-mute</div><div class="hex">#8B8680</div></div>
+    <div class="sw"><div class="chip" style="background:#5C5853"></div><div class="name">text-dim</div><div class="hex">#5C5853</div></div>
+    <div class="sw"><div class="chip" style="background:#C9A961"></div><div class="name">accent · gold</div><div class="hex">#C9A961</div></div>
+    <div class="sw"><div class="chip" style="background:#65B98A"></div><div class="name">success</div><div class="hex">#65B98A</div></div>
+    <div class="sw"><div class="chip" style="background:#D4A04E"></div><div class="name">warning</div><div class="hex">#D4A04E</div></div>
+    <div class="sw"><div class="chip" style="background:#D46B6B"></div><div class="name">error</div><div class="hex">#D46B6B</div></div>
+    <div class="sw"><div class="chip" style="background:#6B9FD4"></div><div class="name">info</div><div class="hex">#6B9FD4</div></div>
+  </div>
+
+  <h2>Components</h2>
+  <div class="row">
+    <button class="btn btn-primary">Run AI review</button>
+    <button class="btn btn-secondary">Edit</button>
+    <button class="btn btn-ghost">cancel</button>
+    <input class="input" placeholder="cmd+k — search phase or ID">
+  </div>
+  <div class="alert s"><span class="dot"></span><span><b class="mono" style="color:var(--success)">PASS</b> · specrail check — 13 phases, 0 errors. <span class="mono" style="color:var(--text-dim)">last run 14:32</span></span></div>
+  <div class="alert w"><span class="dot"></span><span><b class="mono" style="color:var(--warning)">WARN</b> · <span class="mono">NFR-12</span> has no measurable acceptance criterion — suggest patch available</span></div>
+  <div class="alert e"><span class="dot"></span><span><b class="mono" style="color:var(--error)">ERROR</b> · <span class="mono">F1.2</span> references <span class="mono">R3</span> which is not defined in phase 01</span></div>
+  <div class="alert i"><span class="dot"></span><span><b class="mono" style="color:var(--info)">INFO</b> · Phase 5 status=Draft but referenced as Approved in phase 13</span></div>
+
+  <h2>Mockup — Phase view (P-CC-4 / W-CC-PHASE)</h2>
+  <div class="mock">
+    <aside class="mock-side">
+      <div class="sec">Phases</div>
+      <div class="ph"><span class="num">01</span><span class="label">PRD</span><span class="st ok"></span></div>
+      <div class="ph"><span class="num">02</span><span class="label">Personas</span><span class="st ok"></span></div>
+      <div class="ph active"><span class="num">03</span><span class="label">Features</span><span class="st warn"></span></div>
+      <div class="ph"><span class="num">04</span><span class="label">Domain</span><span class="st ok"></span></div>
+      <div class="ph"><span class="num">05</span><span class="label">User Flow</span><span class="st ok"></span></div>
+      <div class="ph"><span class="num">06</span><span class="label">IA</span><span class="st ok"></span></div>
+      <div class="ph"><span class="num">07</span><span class="label">Wireframe</span><span class="st ok"></span></div>
+      <div class="ph"><span class="num">08</span><span class="label">Architecture</span><span class="st ok"></span></div>
+      <div class="ph"><span class="num">09</span><span class="label">NFR</span><span class="st err"></span></div>
+      <div class="ph"><span class="num">10</span><span class="label">Test</span><span class="st ok"></span></div>
+      <div class="ph"><span class="num">11</span><span class="label">Operations</span><span class="st ok"></span></div>
+      <div class="ph"><span class="num">12</span><span class="label">ADR · Risks</span><span class="st ok"></span></div>
+      <div class="ph"><span class="num">13</span><span class="label">Impl plan</span><span class="st ok"></span></div>
+      <div class="sec">Sources</div>
+      <div class="ph"><span class="num">·</span><span class="label">Changes</span></div>
+      <div class="ph"><span class="num">·</span><span class="label">Issues</span><span class="st warn"></span></div>
+    </aside>
+    <section class="mock-main">
+      <div class="top">
+        <div class="title"><span class="pn">Phase 03 —</span>Features</div>
+        <div class="topmeta">status <span class="stat-ok">Approved</span> · v1.0 · mtime 2026-05-17 14:32</div>
+      </div>
+      <h3 class="h">R1 — Spec view & navigation</h3>
+      <p>사용자가 13 phase markdown 을 브라우저에서 자연스럽게 읽고 이동. 해결하는 PAIN: <span class="id">PAIN-2</span> (ctrl-F 반복), <span class="id">PAIN-CONTEXT-1</span> (context 재구성). 해결하는 시나리오: <span class="id">SCEN-1</span> (전 단계).</p>
+      <pre><span class="com">&lt;!-- specrail:attrs id=R1 --&gt;</span>
+<span class="key">status:</span> <span class="val">Approved</span>
+<span class="key">importance:</span> <span class="val">P0</span>
+<span class="key">owner:</span> <span class="val">PERSONA-1</span>
+<span class="key">solves-pains:</span> <span class="val">[PAIN-2, PAIN-CONTEXT-1]</span></pre>
+      <h3 class="h">F1.1 — Phase view (read mode)</h3>
+      <p>Markdown 본문 + frontmatter 를 렌더. 의존 <span class="id">R1</span>, parent <span class="id">F1.2</span>. AC: <span class="id">AC-R1-1</span>, <span class="id">AC-R1-2</span>.</p>
+    </section>
+    <aside class="mock-draw">
+      <div class="tabs">
+        <button class="on">Issues 3</button>
+        <button>Chat</button>
+        <button>Refs</button>
+      </div>
+      <div class="iss">
+        <div><span class="src ai">ai-quality</span><span class="sev">▲</span><span class="mono" style="color:var(--text-mute)">NFR-12</span></div>
+        <div class="msg">측정 단위가 없습니다. <span class="mono" style="color:var(--accent)">unit</span> 필드가 비어있어 "performance metric" 만으로는 검증 불가.</div>
+        <div class="ref">phase 09 · line 47 · ▸ suggested patch</div>
+      </div>
+      <div class="iss">
+        <div><span class="src cross">cross-phase</span><span class="sev" style="color:var(--error)">✖</span><span class="mono" style="color:var(--text-mute)">F1.2 → R3</span></div>
+        <div class="msg">F1.2 references R3 which is not defined in phase 01.</div>
+        <div class="ref">phase 03 · line 88</div>
+      </div>
+      <div class="iss">
+        <div><span class="src plug">plugin-self-check</span><span class="sev">▲</span><span class="mono" style="color:var(--text-mute)">attrs-completeness</span></div>
+        <div class="msg">3 entities missing required attrs field.</div>
+        <div class="ref">phase 04 · 2 locations</div>
+      </div>
+    </aside>
+  </div>
+
+  <h2>Mockup — Graph view (P-CC-5 / W-CC-GRAPH)</h2>
+  <div class="graph-mock">
+    <div class="gnode r" style="top:120px; left:40px;">R1</div>
+    <div class="gnode f" style="top:60px; left:160px;">F1.1</div>
+    <div class="gnode f" style="top:120px; left:160px;">F1.2</div>
+    <div class="gnode f" style="top:180px; left:160px;">F1.4</div>
+    <div class="gnode s" style="top:40px; left:300px;">S1.1.1</div>
+    <div class="gnode s" style="top:80px; left:300px;">S1.1.2</div>
+    <div class="gnode s" style="top:120px; left:300px;">S1.2.1</div>
+    <div class="gnode s" style="top:160px; left:300px;">S1.2.2</div>
+    <div class="gnode nfr" style="top:90px; left:480px;">NFR-PERF-1</div>
+    <div class="gnode nfr" style="top:140px; left:480px;">NFR-PERF-3</div>
+    <div class="gnode" style="top:120px; left:640px; color: var(--info);">TC-1</div>
+    <div class="gnode" style="top:170px; left:640px; color: var(--info);">TC-3</div>
+    <div style="position:absolute; bottom:14px; right:18px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-dim); letter-spacing:0.06em;">
+      filter: 1-hop · 12 nodes · 200ms reflow
+    </div>
+  </div>
+
+  <h2>Mockup — Edit mode (P-CC-7 / W-CC-EDIT)</h2>
+  <div class="edit-mock">
+    <div class="edit-cm">
+      <div><span class="ln">12</span>### F1.2: <span class="b">ID auto-linkify + hover preview</span></div>
+      <div><span class="ln">13</span></div>
+      <div><span class="ln">14</span><span class="h">**Description:**</span> 본문의 R/F/S/NFR/… ID 를 자동 link, hover popover, click jump.</div>
+      <div><span class="ln">15</span><span class="h">**Importance:**</span> P0</div>
+      <div><span class="ln">16</span><span class="h">**Status:**</span> Approved (해결: PAIN-2)</div>
+      <div><span class="ln">17</span></div>
+      <div><span class="ln">18</span>#### S1.2.1: ID 정규식 detect + index 구축</div>
+      <div><span class="ln">19</span></div>
+      <div><span class="ln">20</span>&lt;!-- specrail:attrs id=S1.2.1 --&gt;</div>
+      <div><span class="ln">21</span>```yaml</div>
+      <div><span class="ln">22</span><span class="h">status:</span> Approved</div>
+      <div><span class="ln">23</span><span class="h">parent-f:</span> F1.2</div>
+      <div><span class="ln">24</span>```</div>
+    </div>
+    <div class="edit-form">
+      <label>phase</label><input value="3" readonly>
+      <label>status</label><select><option>Draft</option><option selected>Approved</option><option>Implementing</option></select>
+      <label>mode</label><select><option selected>HOLD_SCOPE</option><option>EXPANSION</option><option>SELECTIVE</option><option>REDUCTION</option></select>
+      <label>version</label><input value="1.0">
+      <div class="row" style="margin-top:18px;">
+        <button class="btn btn-primary" style="font-size:11px; padding:6px 12px;">cmd+s save</button>
+      </div>
+    </div>
+  </div>
+
+  <h2>Light mode</h2>
+  <p class="small">Click "DARK / LIGHT" top-right to see the parchment treatment. Same hue family, 20% darker accent for contrast (#8B6914).</p>
+
+  <h2>Anti-slop confirmed</h2>
+  <div class="grid-two">
+    <div class="spec">
+      <div class="role">Avoided</div>
+      <ul style="margin:0; padding-left:20px; font-size:13px; line-height:1.8;">
+        <li>Purple/violet gradients (gold solid only)</li>
+        <li>3-column icon grid (numbered list sidebar)</li>
+        <li>Centered everything (left-anchored, asymmetric)</li>
+        <li>Decorative blobs (hairline borders only)</li>
+        <li>Gradient CTAs (solid accent fill)</li>
+        <li>Generic stock-photo hero (no images at all)</li>
+      </ul>
+    </div>
+    <div class="spec">
+      <div class="role">Deliberate risks vs category</div>
+      <ul style="margin:0; padding-left:20px; font-size:13px; line-height:1.8;">
+        <li><b>Serif body</b> instead of sans — spec body is read 80% of session, serif aids long-form prose</li>
+        <li><b>Antique gold accent</b> instead of indigo/purple — zero dev tools use gold, instant brand</li>
+        <li>Sidebar as numbered manifest, not icon strip — Fraunces italic for phase numbers</li>
+        <li>ID popovers borderless with 1px top gold rule — instrument readout aesthetic</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="footer">specrail dashboard · design system "Reading Room" · v0 preview · /tmp/dc-preview.html</p>
+</div>
+
+<script>
+  function toggle() {
+    const r = document.documentElement;
+    r.setAttribute('data-theme', r.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  }
+</script>
+</body>
+</html>
