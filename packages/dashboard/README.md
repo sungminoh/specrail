@@ -44,7 +44,7 @@ Path to `0.1.0` (full release) requires closing these:
 
 - **Inline rewrite UI** (AC-R4-3): backend `runInline` is wired; floating menu on text selection not yet built.
 - **Plugin self-check production path** (F3.1): currently resolves to a monorepo sibling `../plugin/src/bin/specrail.ts`; falls back to a `specrail` PATH lookup. Installed-user case (npm-shipped) silently produces no plugin findings — only `cross-phase` and `ai-quality` sources appear. Cross-phase deterministic checks (the more important half) work.
-- **Playwright e2e suite**: server has 19 integration tests; UI has no automated browser coverage in alpha.
+- **Playwright e2e suite**: server has 33 unit + integration tests (parseEvent + watcher + ai + issues-patches + integration); UI has no automated browser coverage in alpha.
 - **AC stubs in `tests/_ac-stubs.test.ts`**: 10 `it.todo` placeholders awaiting real test implementations.
 - **NFR-PERF bench coverage**: Only NFR-PERF-2 (graph nHop) is benched (real 500-node hub-and-spoke, hop=99, ≤200ms median). PERF-1/3/4/5 have no automated benches yet.
 - **Session/proposal/issue persistence**: in-memory `Map`s; restart clears them.

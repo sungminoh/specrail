@@ -29,7 +29,7 @@ First public pre-release. Backend skeleton + partial UI. Not feature-complete ve
 
 - **Inline rewrite UI** (AC-R4-3): Backend `runInline` is wired; floating menu on text selection not yet built.
 - **Plugin self-check production path** (F3.1): Hardcoded to monorepo sibling path; needs npm package resolution for installed users. Falls back to PATH lookup which usually fails silently. Cross-phase deterministic half works.
-- **Playwright e2e suite** (Phase 13 §14 Done): Not implemented in alpha. Server has 19 integration tests; UI integration is dogfood-only.
+- **Playwright e2e suite** (Phase 13 §14 Done): Not implemented in alpha. Server has 33 unit + integration tests (+10 AC stubs as `it.todo`); UI integration is dogfood-only.
 - **AC stubs in `tests/_ac-stubs.test.ts`**: 10 `it.todo` placeholders waiting on real test implementations.
 - **Bench gates for NFR-PERF-1/3/4/5**: Only NFR-PERF-2 (graph nhop) is benched (real 500-node hub-and-spoke + chain, hop=99, ≤200ms median).
 - **Session/proposal/issue persistence**: Sessions, proposals, and issue caches are in-memory `Map`s; restart clears them.
