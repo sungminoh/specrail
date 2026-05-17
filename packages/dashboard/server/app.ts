@@ -1,5 +1,9 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { serveStatic } from '@hono/node-server/serve-static';
+import { existsSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { csrf, csrfTokenFor } from './middleware/csrf.js';
 import { projectsRoutes } from './routes/projects.js';
 import { phasesRoutes } from './routes/phases.js';
@@ -22,6 +26,8 @@ export interface AppDeps {
   watchers?: WatcherManager;
   /** Inject a fake CLI for tests. */
   claudeCli?: ClaudeCli;
+  /** Override dist/web/ path. Defaults to <bundle-dir>/../web. */
+  webRoot?: string;
 }
 
 export function buildApp(deps: AppDeps): Hono {
@@ -45,7 +51,30 @@ export function buildApp(deps: AppDeps): Hono {
   app.route('/api/projects', graphRoutes(projects));
   app.route('/api/projects', eventsRoutes(watchers));
 
+  // Serve the Vite-built SPA in production. dist/bin/ is the bundle location,
+  // dist/web/ is alongside (see build/esbuild.mjs + vite outDir).
+  const webRoot = resolveWebRoot(deps.webRoot);
+  if (webRoot && existsSync(webRoot)) {
+    app.use('/assets/*', serveStatic({ root: webRoot, rewriteRequestPath: (p) => p }));
+    // SPA fallback: any non-API GET returns index.html so the client router handles it.
+    app.get('*', serveStatic({ path: 'index.html', root: webRoot }));
+  }
+
   return app;
+}
+
+function resolveWebRoot(override?: string): string | null {
+  if (override) return override;
+  try {
+    const here = dirname(fileURLToPath(import.meta.url));
+    // Bundled: dist/bin/specrail-dashboard.js → dist/web/
+    const bundledWeb = resolve(here, '../web');
+    if (existsSync(bundledWeb)) return bundledWeb;
+    // Dev: server/app.ts running via tsx — no static; rely on vite dev server.
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 export type App = ReturnType<typeof buildApp>;
