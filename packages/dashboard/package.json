@@ -27,8 +27,10 @@
     "e2e": "playwright test"
   },
   "dependencies": {
+    "@codemirror/commands": "^6.10.3",
     "@codemirror/lang-markdown": "^6.3.0",
     "@codemirror/lang-yaml": "^6.1.0",
+    "@codemirror/language": "^6.12.3",
     "@codemirror/state": "^6.4.0",
     "@codemirror/view": "^6.34.0",
     "@hono/node-server": "^2.0.2",

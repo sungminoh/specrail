@@ -6,15 +6,18 @@ import { phasesRoutes } from './routes/phases.js';
 import { eventsRoutes } from './routes/events.js';
 import { ProjectsService } from './services/projects.js';
 import { PhasesService } from './services/phases.js';
+import { WatcherManager } from './services/watcher-manager.js';
 import { RegistryAdapter } from './adapters/registry.js';
 
 export interface AppDeps {
   registry: RegistryAdapter;
+  watchers?: WatcherManager;
 }
 
 export function buildApp(deps: AppDeps): Hono {
   const projects = new ProjectsService(deps.registry);
   const phases = new PhasesService(projects);
+  const watchers = deps.watchers ?? new WatcherManager(projects);
 
   const app = new Hono();
   app.use('*', cors({ origin: 'http://127.0.0.1:0', credentials: true }));
@@ -23,7 +26,7 @@ export function buildApp(deps: AppDeps): Hono {
   app.get('/api/health', (c) => c.json({ ok: true, csrf: csrfTokenFor(c) }));
   app.route('/api/projects', projectsRoutes(projects));
   app.route('/api/projects', phasesRoutes(phases));
-  app.route('/api/projects', eventsRoutes());
+  app.route('/api/projects', eventsRoutes(watchers));
 
   return app;
 }

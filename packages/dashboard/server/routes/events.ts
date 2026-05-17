@@ -2,14 +2,16 @@
 import { Hono } from 'hono';
 import { bus, type PublishedEvent } from '../adapters/event-bus.js';
 import { streamSSE } from 'hono/streaming';
+import type { WatcherManager } from '../services/watcher-manager.js';
 
-export function eventsRoutes(): Hono {
+export function eventsRoutes(watchers: WatcherManager): Hono {
   const r = new Hono();
 
   r.get('/:id/events', async (c) => {
     const id = c.req.param('id');
     const lastEventIdHeader = c.req.header('Last-Event-ID');
     const lastEventId = lastEventIdHeader ? Number(lastEventIdHeader) : 0;
+    await watchers.ensure(id);
     return streamSSE(c, async (stream) => {
       await stream.writeSSE({ event: 'open', data: JSON.stringify({ projectId: id, ts: Date.now() }) });
       for (const replay of bus.catchUp(id, lastEventId)) {
