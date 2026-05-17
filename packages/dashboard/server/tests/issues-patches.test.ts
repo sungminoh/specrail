@@ -124,6 +124,45 @@ describe('Patch lifecycle', () => {
     expect(updated.body).toContain('R3');
   });
 
+  it('patch-accept with stale mtime returns 409 PatchConflictError (INV-PATCH-2 on patch path)', async () => {
+    // 1. Create a proposal anchored to current mtime.
+    const phaseRes = await app.request(`/api/projects/${projectId}/phases/1`, { headers: { Cookie: cookieHeader } });
+    const phase = await phaseRes.json();
+    const createRes = await app.request(`/api/projects/${projectId}/patches`, {
+      method: 'POST',
+      headers: mutHeaders(),
+      body: JSON.stringify({
+        origin: 'issue-fix',
+        phase: 1,
+        hunks: [{ before: 'R1 and R2 are the goals.', after: 'R1, R2 (changed by patch) are the goals.' }],
+        rationale: '',
+        basedOnMtimeMs: phase.mtimeMs,
+      }),
+    });
+    expect(createRes.status).toBe(201);
+    const proposal = await createRes.json();
+    // 2. Simulate concurrent external write that bumps mtime past basedOnMtimeMs.
+    const { writeFile } = await import('node:fs/promises');
+    const { join } = await import('node:path');
+    await new Promise((r) => setTimeout(r, 30)); // ensure mtime increment
+    await writeFile(
+      join(projectRoot, 'docs/spec/01-prd.md'),
+      `---\nphase: 1\nstatus: Approved\n---\n# PRD\nExternally modified after the patch was proposed.\nR1 and R2 are the goals.\n`,
+    );
+    // 3. Accept should now fail with 409.
+    const acceptRes = await app.request(`/api/projects/${projectId}/patches/${proposal.id}/accept`, {
+      method: 'POST',
+      headers: mutHeaders(),
+    });
+    expect(acceptRes.status).toBe(409);
+    // 4. Proposal status moves to 'stale' (not 'accepted').
+    const getRes = await app.request(`/api/projects/${projectId}/patches/${proposal.id}`, {
+      headers: { Cookie: cookieHeader },
+    });
+    const updated = await getRes.json();
+    expect(updated.status).toBe('stale');
+  });
+
   it('reject moves status to rejected without touching file', async () => {
     const phaseRes = await app.request(`/api/projects/${projectId}/phases/1`, { headers: { Cookie: cookieHeader } });
     const phase = await phaseRes.json();

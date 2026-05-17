@@ -55,17 +55,37 @@ describe('nHop', () => {
     expect(sub.edges).toHaveLength(2);
   });
 
-  it('handles 500-node graph within budget', () => {
+  it('NFR-PERF-2 — nHop traverses ALL 500 nodes in dense graph within 200ms (3-run median)', () => {
     const phases: Phase[] = [];
     const ids: string[] = [];
     for (let i = 1; i <= 500; i++) ids.push(`S1.1.${i}`);
-    phases.push(mkPhase(3, ids, ids.slice(1).map((id, idx) => [id, ids[idx]!, idx + 1])));
+    // Hub-and-spoke: id[0] (hub) connects to every other id. Every id is reachable in 1 hop.
+    // Then add chain among non-hub ids for branching depth.
+    const refs: Array<[string, string, number]> = [];
+    for (let i = 1; i < ids.length; i++) {
+      refs.push([ids[i]!, ids[0]!, i]); // i → hub
+    }
+    // additional chain: i → i+1 (creates branching factor)
+    for (let i = 1; i + 1 < ids.length; i++) {
+      refs.push([ids[i]!, ids[i + 1]!, i + 1000]);
+    }
+    phases.push(mkPhase(3, ids, refs));
     const g = buildGraph(phases, classifyKind);
-    const t0 = performance.now();
-    const sub = nHop(g, ids[0]!, 3);
-    const dt = performance.now() - t0;
-    expect(sub.nodes.length).toBeGreaterThan(1);
-    expect(dt).toBeLessThan(200);
+    // 3-run median to smooth CPU jitter on CI.
+    const samples: number[] = [];
+    let lastSub: ReturnType<typeof nHop> | null = null;
+    for (let run = 0; run < 3; run++) {
+      const t0 = performance.now();
+      // hop=99 → BFS exhausts the whole reachable component.
+      lastSub = nHop(g, ids[0]!, 99);
+      samples.push(performance.now() - t0);
+    }
+    samples.sort((a, b) => a - b);
+    const median = samples[1]!;
+    expect(lastSub).not.toBeNull();
+    // Must cover ALL nodes (not just neighbors of seed).
+    expect(lastSub!.nodes).toHaveLength(500);
+    expect(median).toBeLessThan(200);
   });
 });
 

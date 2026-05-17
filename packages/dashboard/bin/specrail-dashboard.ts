@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // npx entrypoint for @specrail/dashboard.
-import { resolve } from 'node:path';
+import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import open from 'open';
 import { start } from '../server/main.js';
 import { RegistryAdapter } from '../server/adapters/registry.js';
@@ -11,7 +13,6 @@ interface Args {
   port?: number;
   host?: string;
   noOpen?: boolean;
-  noUpdateCheck?: boolean;
   help?: boolean;
   version?: boolean;
 }
@@ -23,7 +24,6 @@ function parseArgs(argv: string[]): Args {
     if (a === '--help' || a === '-h') args.help = true;
     else if (a === '--version' || a === '-v') args.version = true;
     else if (a === '--no-open') args.noOpen = true;
-    else if (a === '--no-update-check') args.noUpdateCheck = true;
     else if (a?.startsWith('--project=')) args.project = a.slice('--project='.length);
     else if (a === '--project') args.project = argv[++i];
     else if (a?.startsWith('--port=')) args.port = Number(a.slice('--port='.length));
@@ -40,14 +40,34 @@ USAGE:
   npx @specrail/dashboard [options]
 
 OPTIONS:
-  --project <path>        Auto-register this project root (must contain docs/spec/01-prd.md)
-  --port <n>              HTTP port (0 = random free, default 0)
-  --host <addr>           Bind address (default 127.0.0.1; use --host=0.0.0.0 to expose externally — warning printed)
-  --no-open               Don't auto-open browser
-  --no-update-check       Skip the npm registry update ping at startup
-  -h, --help              Show this help
-  -v, --version           Show package version
+  --project <path>   Auto-register this project root (must contain docs/spec/01-prd.md)
+  --port <n>         HTTP port (0 = random free, default 0)
+  --host <addr>      Bind address (default 127.0.0.1; use --host=0.0.0.0 to expose externally — warning printed)
+  --no-open          Don't auto-open browser
+  -h, --help         Show this help
+  -v, --version      Show package version
 `;
+
+async function readVersion(): Promise<string> {
+  // dist/bin/specrail-dashboard.js → ../../package.json
+  try {
+    const here = dirname(fileURLToPath(import.meta.url));
+    const candidates = [
+      resolve(here, '../../package.json'),
+      resolve(here, '../package.json'),
+    ];
+    for (const p of candidates) {
+      if (existsSync(p)) {
+        const raw = await readFile(p, 'utf8');
+        const json = JSON.parse(raw) as { name?: string; version?: string };
+        if (json.name === '@specrail/dashboard' && json.version) return json.version;
+      }
+    }
+  } catch {
+    // fall through
+  }
+  return 'unknown';
+}
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
@@ -56,7 +76,8 @@ async function main() {
     return;
   }
   if (args.version) {
-    process.stdout.write('0.1.0\n');
+    const v = await readVersion();
+    process.stdout.write(`${v}\n`);
     return;
   }
 
