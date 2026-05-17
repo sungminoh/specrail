@@ -37,7 +37,19 @@ export interface ClaudeCli {
 class DefaultClaudeCli implements ClaudeCli {
   async *stream(opts: ClaudeCliOptions): AsyncIterable<ClaudeChunk> {
     const binary = opts.binary ?? 'claude';
-    const args = opts.args ?? ['-p', opts.prompt, '--output-format', 'stream-json'];
+    // Real claude CLI args:
+    //   -p / --print          → non-interactive (positional prompt follows)
+    //   --output-format stream-json → JSON-line stream
+    //   --verbose             → required with stream-json
+    //   --include-partial-messages → emit content_block_delta events for real-time tokens
+    const args = opts.args ?? [
+      '-p',
+      opts.prompt,
+      '--output-format',
+      'stream-json',
+      '--verbose',
+      '--include-partial-messages',
+    ];
     let child: ResultPromise<{ shell: false; cwd: string; reject: false }>;
     try {
       child = execa(binary, args, {
@@ -66,8 +78,29 @@ class DefaultClaudeCli implements ClaudeCli {
     }
 
     let buf = '';
+    // When --include-partial-messages is on we receive `stream_event` deltas
+    // AND a final `assistant` event that contains the same full text. Track which
+    // path emitted text so we skip the duplicate from the assistant event.
+    let deltaSeen = false;
     const stdout = child.stdout;
     if (!stdout) throw new ClaudeError('claude CLI produced no stdout', 'exit-nonzero');
+    const consume = function* (line: string): Iterable<ClaudeChunk> {
+      try {
+        const ev = parseEvent(line);
+        if (!ev) return;
+        if (ev.type === 'text' && (ev as { fromAssistant?: boolean }).fromAssistant && deltaSeen) {
+          return; // suppress duplicate
+        }
+        if (ev.type === 'text' && !(ev as { fromAssistant?: boolean }).fromAssistant) {
+          deltaSeen = true;
+        }
+        // Strip private marker before yielding.
+        const cleaned: ClaudeChunk = ev.type === 'text' ? { type: 'text', delta: ev.delta } : ev;
+        yield cleaned;
+      } catch {
+        yield { type: 'text', delta: line };
+      }
+    };
     for await (const chunk of stdout) {
       buf += String(chunk);
       let idx: number;
@@ -75,23 +108,11 @@ class DefaultClaudeCli implements ClaudeCli {
         const line = buf.slice(0, idx).trim();
         buf = buf.slice(idx + 1);
         if (!line) continue;
-        try {
-          const ev = parseEvent(line);
-          if (ev) yield ev;
-        } catch {
-          // Not a JSON line — fall back to raw text delta.
-          yield { type: 'text', delta: line };
-        }
+        for (const ev of consume(line)) yield ev;
       }
     }
-    // Process final buffered line, if any.
     if (buf.trim().length > 0) {
-      try {
-        const ev = parseEvent(buf.trim());
-        if (ev) yield ev;
-      } catch {
-        yield { type: 'text', delta: buf };
-      }
+      for (const ev of consume(buf.trim())) yield ev;
     }
     const result = await child;
     if (opts.abortSignal?.aborted) {
@@ -106,14 +127,74 @@ class DefaultClaudeCli implements ClaudeCli {
   }
 }
 
+interface ClaudeStreamEvent {
+  type?: string;
+  subtype?: string;
+  /** "assistant" wrapper: { message: { content: [ {type:'text', text:'...'}, {type:'tool_use', ...} ] } } */
+  message?: {
+    content?: Array<{ type?: string; text?: string; name?: string; input?: unknown }>;
+  };
+  /** "stream_event" wrapper from --include-partial-messages: contains a raw Anthropic SDK event */
+  event?: {
+    type?: string;
+    delta?: { type?: string; text?: string };
+    index?: number;
+    content_block?: { type?: string; text?: string };
+  };
+  /** "result" wrapper: { result: 'final text', subtype: 'success'|'error_max_turns'|... } */
+  result?: string;
+  is_error?: boolean;
+  stop_reason?: string;
+}
+
 function parseEvent(line: string): ClaudeChunk | null {
-  const obj = JSON.parse(line) as { type?: string; delta?: { text?: string }; name?: string; input?: unknown; stop_reason?: string };
+  const obj = JSON.parse(line) as ClaudeStreamEvent;
   if (!obj.type) return null;
-  if (obj.type === 'content_block_delta' && obj.delta?.text) {
-    return { type: 'text', delta: obj.delta.text };
+
+  // Real Claude CLI shapes (CLI v0.114+):
+  if (obj.type === 'system') return null; // hook lifecycle noise
+
+  if (obj.type === 'stream_event' && obj.event) {
+    // From --include-partial-messages
+    if (obj.event.type === 'content_block_delta' && obj.event.delta?.text) {
+      return { type: 'text', delta: obj.event.delta.text };
+    }
+    if (obj.event.type === 'content_block_start' && obj.event.content_block?.type === 'text' && obj.event.content_block.text) {
+      return { type: 'text', delta: obj.event.content_block.text };
+    }
+    return null;
   }
-  if (obj.type === 'tool_use') {
-    return { type: 'tool_use', tool: obj.name ?? '?', input: obj.input };
+
+  if (obj.type === 'assistant' && obj.message?.content) {
+    // Full assistant turn. With --include-partial-messages this duplicates deltas;
+    // the stream wrapper suppresses it via the `fromAssistant` flag.
+    const parts: string[] = [];
+    let tool: ClaudeChunk | null = null;
+    for (const block of obj.message.content) {
+      if (block.type === 'text' && typeof block.text === 'string') parts.push(block.text);
+      else if (block.type === 'tool_use') {
+        tool = { type: 'tool_use', tool: block.name ?? '?', input: block.input };
+      }
+    }
+    if (parts.length > 0) {
+      const ev: ClaudeChunk & { fromAssistant?: boolean } = {
+        type: 'text',
+        delta: parts.join(''),
+      };
+      ev.fromAssistant = true;
+      return ev;
+    }
+    if (tool) return tool;
+    return null;
+  }
+
+  if (obj.type === 'result') {
+    return { type: 'done', stopReason: obj.is_error ? 'error' : obj.subtype ?? 'end' };
+  }
+
+  // Legacy/compat: Anthropic SDK event names directly.
+  if (obj.type === 'content_block_delta' && obj.event?.delta?.text) {
+    return { type: 'text', delta: obj.event.delta.text };
   }
   if (obj.type === 'message_stop' || obj.type === 'done') {
     return { type: 'done', stopReason: obj.stop_reason ?? 'end' };

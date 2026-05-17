@@ -638,3 +638,19 @@
   background: var(--bg);
   letter-spacing: 0.06em;
 }
+
+.graph-banner {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  font-size: 11px;
+  color: var(--text-mute);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent);
+  padding: 8px 14px;
+  max-width: 80%;
+  letter-spacing: 0.04em;
+}

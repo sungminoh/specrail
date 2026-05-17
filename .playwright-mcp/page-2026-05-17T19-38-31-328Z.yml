@@ -1,0 +1,6 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - heading "Your projects" [level=1] [ref=e5]
+    - link "+ Add project" [ref=e6] [cursor=pointer]:
+      - /url: /onboarding
+  - list

@@ -1,0 +1,505 @@
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - combobox [ref=e7]:
+        - option "plugin (/Users/sungminoh/Development/specrail/packages/plugin)"
+        - option "dashboard" [selected]
+      - generic [ref=e8]: /Users/sungminoh/Development/specrail/packages/dashboard
+    - generic [ref=e9]:
+      - button "☀ LIGHT" [ref=e10] [cursor=pointer]
+      - button "PROJECTS" [ref=e11] [cursor=pointer]
+  - generic [ref=e12]:
+    - complementary [ref=e13]:
+      - generic [ref=e14]: Phases
+      - link "01 PRD Approved" [ref=e15] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/1
+        - generic [ref=e16]: "01"
+        - generic [ref=e17]: PRD
+        - generic "Approved" [ref=e18]
+      - link "02 Personas Approved" [ref=e19] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/2
+        - generic [ref=e20]: "02"
+        - generic [ref=e21]: Personas
+        - generic "Approved" [ref=e22]
+      - link "03 Features Approved" [ref=e23] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/3
+        - generic [ref=e24]: "03"
+        - generic [ref=e25]: Features
+        - generic "Approved" [ref=e26]
+      - link "04 Domain Approved" [ref=e27] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/4
+        - generic [ref=e28]: "04"
+        - generic [ref=e29]: Domain
+        - generic "Approved" [ref=e30]
+      - link "05 User Flow Approved" [ref=e31] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/5
+        - generic [ref=e32]: "05"
+        - generic [ref=e33]: User Flow
+        - generic "Approved" [ref=e34]
+      - link "06 IA Approved" [ref=e35] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/6
+        - generic [ref=e36]: "06"
+        - generic [ref=e37]: IA
+        - generic "Approved" [ref=e38]
+      - link "07 Wireframe Approved" [ref=e39] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/7
+        - generic [ref=e40]: "07"
+        - generic [ref=e41]: Wireframe
+        - generic "Approved" [ref=e42]
+      - link "08 Architecture Approved" [ref=e43] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/8
+        - generic [ref=e44]: "08"
+        - generic [ref=e45]: Architecture
+        - generic "Approved" [ref=e46]
+      - link "09 NFR Approved" [ref=e47] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/9
+        - generic [ref=e48]: "09"
+        - generic [ref=e49]: NFR
+        - generic "Approved" [ref=e50]
+      - link "10 Test Approved" [ref=e51] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/10
+        - generic [ref=e52]: "10"
+        - generic [ref=e53]: Test
+        - generic "Approved" [ref=e54]
+      - link "11 Operations Approved" [ref=e55] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/11
+        - generic [ref=e56]: "11"
+        - generic [ref=e57]: Operations
+        - generic "Approved" [ref=e58]
+      - link "12 ADR · Risks Approved" [ref=e59] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/12
+        - generic [ref=e60]: "12"
+        - generic [ref=e61]: ADR · Risks
+        - generic "Approved" [ref=e62]
+      - link "13 Impl plan Approved" [ref=e63] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/phase/13
+        - generic [ref=e64]: "13"
+        - generic [ref=e65]: Impl plan
+        - generic "Approved" [ref=e66]
+      - generic [ref=e67]: Sources
+      - link "· Graph" [ref=e68] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/graph
+        - generic [ref=e69]: ·
+        - generic [ref=e70]: Graph
+      - link "· Issues" [ref=e71] [cursor=pointer]:
+        - /url: /p/8d08a972d36f0db4/issues
+        - generic [ref=e72]: ·
+        - generic [ref=e73]: Issues
+    - main [ref=e74]:
+      - article [ref=e75]:
+        - generic [ref=e76]:
+          - heading "Phase 01 — prd" [level=1] [ref=e77]:
+            - generic [ref=e78]: Phase 01 —
+            - text: prd
+          - generic [ref=e79]:
+            - generic [ref=e80]: status Approved
+            - generic [ref=e81]: mtime 5/16/2026, 9:28:33 PM
+            - generic [ref=e82]: 15 ids · 44 refs
+            - button "CLOSE CHAT" [ref=e84] [cursor=pointer]
+            - button "EDIT" [ref=e85] [cursor=pointer]
+        - generic [ref=e86]:
+          - generic [ref=e88]:
+            - 'heading "PRD: specrail dashboard" [level=1] [ref=e89]'
+            - paragraph [ref=e90]:
+              - strong [ref=e91]: "Mode:"
+              - text: HOLD SCOPE
+              - strong [ref=e92]: "Version:"
+              - text: "1.0"
+              - strong [ref=e93]: "Date:"
+              - text: 2026-05-17
+            - heading "1. 한 줄 정의" [level=2] [ref=e94]
+            - paragraph [ref=e95]: specrail spec 을 view·관계·AI review 하는 local 웹앱.
+            - heading "2. 문제 (Status Quo)" [level=2] [ref=e96]
+            - heading "2.1 현재 상황" [level=3] [ref=e97]
+            - paragraph [ref=e98]:
+              - text: specrail plugin 사용자(Builder)는 13개 phase markdown 을 VS Code/vim/GitHub preview 에 띄워 직접 cross-reference 한다. "Phase 5 에서
+              - link "R3" [ref=e99] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/3#R3
+              - text: 가 뭐였지" → ctrl-F → 01-prd.md 열어 검색 → 다시 phase 5 로 복귀. 한 검토 session 에 동일 ID 를 평균 6-10회 ctrl-F. Phase 13 implementation plan 의 한 task 가 어떤 R/F 를 만족하는지 추적하려면 6 단계(T→TC→AC→F→R) 의 cross-ref 를 사람이 따라감.
+            - heading "2.2 비용" [level=3] [ref=e100]
+            - list [ref=e101]:
+              - listitem [ref=e102]:
+                - strong [ref=e103]: "시간:"
+                - text: Spec 검토 1 session 당 ctrl-F + 파일 전환에 15-25분. Plugin 만들면서 본인이 매주 3-5회 진행 (≥ 1시간/주).
+              - listitem [ref=e104]:
+                - strong [ref=e105]: "정신적 부담:"
+                - text: "ID 일관성 (예:"
+                - link "F1.2" [ref=e106] [cursor=pointer]:
+                  - /url: /p/8d08a972d36f0db4/phase/3#F1.2
+                - text: 가 정의된 phase, 참조하는 phase, 영향받는 task) 을 머릿속에서 그래프로 유지. 5분만 끊겨도 다시 잡는 데 분 단위 소모. PAIN-2 ("Phase 3 에서
+                - link "R1" [ref=e107] [cursor=pointer]:
+                  - /url: /p/8d08a972d36f0db4/phase/3#R1
+                - text: 뭐였지" 매번 ctrl-F) — plugin PRD §2.2 에 명시.
+              - listitem [ref=e108]:
+                - strong [ref=e109]: "잃는 기회 / 결과:"
+                - text: "검토 부담이 크니 검토 빈도가 낮아짐 → DELTA 변경의 downstream 영향 누락 → spec drift. AI 가 spec 을 자유 형식 prose 로 읽고 의미적 품질 review (예: \"이 NFR 은 측정 불가\") 를 하는 단계가 plugin self-check 와 별개로 없어, 결정적 검사 통과해도 의미적 결함이 잔존."
+            - heading "2.3 왜 지금" [level=3] [ref=e110]
+            - list [ref=e111]:
+              - listitem [ref=e112]:
+                - text: 2026-05-15
+                - code [ref=e113]: core-schema-attrs
+                - text: DELTA 가 plugin 의 spec 을 product-grade dashboard data source 로 격상 — frontmatter + per-entity attrs block 이 안정화되어 dashboard 가 read 할 contract 가 처음으로 존재.
+              - listitem [ref=e114]:
+                - text: Claude Code CLI 의
+                - code [ref=e115]: "--output-format stream-json"
+                - text: 이 안정화되어 subprocess 기반 AI 통합이 API key 관리 없이 가능.
+              - listitem [ref=e116]: specrail plugin PRD §10 이 dashboard 를 별 cycle 로 명시 — 본 cycle 이 그 약속의 첫 이행.
+            - heading "3. 타겟 사용자" [level=2] [ref=e117]
+            - heading "3.1 Primary Persona" [level=3] [ref=e118]
+            - code [ref=e120]: "alias: Spec-Driven Builder role: \"specrail plugin 을 자기 product 에 적용 중인 Claude Code 사용자\" primary-pain: PAIN-2 tech-fluency: 9 daily-context: \"데스크톱 + 브라우저 + Claude Code CLI 병행\" status: Draft since: 2026-05-17"
+            - list [ref=e121]:
+              - listitem [ref=e122]:
+                - strong [ref=e123]: "별칭:"
+                - text: Spec-Driven Builder (specrail user)
+              - listitem [ref=e124]:
+                - strong [ref=e125]: "역할 / 상황:"
+                - text: specrail plugin 을 자기 product 에 적용해 13 phase spec 을 운용 중. solo founder · small team lead · advanced student.
+                - strong [ref=e126]: Claude Code subscriber + specrail 0.3+ 설치자
+                - text: .
+              - listitem [ref=e127]:
+                - strong [ref=e128]: "하루:"
+                - text: 코드 작업 ~60%, spec 작성·검토·DELTA ~25%, 기타 ~15%. spec 작업 중 ctrl-F·파일 전환에 1 session 당 15-25분.
+              - listitem [ref=e129]:
+                - strong [ref=e130]: "고통 (Pain Priority):"
+                - list [ref=e131]:
+                  - listitem [ref=e132]:
+                    - text: PAIN-2 (기억 의존, ctrl-F 반복) —
+                    - strong [ref=e133]: 1순위
+                  - listitem [ref=e134]: PAIN-4 (cross-phase 검토 cumbersome) — 1순위와 결합
+                  - listitem [ref=e135]: PAIN-AI-1 (의미적 review 부재 — 결정적 검사로 못 잡는 품질 결함)
+              - listitem [ref=e136]:
+                - strong [ref=e137]: "가장 얻고 싶은 것:"
+                - text: spec 한 곳에서 흐름을 보고, 의심 가는 부분을 AI 와 대화하며 즉시 고칠 수 있는 단일 인터페이스.
+              - listitem [ref=e138]:
+                - strong [ref=e139]: "가장 두려워하는 결과:"
+                - text: dashboard 가 또 하나의 분산된 도구가 되어 GitHub/VS Code/CLI 사이를 한 군데 더 늘리는 것. silent spec drift.
+            - heading "3.2 Edge Persona (참조용, 본 cycle 비타겟)" [level=3] [ref=e140]
+            - code [ref=e142]: "alias: Non-developer maker role: \"PM·디자이너가 specrail 적용\" primary-pain: PAIN-2 status: Deferred in-scope: false"
+            - list [ref=e143]:
+              - listitem [ref=e144]:
+                - strong [ref=e145]: "무시했을 때 깨지는 것:"
+                - text: AI 시대 신규 사용자층. v2 에서 touch-friendly 모드 검토.
+            - heading "3.3 Role (시스템이 인식할 사용자 종류)" [level=3] [ref=e146]
+            - paragraph [ref=e147]:
+              - strong [ref=e148]: 단일 사용자, role 없음.
+              - text: OSS local self-host, auth 없음. 다중 사용자·hosted 모드는 별 cycle.
+            - heading "3.4 핵심 시나리오 (3개)" [level=3] [ref=e149]
+            - code [ref=e151]:
+              - text: "name: \"Daily cross-ref\" personas: ["
+              - link "PERSONA-1" [ref=e152] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/2#PERSONA-1
+              - text: "] triggers: [\"DELTA proposal 작성 중 downstream 영향 확인\"] outcome: \"5단계 ref 사슬을 클릭으로 추적, ~15초\" status: Approved priority: P0"
+            - paragraph [ref=e153]:
+              - strong [ref=e154]:
+                - link "SCEN-1" [ref=e155] [cursor=pointer]:
+                  - /url: /p/8d08a972d36f0db4/phase/2#SCEN-1
+                - text: "(Daily cross-ref):"
+              - link "PERSONA-1" [ref=e156] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/2#PERSONA-1
+              - text: "이 phase 13 task 를 정의하다가 그 task 가 어떤 NFR 을 만족하는지 추적 필요. Dashboard 의 phase view 에서 task ID 클릭 → 우측 Refs 탭에 outbound 6개(TC, AC, F, R, NFR, ADR) 가 즉시 표시 → hover 로 정의 미리보기 → 클릭으로 해당 phase 점프. 기존: 6번 ctrl-F + 파일 전환 ~3분. Dashboard: ~15초."
+            - code [ref=e158]:
+              - text: "name: \"AI quality review\" personas: ["
+              - link "PERSONA-1" [ref=e159] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/2#PERSONA-1
+              - text: "] triggers: [\"새로 추가한 NFR/AC 의 의미 품질 검증 필요\"] outcome: \"AI 가 patch 제안 stream, 사용자 accept → atomic write + git diff\" status: Approved priority: P0"
+            - paragraph [ref=e160]:
+              - strong [ref=e161]:
+                - link "SCEN-2" [ref=e162] [cursor=pointer]:
+                  - /url: /p/8d08a972d36f0db4/phase/2#SCEN-2
+                - text: "(AI quality review):"
+              - link "PERSONA-1" [ref=e163] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/2#PERSONA-1
+              - text: "이 phase 9 NFR 을 새로 추가하고 issue inbox 의 \"Run AI review\" 클릭. AI 가 cwd 의 NFR 들을 읽고 \"NFR-N 은 측정 unit 없음, NFR-M 은 측정 시점 빠짐\" patch 제안 stream. 사용자가 각 patch 검토 → accept 시 파일 atomic write + git diff 로 즉시 확인. 기존: AI 가 결정적 검사 통과한 NFR 의 의미 결함 자동 발견 안 함."
+            - code [ref=e165]:
+              - text: "name: \"Graph 탐색\" personas: ["
+              - link "PERSONA-1" [ref=e166] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/2#PERSONA-1
+              - text: "] triggers: [\"새 feature 추가 후 downstream 누락(orphan/dangling) 점검\"] outcome: \"1-hop filter + orphan toggle 로 누락 즉시 발견\" status: Approved priority: P0"
+            - paragraph [ref=e167]:
+              - strong [ref=e168]:
+                - link "SCEN-3" [ref=e169] [cursor=pointer]:
+                  - /url: /p/8d08a972d36f0db4/phase/2#SCEN-3
+                - text: "(Graph 탐색):"
+              - link "PERSONA-1" [ref=e170] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/2#PERSONA-1
+              - text: 이 새 feature
+              - link "F2" [ref=e171] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/3#F2
+              - text: .x 추가 후 graph view 에서
+              - link "F2" [ref=e172] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/3#F2
+              - text: ".x 노드 선택 → 1-hop filter → 영향받는 NFR·TC·T 가 시각적으로 즉시 보임 → orphan 또는 dangling ref 가 있으면 빨간 표시 → 누락 즉시 발견. 기존: graph 가 사람 머릿속에만 존재."
+            - heading "4. 핵심 가치 (Value Proposition)" [level=2] [ref=e173]
+            - heading "4.1 한 문장" [level=3] [ref=e174]
+            - paragraph [ref=e175]: specrail 사용자가 13 phase spec 을 한 브라우저에서 흐름·관계·품질을 보고, AI 와 대화하며 즉시 수정해 spec 작업 시간을 ≥ 60% 줄인다.
+            - heading "4.2 차별점 (vs Status Quo)" [level=3] [ref=e176]
+            - list [ref=e177]:
+              - listitem [ref=e178]:
+                - strong [ref=e179]: "vs VS Code/vim + GitHub preview:"
+                - text: ID cross-ref 가 클릭 1회. 결정적 검사 + AI 의미 review 통합 inbox.
+              - listitem [ref=e180]:
+                - strong [ref=e181]: "vs 일반 markdown 뷰어 (Obsidian, Logseq 등):"
+                - text: specrail 의 phase 구조·attrs block·DELTA 패턴을 1급으로 이해. AI 호출이 target repo 의 Claude Code 컨텍스트로 정확히 진입.
+              - listitem [ref=e182]:
+                - strong [ref=e183]: "vs Claude Code CLI 만:"
+                - text: 시각적 graph + 다중 origin 통합 AI UX (issue list + chat + inline) — CLI 의 turn-based 와 다른 패러다임.
+            - heading "4.3 First-Principles Insight" [level=3] [ref=e184]
+            - paragraph [ref=e185]:
+              - text: spec 의 가치는
+              - strong [ref=e186]: 불변식(invariant)이 도구에 의해 강제될 때
+              - text: 비례 증가. plugin 이 frontmatter·attrs·ID consistency 를 강제하고, dashboard 가 cross-phase 의미 일관성을 시각화·AI 검증한다. 두 도구는 같은 contract (frontmatter + attrs) 로 결합 — dashboard 는 plugin 의 약속을 처음으로 소비하는 dogfood.
+            - heading "5. 환경 / 카테고리" [level=2] [ref=e187]
+            - list [ref=e188]:
+              - listitem [ref=e189]:
+                - strong [ref=e190]: "Product 카테고리:"
+                - text: OSS dev tool · local web app
+              - listitem [ref=e191]:
+                - strong [ref=e192]: "플랫폼:"
+                - text: macOS · Linux · Windows (desktop 1280+ only)
+              - listitem [ref=e193]:
+                - strong [ref=e194]: "사용 환경:"
+                - text: 데스크톱 브라우저 + 터미널 병행
+              - listitem [ref=e195]:
+                - strong [ref=e196]: "Connectivity:"
+                - text: Local 우선 (파일 시스템 + Claude CLI). 첫 실행 시 npm download 만 네트워크 필요.
+              - listitem [ref=e197]:
+                - strong [ref=e198]: "배포:"
+                - code [ref=e199]: "@specrail/dashboard"
+                - text: npm package. plugin 의
+                - code [ref=e200]: /specrail dashboard
+                - text: slash command 가
+                - code [ref=e201]: npx -y @specrail/dashboard@^0.x --project <cwd>
+                - text: 로 호출.
+            - heading "6. Non-Goals (안 하는 것)" [level=2] [ref=e202]
+            - list [ref=e203]:
+              - listitem [ref=e204]:
+                - text: ❌
+                - strong [ref=e205]: 팀 공유 hosted 모드
+                - text: — auth, multi-user, DB sync 없음. localhost only.
+                - strong [ref=e206]: "이유:"
+                - text: PRD-plugin §10 이 단일 product cycle 명시. hosted 는 별 cycle.
+              - listitem [ref=e207]:
+                - text: ❌
+                - strong [ref=e208]: DELTA proposal 생성·승인 UI
+                - text: — direct edit + git 으로 대체.
+                - strong [ref=e209]: "이유:"
+                - text: plugin CLI 가 이미
+                - code [ref=e210]: /specrail change
+                - text: 제공. UI 중복.
+              - listitem [ref=e211]:
+                - text: ❌
+                - strong [ref=e212]: 다중 LLM provider
+                - text: — Claude Code CLI subprocess 전용.
+                - strong [ref=e213]: "이유:"
+                - text: plugin 과 동일 LLM 컨텍스트 보장 + API key 관리 회피.
+              - listitem [ref=e214]:
+                - text: ❌
+                - strong [ref=e215]: 모바일·태블릿 지원
+                - text: — desktop 1280+ only.
+                - strong [ref=e216]: "이유:"
+                - text: spec 검토는 multi-pane 화면 + 키보드 단축키 의존.
+              - listitem [ref=e217]:
+                - text: ❌
+                - strong [ref=e218]: i18n
+                - text: — UI 한국어 / 영문 mixed-script 본문 표시만.
+                - strong [ref=e219]: "이유:"
+                - text: v1 사용자층이 한국어 화자 + 영문 spec 혼용.
+              - listitem [ref=e220]:
+                - text: ❌
+                - strong [ref=e221]: Visual design system 자체 제작
+                - text: —
+                - code [ref=e222]: /design-consultation
+                - text: 별 cycle 산출물(DESIGN.md) 위임.
+                - strong [ref=e223]: "이유:"
+                - text: UX/IA 와 visual design 은 별 결정 layer.
+              - listitem [ref=e224]:
+                - text: ❌
+                - strong [ref=e225]: Cross-repo spec graph
+                - text: — 한 dashboard 인스턴스는 multi-project registry 지원하나 각 project 는 독립 graph.
+                - strong [ref=e226]: "이유:"
+                - text: spec 간 의존성 정의 없음, 잘못된 link 위험.
+            - heading "7. 성공 지표" [level=2] [ref=e227]
+            - code [ref=e229]: "target: 60 unit: percent measure-when: \"본인 daily usage 8주 후\" note: \"baseline = 현재 spec 검토 1 session 15-25분\""
+            - table [ref=e230]:
+              - rowgroup [ref=e231]:
+                - row "지표 ID 지표 단위 목표 측정 시점" [ref=e232]:
+                  - columnheader "지표 ID" [ref=e233]
+                  - columnheader "지표" [ref=e234]
+                  - columnheader "단위" [ref=e235]
+                  - columnheader "목표" [ref=e236]
+                  - columnheader "측정 시점" [ref=e237]
+              - rowgroup [ref=e238]:
+                - row "KPI-1 Spec 검토 시간 감소 percent vs baseline ≥ 60% (15-25분 → 6-10분) 본인 daily usage 8주 후" [ref=e239]:
+                  - cell "KPI-1" [ref=e240]:
+                    - link "KPI-1" [ref=e241] [cursor=pointer]:
+                      - /url: /p/8d08a972d36f0db4/phase/1#KPI-1
+                  - cell "Spec 검토 시간 감소" [ref=e242]
+                  - cell "percent vs baseline" [ref=e243]
+                  - cell "≥ 60% (15-25분 → 6-10분)" [ref=e244]
+                  - cell "본인 daily usage 8주 후" [ref=e245]
+            - code [ref=e247]: "target: 0 unit: count measure-when: \"release 후 첫 4주\" note: \"critical KPI — 위반 시 즉시 hotfix\""
+            - paragraph [ref=e248]:
+              - text: "|"
+              - link "KPI-2" [ref=e249] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/1#KPI-2
+              - text: "| 외부 편집 시 파일 corruption 사건 | count | 0 | release 후 첫 4주 |"
+            - code [ref=e251]: "target: 80 unit: percent measure-when: \"본인 sample 30 issues 후\""
+            - paragraph [ref=e252]:
+              - text: "|"
+              - link "KPI-3" [ref=e253] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/1#KPI-3
+              - text: "| AI review-scan 의 patch accept 비율 | percent | ≥ 80% (false positive 낮음) | 본인 sample 30 issues 후 |"
+            - code [ref=e255]: "target: 3 unit: count measure-when: \"v0.1 release 후 12주\""
+            - paragraph [ref=e256]:
+              - text: "|"
+              - link "KPI-4" [ref=e257] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/1#KPI-4
+              - text: "| 본인 외 실 사용자 (1 session ≥ 5분, 1주 ≥ 1회) | count | ≥ 3 | v0.1 release 후 12주 |"
+            - code [ref=e259]: "target: 2 unit: second measure-when: \"phase view 500 ID, graph 200 노드\""
+            - paragraph [ref=e260]:
+              - text: "|"
+              - link "KPI-5" [ref=e261] [cursor=pointer]:
+                - /url: /p/8d08a972d36f0db4/phase/1#KPI-5
+              - text: "| Phase view 초기 load 시간 | second (p95) | ≤ 2 | phase view 500 ID, graph 200 노드 |"
+            - heading "8. 가정 (Assumptions)" [level=2] [ref=e262]
+            - table [ref=e263]:
+              - rowgroup [ref=e264]:
+                - row "ID 가정 검증 방법 Risk Level" [ref=e265]:
+                  - columnheader "ID" [ref=e266]
+                  - columnheader "가정" [ref=e267]
+                  - columnheader "검증 방법" [ref=e268]
+                  - columnheader "Risk Level" [ref=e269]
+              - rowgroup [ref=e270]:
+                - row "A1 Claude Code CLI 의 --output-format stream-json schema 가 6개월 이상 안정 release notes 모니터링 + 어댑터 격리 + bench unit test 로 schema drift 즉시 감지 Med" [ref=e271]:
+                  - cell "A1" [ref=e272]
+                  - cell "Claude Code CLI 의 --output-format stream-json schema 가 6개월 이상 안정" [ref=e273]:
+                    - text: Claude Code CLI 의
+                    - code [ref=e274]: "--output-format stream-json"
+                    - text: schema 가 6개월 이상 안정
+                  - cell "release notes 모니터링 + 어댑터 격리 + bench unit test 로 schema drift 즉시 감지" [ref=e275]
+                  - cell "Med" [ref=e276]
+                - row "A2 PERSONA-1 (본인 + 2-3명) 의 검토 빈도가 dashboard 사용을 정당화 (≥ 주 3회) 본인 8주 telemetry (KPI-1 측정 시) + 외부 사용자 인터뷰 Med" [ref=e277]:
+                  - cell "A2" [ref=e278]
+                  - cell "PERSONA-1 (본인 + 2-3명) 의 검토 빈도가 dashboard 사용을 정당화 (≥ 주 3회)" [ref=e279]:
+                    - link "PERSONA-1" [ref=e280] [cursor=pointer]:
+                      - /url: /p/8d08a972d36f0db4/phase/2#PERSONA-1
+                    - text: (본인 + 2-3명) 의 검토 빈도가 dashboard 사용을 정당화 (≥ 주 3회)
+                  - cell "본인 8주 telemetry (KPI-1 측정 시) + 외부 사용자 인터뷰" [ref=e281]:
+                    - text: 본인 8주 telemetry (
+                    - link "KPI-1" [ref=e282] [cursor=pointer]:
+                      - /url: /p/8d08a972d36f0db4/phase/1#KPI-1
+                    - text: 측정 시) + 외부 사용자 인터뷰
+                  - cell "Med" [ref=e283]
+                - row "A3 core-schema-attrs DELTA 가 정착 — 모든 phase 가 attrs block 충실 plugin 0.3.x 의 specrail audit 결과 ≥ 95% attrs completeness Low" [ref=e284]:
+                  - cell "A3" [ref=e285]
+                  - cell "core-schema-attrs DELTA 가 정착 — 모든 phase 가 attrs block 충실" [ref=e286]:
+                    - code [ref=e287]: core-schema-attrs
+                    - text: DELTA 가 정착 — 모든 phase 가 attrs block 충실
+                  - cell "plugin 0.3.x 의 specrail audit 결과 ≥ 95% attrs completeness" [ref=e288]:
+                    - text: plugin 0.3.x 의
+                    - code [ref=e289]: specrail audit
+                    - text: 결과 ≥ 95% attrs completeness
+                  - cell "Low" [ref=e290]
+                - row "A4 사용자가 npx -y 첫 실행 ~수십초 대기를 수용 plugin slash command UX 에 \"Downloading…\" progress + 이후 cache Low" [ref=e291]:
+                  - cell "A4" [ref=e292]
+                  - cell "사용자가 npx -y 첫 실행 ~수십초 대기를 수용" [ref=e293]:
+                    - text: 사용자가
+                    - code [ref=e294]: npx -y
+                    - text: 첫 실행 ~수십초 대기를 수용
+                  - cell "plugin slash command UX 에 \"Downloading…\" progress + 이후 cache" [ref=e295]
+                  - cell "Low" [ref=e296]
+                - row "A5 desktop 1280+ 가정이 사용자 화면 100% 커버 (sub-1280 사용자 0) 8주 사용 후 user agent 통계 Low" [ref=e297]:
+                  - cell "A5" [ref=e298]
+                  - cell "desktop 1280+ 가정이 사용자 화면 100% 커버 (sub-1280 사용자 0)" [ref=e299]
+                  - cell "8주 사용 후 user agent 통계" [ref=e300]
+                  - cell "Low" [ref=e301]
+            - heading "9. Open Questions" [level=2] [ref=e302]
+            - table [ref=e303]:
+              - rowgroup [ref=e304]:
+                - row "Q ID 질문 결정자 마감 Blocking?" [ref=e305]:
+                  - columnheader "Q ID" [ref=e306]
+                  - columnheader "질문" [ref=e307]
+                  - columnheader "결정자" [ref=e308]
+                  - columnheader "마감" [ref=e309]
+                  - columnheader "Blocking?" [ref=e310]
+              - rowgroup [ref=e311]:
+                - row "OQ-1-1 Plugin 의 /specrail dashboard slash command 추가는 plugin 의 별 DELTA cycle 인가, dashboard cycle 의 phase 13 task 에 포함인가 maintainer Phase 13 N" [ref=e312]:
+                  - cell "OQ-1-1" [ref=e313]
+                  - cell "Plugin 의 /specrail dashboard slash command 추가는 plugin 의 별 DELTA cycle 인가, dashboard cycle 의 phase 13 task 에 포함인가" [ref=e314]:
+                    - text: Plugin 의
+                    - code [ref=e315]: /specrail dashboard
+                    - text: slash command 추가는 plugin 의 별 DELTA cycle 인가, dashboard cycle 의 phase 13 task 에 포함인가
+                  - cell "maintainer" [ref=e316]
+                  - cell "Phase 13" [ref=e317]
+                  - cell "N" [ref=e318]
+                - row "OQ-1-2 v1 의 monorepo migration (root → packages/plugin) 을 어느 phase 의 task 로 — 13 (impl plan) 안 vs 별 plugin DELTA cycle maintainer Phase 13 Y" [ref=e319]:
+                  - cell "OQ-1-2" [ref=e320]
+                  - cell "v1 의 monorepo migration (root → packages/plugin) 을 어느 phase 의 task 로 — 13 (impl plan) 안 vs 별 plugin DELTA cycle" [ref=e321]
+                  - cell "maintainer" [ref=e322]
+                  - cell "Phase 13" [ref=e323]
+                  - cell "Y" [ref=e324]
+                - row "OQ-1-3 @specrail/dashboard npm scope 등록 (anthropic-org? 개인?) maintainer release 전 N" [ref=e325]:
+                  - cell "OQ-1-3" [ref=e326]
+                  - cell "@specrail/dashboard npm scope 등록 (anthropic-org? 개인?)" [ref=e327]:
+                    - code [ref=e328]: "@specrail/dashboard"
+                    - text: npm scope 등록 (anthropic-org? 개인?)
+                  - cell "maintainer" [ref=e329]
+                  - cell "release 전" [ref=e330]
+                  - cell "N" [ref=e331]
+                - row "OQ-1-4 KPI-4 외부 사용자 3명 측정의 telemetry 메커니즘 — opt-in 익명 ping vs GitHub star/issue 수 maintainer Phase 11 N" [ref=e332]:
+                  - cell "OQ-1-4" [ref=e333]
+                  - cell "KPI-4 외부 사용자 3명 측정의 telemetry 메커니즘 — opt-in 익명 ping vs GitHub star/issue 수" [ref=e334]:
+                    - link "KPI-4" [ref=e335] [cursor=pointer]:
+                      - /url: /p/8d08a972d36f0db4/phase/1#KPI-4
+                    - text: 외부 사용자 3명 측정의 telemetry 메커니즘 — opt-in 익명 ping vs GitHub star/issue 수
+                  - cell "maintainer" [ref=e336]
+                  - cell "Phase 11" [ref=e337]
+                  - cell "N" [ref=e338]
+                - row "OQ-1-5 \"Visual design 별 cycle\" 의 순서 — implementation 시작 전 vs middle vs unstyled 로 끝까지 가고 마지막에 maintainer Phase 13 Y" [ref=e339]:
+                  - cell "OQ-1-5" [ref=e340]
+                  - cell "\"Visual design 별 cycle\" 의 순서 — implementation 시작 전 vs middle vs unstyled 로 끝까지 가고 마지막에" [ref=e341]
+                  - cell "maintainer" [ref=e342]
+                  - cell "Phase 13" [ref=e343]
+                  - cell "Y" [ref=e344]
+            - code [ref=e346]: "blocking: false decider: maintainer due: \"Phase 13\""
+            - code [ref=e348]: "blocking: true decider: maintainer due: \"Phase 13\""
+            - code [ref=e350]: "blocking: false decider: maintainer due: \"release 전\""
+            - code [ref=e352]: "blocking: false decider: maintainer due: \"Phase 11\""
+            - code [ref=e354]: "blocking: true decider: maintainer due: \"Phase 13\""
+            - heading "10. Mode 결정 근거" [level=2] [ref=e355]
+            - paragraph [ref=e356]:
+              - strong [ref=e357]: HOLD SCOPE.
+              - text: Brainstorm cycle 에서 합의한 12 결정 (OSS local self-host · Claude CLI subprocess · 3-tier review · 단일 PatchProposal 깔때기 · Vite+React+Hono · monorepo · file watcher+SSE · npm 분리+slash command 연결 등) 을 고정하고 견고하게 구현.
+            - paragraph [ref=e358]: "EXPANSION 하지 않는 이유: demand reality (Q1) 가 본인 + 소규모 커뮤니티 수준. 야심 차게 늘리면 사용자 0인 기능을 만들 위험. REDUCTION 하지 않는 이유: 3 AI UX 통합이 사용자 의도이며 단일 PatchProposal 깔때기로 복잡도가 흡수됨 — 빼면 product 의 정체성이 약해짐."
+            - paragraph [ref=e359]: "향후 cycle 후보: hosted multi-user · DELTA UI · 다중 LLM · 모바일 · Edge-2 (browser multi-tab) · i18n."
+            - heading "11. 다음 phase 인풋" [level=2] [ref=e360]
+            - paragraph [ref=e361]: "Phase 2 (Personas & Journey) 가 사용할 것:"
+            - list [ref=e362]:
+              - listitem [ref=e363]:
+                - text: §3.1
+                - link "PERSONA-1" [ref=e364] [cursor=pointer]:
+                  - /url: /p/8d08a972d36f0db4/phase/2#PERSONA-1
+                - text: (Spec-Driven Builder)
+              - listitem [ref=e365]:
+                - text: §3.2
+                - link "PERSONA-EDGE-1" [ref=e366] [cursor=pointer]:
+                  - /url: /p/8d08a972d36f0db4/phase/2#PERSONA-EDGE-1
+                - text: (참조용)
+              - listitem [ref=e367]:
+                - text: §3.4
+                - link "SCEN-1" [ref=e368] [cursor=pointer]:
+                  - /url: /p/8d08a972d36f0db4/phase/2#SCEN-1
+                - text: ","
+                - link "SCEN-2" [ref=e369] [cursor=pointer]:
+                  - /url: /p/8d08a972d36f0db4/phase/2#SCEN-2
+                - text: ","
+                - link "SCEN-3" [ref=e370] [cursor=pointer]:
+                  - /url: /p/8d08a972d36f0db4/phase/2#SCEN-3
+              - listitem [ref=e371]: §2.2 비용 (시간·정신적 부담·잃는 기회) → PAIN list 의 기초
+              - listitem [ref=e372]: §6 Non-Goals → persona 범위 한정 기준
+          - complementary [ref=e373]:
+            - generic [ref=e375]: AI chat · phase 01
+            - generic [ref=e378]:
+              - textbox "Ask Claude about this phase…" [disabled] [ref=e379]
+              - button "streaming…" [disabled] [ref=e381]
+              - button "stop" [ref=e382] [cursor=pointer]

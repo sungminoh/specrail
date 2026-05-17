@@ -1,0 +1,1288 @@
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - combobox [ref=e7]:
+        - option "plugin" [selected]
+      - generic [ref=e8]: /Users/sungminoh/Development/specrail/packages/plugin
+    - generic [ref=e9]:
+      - button "☀ LIGHT" [ref=e10] [cursor=pointer]
+      - button "PROJECTS" [ref=e11] [cursor=pointer]
+  - generic [ref=e12]:
+    - complementary [ref=e13]:
+      - generic [ref=e14]: Phases
+      - link "01 PRD Approved" [ref=e15] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/1
+        - generic [ref=e16]: "01"
+        - generic [ref=e17]: PRD
+        - generic "Approved" [ref=e18]
+      - link "02 Personas Approved" [ref=e19] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/2
+        - generic [ref=e20]: "02"
+        - generic [ref=e21]: Personas
+        - generic "Approved" [ref=e22]
+      - link "03 Features Approved" [ref=e23] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/3
+        - generic [ref=e24]: "03"
+        - generic [ref=e25]: Features
+        - generic "Approved" [ref=e26]
+      - link "04 Domain Approved" [ref=e27] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/4
+        - generic [ref=e28]: "04"
+        - generic [ref=e29]: Domain
+        - generic "Approved" [ref=e30]
+      - link "05 User Flow Approved" [ref=e31] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/5
+        - generic [ref=e32]: "05"
+        - generic [ref=e33]: User Flow
+        - generic "Approved" [ref=e34]
+      - link "06 IA Approved" [ref=e35] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/6
+        - generic [ref=e36]: "06"
+        - generic [ref=e37]: IA
+        - generic "Approved" [ref=e38]
+      - link "07 Wireframe Approved" [ref=e39] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/7
+        - generic [ref=e40]: "07"
+        - generic [ref=e41]: Wireframe
+        - generic "Approved" [ref=e42]
+      - link "08 Architecture Approved" [ref=e43] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/8
+        - generic [ref=e44]: "08"
+        - generic [ref=e45]: Architecture
+        - generic "Approved" [ref=e46]
+      - link "09 NFR Approved" [ref=e47] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/9
+        - generic [ref=e48]: "09"
+        - generic [ref=e49]: NFR
+        - generic "Approved" [ref=e50]
+      - link "10 Test Approved" [ref=e51] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/10
+        - generic [ref=e52]: "10"
+        - generic [ref=e53]: Test
+        - generic "Approved" [ref=e54]
+      - link "11 Operations Approved" [ref=e55] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/11
+        - generic [ref=e56]: "11"
+        - generic [ref=e57]: Operations
+        - generic "Approved" [ref=e58]
+      - link "12 ADR · Risks Approved" [ref=e59] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/12
+        - generic [ref=e60]: "12"
+        - generic [ref=e61]: ADR · Risks
+        - generic "Approved" [ref=e62]
+      - link "13 Impl plan Approved" [ref=e63] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/phase/13
+        - generic [ref=e64]: "13"
+        - generic [ref=e65]: Impl plan
+        - generic "Approved" [ref=e66]
+      - generic [ref=e67]: Sources
+      - link "· Graph" [ref=e68] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/graph
+        - generic [ref=e69]: ·
+        - generic [ref=e70]: Graph
+      - link "· Issues 482" [ref=e86] [cursor=pointer]:
+        - /url: /p/3bd9541b5617599e/issues
+        - generic [ref=e72]: ·
+        - generic [ref=e73]: Issues
+        - generic [ref=e87]: "482"
+    - main [ref=e74]:
+      - article [ref=e4431]:
+        - generic [ref=e4432]:
+          - heading "Phase 04 — domain-model" [level=1] [ref=e4433]:
+            - generic [ref=e4434]: Phase 04 —
+            - text: domain-model
+          - generic [ref=e4435]:
+            - generic [ref=e4436]: status Approved
+            - generic [ref=e4437]: mtime 5/16/2026, 12:22:14 PM
+            - generic [ref=e4438]: 21 ids · 108 refs
+            - button "AI CHAT" [ref=e4440] [cursor=pointer]
+            - button "EDIT" [ref=e4441] [cursor=pointer]
+        - generic [ref=e4444]:
+          - heading "Domain Model" [level=1] [ref=e4445]
+          - paragraph [ref=e4446]:
+            - strong [ref=e4447]: "Mode:"
+            - text: HOLD SCOPE (retroactive — PRD §10 변경 2026-05-12)
+            - strong [ref=e4448]: "Inputs:"
+            - text: Phase 3 R/F/S, Spec Description 명사
+            - strong [ref=e4449]: "Date:"
+            - text: "2026-05-10 (DELTA 2026-05-12:"
+            - link "INV-3" [ref=e4450] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/4#INV-3
+            - text: Phase 1 예외 + ENT-Phase state source 명시)
+          - heading "1. Entity Catalog" [level=2] [ref=e4451]
+          - heading "ENT-Project" [level=3] [ref=e4452]
+          - code [ref=e4454]:
+            - text: "status: Approved aggregate-root: true linked-r: ["
+            - link "R6" [ref=e4455] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R6
+            - text: "] last-modified: 2026-05-16"
+          - paragraph [ref=e4456]:
+            - strong [ref=e4457]: "Description:"
+            - text: plugin이 관리하는 한 사용자 product 사양화 단위. docs/spec/ 디렉토리 = 1 Project.
+            - strong [ref=e4458]: "Aggregate root:"
+            - text: "Yes"
+            - strong [ref=e4459]: "Source spec:"
+            - link "R6" [ref=e4460] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R6
+            - text: (install·setup)
+          - table [ref=e4461]:
+            - rowgroup [ref=e4462]:
+              - row "Name Type Required Source 설명" [ref=e4463]:
+                - columnheader "Name" [ref=e4464]
+                - columnheader "Type" [ref=e4465]
+                - columnheader "Required" [ref=e4466]
+                - columnheader "Source" [ref=e4467]
+                - columnheader "설명" [ref=e4468]
+            - rowgroup [ref=e4469]:
+              - row "id ProjectId Y system 디렉토리 hash 또는 user-named slug" [ref=e4470]:
+                - cell "id" [ref=e4471]
+                - cell "ProjectId" [ref=e4472]
+                - cell "Y" [ref=e4473]
+                - cell "system" [ref=e4474]
+                - cell "디렉토리 hash 또는 user-named slug" [ref=e4475]
+              - row "rootPath FilePath Y system docs/spec/ absolute path" [ref=e4476]:
+                - cell "rootPath" [ref=e4477]
+                - cell "FilePath" [ref=e4478]
+                - cell "Y" [ref=e4479]
+                - cell "system" [ref=e4480]
+                - cell "docs/spec/ absolute path" [ref=e4481]
+              - row "createdAt ISODateTime Y system 첫 init" [ref=e4482]:
+                - cell "createdAt" [ref=e4483]
+                - cell "ISODateTime" [ref=e4484]
+                - cell "Y" [ref=e4485]
+                - cell "system" [ref=e4486]
+                - cell "첫 init" [ref=e4487]
+              - row "name string N AC-R6-2 사용자 명시 또는 directory name" [ref=e4488]:
+                - cell "name" [ref=e4489]
+                - cell "string" [ref=e4490]
+                - cell "N" [ref=e4491]
+                - cell "AC-R6-2" [ref=e4492]:
+                  - link "AC-R6-2" [ref=e4493] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#AC-R6-2
+                - cell "사용자 명시 또는 directory name" [ref=e4494]
+          - heading "ENT-Phase" [level=3] [ref=e4495]
+          - code [ref=e4497]:
+            - text: "status: Approved aggregate-root: false linked-r: ["
+            - link "R1" [ref=e4498] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R1
+            - text: ","
+            - link "R5" [ref=e4499] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R5
+            - text: "] state-machine: SM-Phase-Lifecycle last-modified: 2026-05-16"
+          - paragraph [ref=e4500]:
+            - strong [ref=e4501]: "Description:"
+            - text: 13단계 중 하나. 각 phase는 skill 1개 + 산출물 file 1개.
+            - strong [ref=e4502]: "Aggregate root:"
+            - text: No (Project에 속함)
+            - strong [ref=e4503]: "Source spec:"
+            - link "R5" [ref=e4504] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R5
+            - text: (orchestration),
+            - link "R1" [ref=e4505] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R1
+            - text: (frontmatter)
+          - table [ref=e4506]:
+            - rowgroup [ref=e4507]:
+              - row "Name Type Required Source 설명" [ref=e4508]:
+                - columnheader "Name" [ref=e4509]
+                - columnheader "Type" [ref=e4510]
+                - columnheader "Required" [ref=e4511]
+                - columnheader "Source" [ref=e4512]
+                - columnheader "설명" [ref=e4513]
+            - rowgroup [ref=e4514]:
+              - row "id PhaseId Y system 1-13 정수" [ref=e4515]:
+                - cell "id" [ref=e4516]
+                - cell "PhaseId" [ref=e4517]
+                - cell "Y" [ref=e4518]
+                - cell "system" [ref=e4519]
+                - cell "1-13 정수" [ref=e4520]
+              - row "name PhaseName Y system \"01-prd\" 등 kebab-case" [ref=e4521]:
+                - cell "name" [ref=e4522]
+                - cell "PhaseName" [ref=e4523]
+                - cell "Y" [ref=e4524]
+                - cell "system" [ref=e4525]
+                - cell "\"01-prd\" 등 kebab-case" [ref=e4526]
+              - row "projectId ProjectId Y FK 부모 Project" [ref=e4527]:
+                - cell "projectId" [ref=e4528]
+                - cell "ProjectId" [ref=e4529]
+                - cell "Y" [ref=e4530]
+                - cell "FK" [ref=e4531]
+                - cell "부모 Project" [ref=e4532]
+              - row "skillName SkillName Y system \"phase-1-prd\" 등" [ref=e4533]:
+                - cell "skillName" [ref=e4534]
+                - cell "SkillName" [ref=e4535]
+                - cell "Y" [ref=e4536]
+                - cell "system" [ref=e4537]
+                - cell "\"phase-1-prd\" 등" [ref=e4538]
+              - row "status PhaseStatus Y SM-Phase-Lifecycle Empty/Draft/Approved" [ref=e4539]:
+                - cell "status" [ref=e4540]
+                - cell "PhaseStatus" [ref=e4541]
+                - cell "Y" [ref=e4542]
+                - cell "SM-Phase-Lifecycle" [ref=e4543]
+                - cell "Empty/Draft/Approved" [ref=e4544]
+              - row "outputPath FilePath Y system 산출물 markdown path" [ref=e4545]:
+                - cell "outputPath" [ref=e4546]
+                - cell "FilePath" [ref=e4547]
+                - cell "Y" [ref=e4548]
+                - cell "system" [ref=e4549]
+                - cell "산출물 markdown path" [ref=e4550]
+              - row "approvedAt ISODateTime N AC-R5-3 명시 승인 timestamp" [ref=e4551]:
+                - cell "approvedAt" [ref=e4552]
+                - cell "ISODateTime" [ref=e4553]
+                - cell "N" [ref=e4554]
+                - cell "AC-R5-3" [ref=e4555]:
+                  - link "AC-R5-3" [ref=e4556] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#AC-R5-3
+                - cell "명시 승인 timestamp" [ref=e4557]
+          - heading "ENT-Spec" [level=3] [ref=e4558]
+          - code [ref=e4560]:
+            - text: "status: Approved aggregate-root: false linked-r: ["
+            - link "R1" [ref=e4561] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R1
+            - text: ","
+            - link "R5" [ref=e4562] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R5
+            - text: "] state-machine: SM-Spec-Status last-modified: 2026-05-16"
+          - paragraph [ref=e4563]:
+            - strong [ref=e4564]: "Description:"
+            - text: 산출물 안의 한 결정 단위 (R/F/S 3-tier).
+            - strong [ref=e4565]: "Aggregate root:"
+            - text: No (Phase에 속함)
+            - strong [ref=e4566]: "Source spec:"
+            - link "R1" [ref=e4567] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R1
+            - text: (ID auto-gen),
+            - link "R5" [ref=e4568] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R5
+            - text: (산출물 형식)
+          - table [ref=e4569]:
+            - rowgroup [ref=e4570]:
+              - row "Name Type Required Source 설명" [ref=e4571]:
+                - columnheader "Name" [ref=e4572]
+                - columnheader "Type" [ref=e4573]
+                - columnheader "Required" [ref=e4574]
+                - columnheader "Source" [ref=e4575]
+                - columnheader "설명" [ref=e4576]
+            - rowgroup [ref=e4577]:
+              - row "id SpecId Y AC-R1-3 \"R1\", \"F1.1\", \"S1.1.1\" 형식, plugin auto-generated" [ref=e4578]:
+                - cell "id" [ref=e4579]
+                - cell "SpecId" [ref=e4580]
+                - cell "Y" [ref=e4581]
+                - cell "AC-R1-3" [ref=e4582]:
+                  - link "AC-R1-3" [ref=e4583] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#AC-R1-3
+                - cell "\"R1\", \"F1.1\", \"S1.1.1\" 형식, plugin auto-generated" [ref=e4584]:
+                  - text: "\""
+                  - link "R1" [ref=e4585] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#R1
+                  - text: "\", \""
+                  - link "F1.1" [ref=e4586] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F1.1
+                  - text: "\", \""
+                  - link "S1.1.1" [ref=e4587] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#S1.1.1
+                  - text: "\" 형식, plugin auto-generated"
+              - row "tier SpecTier Y system Requirement / Feature / Specification" [ref=e4588]:
+                - cell "tier" [ref=e4589]
+                - cell "SpecTier" [ref=e4590]
+                - cell "Y" [ref=e4591]
+                - cell "system" [ref=e4592]
+                - cell "Requirement / Feature / Specification" [ref=e4593]
+              - row "phaseId PhaseId Y FK 정의된 phase" [ref=e4594]:
+                - cell "phaseId" [ref=e4595]
+                - cell "PhaseId" [ref=e4596]
+                - cell "Y" [ref=e4597]
+                - cell "FK" [ref=e4598]
+                - cell "정의된 phase" [ref=e4599]
+              - row "description string Y AC 1-2줄" [ref=e4600]:
+                - cell "description" [ref=e4601]
+                - cell "string" [ref=e4602]
+                - cell "Y" [ref=e4603]
+                - cell "AC" [ref=e4604]
+                - cell "1-2줄" [ref=e4605]
+              - row "importance Importance Y spec P0/P1/P2/P3" [ref=e4606]:
+                - cell "importance" [ref=e4607]
+                - cell "Importance" [ref=e4608]
+                - cell "Y" [ref=e4609]
+                - cell "spec" [ref=e4610]
+                - cell "P0/P1/P2/P3" [ref=e4611]
+              - row "status SpecStatus Y SM-Spec-Status Draft/Approved/Implementing/Done" [ref=e4612]:
+                - cell "status" [ref=e4613]
+                - cell "SpecStatus" [ref=e4614]
+                - cell "Y" [ref=e4615]
+                - cell "SM-Spec-Status" [ref=e4616]
+                - cell "Draft/Approved/Implementing/Done" [ref=e4617]
+              - row "sourcePainIds PainId[] N Phase 2 Pain catalog 인용된 PAIN" [ref=e4618]:
+                - cell "sourcePainIds" [ref=e4619]
+                - cell "PainId[]" [ref=e4620]
+                - cell "N" [ref=e4621]
+                - cell "Phase 2 Pain catalog" [ref=e4622]
+                - cell "인용된 PAIN" [ref=e4623]
+              - row "frontmatterRaw YAML Y F1.1 structured form" [ref=e4624]:
+                - cell "frontmatterRaw" [ref=e4625]
+                - cell "YAML" [ref=e4626]
+                - cell "Y" [ref=e4627]
+                - cell "F1.1" [ref=e4628]:
+                  - link "F1.1" [ref=e4629] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F1.1
+                - cell "structured form" [ref=e4630]
+          - heading "ENT-AcceptanceCriteria" [level=3] [ref=e4631]
+          - code [ref=e4633]:
+            - text: "status: Approved aggregate-root: false linked-r: ["
+            - link "R1" [ref=e4634] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R1
+            - text: ","
+            - link "R2" [ref=e4635] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R2
+            - text: "] last-modified: 2026-05-16"
+          - paragraph [ref=e4636]:
+            - strong [ref=e4637]: "Description:"
+            - text: Requirement 수준 testable 조건. plugin이 frontmatter parse → structured.
+            - strong [ref=e4638]: "Aggregate root:"
+            - text: "No"
+            - strong [ref=e4639]: "Source spec:"
+            - link "R1" [ref=e4640] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R1
+            - text: (frontmatter),
+            - link "R2" [ref=e4641] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R2
+            - text: (hook validation)
+          - table [ref=e4642]:
+            - rowgroup [ref=e4643]:
+              - row "Name Type Required Source 설명" [ref=e4644]:
+                - columnheader "Name" [ref=e4645]
+                - columnheader "Type" [ref=e4646]
+                - columnheader "Required" [ref=e4647]
+                - columnheader "Source" [ref=e4648]
+                - columnheader "설명" [ref=e4649]
+            - rowgroup [ref=e4650]:
+              - row "id AcId Y AC-R1-3 \"AC-R1-1\" 형식" [ref=e4651]:
+                - cell "id" [ref=e4652]
+                - cell "AcId" [ref=e4653]
+                - cell "Y" [ref=e4654]
+                - cell "AC-R1-3" [ref=e4655]:
+                  - link "AC-R1-3" [ref=e4656] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#AC-R1-3
+                - cell "\"AC-R1-1\" 형식" [ref=e4657]:
+                  - text: "\""
+                  - link "AC-R1-1" [ref=e4658] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#AC-R1-1
+                  - text: "\" 형식"
+              - row "requirementId SpecId Y FK 부모 R" [ref=e4659]:
+                - cell "requirementId" [ref=e4660]
+                - cell "SpecId" [ref=e4661]
+                - cell "Y" [ref=e4662]
+                - cell "FK" [ref=e4663]
+                - cell "부모 R" [ref=e4664]
+              - row "given string Y spec 전제" [ref=e4665]:
+                - cell "given" [ref=e4666]
+                - cell "string" [ref=e4667]
+                - cell "Y" [ref=e4668]
+                - cell "spec" [ref=e4669]
+                - cell "전제" [ref=e4670]
+              - row "when string Y spec 행동" [ref=e4671]:
+                - cell "when" [ref=e4672]
+                - cell "string" [ref=e4673]
+                - cell "Y" [ref=e4674]
+                - cell "spec" [ref=e4675]
+                - cell "행동" [ref=e4676]
+              - row "then string Y spec 기대 결과" [ref=e4677]:
+                - cell "then" [ref=e4678]
+                - cell "string" [ref=e4679]
+                - cell "Y" [ref=e4680]
+                - cell "spec" [ref=e4681]
+                - cell "기대 결과" [ref=e4682]
+          - heading "ENT-DependencyGraph" [level=3] [ref=e4683]
+          - code [ref=e4685]:
+            - text: "status: Approved aggregate-root: true linked-r: ["
+            - link "R2" [ref=e4686] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R2
+            - text: ","
+            - link "R4" [ref=e4687] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R4
+            - text: "] last-modified: 2026-05-16"
+          - paragraph [ref=e4688]:
+            - strong [ref=e4689]: "Description:"
+            - text: Phase 간 ID 인용 관계 그래프.
+            - link "R4" [ref=e4690] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R4
+            - text: 영향 phase 자동 식별 +
+            - link "INV-2" [ref=e4691] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/4#INV-2
+            - text: 환각 ID 검증의 source. (dashboard 시각화도 동일 graph 소비.)
+            - strong [ref=e4692]: "Aggregate root:"
+            - text: Yes (per Project)
+            - strong [ref=e4693]: "Source spec:"
+            - link "R4" [ref=e4694] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R4
+            - text: (DELTA),
+            - link "R2" [ref=e4695] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R2
+            - text: (hook validation)
+          - blockquote [ref=e4696]:
+            - paragraph [ref=e4697]:
+              - strong [ref=e4698]:
+                - text: Note (
+                - link "ADR-9" [ref=e4699] [cursor=pointer]:
+                  - /url: /p/3bd9541b5617599e/phase/12#ADR-9
+                - text: option D)
+              - text: ": graph state는 in-memory only."
+              - code [ref=e4700]: graph.json
+              - text: 또는 persistent cache 파일은 작성되지 않는다.
+          - table [ref=e4701]:
+            - rowgroup [ref=e4702]:
+              - row "Name Type Required Source 설명" [ref=e4703]:
+                - columnheader "Name" [ref=e4704]
+                - columnheader "Type" [ref=e4705]
+                - columnheader "Required" [ref=e4706]
+                - columnheader "Source" [ref=e4707]
+                - columnheader "설명" [ref=e4708]
+            - rowgroup [ref=e4709]:
+              - row "id GraphId Y system per Project 1개" [ref=e4710]:
+                - cell "id" [ref=e4711]
+                - cell "GraphId" [ref=e4712]
+                - cell "Y" [ref=e4713]
+                - cell "system" [ref=e4714]
+                - cell "per Project 1개" [ref=e4715]
+              - row "projectId ProjectId Y FK -" [ref=e4716]:
+                - cell "projectId" [ref=e4717]
+                - cell "ProjectId" [ref=e4718]
+                - cell "Y" [ref=e4719]
+                - cell "FK" [ref=e4720]
+                - cell "-" [ref=e4721]
+              - row "nodes GraphNode[] Y F4.1 모든 정의된 ID" [ref=e4722]:
+                - cell "nodes" [ref=e4723]
+                - cell "GraphNode[]" [ref=e4724]
+                - cell "Y" [ref=e4725]
+                - cell "F4.1" [ref=e4726]:
+                  - link "F4.1" [ref=e4727] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F4.1
+                - cell "모든 정의된 ID" [ref=e4728]
+              - row "edges GraphEdge[] Y F4.1 인용 관계 (from→to)" [ref=e4729]:
+                - cell "edges" [ref=e4730]
+                - cell "GraphEdge[]" [ref=e4731]
+                - cell "Y" [ref=e4732]
+                - cell "F4.1" [ref=e4733]:
+                  - link "F4.1" [ref=e4734] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F4.1
+                - cell "인용 관계 (from→to)" [ref=e4735]
+              - row "lastBuiltAt ISODateTime Y system rebuild timestamp" [ref=e4736]:
+                - cell "lastBuiltAt" [ref=e4737]
+                - cell "ISODateTime" [ref=e4738]
+                - cell "Y" [ref=e4739]
+                - cell "system" [ref=e4740]
+                - cell "rebuild timestamp" [ref=e4741]
+          - heading "GraphNode (sub-entity)" [level=4] [ref=e4742]
+          - list [ref=e4743]:
+            - listitem [ref=e4744]: "specId: SpecId"
+            - listitem [ref=e4745]: "phaseId: PhaseId"
+            - listitem [ref=e4746]: "definedAt: FilePath + line"
+          - heading "GraphEdge (sub-entity)" [level=4] [ref=e4747]
+          - list [ref=e4748]:
+            - listitem [ref=e4749]: "from: SpecId (인용한 ID)"
+            - listitem [ref=e4750]: "to: SpecId (인용된 ID)"
+            - listitem [ref=e4751]: "citedAt: FilePath + line"
+            - listitem [ref=e4752]: "type: ReferenceType (uses / extends / implements / blocks)"
+          - heading "ENT-Hook" [level=3] [ref=e4753]
+          - code [ref=e4755]:
+            - text: "status: Approved aggregate-root: false linked-r: ["
+            - link "R2" [ref=e4756] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R2
+            - text: "] state-machine: SM-Hook last-modified: 2026-05-16"
+          - paragraph [ref=e4757]:
+            - strong [ref=e4758]: "Description:"
+            - text: Plugin이 install·관리하는 검증 hook 정의.
+            - strong [ref=e4759]: "Aggregate root:"
+            - text: No (Project에 속함)
+            - strong [ref=e4760]: "Source spec:"
+            - link "R2" [ref=e4761] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R2
+            - text: (모든 F)
+          - table [ref=e4762]:
+            - rowgroup [ref=e4763]:
+              - row "Name Type Required Source 설명" [ref=e4764]:
+                - columnheader "Name" [ref=e4765]
+                - columnheader "Type" [ref=e4766]
+                - columnheader "Required" [ref=e4767]
+                - columnheader "Source" [ref=e4768]
+                - columnheader "설명" [ref=e4769]
+            - rowgroup [ref=e4770]:
+              - row "id HookId Y system \"pre-commit-self-check\" 등" [ref=e4771]:
+                - cell "id" [ref=e4772]
+                - cell "HookId" [ref=e4773]
+                - cell "Y" [ref=e4774]
+                - cell "system" [ref=e4775]
+                - cell "\"pre-commit-self-check\" 등" [ref=e4776]
+              - row "type HookType Y F2.1·F2.2·F2.3·F2.4 PreCommit / PhaseTransition / SchemaValidation" [ref=e4777]:
+                - cell "type" [ref=e4778]
+                - cell "HookType" [ref=e4779]
+                - cell "Y" [ref=e4780]
+                - cell "F2.1·F2.2·F2.3·F2.4" [ref=e4781]:
+                  - link "F2.1" [ref=e4782] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F2.1
+                  - text: ·
+                  - link "F2.2" [ref=e4783] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F2.2
+                  - text: ·
+                  - link "F2.3" [ref=e4784] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F2.3
+                  - text: ·
+                  - link "F2.4" [ref=e4785] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F2.4
+                - cell "PreCommit / PhaseTransition / SchemaValidation" [ref=e4786]
+              - row "projectId ProjectId Y FK -" [ref=e4787]:
+                - cell "projectId" [ref=e4788]
+                - cell "ProjectId" [ref=e4789]
+                - cell "Y" [ref=e4790]
+                - cell "FK" [ref=e4791]
+                - cell "-" [ref=e4792]
+              - row "installPath FilePath Y F6.4 .git/hooks/pre-commit 등" [ref=e4793]:
+                - cell "installPath" [ref=e4794]
+                - cell "FilePath" [ref=e4795]
+                - cell "Y" [ref=e4796]
+                - cell "F6.4" [ref=e4797]:
+                  - link "F6.4" [ref=e4798] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F6.4
+                - cell ".git/hooks/pre-commit 등" [ref=e4799]
+              - row "status HookStatus Y SM-Hook Installed / Failed / Disabled" [ref=e4800]:
+                - cell "status" [ref=e4801]
+                - cell "HookStatus" [ref=e4802]
+                - cell "Y" [ref=e4803]
+                - cell "SM-Hook" [ref=e4804]
+                - cell "Installed / Failed / Disabled" [ref=e4805]
+          - heading "ENT-Change (DELTA mode)" [level=3] [ref=e4806]
+          - code [ref=e4808]:
+            - text: "status: Approved aggregate-root: true linked-r: ["
+            - link "R4" [ref=e4809] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R4
+            - text: "] state-machine: SM-Change-Lifecycle last-modified: 2026-05-16"
+          - paragraph [ref=e4810]:
+            - strong [ref=e4811]: "Description:"
+            - text: 기존 spec 위 변경 단위. ADDED/MODIFIED/REMOVED + 영향 phase 자동 식별 결과.
+            - strong [ref=e4812]: "Aggregate root:"
+            - text: "Yes"
+            - strong [ref=e4813]: "Source spec:"
+            - link "R4" [ref=e4814] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R4
+            - text: (모든).
+            - link "R10" [ref=e4815] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R10
+            - text: deferred — EXPANSION cherry-pick (timeline) not yet promoted to a requirement.
+          - table [ref=e4816]:
+            - rowgroup [ref=e4817]:
+              - row "Name Type Required Source 설명" [ref=e4818]:
+                - columnheader "Name" [ref=e4819]
+                - columnheader "Type" [ref=e4820]
+                - columnheader "Required" [ref=e4821]
+                - columnheader "Source" [ref=e4822]
+                - columnheader "설명" [ref=e4823]
+            - rowgroup [ref=e4824]:
+              - 'row "id ChangeId Y system \"{date}-{topic}\" 형식" [ref=e4825]':
+                - cell "id" [ref=e4826]
+                - cell "ChangeId" [ref=e4827]
+                - cell "Y" [ref=e4828]
+                - cell "system" [ref=e4829]
+                - 'cell "\"{date}-{topic}\" 형식" [ref=e4830]'
+              - row "projectId ProjectId Y FK -" [ref=e4831]:
+                - cell "projectId" [ref=e4832]
+                - cell "ProjectId" [ref=e4833]
+                - cell "Y" [ref=e4834]
+                - cell "FK" [ref=e4835]
+                - cell "-" [ref=e4836]
+              - row "capability CapabilityId Y spec kebab-case" [ref=e4837]:
+                - cell "capability" [ref=e4838]
+                - cell "CapabilityId" [ref=e4839]
+                - cell "Y" [ref=e4840]
+                - cell "spec" [ref=e4841]
+                - cell "kebab-case" [ref=e4842]
+              - row "status ChangeStatus Y SM-Change Proposed/Reviewed/Approved/Applied/Archived" [ref=e4843]:
+                - cell "status" [ref=e4844]
+                - cell "ChangeStatus" [ref=e4845]
+                - cell "Y" [ref=e4846]
+                - cell "SM-Change" [ref=e4847]
+                - cell "Proposed/Reviewed/Approved/Applied/Archived" [ref=e4848]
+              - row "affectedPhases PhaseId[] Y AC-R4-1 plugin auto-extracted" [ref=e4849]:
+                - cell "affectedPhases" [ref=e4850]
+                - cell "PhaseId[]" [ref=e4851]
+                - cell "Y" [ref=e4852]
+                - cell "AC-R4-1" [ref=e4853]:
+                  - link "AC-R4-1" [ref=e4854] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#AC-R4-1
+                - cell "plugin auto-extracted" [ref=e4855]
+              - row "addedSpecIds SpecId[] N spec -" [ref=e4856]:
+                - cell "addedSpecIds" [ref=e4857]
+                - cell "SpecId[]" [ref=e4858]
+                - cell "N" [ref=e4859]
+                - cell "spec" [ref=e4860]
+                - cell "-" [ref=e4861]
+              - row "modifiedSpecIds SpecId[] N spec -" [ref=e4862]:
+                - cell "modifiedSpecIds" [ref=e4863]
+                - cell "SpecId[]" [ref=e4864]
+                - cell "N" [ref=e4865]
+                - cell "spec" [ref=e4866]
+                - cell "-" [ref=e4867]
+              - row "removedSpecIds SpecId[] N spec -" [ref=e4868]:
+                - cell "removedSpecIds" [ref=e4869]
+                - cell "SpecId[]" [ref=e4870]
+                - cell "N" [ref=e4871]
+                - cell "spec" [ref=e4872]
+                - cell "-" [ref=e4873]
+              - row "createdAt ISODateTime Y system timeline anchor" [ref=e4874]:
+                - cell "createdAt" [ref=e4875]
+                - cell "ISODateTime" [ref=e4876]
+                - cell "Y" [ref=e4877]
+                - cell "system" [ref=e4878]
+                - cell "timeline anchor" [ref=e4879]
+              - row "appliedAt ISODateTime N system -" [ref=e4880]:
+                - cell "appliedAt" [ref=e4881]
+                - cell "ISODateTime" [ref=e4882]
+                - cell "N" [ref=e4883]
+                - cell "system" [ref=e4884]
+                - cell "-" [ref=e4885]
+          - heading "ENT-Skill" [level=3] [ref=e4886]
+          - code [ref=e4888]:
+            - text: "status: Approved aggregate-root: false linked-r: ["
+            - link "R5" [ref=e4889] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R5
+            - text: ","
+            - link "R8" [ref=e4890] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R8
+            - text: "] last-modified: 2026-05-16"
+          - paragraph [ref=e4891]:
+            - strong [ref=e4892]: "Description:"
+            - text: Claude Code skill 정의. plugin install 시 13개 skill + orchestrator 1개 등록.
+            - strong [ref=e4893]: "Aggregate root:"
+            - text: No (plugin 자체 속함, project-independent)
+            - strong [ref=e4894]: "Source spec:"
+            - link "R5" [ref=e4895] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R5
+            - text: (orchestration),
+            - link "R8" [ref=e4896] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R8
+            - text: (implementation)
+          - table [ref=e4897]:
+            - rowgroup [ref=e4898]:
+              - row "Name Type Required Source 설명" [ref=e4899]:
+                - columnheader "Name" [ref=e4900]
+                - columnheader "Type" [ref=e4901]
+                - columnheader "Required" [ref=e4902]
+                - columnheader "Source" [ref=e4903]
+                - columnheader "설명" [ref=e4904]
+            - rowgroup [ref=e4905]:
+              - row "name SkillName Y system \"phase-1-prd\" 등" [ref=e4906]:
+                - cell "name" [ref=e4907]
+                - cell "SkillName" [ref=e4908]
+                - cell "Y" [ref=e4909]
+                - cell "system" [ref=e4910]
+                - cell "\"phase-1-prd\" 등" [ref=e4911]
+              - row "version SemVer Y system plugin 버전" [ref=e4912]:
+                - cell "version" [ref=e4913]
+                - cell "SemVer" [ref=e4914]
+                - cell "Y" [ref=e4915]
+                - cell "system" [ref=e4916]
+                - cell "plugin 버전" [ref=e4917]
+              - row "triggerWords string[] Y spec LLM 자동 trigger" [ref=e4918]:
+                - cell "triggerWords" [ref=e4919]
+                - cell "string[]" [ref=e4920]
+                - cell "Y" [ref=e4921]
+                - cell "spec" [ref=e4922]
+                - cell "LLM 자동 trigger" [ref=e4923]
+              - row "inputSchema JSONSchema Y F1.2 이전 phase frontmatter" [ref=e4924]:
+                - cell "inputSchema" [ref=e4925]
+                - cell "JSONSchema" [ref=e4926]
+                - cell "Y" [ref=e4927]
+                - cell "F1.2" [ref=e4928]:
+                  - link "F1.2" [ref=e4929] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F1.2
+                - cell "이전 phase frontmatter" [ref=e4930]
+              - row "outputSchema JSONSchema Y F1.1 산출물 frontmatter" [ref=e4931]:
+                - cell "outputSchema" [ref=e4932]
+                - cell "JSONSchema" [ref=e4933]
+                - cell "Y" [ref=e4934]
+                - cell "F1.1" [ref=e4935]:
+                  - link "F1.1" [ref=e4936] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F1.1
+                - cell "산출물 frontmatter" [ref=e4937]
+              - row "requiresPhaseStatus PhaseStatus[] Y F2.2 호출 전제 (이전 phase Approved)" [ref=e4938]:
+                - cell "requiresPhaseStatus" [ref=e4939]
+                - cell "PhaseStatus[]" [ref=e4940]
+                - cell "Y" [ref=e4941]
+                - cell "F2.2" [ref=e4942]:
+                  - link "F2.2" [ref=e4943] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F2.2
+                - cell "호출 전제 (이전 phase Approved)" [ref=e4944]
+          - heading "ENT-Subagent (Phase 13 implementation)" [level=3] [ref=e4945]
+          - code [ref=e4947]:
+            - text: "status: Approved aggregate-root: false linked-r: ["
+            - link "R8" [ref=e4948] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R8
+            - text: "] state-machine: SM-Subagent last-modified: 2026-05-16"
+          - paragraph [ref=e4949]:
+            - strong [ref=e4950]: "Description:"
+            - text: Superpowers 패턴 fresh subagent. Phase 13 atomic task별.
+            - strong [ref=e4951]: "Aggregate root:"
+            - text: No (Project·Implementation session 속함)
+            - strong [ref=e4952]: "Source spec:"
+            - link "R8" [ref=e4953] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R8
+            - text: (모든)
+          - table [ref=e4954]:
+            - rowgroup [ref=e4955]:
+              - row "Name Type Required Source 설명" [ref=e4956]:
+                - columnheader "Name" [ref=e4957]
+                - columnheader "Type" [ref=e4958]
+                - columnheader "Required" [ref=e4959]
+                - columnheader "Source" [ref=e4960]
+                - columnheader "설명" [ref=e4961]
+            - rowgroup [ref=e4962]:
+              - row "id SubagentId Y system per task 1개" [ref=e4963]:
+                - cell "id" [ref=e4964]
+                - cell "SubagentId" [ref=e4965]
+                - cell "Y" [ref=e4966]
+                - cell "system" [ref=e4967]
+                - cell "per task 1개" [ref=e4968]
+              - row "taskId TaskId Y FK Phase 13 atomic task" [ref=e4969]:
+                - cell "taskId" [ref=e4970]
+                - cell "TaskId" [ref=e4971]
+                - cell "Y" [ref=e4972]
+                - cell "FK" [ref=e4973]
+                - cell "Phase 13 atomic task" [ref=e4974]
+              - row "stage SubagentStage Y F8.3 Implementation / SpecReview / QualityReview" [ref=e4975]:
+                - cell "stage" [ref=e4976]
+                - cell "SubagentStage" [ref=e4977]
+                - cell "Y" [ref=e4978]
+                - cell "F8.3" [ref=e4979]:
+                  - link "F8.3" [ref=e4980] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F8.3
+                - cell "Implementation / SpecReview / QualityReview" [ref=e4981]
+              - row "status SubagentStatus Y SM-Subagent Running / Passed / Blocked / Failed" [ref=e4982]:
+                - cell "status" [ref=e4983]
+                - cell "SubagentStatus" [ref=e4984]
+                - cell "Y" [ref=e4985]
+                - cell "SM-Subagent" [ref=e4986]
+                - cell "Running / Passed / Blocked / Failed" [ref=e4987]
+              - row "escalationReason string N F8.4 BLOCKED 사유" [ref=e4988]:
+                - cell "escalationReason" [ref=e4989]
+                - cell "string" [ref=e4990]
+                - cell "N" [ref=e4991]
+                - cell "F8.4" [ref=e4992]:
+                  - link "F8.4" [ref=e4993] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F8.4
+                - cell "BLOCKED 사유" [ref=e4994]
+          - heading "ENT-TelemetryEvent (R13)" [level=3] [ref=e4995]:
+            - text: ENT-TelemetryEvent (
+            - link "R13" [ref=e4996] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R13
+            - text: )
+          - code [ref=e4998]:
+            - text: "status: Approved aggregate-root: true linked-r: ["
+            - link "R13" [ref=e4999] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R13
+            - text: "] last-modified: 2026-05-16"
+          - paragraph [ref=e5000]:
+            - strong [ref=e5001]: "Description:"
+            - text: opt-in 사용자의 익명 metric event.
+            - strong [ref=e5002]: "Aggregate root:"
+            - text: Yes (telemetry stream 자체)
+            - strong [ref=e5003]: "Source spec:"
+            - link "R13" [ref=e5004] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R13
+          - table [ref=e5005]:
+            - rowgroup [ref=e5006]:
+              - row "Name Type Required Source 설명" [ref=e5007]:
+                - columnheader "Name" [ref=e5008]
+                - columnheader "Type" [ref=e5009]
+                - columnheader "Required" [ref=e5010]
+                - columnheader "Source" [ref=e5011]
+                - columnheader "설명" [ref=e5012]
+            - rowgroup [ref=e5013]:
+              - row "id EventId Y system UUID" [ref=e5014]:
+                - cell "id" [ref=e5015]
+                - cell "EventId" [ref=e5016]
+                - cell "Y" [ref=e5017]
+                - cell "system" [ref=e5018]
+                - cell "UUID" [ref=e5019]
+              - row "eventType TelemetryEventType Y spec PhaseStarted / PhaseApproved / HookBlock / ChangeProposed / ImplementationStarted 등" [ref=e5020]:
+                - cell "eventType" [ref=e5021]
+                - cell "TelemetryEventType" [ref=e5022]
+                - cell "Y" [ref=e5023]
+                - cell "spec" [ref=e5024]
+                - cell "PhaseStarted / PhaseApproved / HookBlock / ChangeProposed / ImplementationStarted 등" [ref=e5025]
+              - row "anonProjectHash string Y AC-R13-2 사용자 식별 X — project root path SHA256 (irreversible)" [ref=e5026]:
+                - cell "anonProjectHash" [ref=e5027]
+                - cell "string" [ref=e5028]
+                - cell "Y" [ref=e5029]
+                - cell "AC-R13-2" [ref=e5030]:
+                  - link "AC-R13-2" [ref=e5031] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#AC-R13-2
+                - cell "사용자 식별 X — project root path SHA256 (irreversible)" [ref=e5032]
+              - row "timestamp ISODateTime Y system -" [ref=e5033]:
+                - cell "timestamp" [ref=e5034]
+                - cell "ISODateTime" [ref=e5035]
+                - cell "Y" [ref=e5036]
+                - cell "system" [ref=e5037]
+                - cell "-" [ref=e5038]
+              - row "pluginVersion SemVer Y system -" [ref=e5039]:
+                - cell "pluginVersion" [ref=e5040]
+                - cell "SemVer" [ref=e5041]
+                - cell "Y" [ref=e5042]
+                - cell "system" [ref=e5043]
+                - cell "-" [ref=e5044]
+              - row "metadata json N spec event-specific (phase number, duration 등 — spec 내용 제외)" [ref=e5045]:
+                - cell "metadata" [ref=e5046]
+                - cell "json" [ref=e5047]
+                - cell "N" [ref=e5048]
+                - cell "spec" [ref=e5049]
+                - cell "event-specific (phase number, duration 등 — spec 내용 제외)" [ref=e5050]
+          - heading "ENT-TelemetryConsent" [level=3] [ref=e5051]
+          - code [ref=e5053]:
+            - text: "status: Approved aggregate-root: true linked-r: ["
+            - link "R13" [ref=e5054] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R13
+            - text: "] state-machine: SM-Consent last-modified: 2026-05-16"
+          - paragraph [ref=e5055]:
+            - strong [ref=e5056]: "Description:"
+            - text: 사용자 opt-in 동의 상태. Local storage.
+            - strong [ref=e5057]: "Aggregate root:"
+            - text: "Yes"
+            - strong [ref=e5058]: "Source spec:"
+            - link "R13" [ref=e5059] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R13
+          - table [ref=e5060]:
+            - rowgroup [ref=e5061]:
+              - row "Name Type Required Source 설명" [ref=e5062]:
+                - columnheader "Name" [ref=e5063]
+                - columnheader "Type" [ref=e5064]
+                - columnheader "Required" [ref=e5065]
+                - columnheader "Source" [ref=e5066]
+                - columnheader "설명" [ref=e5067]
+            - rowgroup [ref=e5068]:
+              - row "id ConsentId Y system per machine·user" [ref=e5069]:
+                - cell "id" [ref=e5070]
+                - cell "ConsentId" [ref=e5071]
+                - cell "Y" [ref=e5072]
+                - cell "system" [ref=e5073]
+                - cell "per machine·user" [ref=e5074]
+              - row "status ConsentStatus Y SM-Consent NotAsked / OptedIn / OptedOut" [ref=e5075]:
+                - cell "status" [ref=e5076]
+                - cell "ConsentStatus" [ref=e5077]
+                - cell "Y" [ref=e5078]
+                - cell "SM-Consent" [ref=e5079]
+                - cell "NotAsked / OptedIn / OptedOut" [ref=e5080]
+              - row "consentedAt ISODateTime N AC-R13-1 opt-in 시각" [ref=e5081]:
+                - cell "consentedAt" [ref=e5082]
+                - cell "ISODateTime" [ref=e5083]
+                - cell "N" [ref=e5084]
+                - cell "AC-R13-1" [ref=e5085]:
+                  - link "AC-R13-1" [ref=e5086] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#AC-R13-1
+                - cell "opt-in 시각" [ref=e5087]
+              - row "revokedAt ISODateTime N AC-R13-3 opt-out 시각" [ref=e5088]:
+                - cell "revokedAt" [ref=e5089]
+                - cell "ISODateTime" [ref=e5090]
+                - cell "N" [ref=e5091]
+                - cell "AC-R13-3" [ref=e5092]:
+                  - link "AC-R13-3" [ref=e5093] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#AC-R13-3
+                - cell "opt-out 시각" [ref=e5094]
+          - heading "2. Relations" [level=2] [ref=e5095]
+          - code [ref=e5097]: "erDiagram Project ||--o{ Phase : contains Project ||--|| DependencyGraph : has Project ||--o{ Hook : \"installs\" Project ||--o{ Change : \"tracks\" Phase ||--o{ Spec : contains Spec ||--o{ AcceptanceCriteria : \"has (R-tier만)\" Spec ||--o{ Spec : \"parent (R→F→S)\" Change ||--o{ Phase : \"affects (M:N)\" Change ||--o{ Spec : \"ADDED/MODIFIED/REMOVED\" Subagent ||--|| Spec : implements DependencyGraph ||..|| Spec : \"indexes\" TelemetryConsent ||--o{ TelemetryEvent : authorizes Project { ProjectId id PK FilePath rootPath ISODateTime createdAt } Phase { PhaseId id PK ProjectId projectId FK SkillName skillName PhaseStatus status } Spec { SpecId id PK PhaseId phaseId FK SpecTier tier Importance importance SpecStatus status } DependencyGraph { GraphId id PK ProjectId projectId FK ISODateTime lastBuiltAt } Hook { HookId id PK ProjectId projectId FK HookType type HookStatus status } Change { ChangeId id PK ProjectId projectId FK ChangeStatus status ISODateTime createdAt } TelemetryEvent { EventId id PK TelemetryEventType eventType string anonProjectHash ISODateTime timestamp } TelemetryConsent { ConsentId id PK ConsentStatus status }"
+          - heading "3. State Machines" [level=2] [ref=e5098]
+          - heading "SM-Phase-Lifecycle" [level=3] [ref=e5099]
+          - code [ref=e5101]: "stateDiagram-v2 [*] --> Empty: project init Empty --> Draft: skill 호출 + 산출물 생성 시작 Draft --> Draft: 사용자/LLM 수정·재작성 Draft --> Approved: 사용자 명시 승인 + hook 통과 Approved --> Draft: DELTA 변경 영향 받음 Approved --> [*]: project archive (P2)"
+          - table [ref=e5102]:
+            - rowgroup [ref=e5103]:
+              - row "상태 설명 진입 이탈" [ref=e5104]:
+                - columnheader "상태" [ref=e5105]
+                - columnheader "설명" [ref=e5106]
+                - columnheader "진입" [ref=e5107]
+                - columnheader "이탈" [ref=e5108]
+            - rowgroup [ref=e5109]:
+              - row "Empty 산출물 file 없음 project init skill 첫 호출" [ref=e5110]:
+                - cell "Empty" [ref=e5111]
+                - cell "산출물 file 없음" [ref=e5112]
+                - cell "project init" [ref=e5113]
+                - cell "skill 첫 호출" [ref=e5114]
+              - row "Draft 작성 중 skill 호출 명시 승인" [ref=e5115]:
+                - cell "Draft" [ref=e5116]
+                - cell "작성 중" [ref=e5117]
+                - cell "skill 호출" [ref=e5118]
+                - cell "명시 승인" [ref=e5119]
+              - row "Approved 승인 완료, 다음 phase 진입 가능 사용자 명시 + hook pass DELTA 또는 archive" [ref=e5120]:
+                - cell "Approved" [ref=e5121]
+                - cell "승인 완료, 다음 phase 진입 가능" [ref=e5122]
+                - cell "사용자 명시 + hook pass" [ref=e5123]
+                - cell "DELTA 또는 archive" [ref=e5124]
+          - heading "불가능 전이" [level=4] [ref=e5125]
+          - table [ref=e5126]:
+            - rowgroup [ref=e5127]:
+              - row "시도 차단 메커니즘" [ref=e5128]:
+                - columnheader "시도" [ref=e5129]
+                - columnheader "차단" [ref=e5130]
+                - columnheader "메커니즘" [ref=e5131]
+            - rowgroup [ref=e5132]:
+              - row "Empty → Approved skill 작업 우회 F2.2 phase transition gate" [ref=e5133]:
+                - cell "Empty → Approved" [ref=e5134]
+                - cell "skill 작업 우회" [ref=e5135]
+                - cell "F2.2 phase transition gate" [ref=e5136]:
+                  - link "F2.2" [ref=e5137] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F2.2
+                  - text: phase transition gate
+              - row "Draft → Approved (hook fail) self-check 미통과 F2.1 pre-commit hook" [ref=e5138]:
+                - cell "Draft → Approved (hook fail)" [ref=e5139]
+                - cell "self-check 미통과" [ref=e5140]
+                - cell "F2.1 pre-commit hook" [ref=e5141]:
+                  - link "F2.1" [ref=e5142] [cursor=pointer]:
+                    - /url: /p/3bd9541b5617599e/phase/3#F2.1
+                  - text: pre-commit hook
+          - heading "SM-Spec-Status" [level=3] [ref=e5143]
+          - code [ref=e5145]:
+            - text: "stateDiagram-v2 [*] --> Draft: phase 산출물 작성 중 Draft --> Approved: phase Approved 시 일괄 Approved --> Implementing: Phase 13 task 시작 Implementing --> Done: TC 통과 Approved --> Draft: DELTA modify Implementing --> Blocked:"
+            - link "F8.4" [ref=e5146] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#F8.4
+            - text: "escalation Blocked --> Implementing: 사용자 결정 후"
+          - heading "SM-Change-Lifecycle" [level=3] [ref=e5147]
+          - code [ref=e5149]: "stateDiagram-v2 [*] --> Proposed: change 명령 Proposed --> Reviewed: 사용자 review 시작 Reviewed --> Proposed: 변경 요청 (수정) Reviewed --> Approved: 명시 승인 Approved --> Implementing: tasks.md 실행 Implementing --> Applied: current/ 머지 Applied --> Archived: archive 이동 Archived --> [*]"
+          - heading "SM-Hook" [level=3] [ref=e5150]
+          - code [ref=e5152]:
+            - text: "stateDiagram-v2 [*] --> NotInstalled NotInstalled --> Installed:"
+            - link "F6.4" [ref=e5153] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#F6.4
+            - text: "자동 install Installed --> Failed: hook 실행 시 error Failed --> Installed: 재install 또는 재실행 성공 Installed --> Disabled: 사용자 명시 disable Disabled --> Installed: 재enable"
+          - heading "SM-Subagent" [level=3] [ref=e5154]
+          - code [ref=e5156]: "stateDiagram-v2 [*] --> Running: task 시작 Running --> Passed: TC pass + 2-stage review pass Running --> Blocked: ambiguity 또는 외부 의존 Running --> Failed: TC fail Blocked --> Running: 사용자 결정 후 Failed --> Running: 재시도 (다른 subagent) Passed --> [*]"
+          - heading "SM-Consent (R13)" [level=3] [ref=e5157]:
+            - text: SM-Consent (
+            - link "R13" [ref=e5158] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R13
+            - text: )
+          - code [ref=e5160]: "stateDiagram-v2 [*] --> NotAsked: plugin install NotAsked --> OptedIn: 사용자 yes NotAsked --> OptedOut: 사용자 no (default) OptedIn --> OptedOut: anytime opt-out OptedOut --> OptedIn: anytime opt-in"
+          - heading "4. Invariants" [level=2] [ref=e5161]
+          - 'heading "INV-1: Spec ID는 Project 내 unique" [level=3] [ref=e5162]':
+            - link "INV-1" [ref=e5163] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/4#INV-1
+            - text: ": Spec ID는 Project 내 unique"
+          - code [ref=e5165]: "status: Approved applies-to: [ENT-Spec] last-modified: 2026-05-16"
+          - paragraph [ref=e5166]:
+            - strong [ref=e5167]: "규칙:"
+            - text: 같은 Project의 모든 Spec.id는 unique. 두 Phase에서 같은 ID 정의 X.
+            - strong [ref=e5168]: "위반 시:"
+            - text: ID 인용 ambiguous → cross-reference 깨짐.
+            - strong [ref=e5169]: "검증:"
+            - text: plugin auto-generation (
+            - link "F1.3" [ref=e5170] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#F1.3
+            - text: )이 unique 보장. hook이 commit 시 verify.
+          - 'heading "INV-2: 인용 ID는 정의된 ID set 안" [level=3] [ref=e5171]':
+            - link "INV-2" [ref=e5172] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/4#INV-2
+            - text: ": 인용 ID는 정의된 ID set 안"
+          - code [ref=e5174]: "status: Approved applies-to: [ENT-Spec, ENT-AcceptanceCriteria, ENT-DependencyGraph] last-modified: 2026-05-16"
+          - paragraph [ref=e5175]:
+            - strong [ref=e5176]: "규칙:"
+            - text: 모든 Spec/AC의 본문에서 인용된 ID는 같은 Project에 정의되어 있어야.
+            - strong [ref=e5177]: "위반 시:"
+            - text: 환각 ID — dangling reference.
+            - strong [ref=e5178]: "검증:"
+            - link "F2.3" [ref=e5179] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#F2.3
+            - text: ID consistency hook (commit 차단). 또는 LLM 작성 시점에
+            - link "F1.4" [ref=e5180] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#F1.4
+            - text: resolver가 valid list만 노출.
+          - 'heading "INV-3: Phase N+1 진입 시 Phase N status=Approved" [level=3] [ref=e5181]':
+            - link "INV-3" [ref=e5182] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/4#INV-3
+            - text: ": Phase N+1 진입 시 Phase N status=Approved"
+          - code [ref=e5184]: "status: Approved applies-to: [ENT-Phase] last-modified: 2026-05-16"
+          - paragraph [ref=e5185]:
+            - strong [ref=e5186]: "규칙:"
+            - text: PhaseStatus enum 순서 강제. Empty→Draft→Approved 외 전이 X.
+            - strong [ref=e5187]: "예외:"
+            - text: Phase 1은 predecessor 없음 —
+            - code [ref=e5188]: canInvokePhase(target=1)
+            - text: 은 항상 allowed (다른 검증 부재).
+            - strong [ref=e5189]: "State source-of-truth:"
+            - text: ENT-Phase.status가 frontmatter에 저장된 값이 authoritative.
+            - code [ref=e5190]: .specrail-cache/state.json
+            - text: 은 derived (rebuild 가능). 불일치 시 frontmatter 기준으로 cache 재생성.
+            - strong [ref=e5191]: "위반 시:"
+            - text: 사양 안 된 phase 위에 작업 — LLM hallucination 위험.
+            - strong [ref=e5192]: "검증:"
+            - link "F2.2" [ref=e5193] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#F2.2
+            - text: phase transition gate (skill 호출 거부). ENT-Skill.requiresPhaseStatus. Hook이 commit 시 frontmatter vs cache 일치 검증.
+          - 'heading "INV-4: 모든 P0 Spec은 PRD 시나리오 cover" [level=3] [ref=e5194]':
+            - link "INV-4" [ref=e5195] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/4#INV-4
+            - text: ": 모든 P0 Spec은 PRD 시나리오 cover"
+          - code [ref=e5197]: "status: Approved applies-to: [ENT-Spec] last-modified: 2026-05-16"
+          - paragraph [ref=e5198]:
+            - strong [ref=e5199]: "규칙:"
+            - text: Importance=P0 set이 PRD §3.3 시나리오 cover.
+            - strong [ref=e5200]: "위반 시:"
+            - text: MVP 출시 후 핵심 시나리오 깨짐.
+            - strong [ref=e5201]: "검증:"
+            - text: Phase 13 self-check matrix.
+          - 'heading "INV-5: AC는 R-tier만, GIVEN/WHEN/THEN 형식" [level=3] [ref=e5202]':
+            - link "INV-5" [ref=e5203] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/4#INV-5
+            - text: ": AC는 R-tier만, GIVEN/WHEN/THEN 형식"
+          - code [ref=e5205]: "status: Approved applies-to: [ENT-AcceptanceCriteria] last-modified: 2026-05-16"
+          - paragraph [ref=e5206]:
+            - strong [ref=e5207]: "규칙:"
+            - text: AcceptanceCriteria.requirementId는 항상 R-tier Spec.id. F·S tier에 AC 부여 X. 모든 AC는 given/when/then 모두 비어있지 않음.
+            - strong [ref=e5208]: "위반 시:"
+            - text: 검증 ambiguous 또는 중복.
+            - strong [ref=e5209]: "검증:"
+            - link "F2.4" [ref=e5210] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#F2.4
+            - text: schema hook + Phase 3 self-check.
+          - 'heading "INV-6: 모든 Change에 affectedPhases ≥ 1" [level=3] [ref=e5211]':
+            - link "INV-6" [ref=e5212] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/4#INV-6
+            - text: ": 모든 Change에 affectedPhases ≥ 1"
+          - code [ref=e5214]: "status: Approved applies-to: [ENT-Change] last-modified: 2026-05-16"
+          - paragraph [ref=e5215]:
+            - strong [ref=e5216]: "규칙:"
+            - text: Change.affectedPhases 빈 배열 X. plugin이 자동 추출.
+            - strong [ref=e5217]: "위반 시:"
+            - text: delta 영향 미식별 — 모순 spec.
+            - strong [ref=e5218]: "검증:"
+            - link "AC-R4-1" [ref=e5219] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#AC-R4-1
+            - text: plugin enforce.
+          - 'heading "INV-7: ADR alternatives ≥ 2 + 거절 이유" [level=3] [ref=e5220]':
+            - link "INV-7" [ref=e5221] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/4#INV-7
+            - text: ": ADR alternatives ≥ 2 + 거절 이유"
+          - code [ref=e5223]: "status: Approved applies-to: [ENT-Spec] last-modified: 2026-05-16"
+          - paragraph [ref=e5224]:
+            - strong [ref=e5225]: "규칙:"
+            - text: Phase 12에서 만들 ADR은 alternatives 길이 ≥ 2, 각 거절은 이유 포함.
+            - strong [ref=e5226]: "위반 시:"
+            - text: 단일 옵션만 검토 — 더 좋은 길 놓침.
+            - strong [ref=e5227]: "검증:"
+            - text: Phase 12 self-check.
+          - 'heading "INV-8: Telemetry는 anonProjectHash·spec 내용 제외 (R13 privacy)" [level=3] [ref=e5228]':
+            - link "INV-8" [ref=e5229] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/4#INV-8
+            - text: ": Telemetry는 anonProjectHash·spec 내용 제외 ("
+            - link "R13" [ref=e5230] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R13
+            - text: privacy)
+          - code [ref=e5232]: "status: Approved applies-to: [ENT-TelemetryEvent] last-modified: 2026-05-16"
+          - paragraph [ref=e5233]:
+            - strong [ref=e5234]: "규칙:"
+            - text: TelemetryEvent.anonProjectHash는 SHA256 (irreversible). metadata에 spec 내용·사용자 식별자 0건.
+            - strong [ref=e5235]: "위반 시:"
+            - text: Privacy 위반 — opt-in 신뢰 깨짐.
+            - strong [ref=e5236]: "검증:"
+            - link "F13.2" [ref=e5237] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#F13.2
+            - text: schema hook + 코드 review.
+          - 'heading "INV-9: TelemetryConsent default = NotAsked → OptedOut (default off)" [level=3] [ref=e5238]':
+            - link "INV-9" [ref=e5239] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/4#INV-9
+            - text: ": TelemetryConsent default = NotAsked → OptedOut (default off)"
+          - code [ref=e5241]: "status: Approved applies-to: [ENT-TelemetryConsent] last-modified: 2026-05-16"
+          - paragraph [ref=e5242]:
+            - strong [ref=e5243]: "규칙:"
+            - text: 사용자 명시 yes 없이 OptedIn 전이 X.
+            - strong [ref=e5244]: "위반 시:"
+            - text: opt-in 정신 위반.
+            - strong [ref=e5245]: "검증:"
+            - link "F13.1" [ref=e5246] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#F13.1
+            - text: install flow.
+          - 'heading "INV-10: 기존 사용자 pre-commit hook 보존 (analyst 재검토 — 정식 INV 등재)" [level=3] [ref=e5247]':
+            - link "INV-10" [ref=e5248] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/4#INV-10
+            - text: ": 기존 사용자 pre-commit hook 보존 (analyst 재검토 — 정식 INV 등재)"
+          - code [ref=e5250]: "status: Approved applies-to: [ENT-Hook] last-modified: 2026-05-16"
+          - paragraph [ref=e5251]:
+            - strong [ref=e5252]: "규칙:"
+            - text: Plugin install 시 기존
+            - code [ref=e5253]: .git/hooks/pre-commit
+            - text: (husky·lefthook·plain script)을 절대 덮어쓰지 않음. Chain 방식으로 기존 hook을 backup + sequential 실행.
+            - strong [ref=e5254]: "위반 시:"
+            - text: 사용자 기존 lint·format·CI pipeline 파괴 —
+            - link "R6" [ref=e5255] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#R6
+            - text: install이 사용자 환경 손상시키는 결정적 결함.
+            - strong [ref=e5256]: "검증:"
+            - link "AC-R6-3" [ref=e5257] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/3#AC-R6-3
+            - text: +
+            - link "T1.7" [ref=e5258] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/13#T1.7
+            - text: chain 방식 + commit 전 backup hash record. Phase 10
+            - link "TC-14" [ref=e5259] [cursor=pointer]:
+              - /url: /p/3bd9541b5617599e/phase/10#TC-14
+            - text: 확장 — 기존 husky 사용자 시나리오 cover.
+          - heading "5. Domain Types Glossary" [level=2] [ref=e5260]
+          - table [ref=e5261]:
+            - rowgroup [ref=e5262]:
+              - row "Domain Type 정의" [ref=e5263]:
+                - columnheader "Domain Type" [ref=e5264]
+                - columnheader "정의" [ref=e5265]
+            - rowgroup [ref=e5266]:
+              - row "ProjectId path-derived hash 또는 user slug" [ref=e5267]:
+                - cell "ProjectId" [ref=e5268]
+                - cell "path-derived hash 또는 user slug" [ref=e5269]
+              - row "FilePath absolute path" [ref=e5270]:
+                - cell "FilePath" [ref=e5271]
+                - cell "absolute path" [ref=e5272]
+              - row "PhaseId 1-13 정수" [ref=e5273]:
+                - cell "PhaseId" [ref=e5274]
+                - cell "1-13 정수" [ref=e5275]
+              - row "PhaseName \"01-prd\" 등 kebab-case" [ref=e5276]:
+                - cell "PhaseName" [ref=e5277]
+                - cell "\"01-prd\" 등 kebab-case" [ref=e5278]
+              - 'row "PhaseStatus enum: Empty | Draft | Approved" [ref=e5279]':
+                - cell "PhaseStatus" [ref=e5280]
+                - 'cell "enum: Empty | Draft | Approved" [ref=e5281]'
+              - 'row "SpecId \"R{n}\" | \"F{n}.{m}\" | \"S{n}.{m}.{k}\"" [ref=e5282]':
+                - cell "SpecId" [ref=e5283]
+                - 'cell "\"R{n}\" | \"F{n}.{m}\" | \"S{n}.{m}.{k}\"" [ref=e5284]'
+              - 'row "SpecTier enum: Requirement | Feature | Specification" [ref=e5285]':
+                - cell "SpecTier" [ref=e5286]
+                - 'cell "enum: Requirement | Feature | Specification" [ref=e5287]'
+              - 'row "Importance enum: P0 | P1 | P2 | P3" [ref=e5288]':
+                - cell "Importance" [ref=e5289]
+                - 'cell "enum: P0 | P1 | P2 | P3" [ref=e5290]'
+              - 'row "SpecStatus enum: Draft | Approved | Implementing | Blocked | Done" [ref=e5291]':
+                - cell "SpecStatus" [ref=e5292]
+                - 'cell "enum: Draft | Approved | Implementing | Blocked | Done" [ref=e5293]'
+              - 'row "AcId \"AC-R{n}-{m}\"" [ref=e5294]':
+                - cell "AcId" [ref=e5295]
+                - 'cell "\"AC-R{n}-{m}\"" [ref=e5296]'
+              - row "GraphId per Project 1" [ref=e5297]:
+                - cell "GraphId" [ref=e5298]
+                - cell "per Project 1" [ref=e5299]
+              - 'row "ReferenceType enum: uses | extends | implements | blocks" [ref=e5300]':
+                - cell "ReferenceType" [ref=e5301]
+                - 'cell "enum: uses | extends | implements | blocks" [ref=e5302]'
+              - row "HookId string" [ref=e5303]:
+                - cell "HookId" [ref=e5304]
+                - cell "string" [ref=e5305]
+              - 'row "HookType enum: PreCommit | PhaseTransition | SchemaValidation" [ref=e5306]':
+                - cell "HookType" [ref=e5307]
+                - 'cell "enum: PreCommit | PhaseTransition | SchemaValidation" [ref=e5308]'
+              - 'row "HookStatus enum: Installed | Failed | Disabled | NotInstalled" [ref=e5309]':
+                - cell "HookStatus" [ref=e5310]
+                - 'cell "enum: Installed | Failed | Disabled | NotInstalled" [ref=e5311]'
+              - 'row "ChangeId \"{YYYY-MM-DD}-{kebab-topic}\"" [ref=e5312]':
+                - cell "ChangeId" [ref=e5313]
+                - 'cell "\"{YYYY-MM-DD}-{kebab-topic}\"" [ref=e5314]'
+              - row "CapabilityId kebab-case" [ref=e5315]:
+                - cell "CapabilityId" [ref=e5316]
+                - cell "kebab-case" [ref=e5317]
+              - 'row "ChangeStatus enum: Proposed | Reviewed | Approved | Implementing | Applied | Archived" [ref=e5318]':
+                - cell "ChangeStatus" [ref=e5319]
+                - 'cell "enum: Proposed | Reviewed | Approved | Implementing | Applied | Archived" [ref=e5320]'
+              - 'row "SkillName \"phase-N-{name}\" 또는 \"orchestrator\"" [ref=e5321]':
+                - cell "SkillName" [ref=e5322]
+                - 'cell "\"phase-N-{name}\" 또는 \"orchestrator\"" [ref=e5323]'
+              - 'row "SemVer \"{major}.{minor}.{patch}\"" [ref=e5324]':
+                - cell "SemVer" [ref=e5325]
+                - 'cell "\"{major}.{minor}.{patch}\"" [ref=e5326]'
+              - row "JSONSchema JSON Schema spec" [ref=e5327]:
+                - cell "JSONSchema" [ref=e5328]
+                - cell "JSON Schema spec" [ref=e5329]
+              - row "SubagentId UUID" [ref=e5330]:
+                - cell "SubagentId" [ref=e5331]
+                - cell "UUID" [ref=e5332]
+              - 'row "TaskId \"T{n}.{m}\"" [ref=e5333]':
+                - cell "TaskId" [ref=e5334]
+                - 'cell "\"T{n}.{m}\"" [ref=e5335]'
+              - 'row "SubagentStage enum: Implementation | SpecReview | QualityReview" [ref=e5336]':
+                - cell "SubagentStage" [ref=e5337]
+                - 'cell "enum: Implementation | SpecReview | QualityReview" [ref=e5338]'
+              - 'row "SubagentStatus enum: Running | Passed | Blocked | Failed" [ref=e5339]':
+                - cell "SubagentStatus" [ref=e5340]
+                - 'cell "enum: Running | Passed | Blocked | Failed" [ref=e5341]'
+              - row "EventId UUID" [ref=e5342]:
+                - cell "EventId" [ref=e5343]
+                - cell "UUID" [ref=e5344]
+              - 'row "TelemetryEventType enum: PhaseStarted | PhaseApproved | HookBlock | ChangeProposed | ImplementationStarted | Other" [ref=e5345]':
+                - cell "TelemetryEventType" [ref=e5346]
+                - 'cell "enum: PhaseStarted | PhaseApproved | HookBlock | ChangeProposed | ImplementationStarted | Other" [ref=e5347]'
+              - row "ConsentId per-machine UUID" [ref=e5348]:
+                - cell "ConsentId" [ref=e5349]
+                - cell "per-machine UUID" [ref=e5350]
+              - 'row "ConsentStatus enum: NotAsked | OptedIn | OptedOut" [ref=e5351]':
+                - cell "ConsentStatus" [ref=e5352]
+                - 'cell "enum: NotAsked | OptedIn | OptedOut" [ref=e5353]'
+              - 'row "PainId \"PAIN-{name}\"" [ref=e5354]':
+                - cell "PainId" [ref=e5355]
+                - 'cell "\"PAIN-{name}\"" [ref=e5356]'
+              - row "ISODateTime UTC ISO 8601" [ref=e5357]:
+                - cell "ISODateTime" [ref=e5358]
+                - cell "UTC ISO 8601" [ref=e5359]
+          - heading "6. Open Questions" [level=2] [ref=e5360]
+          - table [ref=e5361]:
+            - rowgroup [ref=e5362]:
+              - row "Q ID 질문 결정자 Blocking?" [ref=e5363]:
+                - columnheader "Q ID" [ref=e5364]
+                - columnheader "질문" [ref=e5365]
+                - columnheader "결정자" [ref=e5366]
+                - columnheader "Blocking?" [ref=e5367]
+            - rowgroup [ref=e5368]:
+              - row "OQ-4-1 Subagent stage 3개 (Impl/SpecReview/QualityReview) — Spec/Quality review 동시 또는 순차 maintainer Phase 8" [ref=e5369]:
+                - cell "OQ-4-1" [ref=e5370]
+                - cell "Subagent stage 3개 (Impl/SpecReview/QualityReview) — Spec/Quality review 동시 또는 순차" [ref=e5371]
+                - cell "maintainer" [ref=e5372]
+                - cell "Phase 8" [ref=e5373]
+              - row "OQ-4-2 TelemetryEvent backend (자체 host vs plausible.io 같은 자체 hosted vs Supabase 등) maintainer Phase 8·12 (ADR-CAND)" [ref=e5374]:
+                - cell "OQ-4-2" [ref=e5375]
+                - cell "TelemetryEvent backend (자체 host vs plausible.io 같은 자체 hosted vs Supabase 등)" [ref=e5376]
+                - cell "maintainer" [ref=e5377]
+                - cell "Phase 8·12 (ADR-CAND)" [ref=e5378]
+              - row "OQ-4-3 ChangeId capability 수동 vs 자동 (kebab-case 어떻게) maintainer Phase 7" [ref=e5379]:
+                - cell "OQ-4-3" [ref=e5380]
+                - cell "ChangeId capability 수동 vs 자동 (kebab-case 어떻게)" [ref=e5381]
+                - cell "maintainer" [ref=e5382]
+                - cell "Phase 7" [ref=e5383]
+              - row "OQ-4-4 ENT-Skill input/output JSONSchema — 13 phase별로 다 정의? frontmatter schema와 sync? maintainer Phase 8" [ref=e5384]:
+                - cell "OQ-4-4" [ref=e5385]
+                - cell "ENT-Skill input/output JSONSchema — 13 phase별로 다 정의? frontmatter schema와 sync?" [ref=e5386]
+                - cell "maintainer" [ref=e5387]
+                - cell "Phase 8" [ref=e5388]
+          - heading "7. 다음 phase 인풋" [level=2] [ref=e5389]
+          - paragraph [ref=e5390]: "Phase 5 (User Flow):"
+          - list [ref=e5391]:
+            - listitem [ref=e5392]: Entity ID + State Machine (Node 매핑)
+            - listitem [ref=e5393]:
+              - text: "핵심 SM: Phase-Lifecycle ("
+              - link "S1" [ref=e5394] [cursor=pointer]:
+                - /url: /p/3bd9541b5617599e/phase/3#S1
+              - text: ·
+              - link "S2" [ref=e5395] [cursor=pointer]:
+                - /url: /p/3bd9541b5617599e/phase/3#S2
+              - text: 모두), Change-Lifecycle (
+              - link "S2" [ref=e5396] [cursor=pointer]:
+                - /url: /p/3bd9541b5617599e/phase/3#S2
+              - text: ), Subagent (Phase 13 후), Consent (install 시)
+          - paragraph [ref=e5397]: "Phase 8 (Architecture):"
+          - list [ref=e5398]:
+            - listitem [ref=e5399]: 모든 Entity → Storage 매핑 후보 (file system vs SQLite vs JSON)
+            - listitem [ref=e5400]: ENT-Skill·ENT-Hook → Claude Code plugin SDK 매핑
+            - listitem [ref=e5401]: ENT-DependencyGraph → 빌드 component (skill·hook 의존; dashboard 추가 소비)
+            - listitem [ref=e5402]: ENT-TelemetryEvent → external endpoint (ADR-CAND)
+          - paragraph [ref=e5403]: "Phase 10 (Test):"
+          - list [ref=e5404]:
+            - listitem [ref=e5405]:
+              - link "INV-1" [ref=e5406] [cursor=pointer]:
+                - /url: /p/3bd9541b5617599e/phase/4#INV-1
+              - text: ~
+              - link "INV-9" [ref=e5407] [cursor=pointer]:
+                - /url: /p/3bd9541b5617599e/phase/4#INV-9
+              - text: → integration test
+            - listitem [ref=e5408]:
+              - link "INV-8" [ref=e5409] [cursor=pointer]:
+                - /url: /p/3bd9541b5617599e/phase/4#INV-8
+              - text: (privacy) 강조
+          - paragraph [ref=e5410]: "Phase 13 (Implementation):"
+          - list [ref=e5411]:
+            - listitem [ref=e5412]: Aggregate root별 모듈 (Project·Change·DependencyGraph·TelemetryConsent)

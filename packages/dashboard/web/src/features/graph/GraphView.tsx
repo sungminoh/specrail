@@ -66,15 +66,34 @@ export function GraphView() {
     }
 
     // Cap at 250 for layout cost — collapse to phase-level when too many.
+    // Also keep inter-phase edges (folded into phase→phase aggregates) so the
+    // user sees real dependency flow even at the bird's-eye view.
     if (nodes.length > 250) {
       const phasesPresent = new Set<number>();
       for (const n of nodes) phasesPresent.add(n.phase);
-      nodes = [...phasesPresent].map((p) => ({
+      const phaseById = new Map(data.nodes.map((n) => [n.id, n.phase]));
+      const phaseEdgeSet = new Set<string>();
+      const phaseEdges: typeof edges = [];
+      for (const e of edges) {
+        const fromPhase = phaseById.get(e.from);
+        const toPhase = phaseById.get(e.to);
+        if (!fromPhase || !toPhase || fromPhase === toPhase) continue;
+        const key = `${fromPhase}→${toPhase}`;
+        if (phaseEdgeSet.has(key)) continue;
+        phaseEdgeSet.add(key);
+        phaseEdges.push({
+          from: `phase-${fromPhase}`,
+          to: `phase-${toPhase}`,
+          phase: fromPhase,
+          line: 0,
+        });
+      }
+      nodes = [...phasesPresent].sort((a, b) => a - b).map((p) => ({
         id: `phase-${p}`,
         phase: p,
         kind: 'phase-group' as string | null,
       }));
-      edges = [];
+      edges = phaseEdges;
     }
 
     return { nodes, edges };
@@ -174,6 +193,12 @@ export function GraphView() {
         )}
       </aside>
       <div className="graph-canvas">
+        {data && data.nodes.length > 250 && filtered.nodes.length <= 13 && !selected && (
+          <div className="graph-banner mono">
+            Showing phase-level overview ({data.nodes.length} IDs collapsed into {filtered.nodes.length} phase nodes).
+            Click a phase to drill into its IDs · or filter by Kind / Phase to expand a subset.
+          </div>
+        )}
         <ReactFlow
           nodes={layout.nodes}
           edges={layout.edges}
