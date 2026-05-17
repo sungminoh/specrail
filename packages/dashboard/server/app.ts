@@ -6,16 +6,21 @@ import { phasesRoutes } from './routes/phases.js';
 import { eventsRoutes } from './routes/events.js';
 import { issuesRoutes } from './routes/issues.js';
 import { patchesRoutes } from './routes/patches.js';
+import { aiRoutes } from './routes/ai.js';
 import { ProjectsService } from './services/projects.js';
 import { PhasesService } from './services/phases.js';
 import { IssuesService } from './services/issues.js';
 import { PatchesService } from './services/patches.js';
+import { AiService } from './services/ai.js';
 import { WatcherManager } from './services/watcher-manager.js';
 import { RegistryAdapter } from './adapters/registry.js';
+import type { ClaudeCli } from './adapters/claude-cli.js';
 
 export interface AppDeps {
   registry: RegistryAdapter;
   watchers?: WatcherManager;
+  /** Inject a fake CLI for tests. */
+  claudeCli?: ClaudeCli;
 }
 
 export function buildApp(deps: AppDeps): Hono {
@@ -23,6 +28,7 @@ export function buildApp(deps: AppDeps): Hono {
   const phases = new PhasesService(projects);
   const issues = new IssuesService(projects);
   const patches = new PatchesService(projects, phases);
+  const ai = new AiService(projects, phases, patches, deps.claudeCli);
   const watchers = deps.watchers ?? new WatcherManager(projects);
 
   const app = new Hono();
@@ -34,6 +40,7 @@ export function buildApp(deps: AppDeps): Hono {
   app.route('/api/projects', phasesRoutes(phases));
   app.route('/api/projects', issuesRoutes(issues));
   app.route('/api/projects', patchesRoutes(patches));
+  app.route('/api/projects', aiRoutes(ai));
   app.route('/api/projects', eventsRoutes(watchers));
 
   return app;

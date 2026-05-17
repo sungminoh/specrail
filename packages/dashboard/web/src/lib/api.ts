@@ -87,4 +87,26 @@ export const api = {
     req<PatchProposal>(`/api/projects/${id}/patches/${pid}/accept`, { method: 'POST' }),
   rejectPatch: (id: string, pid: string) =>
     req<PatchProposal>(`/api/projects/${id}/patches/${pid}/reject`, { method: 'POST' }),
+
+  // AI sessions
+  listSessions: (id: string) =>
+    req<Array<{ id: string; origin: string; status: string; proposedPatchIds: string[] }>>(
+      `/api/projects/${id}/ai/sessions`,
+    ),
+  createSession: (id: string, origin: 'review-scan' | 'chat' | 'inline') =>
+    req<{ id: string; status: string; origin: string }>(`/api/projects/${id}/ai/sessions`, {
+      method: 'POST',
+      body: JSON.stringify({ origin }),
+    }),
+  sendMessage: (
+    id: string,
+    sid: string,
+    body: { phase: PhaseNumber; content: string; selection?: string; surrounding?: string },
+  ) =>
+    req<{ ok: true }>(`/api/projects/${id}/ai/sessions/${sid}/messages`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  abortSession: (id: string, sid: string) =>
+    req<void>(`/api/projects/${id}/ai/sessions/${sid}`, { method: 'DELETE' }),
 };
