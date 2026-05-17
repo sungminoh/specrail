@@ -24,7 +24,7 @@ inputs-from: ["03-features.md (R/F/S 전체)"]
 ```yaml
 status: Approved
 aggregate-root: true
-source-spec: [S1.4.1, S1.4.2]
+linked-features: [S1.4.1, S1.4.2]
 ```
 <!-- /specrail:attrs -->
 
@@ -48,8 +48,7 @@ source-spec: [S1.4.1, S1.4.2]
 ```yaml
 status: Approved
 aggregate-root: false
-parent: ENT-Project
-source-spec: [S1.1.1, S1.1.2, S2.1.1]
+linked-features: [S1.1.1, S1.1.2, S2.1.1]
 ```
 <!-- /specrail:attrs -->
 
@@ -75,8 +74,7 @@ source-spec: [S1.1.1, S1.1.2, S2.1.1]
 ```yaml
 status: Approved
 aggregate-root: false
-parent: ENT-Project
-source-spec: [S3.1.1, S3.2.1, S3.2.2, S3.2.3, S3.2.4, S3.3.1]
+linked-features: [S3.1.1, S3.2.1, S3.2.2, S3.2.3, S3.2.4, S3.3.1]
 ```
 <!-- /specrail:attrs -->
 
@@ -101,8 +99,7 @@ source-spec: [S3.1.1, S3.2.1, S3.2.2, S3.2.3, S3.2.4, S3.3.1]
 ```yaml
 status: Approved
 aggregate-root: true
-source-spec: [S4.4.1, S4.4.2, S4.4.3]
-invariants: [INV-PATCH-1, INV-PATCH-2]
+linked-features: [S4.4.1, S4.4.2, S4.4.3]
 ```
 <!-- /specrail:attrs -->
 
@@ -118,8 +115,8 @@ invariants: [INV-PATCH-1, INV-PATCH-2]
 | origin | enum {issue-fix, chat, inline-rewrite} | Y | AC-R4-2, AC-R4-3 | 3 source |
 | target | {phase: PhaseNumber, selection?: TextRange} | Y | AC-R5-1 | |
 | hunks | List\<{before: string, after: string}\> | Y | AC-R3-2 | 적용 단위 |
-| rationale | HumanText | Y | INV-PATCH-2 | AI 가 왜 |
-| status | enum {proposed, accepted, rejected} | Y | INV-PATCH-1 | SM 참조 |
+| rationale | HumanText | Y | INV-2 | AI 가 왜 |
+| status | enum {proposed, accepted, rejected} | Y | INV-1 | SM 참조 |
 | basedOnMtimeMs | EpochMillis | Y | AC-R5-1 | 적용 시 mismatch → 409 |
 
 ### ENT-AiSession
@@ -128,7 +125,7 @@ invariants: [INV-PATCH-1, INV-PATCH-2]
 ```yaml
 status: Approved
 aggregate-root: true
-source-spec: [S4.1.1, S4.1.2, S4.2.1, S4.2.2, S4.3.1]
+linked-features: [S4.1.1, S4.1.2, S4.2.1, S4.2.2, S4.3.1]
 ```
 <!-- /specrail:attrs -->
 
@@ -154,8 +151,7 @@ source-spec: [S4.1.1, S4.1.2, S4.2.1, S4.2.2, S4.3.1]
 ```yaml
 status: Approved
 aggregate-root: false
-parent: ENT-AiSession
-source-spec: [S4.2.1]
+linked-features: [S4.2.1]
 ```
 <!-- /specrail:attrs -->
 
@@ -174,7 +170,7 @@ source-spec: [S4.2.1]
 ```yaml
 status: Approved
 aggregate-root: true
-source-spec: [S1.4.1]
+linked-features: [S1.4.1]
 ```
 <!-- /specrail:attrs -->
 
@@ -193,8 +189,7 @@ source-spec: [S1.4.1]
 ```yaml
 status: Approved
 aggregate-root: false
-parent: ENT-Project
-source-spec: [S6.1.1]
+linked-features: [S6.1.1]
 ```
 <!-- /specrail:attrs -->
 
@@ -295,13 +290,6 @@ erDiagram
 
 ### SM-PatchProposal-Lifecycle
 
-<!-- specrail:attrs id=SM-PatchProposal-Lifecycle -->
-```yaml
-status: Approved
-entity: ENT-PatchProposal
-```
-<!-- /specrail:attrs -->
-
 ```mermaid
 stateDiagram-v2
     [*] --> Proposed: createPatch (AI parsed | user inline)
@@ -315,13 +303,6 @@ stateDiagram-v2
 ```
 
 ### SM-AiSession-Lifecycle
-
-<!-- specrail:attrs id=SM-AiSession-Lifecycle -->
-```yaml
-status: Approved
-entity: ENT-AiSession
-```
-<!-- /specrail:attrs -->
 
 ```mermaid
 stateDiagram-v2
@@ -339,13 +320,6 @@ stateDiagram-v2
 
 ### SM-Issue-Lifecycle
 
-<!-- specrail:attrs id=SM-Issue-Lifecycle -->
-```yaml
-status: Approved
-entity: ENT-Issue
-```
-<!-- /specrail:attrs -->
-
 ```mermaid
 stateDiagram-v2
     [*] --> Open: detected (plugin/cross-phase/ai)
@@ -359,12 +333,12 @@ stateDiagram-v2
 
 ## 4. Invariants
 
-### INV-PATCH-1
+### INV-1
 
-<!-- specrail:attrs id=INV-PATCH-1 -->
+<!-- specrail:attrs id=INV-1 -->
 ```yaml
 status: Approved
-covers: ["AC-R5-1"]
+applies-to: ["AC-R5-1"]
 violation-impact: critical
 ```
 <!-- /specrail:attrs -->
@@ -373,12 +347,12 @@ violation-impact: critical
 **Violation 영향:** 단일 깔때기 무너짐 → audit log 누락, conflict detection 우회. **시스템 핵심 가정 깨짐.**
 **Enforcement:** services.applyPatch 만 fs write 호출 가능. core.patch.apply 도 PatchProposal 객체 받음. lint rule (eslint custom) 으로 fs.writeFile 직접 호출 금지.
 
-### INV-PATCH-2
+### INV-2
 
-<!-- specrail:attrs id=INV-PATCH-2 -->
+<!-- specrail:attrs id=INV-2 -->
 ```yaml
 status: Approved
-covers: ["AC-R5-1"]
+applies-to: ["AC-R5-1"]
 violation-impact: high
 ```
 <!-- /specrail:attrs -->
@@ -387,12 +361,12 @@ violation-impact: high
 **Violation 영향:** 외부 동시 편집 silently overwrite. PAIN-DRIFT-1 재발.
 **Enforcement:** services.applyPatch 첫 단계에 fs.stat → mismatch 면 409 throw.
 
-### INV-AI-1
+### INV-3
 
-<!-- specrail:attrs id=INV-AI-1 -->
+<!-- specrail:attrs id=INV-3 -->
 ```yaml
 status: Approved
-covers: ["AC-R4-1"]
+applies-to: ["AC-R4-1"]
 violation-impact: high
 ```
 <!-- /specrail:attrs -->
@@ -401,12 +375,12 @@ violation-impact: high
 **Violation 영향:** AI 가 잘못된 repo 의 CLAUDE.md/MCP/skill 컨텍스트를 가져옴. spec quality review 가 무관한 base 위에서 일어남.
 **Enforcement:** claudeCli.stream(opts) 시그니처에 cwd 필수, services 가 항상 project.rootPath 전달.
 
-### INV-WATCH-1
+### INV-4
 
-<!-- specrail:attrs id=INV-WATCH-1 -->
+<!-- specrail:attrs id=INV-4 -->
 ```yaml
 status: Approved
-covers: ["AC-R6-1", "AC-R6-2"]
+applies-to: ["AC-R6-1", "AC-R6-2"]
 violation-impact: medium
 ```
 <!-- /specrail:attrs -->
@@ -415,12 +389,12 @@ violation-impact: medium
 **Violation 영향:** node_modules·.git·build artifacts watch → 무관 이벤트 폭주, 성능 저하 + 보안 (다른 secret 변경 감지).
 **Enforcement:** watcher 생성 시 path validation, allowlist 외 path 거부.
 
-### INV-CSRF-1
+### INV-5
 
-<!-- specrail:attrs id=INV-CSRF-1 -->
+<!-- specrail:attrs id=INV-5 -->
 ```yaml
 status: Approved
-covers: ["AC-R5-1", "AC-R4-2"]
+applies-to: ["AC-R5-1", "AC-R4-2"]
 violation-impact: high
 ```
 <!-- /specrail:attrs -->
@@ -429,12 +403,12 @@ violation-impact: high
 **Violation 영향:** localhost 라도 임의 사이트의 JS 가 dashboard mutation 호출 가능 → 의도치 않은 spec 수정.
 **Enforcement:** Hono middleware 가 모든 non-GET 라우트에 적용. unit + e2e test 로 위조 시도 403 검증.
 
-### INV-PROJECT-1
+### INV-6
 
-<!-- specrail:attrs id=INV-PROJECT-1 -->
+<!-- specrail:attrs id=INV-6 -->
 ```yaml
 status: Approved
-covers: ["AC-R1-1"]
+applies-to: ["AC-R1-1"]
 violation-impact: medium
 ```
 <!-- /specrail:attrs -->
@@ -469,25 +443,31 @@ violation-impact: medium
 |---|---|---|---|
 | OQ-4-1 | ENT-Issue 가 ENT-PatchProposal accept 시 자동 Resolved 로 가는 매핑이 1:1 보장되는가 (issue 가 patch 보다 더 많은 영역 cover 시) | maintainer | N |
 | OQ-4-2 | ENT-AiSession 의 message content 가 SQLite TEXT 컬럼에 충분 vs 별도 file blob 필요 (긴 patch JSON 포함 시) | maintainer | N |
-| OQ-4-3 | INV-WATCH-1 의 allowlist 에 `.specrail-cache/` 도 watch (state machine 변동) vs 제외 (자기 변경 감지 무한 loop 위험) | maintainer | Y |
+| OQ-4-3 | INV-4 의 allowlist 에 `.specrail-cache/` 도 watch (state machine 변동) vs 제외 (자기 변경 감지 무한 loop 위험) | maintainer | Y |
 
-<!-- specrail:attrs id=OQ-4-1 --> ```yaml
+<!-- specrail:attrs id=OQ-4-1 -->
+```yaml
 blocking: false
 decider: maintainer
-defer-to: "Phase 10"
-``` <!-- /specrail:attrs -->
+due: "Phase 10"
+```
+<!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=OQ-4-2 --> ```yaml
+<!-- specrail:attrs id=OQ-4-2 -->
+```yaml
 blocking: false
 decider: maintainer
-defer-to: "Phase 13"
-``` <!-- /specrail:attrs -->
+due: "Phase 13"
+```
+<!-- /specrail:attrs -->
 
-<!-- specrail:attrs id=OQ-4-3 --> ```yaml
+<!-- specrail:attrs id=OQ-4-3 -->
+```yaml
 blocking: true
 decider: maintainer
-defer-to: "Phase 8"
-``` <!-- /specrail:attrs -->
+due: "Phase 8"
+```
+<!-- /specrail:attrs -->
 
 ## 7. 다음 phase 인풋
 

@@ -26,7 +26,8 @@ primary-pain: PAIN-2
 tech-fluency: 9
 daily-context: "데스크톱 + 브라우저 + Claude Code CLI 병행"
 status: Approved
-since: 2026-05-17
+in-scope: true
+since: "2026-05-17"
 ```
 <!-- /specrail:attrs -->
 
@@ -70,7 +71,7 @@ alias: Non-developer maker
 role: "PM·디자이너가 specrail 적용 (Claude Code vibe coding)"
 primary-pain: PAIN-2
 status: Deferred
-defer-reason: "v1 desktop dev tool. Touch-friendly mode 후속 cycle."
+in-scope: false
 ```
 <!-- /specrail:attrs -->
 
@@ -84,7 +85,7 @@ alias: External reviewer
 role: "동료·멘토가 spec 만 검토 (코드 권한 없음)"
 primary-pain: PAIN-4
 status: Deferred
-defer-reason: "Multi-user · auth 별 cycle (hosted mode)."
+in-scope: false
 ```
 <!-- /specrail:attrs -->
 
@@ -94,15 +95,17 @@ defer-reason: "Multi-user · auth 별 cycle (hosted mode)."
 
 ## 3. Journey Map: 시나리오 1 — Daily cross-ref (SCEN-1)
 
-<!-- specrail:attrs id=JNY-1 -->
+<!-- specrail:attrs id=JNY-1.1 -->
 ```yaml
-persona: PERSONA-1
 scenario: SCEN-1
-make-or-break: 3
-magic-moment: 4
-status: Approved
+step-order: 1
+surface: dashboard
+pain-touched: [PAIN-2, PAIN-AI-1]
+linked-features: [F1.2, F2.1, F4.4]
 ```
 <!-- /specrail:attrs -->
+
+> Critical: make-or-break = Step 3 (5-hop click 사슬). Magic moment = Step 4-5 (AI verify → patch).
 
 ### 컨텍스트
 - **시간:** 평일 오후 4시 (16:00-17:30 spec 갱신 슬롯)
@@ -140,15 +143,17 @@ low  │●───skeptical (Step 4)
 
 ## 4. Journey Map: 시나리오 2 — AI quality review (SCEN-2)
 
-<!-- specrail:attrs id=JNY-2 -->
+<!-- specrail:attrs id=JNY-2.1 -->
 ```yaml
-persona: PERSONA-1
 scenario: SCEN-2
-make-or-break: 4
-magic-moment: 5
-status: Approved
+step-order: 1
+surface: dashboard
+pain-touched: [PAIN-AI-1]
+linked-features: [F4.1, F4.4, F5.3]
 ```
 <!-- /specrail:attrs -->
+
+> Critical: make-or-break = Step 4 (diff preview 정확도). Magic moment = Step 5 (atomic write + git diff).
 
 ### 컨텍스트
 - **시간:** 평일 오전 11시 (spec 검토·DELTA 슬롯)
@@ -183,15 +188,17 @@ mid  │      ╱
 
 ## 5. Journey Map: 시나리오 3 — Graph 탐색 (SCEN-3)
 
-<!-- specrail:attrs id=JNY-3 -->
+<!-- specrail:attrs id=JNY-3.1 -->
 ```yaml
-persona: PERSONA-1
 scenario: SCEN-3
-make-or-break: 3
-magic-moment: 4
-status: Approved
+step-order: 1
+surface: dashboard
+pain-touched: [PAIN-4, PAIN-DRIFT-1]
+linked-features: [F2.2, F2.3, F3.2]
 ```
 <!-- /specrail:attrs -->
+
+> Critical: make-or-break = Step 3 (N-hop 성능 < 200ms). Magic moment = Step 4 (orphan 자동 발견).
 
 ### 컨텍스트
 - **시간:** 평일 오후 4시 30분 (downstream 영향 점검 슬롯)
@@ -259,7 +266,7 @@ Phase 3 (Features) 가 사용할 것:
 ```yaml
 blocking: false
 decider: maintainer
-defer-to: "post v0.1"
+due: "post v0.1"
 ```
 <!-- /specrail:attrs -->
 
@@ -267,7 +274,7 @@ defer-to: "post v0.1"
 ```yaml
 blocking: false
 decider: maintainer
-defer-to: "hosted cycle"
+due: "hosted cycle"
 ```
 <!-- /specrail:attrs -->
 
@@ -275,6 +282,6 @@ defer-to: "hosted cycle"
 ```yaml
 blocking: true
 decider: maintainer
-defer-to: "Phase 3"
+due: "Phase 3"
 ```
 <!-- /specrail:attrs -->
