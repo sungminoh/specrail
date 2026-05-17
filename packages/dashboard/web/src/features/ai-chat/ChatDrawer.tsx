@@ -29,15 +29,17 @@ export function ChatDrawer({ projectId, currentPhase }: Props) {
 
   useEffect(() => {
     const handler = (ev: Event) => {
-      const e = ev as CustomEvent<{ type: string; payload: any }>;
+      type P = { sessionId?: string; delta?: string; patchIds?: string[]; message?: string };
+      const e = ev as CustomEvent<{ type: string; payload: P | null }>;
       const t = e.detail?.type;
-      if (!state.sessionId) return;
-      if (t === 'ai.token' && e.detail.payload?.sessionId === state.sessionId) {
-        setState((s) => ({ ...s, buffer: s.buffer + (e.detail.payload.delta ?? '') }));
-      } else if (t === 'ai.done' && e.detail.payload?.sessionId === state.sessionId) {
-        setState((s) => ({ ...s, status: 'done', patchIds: e.detail.payload.patchIds ?? [] }));
-      } else if (t === 'ai.error' && e.detail.payload?.sessionId === state.sessionId) {
-        setState((s) => ({ ...s, status: 'error', error: String(e.detail.payload.message ?? '') }));
+      const p = e.detail?.payload;
+      if (!state.sessionId || !p || p.sessionId !== state.sessionId) return;
+      if (t === 'ai.token') {
+        setState((s) => ({ ...s, buffer: s.buffer + (p.delta ?? '') }));
+      } else if (t === 'ai.done') {
+        setState((s) => ({ ...s, status: 'done', patchIds: p.patchIds ?? [] }));
+      } else if (t === 'ai.error') {
+        setState((s) => ({ ...s, status: 'error', error: String(p.message ?? '') }));
       }
     };
     window.addEventListener('specrail:sse', handler as EventListener);

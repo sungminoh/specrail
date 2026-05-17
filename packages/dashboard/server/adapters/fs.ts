@@ -2,7 +2,7 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import writeFileAtomic from 'write-file-atomic';
-import { parsePhaseMarkdown, extractDefinedIds, extractIds, extractRefs } from '@specrail/core';
+import { parsePhaseMarkdown, extractDefinedIds, extractRefs } from '@specrail/core';
 import type { Phase, PhaseNumber } from '@specrail/core';
 import { safeJoin } from '../lib/path-allowlist.js';
 
@@ -52,7 +52,6 @@ export async function readPhaseFile(
   // Keep all distinct (to, line) entries — these surface dangling targets even when
   // the to-id is mentioned multiple times in the body.
   const refs = allRefs.filter((r) => r.to !== anchor);
-  void extractIds;
   return {
     projectId,
     number,
