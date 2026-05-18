@@ -37,12 +37,63 @@ export function ConnectionsPanel({ projectId }: Props) {
   const navigate = useNavigate();
   const conn = useGraphConnections(projectId, focus);
 
-  // Auto-pick first ID present in the page on first mount (so panel isn't blank).
+  // Auto-pick a focus when chips appear. Order of preference:
+  //   1. URL fragment (#R1, etc.) — set on chip click for navigation
+  //   2. First `.id-chip` on the page
+  // ConnectionsPanel mounts in AppShell BEFORE PhaseRoute renders chips
+  // (phase fetch is async), so we observe the DOM until chips show up.
   useEffect(() => {
     if (focus) return;
-    const first = document.querySelector('.id-chip')?.textContent?.trim();
-    if (first) setFocus(first);
+
+    const pickFromHash = (): string | null => {
+      const h = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+      return h && /^[A-Z][A-Za-z0-9\-.]*\d/.test(h) ? h : null;
+    };
+    const pickFirstChip = (): string | null =>
+      document.querySelector('.id-chip')?.textContent?.trim() ?? null;
+
+    const initial = pickFromHash() ?? pickFirstChip();
+    if (initial) {
+      setFocus(initial);
+      return;
+    }
+    // Chips not in DOM yet — observe and pick when they appear.
+    const observer = new MutationObserver(() => {
+      const id = pickFirstChip();
+      if (id) {
+        setFocus(id);
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
   }, [focus]);
+
+  // Phase navigation invalidates the focus (different page, different chips).
+  // Reset to null so the auto-pick logic above re-runs against the new DOM.
+  useEffect(() => {
+    const onHashChange = () => {
+      const h = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+      if (h && /^[A-Z][A-Za-z0-9\-.]*\d/.test(h)) setFocus(h);
+    };
+    const onPop = () => {
+      // Wait a tick for the new route to mount, then re-pick from URL hash or chips.
+      setTimeout(() => {
+        const h = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+        if (h && /^[A-Z][A-Za-z0-9\-.]*\d/.test(h)) setFocus(h);
+        else {
+          const first = document.querySelector('.id-chip')?.textContent?.trim();
+          if (first) setFocus(first);
+        }
+      }, 50);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    window.addEventListener('popstate', onPop);
+    return () => {
+      window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('popstate', onPop);
+    };
+  }, []);
 
   // Subscribe to chip click events (document-level capture).
   useEffect(() => {
