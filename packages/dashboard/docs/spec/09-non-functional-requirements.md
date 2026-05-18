@@ -78,6 +78,31 @@ linked-r: [R1]
 ```
 <!-- /specrail:attrs -->
 
+<!-- specrail:attrs id=NFR-PERF-6 -->
+```yaml
+status: Approved
+target: "≤16"
+unit: millisecond
+measure-method: "client perf.now() between focus state mutation and Connections panel commit"
+violates-action: "warn (block at 50ms)"
+linked-arch: [ARCH-1]
+linked-r: [R2]
+linked-features: [F2.4]
+```
+<!-- /specrail:attrs -->
+
+<!-- specrail:attrs id=NFR-COMPAT-1 -->
+```yaml
+status: Approved
+target: "100"
+unit: percent
+measure-method: "Vitest fixture: attrs block with all 14 supported edge keys → assert 14 typed-refs out (8 closed-enum + 6 qualified variants)"
+violates-action: "release block"
+linked-arch: [ARCH-4]
+linked-features: [F2.5]
+```
+<!-- /specrail:attrs -->
+
 | ID | 지표 | 단위 | 목표 | 측정 방법 | 위반 시 |
 |---|---|---|---|---|---|
 | NFR-PERF-1 | Phase view cold load p95 | second | ≤ 2 (KPI-5) | Playwright trace localhost | release block |
@@ -85,6 +110,8 @@ linked-r: [R1]
 | NFR-PERF-3 | Frontmatter parse p95 (avg phase) | ms | ≤ 50 | Vitest bench | release block |
 | NFR-PERF-4 | External edit → SSE 반영 e2e | ms | ≤ 500 | Playwright timer | release block |
 | NFR-PERF-5 | cmd+k 첫 결과 paint | ms | ≤ 50 | client perf API | warn (block 100) |
+| NFR-PERF-6 | Connections panel refresh on focus change | ms | ≤ 16 | client perf API | warn (block 50) |
+| NFR-COMPAT-1 | attrs typed-ref extraction completeness | % | 100 | Vitest fixture | release block |
 
 ## 2. Scalability (Scal)
 

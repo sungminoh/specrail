@@ -90,8 +90,28 @@ export const api = {
 
   getGraph: (id: string) =>
     req<{
-      nodes: Array<{ id: string; phase: number; kind: string | null }>;
-      edges: Array<{ from: string; to: string; phase: number; line: number }>;
+      nodes: Array<{ id: string; phase: number; kind: string | null; status?: string }>;
+      edges: Array<{
+        from: string;
+        to: string;
+        phase: number;
+        line: number;
+        kind?:
+          | 'solves'
+          | 'linked-features'
+          | 'parent'
+          | 'tested-by'
+          | 'covers-ac'
+          | 'mitigates'
+          | 'linked-arch'
+          | 'depends-on'
+          | 'parent-f'
+          | 'parent-r'
+          | 'parent-zone'
+          | 'linked-ac'
+          | 'linked-r'
+          | 'solves-pains';
+      }>;
     }>(`/api/projects/${id}/graph`),
 
   // AI sessions

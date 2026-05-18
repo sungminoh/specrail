@@ -1,5 +1,28 @@
 # @specrail/dashboard CHANGELOG
 
+## Unreleased — M9 typed-graph-relationships
+
+DELTA: `packages/dashboard/changes/2026-05-17-typed-graph-relationships/` (proposal + 7 per-phase deltas, all Approved). Spec sync applied to phases 3 / 9 / 13.
+
+### Added
+- **F2.4 Connections panel** — always-visible right-rail in phase view. Shows the focused ID's typed neighbors grouped by edge kind (in/out, with status pills). Reads from cached graph query (no new API roundtrip). Collapsible with localStorage sticky state. AC-R2-6.
+- **F2.5 Typed graph relationships** — `@specrail/core` now extracts typed refs from `<!-- specrail:attrs -->` yaml blocks. Recognizes the 8 schema closed-enum kinds (`solves`, `linked-features`, `parent`, `tested-by`, `covers-ac`, `mitigates`, `linked-arch`, `depends-on`) plus 6 qualified variants used in real dashboard spec (`parent-f`, `parent-r`, `parent-zone`, `linked-ac`, `linked-r`, `solves-pains`). Typed refs suppress prose-mention duplicates for the same `(from, to)`.
+- **F2.6 Graph focus input + status tint** — graph page toolbar has typeahead focus input (powered by idIndex); URL search params `?focus=<id>&hop=N` are now bidirectionally synced. Nodes are tinted by attrs.status (Draft/Proposed = dashed border, Rejected = muted + strikethrough). Edge styling per OQ-DELTA-1: gold-accent only, differentiated by stroke weight / dasharray / opacity in 4 visual families (relational / coverage / value / link). Floating legend overlay.
+- **AC-R2-5, AC-R2-6** — new acceptance criteria for the graph upgrades.
+- **NFR-PERF-6** — Connections panel refresh ≤16ms on focus change (single frame).
+- **NFR-COMPAT-1** — attrs typed-ref extraction completeness (100% of supported edge keys produce typed-refs).
+
+### Changed
+- `/api/projects/:id/graph` payload now includes optional `edge.kind` (14-kind union) and `node.status` (attrs scalar). Backward compat: existing clients unaffected.
+- `GraphEdge` / `GraphNode` in `@specrail/core` carry optional `kind` / `status`.
+- `Phase.parsedRefs` now contains both typed and prose refs (typed take priority on duplicate targets).
+- Graph view: `/api/graph` edges are now filtered to require both endpoints present in the rendered node set — fixes ELK "Referenced shape does not exist" when typed refs point at undefined IDs (e.g. PAIN-* in dashboard spec).
+
+### Tests
+- `packages/core/tests/attrs.test.ts` — 17 new unit tests for parseAttrsBlocks + extractTypedRefs (TC-TYPED-REFS-1, TC-TYPED-REFS-2, EDGE-MALFORMED-ATTRS).
+- `packages/dashboard/server/tests/graph-typed.test.ts` — 5 new integration tests (edge.kind exposure for all 8 schema kinds, node.status, prose fallback, dedup, payload contract).
+- Total: 92 PASS (was 87).
+
 ## 0.1.0-alpha.1 — 2026-05-17
 
 First public pre-release. Backend skeleton + partial UI. Not feature-complete versus the v1 spec — see "Known gaps" in [README](./README.md) and the deferred list below.

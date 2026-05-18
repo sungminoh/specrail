@@ -2,8 +2,14 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import writeFileAtomic from 'write-file-atomic';
-import { parsePhaseMarkdown, extractDefinedIds, extractRefs } from '@specrail/core';
-import type { Phase, PhaseNumber } from '@specrail/core';
+import {
+  parsePhaseMarkdown,
+  extractDefinedIds,
+  extractRefs,
+  extractTypedRefs,
+  parseAttrsBlocks,
+} from '@specrail/core';
+import type { Phase, PhaseNumber, AttrsBlock } from '@specrail/core';
 import { safeJoin } from '../lib/path-allowlist.js';
 
 export class MtimeConflictError extends Error {
@@ -46,12 +52,20 @@ export async function readPhaseFile(
   const s = await stat(filePath);
   const parsed = parsePhaseMarkdown(raw);
   const definedIds = extractDefinedIds(parsed.body);
-  // Source-side: pin refs to the first defined id in the file (or a phase pseudo).
+  // Source-side: pin prose-mention refs to the first defined id (or a phase pseudo).
   const anchor = definedIds[0] ?? `phase-${number}`;
-  const allRefs = extractRefs(parsed.body, { definedIds: new Set(definedIds), from: anchor });
-  // Keep all distinct (to, line) entries — these surface dangling targets even when
-  // the to-id is mentioned multiple times in the body.
-  const refs = allRefs.filter((r) => r.to !== anchor);
+  const proseRefs = extractRefs(parsed.body, { definedIds: new Set(definedIds), from: anchor })
+    .filter((r) => r.to !== anchor);
+  // Typed refs surface from per-id attrs blocks — `from` is the attrs-block id.
+  const typedRefs = extractTypedRefs(parsed.body);
+  // Suppress prose-ref noise that duplicates a typed-ref for the same target.
+  // (Typed-ref carries kind information; prose anchor is coarser.)
+  const typedTargets = new Set(typedRefs.map((t) => `${t.from}::${t.to}`));
+  const dedupedProse = proseRefs.filter((p) => !typedTargets.has(`${p.from}::${p.to}`));
+  const refs = [
+    ...typedRefs.map((t) => ({ from: t.from, to: t.to, line: t.line, kind: t.kind })),
+    ...dedupedProse,
+  ];
   return {
     projectId,
     number,
@@ -63,6 +77,15 @@ export async function readPhaseFile(
     parsedRefs: refs,
     mtimeMs: s.mtimeMs,
   };
+}
+
+/** Extract `id → status` mapping from all attrs blocks in body. Used by graph route. */
+export function attrsStatusMap(body: string): Map<string, string> {
+  const m = new Map<string, string>();
+  for (const b of parseAttrsBlocks(body) as AttrsBlock[]) {
+    if (b.scalars.status) m.set(b.id, b.scalars.status);
+  }
+  return m;
 }
 
 const recentSelfWrites = new Set<string>();

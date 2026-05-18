@@ -677,6 +677,91 @@ depends-on: [T7.2]
 **T7.3 Graph filters + N-hop**
 - Files: `packages/dashboard/web/src/features/graph/Filters.tsx`, `NhopSlider.tsx`
 
+### M9: Typed graph relationships + Connections panel
+
+**Goal:** F2.4 (Connections panel) + F2.5 (typed-refs) + F2.6 (graph upgrades) — close the v0.1.0-alpha.1 dogfood finding that the graph view had near-zero utility (400 nodes collapsed to 13 phase dots with all-null edge kinds).
+
+**Dependencies:** M7 (graph view) 완료. M4 (file watcher) — typed-refs 변경 시 graph invalidation 경로.
+
+**Done definition:**
+- AC-R2-5, AC-R2-6 통과 (visual + ≤16ms refresh).
+- NFR-PERF-6, NFR-COMPAT-1 통과 (fixture + bench).
+- backward-compat: 기존 0.1.0-alpha.1 client 가 새 /api/graph payload 처리 가능 (optional field 만 추가).
+- Spec sync: 영향 phase (3, 9, 13) markdown 머지.
+
+<!-- specrail:attrs id=T9.1 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "TC-TYPED-REFS-1 + TC-TYPED-REFS-2 + EDGE-MALFORMED-ATTRS — 17 tests in packages/core/tests/attrs.test.ts"
+commit-msg-stub: "feat(core): typed refs from attrs blocks (8 closed + 6 qualified kinds)"
+depends-on: [T1.4]
+linked-ac: [AC-R2-5]
+linked-features: [F2.5]
+```
+<!-- /specrail:attrs -->
+
+**T9.1 core extractTypedRefs + attrs scalars**
+- Files: `packages/core/src/spec/attrs.ts` (NEW), `packages/core/src/spec/index.ts` (export), `packages/core/src/spec/types.ts` (SpecRefSchema kind?, EdgeKindSchema), `packages/core/src/graph/build.ts` (GraphEdge.kind, GraphNode.status), `packages/core/tests/attrs.test.ts` (NEW).
+
+<!-- specrail:attrs id=T9.2 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "server/tests/graph-typed.test.ts — 5 tests covering edge.kind exposure + node.status + dedup"
+commit-msg-stub: "feat(server): /api/graph exposes edge.kind + node.status"
+depends-on: [T9.1]
+linked-ac: [AC-R2-5]
+linked-arch: [ARCH-2]
+```
+<!-- /specrail:attrs -->
+
+**T9.2 server /api/graph payload extension**
+- Files: `packages/dashboard/server/adapters/fs.ts` (typed + prose refs merge + dedup, attrsStatusMap), `packages/dashboard/server/routes/graph.ts` (propagate kind + status), `packages/dashboard/server/tests/graph-typed.test.ts` (NEW).
+
+<!-- specrail:attrs id=T9.3 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "Manual browser smoke: chip click → panel refocus < single frame; verified live on dashboard own spec (R1: 268 out · 21 in across 5 typed groups)"
+commit-msg-stub: "feat(web): inline Connections panel in phase view (F2.4)"
+depends-on: [T9.2]
+linked-ac: [AC-R2-6]
+linked-features: [F2.4]
+```
+<!-- /specrail:attrs -->
+
+**T9.3 UI-A Connections panel**
+- Files: `packages/dashboard/web/src/features/connections/ConnectionsPanel.tsx` (NEW), `useGraphConnections.ts` (NEW hook), `features/phases/PhaseRoute.tsx` (3-pane wiring), `styles/layout.css` (panel + collapsed chevron rail + status pills).
+
+<!-- specrail:attrs id=T9.4 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "Browser smoke: /p/:id/graph?focus=NFR-PERF-2&hop=2 → URL-driven focus, typed edges distinct stroke/dash/opacity, legend + status tint visible"
+commit-msg-stub: "feat(web): typed edge styling + legend + focus input + status tint"
+depends-on: [T9.2]
+linked-ac: [AC-R2-5]
+linked-features: [F2.5, F2.6]
+```
+<!-- /specrail:attrs -->
+
+**T9.4 UI-B Graph page upgrades (legend + focus + status tint)**
+- Files: `packages/dashboard/web/src/features/graph/GraphView.tsx` (EDGE_STYLE map, EdgeLegend, FocusInput, status tint in nodeStyleForKind), `lib/api.ts` (typed kind union extension).
+
+<!-- specrail:attrs id=T9.5 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "docs/spec/{03,09,13}-*.md updated; specrail check PASS; CHANGELOG entry"
+commit-msg-stub: "docs(spec): apply M9 deltas (F2.4/F2.5/F2.6 + AC-R2-5/6 + NFR-PERF-6/COMPAT-1)"
+depends-on: [T9.1, T9.2, T9.3, T9.4]
+```
+<!-- /specrail:attrs -->
+
+**T9.5 Spec sync — apply deltas**
+- Files: `packages/dashboard/docs/spec/{03,09,13}-*.md` (this commit). Deltas remain in `packages/dashboard/changes/2026-05-17-typed-graph-relationships/` for traceability.
+
 ### M8: Distribution + slash command
 
 <!-- specrail:attrs id=T8.1 -->
@@ -809,8 +894,9 @@ P0 Spec (43) → Task mapping:
 
 모든 task 의 함수·type 명이 packages/core 의 types 와 일치하는지 implementation 시 lint 강제 (T0.2 의 Biome import-cycle + project-references 체크).
 
-## 14. Done Definition (v0.1.0 ship gate)
+## 14. Done Definition
 
+### v0.1.0 ship gate
 - [ ] P0 Spec 100% cover (위 §10)
 - [ ] e2e 8 must-pass 시나리오 green
 - [ ] CI matrix (Node 20/22 × ubuntu/macos) green
@@ -820,6 +906,11 @@ P0 Spec (43) → Task mapping:
 - [ ] DESIGN.md 적용 styling pass 완료 (또는 명시적 beta label)
 - [ ] CHANGELOG v0.1.0 entry
 - [ ] README + 기본 docs 작성
+
+### v0.2.0 ship gate (post-M9)
+- [ ] M9 의 모든 task complete + AC-R2-5/6 + NFR-PERF-6/COMPAT-1 PASS
+- [ ] Connections panel dogfood — maintainer 본인 1주 이상 daily use 검증
+- [ ] Backward-compat — 0.1.0-alpha.1 client 가 새 /api/graph payload 처리 가능 (optional field 만 추가)
 
 ## 15. 다음 단계 (post-spec phase)
 

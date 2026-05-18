@@ -1,9 +1,11 @@
-import type { Phase } from '../spec/types.js';
+import type { Phase, EdgeKind } from '../spec/types.js';
 
 export interface GraphNode {
   id: string;
   phase: number;
   kind: string | null;
+  /** attrs scalar `status` when present (e.g. "Approved" | "Draft" | "Rejected"). */
+  status?: string;
 }
 
 export interface GraphEdge {
@@ -11,6 +13,8 @@ export interface GraphEdge {
   to: string;
   phase: number;
   line: number;
+  /** Typed-relationship kind when the edge came from an attrs block. */
+  kind?: EdgeKind;
 }
 
 export interface SpecGraph {
@@ -46,6 +50,7 @@ export function buildGraph(phases: Phase[], classify: (id: string) => string | n
         to: ref.to,
         phase: phase.number,
         line: ref.line,
+        ...(ref.kind ? { kind: ref.kind } : {}),
       };
       edges.push(edge);
       const o = outbound.get(ref.from);

@@ -1,30 +1,77 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ReactFlow, Background, Controls, type Node, type Edge } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { api } from '../../lib/api.js';
+import { useIdIndex } from '../phases/useIdIndex.js';
+import type { EdgeKind } from '../connections/useGraphConnections.js';
 
 const elk = new ELK();
 
 const PHASES = new Set<number>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
 
+// Per OQ-DELTA-1: DESIGN.md "Reading Room" — gold-accent only.
+// Differentiate by stroke weight / dasharray / opacity, NOT by adding new hues.
+// Four families (grouped meaning) × visual axis:
+//   relational ties (parent/depends/linked-arch)  → solid, thicker
+//   coverage ties (tested-by/covers-ac)           → dashed
+//   value ties    (solves/solves-pains/mitigates) → dotted
+//   feature link  (linked-features/linked-ac/...) → solid, thin
+const EDGE_STYLE: Record<EdgeKind, { dash?: string; width: number; opacity: number }> = {
+  parent:           { width: 2.2, opacity: 0.95 },
+  'parent-f':       { width: 2.2, opacity: 0.95 },
+  'parent-r':       { width: 2.2, opacity: 0.95 },
+  'parent-zone':    { width: 2.2, opacity: 0.95 },
+  'depends-on':     { width: 2.0, opacity: 0.9 },
+  'linked-arch':    { width: 1.8, opacity: 0.85 },
+  'tested-by':      { width: 1.4, opacity: 0.85, dash: '6 3' },
+  'covers-ac':      { width: 1.4, opacity: 0.85, dash: '6 3' },
+  solves:           { width: 1.4, opacity: 0.85, dash: '1 3' },
+  'solves-pains':   { width: 1.4, opacity: 0.85, dash: '1 3' },
+  mitigates:        { width: 1.4, opacity: 0.85, dash: '1 3' },
+  'linked-features':{ width: 1.0, opacity: 0.75 },
+  'linked-ac':      { width: 1.0, opacity: 0.75 },
+  'linked-r':       { width: 1.0, opacity: 0.75 },
+};
+const UNTYPED_STYLE = { width: 0.8, opacity: 0.4 };
+
 export function GraphView() {
   const { projectId = '' } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
+  const [search, setSearch] = useSearchParams();
   const { data, isLoading, error } = useQuery({
     queryKey: ['graph', projectId],
     queryFn: () => api.getGraph(projectId),
     enabled: !!projectId,
   });
+  const { data: idIndex } = useIdIndex(projectId);
   const [phaseFilter, setPhaseFilter] = useState<Set<number>>(new Set(PHASES));
   const [kindFilter, setKindFilter] = useState<string>('');
   const [showOrphans, setShowOrphans] = useState(false);
   const [showDangling, setShowDangling] = useState(false);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [nhop, setNhop] = useState(2);
+  const urlFocus = search.get('focus');
+  const urlHop = Number(search.get('hop') ?? '2');
+  const [selected, setSelected] = useState<string | null>(urlFocus);
+  const [nhop, setNhop] = useState(Number.isFinite(urlHop) ? Math.min(5, Math.max(0, urlHop)) : 2);
+  const [focusInput, setFocusInput] = useState(urlFocus ?? '');
+  const [showLegend, setShowLegend] = useState(true);
   const [layout, setLayout] = useState<{ nodes: Node[]; edges: Edge[] }>({ nodes: [], edges: [] });
+
+  // URL ↔ state sync (one-way: state → URL on change).
+  useEffect(() => {
+    const sp = new URLSearchParams(search);
+    if (selected) {
+      sp.set('focus', selected);
+      sp.set('hop', String(nhop));
+    } else {
+      sp.delete('focus');
+      sp.delete('hop');
+    }
+    if (sp.toString() !== search.toString()) setSearch(sp, { replace: true });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected, nhop]);
 
   const filtered = useMemo(() => {
     if (!data) return { nodes: [], edges: [] };
@@ -96,6 +143,12 @@ export function GraphView() {
       edges = phaseEdges;
     }
 
+    // Final safety: drop edges whose endpoints aren't in the rendered node set.
+    // (Prevents ELK "Referenced shape does not exist" when a typed-ref points at
+    // an ID that isn't defined in this project's spec — e.g. PAIN-* in dashboard.)
+    const renderedIds = new Set(nodes.map((n) => n.id));
+    edges = edges.filter((e) => renderedIds.has(e.from) && renderedIds.has(e.to));
+
     return { nodes, edges };
   }, [data, phaseFilter, kindFilter, showOrphans, showDangling, selected, nhop]);
 
@@ -118,20 +171,33 @@ export function GraphView() {
     elk.layout(elkGraph).then((laid) => {
       const nodes: Node[] = (laid.children ?? []).map((n) => {
         const meta = filtered.nodes.find((m) => m.id === n.id);
+        const status = (meta as { status?: string } | undefined)?.status;
         return {
           id: n.id,
           position: { x: n.x ?? 0, y: n.y ?? 0 },
-          data: { label: n.id, phase: meta?.phase, kind: meta?.kind },
-          style: nodeStyleForKind(meta?.kind ?? null),
+          data: { label: n.id, phase: meta?.phase, kind: meta?.kind, status },
+          style: nodeStyleForKind(meta?.kind ?? null, status),
         };
       });
-      const edges: Edge[] = filtered.edges.map((e, i) => ({
-        id: `e${i}`,
-        source: e.from,
-        target: e.to,
-        animated: false,
-        style: { stroke: 'var(--border)' },
-      }));
+      const edges: Edge[] = filtered.edges.map((e, i) => {
+        const kind = (e as { kind?: EdgeKind }).kind;
+        const style = kind ? EDGE_STYLE[kind] : UNTYPED_STYLE;
+        return {
+          id: `e${i}`,
+          source: e.from,
+          target: e.to,
+          animated: false,
+          label: kind,
+          labelStyle: { fontSize: 9, fill: 'var(--muted)', fontFamily: 'JetBrains Mono, monospace' },
+          labelShowBg: false,
+          style: {
+            stroke: kind ? 'var(--accent)' : 'var(--border)',
+            strokeWidth: style.width,
+            strokeDasharray: getDash(style),
+            opacity: style.opacity,
+          },
+        };
+      });
       setLayout({ nodes, edges });
     });
   }, [filtered]);
@@ -193,12 +259,44 @@ export function GraphView() {
         )}
       </aside>
       <div className="graph-canvas">
+        <div className="graph-toolbar">
+          <FocusInput
+            projectId={projectId}
+            idIndex={idIndex}
+            value={focusInput}
+            onChange={setFocusInput}
+            onCommit={(id) => {
+              setSelected(id);
+              setFocusInput(id);
+            }}
+            onClear={() => {
+              setSelected(null);
+              setFocusInput('');
+            }}
+          />
+          {selected && (
+            <span className="graph-hop mono">
+              <label>hop</label>
+              <input type="range" min={0} max={5} value={nhop} onChange={(e) => setNhop(Number(e.target.value))} />
+              <span>{nhop}</span>
+            </span>
+          )}
+          <button
+            type="button"
+            className="btn-ghost mono graph-legend-toggle"
+            onClick={() => setShowLegend((v) => !v)}
+            title="Toggle legend"
+          >
+            legend {showLegend ? '▼' : '▶'}
+          </button>
+        </div>
         {data && data.nodes.length > 250 && filtered.nodes.length <= 13 && !selected && (
           <div className="graph-banner mono">
             Showing phase-level overview ({data.nodes.length} IDs collapsed into {filtered.nodes.length} phase nodes).
-            Click a phase to drill into its IDs · or filter by Kind / Phase to expand a subset.
+            Click a phase to drill into its IDs · type an ID in focus · or filter by Kind / Phase.
           </div>
         )}
+        {showLegend && <EdgeLegend />}
         <ReactFlow
           nodes={layout.nodes}
           edges={layout.edges}
@@ -211,6 +309,7 @@ export function GraphView() {
               return;
             }
             setSelected(n.id);
+            setFocusInput(n.id);
           }}
         >
           <Background gap={24} color="var(--border)" />
@@ -218,14 +317,18 @@ export function GraphView() {
         </ReactFlow>
         <div className="graph-status mono">
           {filtered.nodes.length} nodes · {filtered.edges.length} edges
-          {selected ? ` · selected ${selected}` : ''}
+          {selected ? ` · focus ${selected}` : ''}
         </div>
       </div>
     </div>
   );
 }
 
-function nodeStyleForKind(kind: string | null): React.CSSProperties {
+function getDash(style: { dash?: string; width: number; opacity: number }): string {
+  return style.dash ?? '0';
+}
+
+function nodeStyleForKind(kind: string | null, status?: string): React.CSSProperties {
   const base: React.CSSProperties = {
     background: 'var(--bg)',
     color: 'var(--text)',
@@ -235,23 +338,129 @@ function nodeStyleForKind(kind: string | null): React.CSSProperties {
     fontSize: 11,
     padding: '6px 12px',
   };
+  let styled = base;
   switch (kind) {
     case 'R':
     case 'F':
     case 'S':
-      return { ...base, color: 'var(--accent)', borderColor: 'var(--accent-mute)' };
+      styled = { ...base, color: 'var(--accent)', borderColor: 'var(--accent-mute)' }; break;
     case 'NFR':
-      return { ...base, color: 'var(--success)' };
+      styled = { ...base, color: 'var(--success)' }; break;
     case 'TC':
-      return { ...base, color: 'var(--info)' };
     case 'AC':
-      return { ...base, color: 'var(--info)' };
+      styled = { ...base, color: 'var(--info)' }; break;
     case 'ADR':
     case 'RISK':
-      return { ...base, color: 'var(--warning)' };
+      styled = { ...base, color: 'var(--warning)' }; break;
     case 'phase-group':
-      return { ...base, color: 'var(--text)', background: 'var(--surface)', borderColor: 'var(--accent)' };
+      styled = { ...base, color: 'var(--text)', background: 'var(--surface)', borderColor: 'var(--accent)' }; break;
     default:
-      return base;
+      styled = base;
   }
+  // Status tint overrides border / opacity / decoration per OQ-DELTA-1.
+  if (status) {
+    const s = status.toLowerCase();
+    if (s === 'draft' || s === 'proposed') {
+      styled = { ...styled, borderColor: 'var(--warning)', borderStyle: 'dashed' };
+    } else if (s === 'rejected') {
+      styled = { ...styled, opacity: 0.4, textDecoration: 'line-through' };
+    }
+    // 'approved' / 'accepted' → no override (default state).
+  }
+  return styled;
+}
+
+// Floating legend showing the edge-styling system (OQ-DELTA-1).
+function EdgeLegend() {
+  return (
+    <div className="graph-legend mono" role="complementary">
+      <div className="legend-title">EDGE STYLING</div>
+      <ul>
+        <li><span className="swatch sw-parent" />parent / depends-on / linked-arch</li>
+        <li><span className="swatch sw-coverage" />tested-by / covers-ac</li>
+        <li><span className="swatch sw-value" />solves / mitigates</li>
+        <li><span className="swatch sw-linked" />linked-features / linked-ac / linked-r</li>
+        <li><span className="swatch sw-untyped" />(prose mention, no kind)</li>
+      </ul>
+      <div className="legend-title">STATUS TINT</div>
+      <ul>
+        <li><span className="status-chip status-approved" />Approved · Accepted</li>
+        <li><span className="status-chip status-draft" />Draft · Proposed (dashed border)</li>
+        <li><span className="status-chip status-rejected" />Rejected (muted + strikethrough)</li>
+      </ul>
+    </div>
+  );
+}
+
+// Typeahead focus input — drives the graph's ego mode without requiring node click.
+function FocusInput({
+  projectId,
+  idIndex,
+  value,
+  onChange,
+  onCommit,
+  onClear,
+}: {
+  projectId: string;
+  idIndex: Map<string, { id: string; phase: number; kind: string | null }> | undefined;
+  value: string;
+  onChange: (v: string) => void;
+  onCommit: (id: string) => void;
+  onClear: () => void;
+}) {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const suggestions = useMemo(() => {
+    if (!value.trim() || !idIndex) return [] as Array<{ id: string; kind: string | null; phase: number }>;
+    const q = value.trim().toLowerCase();
+    const out: Array<{ id: string; kind: string | null; phase: number }> = [];
+    for (const [id, meta] of idIndex) {
+      if (id.toLowerCase().includes(q)) out.push({ id, kind: meta.kind, phase: meta.phase });
+      if (out.length >= 8) break;
+    }
+    return out;
+  }, [value, idIndex]);
+
+  return (
+    <div className="graph-focus-input">
+      <input
+        type="text"
+        className="mono"
+        placeholder="focus an ID…  (e.g. R1, NFR-PERF-2)"
+        value={value}
+        onChange={(e) => { onChange(e.target.value); setActiveIdx(0); }}
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowDown') { e.preventDefault(); setActiveIdx((i) => Math.min(suggestions.length - 1, i + 1)); }
+          else if (e.key === 'ArrowUp') { e.preventDefault(); setActiveIdx((i) => Math.max(0, i - 1)); }
+          else if (e.key === 'Enter') {
+            e.preventDefault();
+            const pick = suggestions[activeIdx]?.id ?? value.trim();
+            if (pick) onCommit(pick);
+          } else if (e.key === 'Escape') {
+            onClear();
+          }
+        }}
+        aria-label="Focus an ID"
+        // suppress unused projectId warning in lint
+        data-project={projectId}
+      />
+      {value && (
+        <button type="button" className="graph-focus-clear mono" onClick={onClear} title="Clear focus">×</button>
+      )}
+      {suggestions.length > 0 && (
+        <ul className="graph-focus-suggestions mono">
+          {suggestions.map((s, i) => (
+            <li
+              key={s.id}
+              className={i === activeIdx ? 'active' : ''}
+              onMouseEnter={() => setActiveIdx(i)}
+              onClick={() => onCommit(s.id)}
+            >
+              <span className="sug-id">{s.id}</span>
+              <span className="sug-meta">{s.kind ?? '?'} · phase {String(s.phase).padStart(2, '0')}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }

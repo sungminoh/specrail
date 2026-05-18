@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { buildGraph, classifyKind } from '@specrail/core';
-import { readAllPhases } from '../adapters/fs.js';
+import { readAllPhases, attrsStatusMap } from '../adapters/fs.js';
 import type { ProjectsService } from '../services/projects.js';
 import { ProjectNotFoundError } from '../services/phases.js';
 
@@ -16,8 +16,16 @@ export function graphRoutes(projects: ProjectsService): Hono {
     try {
       const phases = await readAllPhases(project.rootPath, id);
       const g = buildGraph(phases, classifyKind);
+      const statusByid = new Map<string, string>();
+      for (const p of phases) {
+        for (const [k, v] of attrsStatusMap(p.body)) statusByid.set(k, v);
+      }
+      const nodes = g.nodes.map((n) => {
+        const status = statusByid.get(n.id);
+        return status ? { ...n, status } : n;
+      });
       return c.json({
-        nodes: g.nodes,
+        nodes,
         edges: g.edges,
       });
     } catch (e: unknown) {

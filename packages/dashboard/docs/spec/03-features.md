@@ -204,6 +204,8 @@ solves-pains: [PAIN-2, PAIN-4]
 - **AC-R2-2:** GIVEN graph view + 500 노드 이하, WHEN N-hop filter 적용, THEN ≤ 200ms 내 reflow.
 - **AC-R2-3:** GIVEN graph 노드 클릭, WHEN 우측 Refs tab, THEN in/out refs + "Open in phase view" 버튼 표시.
 - **AC-R2-4:** GIVEN graph 200 노드 초과, WHEN graph view open, THEN phase-level collapsed view 로 자동 fallback (phase 노드 click 시 expand).
+- **AC-R2-5:** GIVEN graph view, WHEN 노드 / edge 표시, THEN edge 가 `kind` 별로 visually distinguishable (stroke weight / dasharray / opacity — DESIGN.md gold-accent 유지) 하고 legend overlay 가 항상 노출.
+- **AC-R2-6:** GIVEN phase view + ID hover/click, WHEN Connections panel 활성, THEN ≤ 16ms 안에 그 ID 의 typed neighbors 가 edge kind 별 그룹으로 표시 (in/out 구분 + status pill 포함).
 
 ### F2.1: Refs tab (in/out)
 <!-- specrail:attrs id=F2.1 -->
@@ -276,6 +278,90 @@ parent-r: R2
 ```yaml
 status: Approved
 parent-f: F2.3
+```
+<!-- /specrail:attrs -->
+
+### F2.4: Connections panel (inline in phase view)
+<!-- specrail:attrs id=F2.4 -->
+```yaml
+status: Approved
+parent-r: R2
+solves-pains: [PAIN-2]
+linked-ac: [AC-R2-6]
+```
+<!-- /specrail:attrs -->
+
+**Description:** Phase markdown 우측에 always-visible right-rail. 현재 focus 중인 ID 의 typed neighbors 를 edge kind 별 grouped list 로 표시. Focus 변경 trigger: chip click / panel 내 neighbor click. Collapsible (sticky in localStorage; default open; 좁은 화면 ≤ 900px auto-hide).
+**Out:** "Open in graph ↗" deep-link `?focus=<id>&hop=2`.
+
+#### S2.4.1: ConnectionsPanel UI + useGraphConnections 훅 (cached graph query 재활용 — no new API)
+<!-- specrail:attrs id=S2.4.1 -->
+```yaml
+status: Approved
+parent-f: F2.4
+```
+<!-- /specrail:attrs -->
+
+#### S2.4.2: Focus state sync (chip click → panel) + localStorage sticky collapse
+<!-- specrail:attrs id=S2.4.2 -->
+```yaml
+status: Approved
+parent-f: F2.4
+```
+<!-- /specrail:attrs -->
+
+### F2.5: Typed graph relationships (core)
+<!-- specrail:attrs id=F2.5 -->
+```yaml
+status: Approved
+parent-r: R2
+linked-ac: [AC-R2-5]
+linked-arch: [ARCH-4]
+```
+<!-- /specrail:attrs -->
+
+**Description:** core 가 `<!-- specrail:attrs -->` 블록의 closed-enum edge keys (`solves`, `linked-features`, `parent`, `tested-by`, `covers-ac`, `mitigates`, `linked-arch`, `depends-on`) 와 dashboard spec 에서 실제 사용되는 qualified 변형 (`parent-f`, `parent-r`, `parent-zone`, `linked-ac`, `linked-r`, `solves-pains`) 를 typed-ref 로 추출. 기존 prose-mention ref 와 union (typed-ref 가 같은 (from,to) 의 prose-ref 를 suppress).
+
+#### S2.5.1: `extractTypedRefs(body)` + `parseAttrsBlocks(body)` in @specrail/core
+<!-- specrail:attrs id=S2.5.1 -->
+```yaml
+status: Approved
+parent-f: F2.5
+```
+<!-- /specrail:attrs -->
+
+#### S2.5.2: SpecRef zod schema `kind?` field + GraphEdge.kind + GraphNode.status
+<!-- specrail:attrs id=S2.5.2 -->
+```yaml
+status: Approved
+parent-f: F2.5
+```
+<!-- /specrail:attrs -->
+
+### F2.6: Graph focus input + status tint
+<!-- specrail:attrs id=F2.6 -->
+```yaml
+status: Approved
+parent-r: R2
+linked-ac: [AC-R2-5]
+```
+<!-- /specrail:attrs -->
+
+**Description:** Graph 상단 chrome 에 focus 입력 (typeahead, idIndex 재활용). 입력 즉시 ego mode 활성 (노드 click 도 동일). 노드 색이 attrs.status 에 따라 tint (Approved = 기본, Draft/Proposed = dashed border, Rejected = muted + strikethrough). Edge styling: gold-accent 단색 + stroke weight/dasharray/opacity 4-family grouping (OQ-DELTA-1 합의).
+
+#### S2.6.1: FocusInput 컴포넌트 + URL search params (`?focus=<id>&hop=N`) 양방향 sync
+<!-- specrail:attrs id=S2.6.1 -->
+```yaml
+status: Approved
+parent-f: F2.6
+```
+<!-- /specrail:attrs -->
+
+#### S2.6.2: nodeStyleForKind 확장 (status tint) + EdgeLegend overlay
+<!-- specrail:attrs id=S2.6.2 -->
+```yaml
+status: Approved
+parent-f: F2.6
 ```
 <!-- /specrail:attrs -->
 

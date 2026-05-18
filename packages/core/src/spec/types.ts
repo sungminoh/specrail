@@ -46,10 +46,32 @@ export const ProjectSchema = z.object({
 });
 export type Project = z.infer<typeof ProjectSchema>;
 
+export const EdgeKindSchema = z.enum([
+  // Schema-defined closed enum:
+  'solves',
+  'linked-features',
+  'parent',
+  'tested-by',
+  'covers-ac',
+  'mitigates',
+  'linked-arch',
+  'depends-on',
+  // Common qualified variants used by the dashboard spec:
+  'parent-f',
+  'parent-r',
+  'parent-zone',
+  'linked-ac',
+  'linked-r',
+  'solves-pains',
+]);
+export type EdgeKind = z.infer<typeof EdgeKindSchema>;
+
 export const SpecRefSchema = z.object({
   from: SpecIdSchema,
   to: SpecIdSchema,
   line: z.number().int().min(1),
+  /** Closed-enum kind when surfaced from an attrs block; absent for prose mentions. */
+  kind: EdgeKindSchema.optional(),
 });
 export type SpecRef = z.infer<typeof SpecRefSchema>;
 

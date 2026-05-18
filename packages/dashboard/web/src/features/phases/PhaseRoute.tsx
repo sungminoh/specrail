@@ -6,6 +6,7 @@ import type { PhaseNumber } from '@specrail/core';
 import { MarkdownView } from './MarkdownView.js';
 import { EditMode } from './EditMode.js';
 import { ChatDrawer } from '../ai-chat/ChatDrawer.js';
+import { ConnectionsPanel } from '../connections/ConnectionsPanel.js';
 
 export function PhaseRoute() {
   const { projectId = '', n = '1' } = useParams<{ projectId: string; n: string }>();
@@ -62,6 +63,7 @@ export function PhaseRoute() {
             <MarkdownView body={data.body} projectId={projectId} />
           )}
         </div>
+        {!editing && <ConnectionsPanel projectId={projectId} />}
         {chatOpen && <ChatDrawer projectId={projectId} currentPhase={num} />}
       </div>
     </article>
