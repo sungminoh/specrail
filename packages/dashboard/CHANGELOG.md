@@ -1,5 +1,23 @@
 # @specrail/dashboard CHANGELOG
 
+## Unreleased — M9 + core bullet-def recognition fix
+
+DELTA-4: `packages/dashboard/changes/2026-05-18-core-bullet-def-recognition/` (proposal + 2 per-phase deltas).
+
+### Fixed (DELTA-4)
+- **`@specrail/core::extractDefinedIds`** now recognizes bullet-style definitions (`- **AC-R1-1:** GIVEN ...`) — the convention spec authors use for ACs and inline F/NFR/TC entries. Previously only heading + attrs-block definitions were detected.
+- Downstream effect: `buildGraph`, `runChecks`, `findOrphans`, `findDanglingRefs` no longer produce false positives for bullet-defined IDs.
+- Live verified on dashboard's own spec: Quality mode count drops from **105 → 33** (-72 nodes; the AC-R*-* family that was wrongly flagged as dangling is now first-class). Remaining 33 are genuine missing definitions (ZN-SHELL-1, S4.3, T13.7, PAIN-DRIFT-1, F1/F2/S1, …).
+
+### Acceptance Criteria added
+- **AC-CORE-1** — extractDefinedIds recognizes `- **AC-R1-1:**` bullet pattern.
+- **AC-CORE-2** — Bullet-defined ACs included in graph nodes; not classified as dangling.
+- **AC-CORE-3** — Bullet pattern works for non-AC ID families too (F1.2, NFR-PERF-2, TC-12).
+
+### Tests
+- core: 71 → **80 PASS** (+9 extractDefinedIds tests covering heading / attrs / bullet / mixed / dedup / indent / false-positive guards).
+- dashboard: 38 PASS unchanged.
+
 ## Unreleased — M9 typed-graph-relationships + side-panels refactor + graph view modes
 
 DELTA-3: `packages/dashboard/changes/2026-05-18-graph-view-modes/` (proposal + 3 per-phase deltas, Approved). Spec sync applied to phases 3 / 13.

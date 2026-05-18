@@ -48,22 +48,32 @@ export function extractIds(text: string): string[] {
 
 const HEADING_LINE_RE = /^(#{1,6})\s+(.+)$/gm;
 const ATTRS_ID_RE = /<!--\s*specrail:attrs\s+id=([^\s>]+)\s*-->/g;
-const ID_AT_START = new RegExp(
-  '^\\*{0,2}(' +
-    '[RFS]\\d+(?:\\.\\d+){0,2}|T\\d+(?:\\.\\d+)?|NFR-[A-Z][A-Z0-9]*-\\d+|TC-\\d+|EDGE-\\d+|AC-R\\d+-\\d+|INV-\\d+|ADR-\\d+|RISK-\\d+|OPS-\\d+|OQ-\\d+-\\d+|ARCH-\\d+|EXT-\\d+|KPI-\\d+|PAIN-[A-Z0-9_-]*\\d?|PERSONA-(?:EDGE-)?\\d+|PERSONA-[A-Z]+(?:-\\d+)?|SCEN-\\d+|JNY-\\d+\\.\\d+|ZN-[A-Z][A-Z0-9-]*-\\d+|P-CC-\\d+|E-CC-\\d+|W-CC-[A-Z][A-Z0-9_-]*|FLN-\\d+|FLE-\\d+' +
-    ')\\b',
-);
+
+// All supported ID families (closed-enum union).
+const ID_FAMILY =
+  '[RFS]\\d+(?:\\.\\d+){0,2}|T\\d+(?:\\.\\d+)?|NFR-[A-Z][A-Z0-9]*-\\d+|TC-\\d+|EDGE-\\d+|AC-R\\d+-\\d+|INV-\\d+|ADR-\\d+|RISK-\\d+|OPS-\\d+|OQ-\\d+-\\d+|ARCH-\\d+|EXT-\\d+|KPI-\\d+|PAIN-[A-Z0-9_-]*\\d?|PERSONA-(?:EDGE-)?\\d+|PERSONA-[A-Z]+(?:-\\d+)?|SCEN-\\d+|JNY-\\d+\\.\\d+|ZN-[A-Z][A-Z0-9-]*-\\d+|P-CC-\\d+|E-CC-\\d+|W-CC-[A-Z][A-Z0-9_-]*|FLN-\\d+|FLE-\\d+';
+
+const ID_AT_START = new RegExp(`^\\*{0,2}(${ID_FAMILY})\\b`);
+
+// Bullet-style definition: list-item containing a bolded ID followed by `:`.
+// e.g. `- **AC-R1-1:** GIVEN ...`, `  - **F1.2:** indented`. Spec authors
+// commonly write ACs this way; without this pass core treats them as undefined
+// even when other entities link to them.
+const BULLET_DEF_RE = new RegExp(`^\\s*-\\s+\\*\\*(${ID_FAMILY}):\\*\\*\\s+`, 'gm');
 
 /**
  * Extract IDs that are DEFINED in this text. Definitions come from:
  *   - Heading lines starting with the ID (e.g. "## R1: Spec view")
  *   - <!-- specrail:attrs id=X --> markers
+ *   - Bullet-list items "- **AC-R1-1:** GIVEN ..." (common for ACs)
  *
  * Stricter than extractIds — used for graph build where "defined" matters.
  */
 export function extractDefinedIds(text: string): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
+
+  // Pass 1: heading definitions.
   for (const m of text.matchAll(HEADING_LINE_RE)) {
     const heading = m[2] ?? '';
     const idMatch = heading.match(ID_AT_START);
@@ -74,6 +84,8 @@ export function extractDefinedIds(text: string): string[] {
       out.push(id);
     }
   }
+
+  // Pass 2: attrs-block markers.
   for (const m of text.matchAll(ATTRS_ID_RE)) {
     const id = m[1];
     if (id && !seen.has(id)) {
@@ -81,6 +93,16 @@ export function extractDefinedIds(text: string): string[] {
       out.push(id);
     }
   }
+
+  // Pass 3: bullet-style definitions (`- **<ID>:**`).
+  for (const m of text.matchAll(BULLET_DEF_RE)) {
+    const id = m[1];
+    if (id && !seen.has(id)) {
+      seen.add(id);
+      out.push(id);
+    }
+  }
+
   return out;
 }
 

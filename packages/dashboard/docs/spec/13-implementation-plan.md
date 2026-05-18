@@ -822,6 +822,21 @@ linked-features: [F2.8]
 **T9.9 Phase Focus + Quality + sidebar refactor**
 - Files: same GraphView.tsx rewrite as T9.8 (Phase + Quality branches included). Sidebar conditional render = only `mode === 'phase'`; legend default closed; ModeBanner per mode.
 
+<!-- specrail:attrs id=T9.10 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "TC-CORE-BULLET-DEF (9 tests in spec-ids.test.ts) — bullet pattern recognized for all ID families; Quality mode dangling count drops from 105 to 33"
+commit-msg-stub: "fix(core): extractDefinedIds recognizes bullet-style `- **ID:**` definitions"
+depends-on: [T9.1]
+linked-ac: [AC-CORE-1, AC-CORE-2, AC-CORE-3]
+```
+<!-- /specrail:attrs -->
+
+**T9.10 Core extractDefinedIds bullet pattern (DELTA-4)**
+- Files: `packages/core/src/spec/ids.ts` — extracted `ID_FAMILY` pattern, added `BULLET_DEF_RE`, Pass-3 in `extractDefinedIds`. `packages/core/tests/spec-ids.test.ts` — 9 new tests including dedup, indented bullets, false-positive guards.
+- Effect: `buildGraph` / `runChecks` / `findOrphans` / `findDanglingRefs` now treat `- **AC-R1-1:**` bullet definitions as first-class IDs. Live measurement on dashboard own spec: Quality mode 105 → 33 nodes (AC-* false positives eliminated). Remaining 33 are real missing definitions (ZN-SHELL-1, S4.3, T13.7, PAIN-DRIFT-1, F1/F2/S1, …).
+
 ### M8: Distribution + slash command
 
 <!-- specrail:attrs id=T8.1 -->
