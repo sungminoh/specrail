@@ -50,6 +50,14 @@ export function ChatDrawer({ projectId, currentPhase }: Props) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [state.buffer]);
 
+  // Reset chat state when the phase context changes — the session is bound to
+  // a specific phase, so showing the previous phase's reply alongside the new
+  // "context auto-attached: phase N" prompt is confusing.
+  useEffect(() => {
+    setState({ sessionId: null, buffer: '', patchIds: [], status: 'idle' });
+    setInput('');
+  }, [currentPhase]);
+
   const send = useMutation({
     mutationFn: async () => {
       const session = await api.createSession(projectId, 'chat');

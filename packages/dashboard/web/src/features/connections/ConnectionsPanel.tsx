@@ -2,7 +2,7 @@
 // Reads from cached graph query (no new roundtrip). Refresh budget: NFR-PERF-6 (≤16ms).
 
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useGraphConnections, type Neighbor, type EdgeKind } from './useGraphConnections.js';
 import { usePanel, setPanel } from '../../shell/usePanelState.js';
 
@@ -35,29 +35,49 @@ export function ConnectionsPanel({ projectId }: Props) {
   const [focus, setFocus] = useState<string | null>(null);
   const open = usePanel('connections');
   const navigate = useNavigate();
+  const location = useLocation();
   const conn = useGraphConnections(projectId, focus);
 
-  // Auto-pick a focus when chips appear. Order of preference:
-  //   1. URL fragment (#R1, etc.) — set on chip click for navigation
-  //   2. First `.id-chip` on the page
-  // ConnectionsPanel mounts in AppShell BEFORE PhaseRoute renders chips
-  // (phase fetch is async), so we observe the DOM until chips show up.
+  // ── Focus management ──────────────────────────────────────────────────────
+  // Source of truth (in priority order):
+  //   1. URL hash       (#R1)         — deep-link from neighbor jump
+  //   2. First `.id-chip` on the page — auto-pick after markdown renders
+  //   3. null            (not on a chip-bearing route — e.g. /graph)
+  //
+  // Re-evaluated whenever:
+  //   - location.pathname changes (react-router Link click)
+  //   - location.hash changes
+  //   - DOM mutates new chips into the document (async render)
   useEffect(() => {
-    if (focus) return;
+    const isChipBearingRoute = /\/phase\/\d+/.test(location.pathname);
+    if (!isChipBearingRoute) {
+      // /graph and other non-phase routes have no markdown chips — clear focus.
+      setFocus(null);
+      return;
+    }
 
     const pickFromHash = (): string | null => {
-      const h = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+      const h = decodeURIComponent(location.hash.replace(/^#/, ''));
       return h && /^[A-Z][A-Za-z0-9\-.]*\d/.test(h) ? h : null;
     };
     const pickFirstChip = (): string | null =>
       document.querySelector('.id-chip')?.textContent?.trim() ?? null;
 
-    const initial = pickFromHash() ?? pickFirstChip();
-    if (initial) {
-      setFocus(initial);
+    const hashPick = pickFromHash();
+    if (hashPick) {
+      setFocus(hashPick);
       return;
     }
-    // Chips not in DOM yet — observe and pick when they appear.
+
+    // Try synchronously first — may already have rendered if revisiting cached phase.
+    const immediate = pickFirstChip();
+    if (immediate) {
+      setFocus(immediate);
+      return;
+    }
+
+    // Otherwise reset focus and observe the DOM until chips render.
+    setFocus(null);
     const observer = new MutationObserver(() => {
       const id = pickFirstChip();
       if (id) {
@@ -67,33 +87,7 @@ export function ConnectionsPanel({ projectId }: Props) {
     });
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
-  }, [focus]);
-
-  // Phase navigation invalidates the focus (different page, different chips).
-  // Reset to null so the auto-pick logic above re-runs against the new DOM.
-  useEffect(() => {
-    const onHashChange = () => {
-      const h = decodeURIComponent(window.location.hash.replace(/^#/, ''));
-      if (h && /^[A-Z][A-Za-z0-9\-.]*\d/.test(h)) setFocus(h);
-    };
-    const onPop = () => {
-      // Wait a tick for the new route to mount, then re-pick from URL hash or chips.
-      setTimeout(() => {
-        const h = decodeURIComponent(window.location.hash.replace(/^#/, ''));
-        if (h && /^[A-Z][A-Za-z0-9\-.]*\d/.test(h)) setFocus(h);
-        else {
-          const first = document.querySelector('.id-chip')?.textContent?.trim();
-          if (first) setFocus(first);
-        }
-      }, 50);
-    };
-    window.addEventListener('hashchange', onHashChange);
-    window.addEventListener('popstate', onPop);
-    return () => {
-      window.removeEventListener('hashchange', onHashChange);
-      window.removeEventListener('popstate', onPop);
-    };
-  }, []);
+  }, [location.pathname, location.hash]);
 
   // Subscribe to chip click events (document-level capture).
   useEffect(() => {
@@ -124,7 +118,13 @@ export function ConnectionsPanel({ projectId }: Props) {
         <span className="conn-title mono">CONNECTIONS</span>
       </header>
 
-      {!focus && <div className="conn-empty mono">Click any ID chip to focus.</div>}
+      {!focus && (
+        <div className="conn-empty mono">
+          {/\/graph/.test(location.pathname)
+            ? 'Open a phase to see typed connections.'
+            : 'Click any ID chip to focus.'}
+        </div>
+      )}
 
       {conn && (
         <>
