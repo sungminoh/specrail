@@ -1,18 +1,17 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 import { api } from '../../lib/api.js';
 import type { PhaseNumber } from '@specrail/core';
 import { MarkdownView } from './MarkdownView.js';
 import { EditMode } from './EditMode.js';
-import { ChatDrawer } from '../ai-chat/ChatDrawer.js';
-import { ConnectionsPanel } from '../connections/ConnectionsPanel.js';
+import { usePanel, togglePanel } from '../../shell/usePanelState.js';
 
 export function PhaseRoute() {
   const { projectId = '', n = '1' } = useParams<{ projectId: string; n: string }>();
   const [search, setSearch] = useSearchParams();
   const editing = search.get('edit') === '1';
-  const [chatOpen, setChatOpen] = useState(false);
+  const chatOpen = usePanel('chat');
+  const connOpen = usePanel('connections');
   const num = Number(n) as PhaseNumber;
   const { data, isLoading, error } = useQuery({
     queryKey: ['phase', projectId, num],
@@ -40,15 +39,26 @@ export function PhaseRoute() {
           <span className="meta-pill">mtime {new Date(data.mtimeMs).toLocaleString()}</span>
           <span className="meta-pill">{data.parsedIds.length} ids · {data.parsedRefs.length} refs</span>
           <div style={{ flex: 1 }} />
-          <button className="btn-ghost mono" onClick={() => setChatOpen((v) => !v)}>
-            {chatOpen ? 'CLOSE CHAT' : 'AI CHAT'}
+          <button
+            className={`btn-ghost mono${connOpen ? ' on' : ''}`}
+            onClick={() => togglePanel('connections')}
+            title="Toggle Connections panel"
+          >
+            CONNECTIONS
+          </button>
+          <button
+            className={`btn-ghost mono${chatOpen ? ' on' : ''}`}
+            onClick={() => togglePanel('chat')}
+            title="Toggle AI chat"
+          >
+            AI CHAT
           </button>
           <button className="btn-ghost mono" onClick={() => toggleEdit(!editing)}>
             {editing ? 'READ' : 'EDIT'}
           </button>
         </div>
       </header>
-      <div className={`phase-body${chatOpen ? ' with-drawer' : ''}`}>
+      <div className="phase-body">
         <div className="phase-body-main">
           {editing ? (
             <EditMode
@@ -63,8 +73,6 @@ export function PhaseRoute() {
             <MarkdownView body={data.body} projectId={projectId} />
           )}
         </div>
-        {!editing && <ConnectionsPanel projectId={projectId} />}
-        {chatOpen && <ChatDrawer projectId={projectId} currentPhase={num} />}
       </div>
     </article>
   );

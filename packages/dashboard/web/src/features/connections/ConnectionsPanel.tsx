@@ -1,11 +1,10 @@
 // W-CC-CONNECTIONS — Inline right-rail in PhaseView. AC-R2-6.
 // Reads from cached graph query (no new roundtrip). Refresh budget: NFR-PERF-6 (≤16ms).
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGraphConnections, type Neighbor, type EdgeKind } from './useGraphConnections.js';
-
-const STORAGE_KEY = 'phase-view.connections-panel.open';
+import { usePanel, setPanel } from '../../shell/usePanelState.js';
 
 const KIND_LABEL: Record<EdgeKind, string> = {
   solves: 'solves',
@@ -34,7 +33,7 @@ interface Props {
  */
 export function ConnectionsPanel({ projectId }: Props) {
   const [focus, setFocus] = useState<string | null>(null);
-  const [open, setOpen] = useState<boolean>(() => readSticky());
+  const open = usePanel('connections');
   const navigate = useNavigate();
   const conn = useGraphConnections(projectId, focus);
 
@@ -57,33 +56,7 @@ export function ConnectionsPanel({ projectId }: Props) {
     return () => document.removeEventListener('click', onChipClick, true);
   }, []);
 
-  const toggleOpen = useCallback(() => {
-    setOpen((v) => {
-      const next = !v;
-      try {
-        localStorage.setItem(STORAGE_KEY, next ? '1' : '0');
-      } catch {
-        /* private mode */
-      }
-      return next;
-    });
-  }, []);
-
-  if (!open) {
-    return (
-      <aside className="connections-panel collapsed">
-        <button
-          type="button"
-          className="conn-toggle mono"
-          onClick={toggleOpen}
-          aria-label="Open connections panel"
-          title="Open connections panel"
-        >
-          ◀
-        </button>
-      </aside>
-    );
-  }
+  if (!open) return null;
 
   return (
     <aside className="connections-panel">
@@ -91,11 +64,11 @@ export function ConnectionsPanel({ projectId }: Props) {
         <button
           type="button"
           className="conn-toggle mono"
-          onClick={toggleOpen}
+          onClick={() => setPanel('connections', false)}
           aria-label="Close connections panel"
           title="Close connections panel"
         >
-          ▶
+          ✕
         </button>
         <span className="conn-title mono">CONNECTIONS</span>
       </header>
@@ -216,15 +189,3 @@ function NeighborGroup({
   );
 }
 
-function readSticky(): boolean {
-  try {
-    const v = localStorage.getItem(STORAGE_KEY);
-    if (v === '0') return false;
-    if (v === '1') return true;
-  } catch {
-    /* private mode */
-  }
-  // Default: open on wide screens, closed on narrow ones.
-  if (typeof window !== 'undefined' && window.innerWidth <= 1280) return false;
-  return true;
-}

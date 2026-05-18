@@ -19,6 +19,11 @@ const ID_AT_START =
 
 const ATTRS_MARKER_RE = /<!--\s*specrail:attrs\s+id=([^\s>]+)\s*-->/;
 
+// Bullet-style definition (commonly used for AC entries): "- **AC-R1-1:** GIVEN…"
+// Note: the colon is INSIDE the bold pair (**AC-R1-1:**), so it's part of the bolded text.
+const BULLET_DEF_RE =
+  /^-\s+\*\*([RFS]\d+(?:\.\d+){0,2}|T\d+(?:\.\d+)?|NFR-[A-Z][A-Z0-9]*-\d+|TC-\d+|EDGE-\d+|AC-R\d+-\d+|INV-\d+|ADR-\d+|RISK-\d+|OPS-\d+|OQ-\d+-\d+|ARCH-\d+|EXT-\d+|KPI-\d+|PAIN-[A-Z0-9_-]*\d?|PERSONA-(?:EDGE-)?\d+|PERSONA-[A-Z]+(?:-\d+)?|SCEN-\d+|JNY-\d+\.\d+|ZN-[A-Z][A-Z0-9-]*-\d+|P-CC-\d+|E-CC-\d+|W-CC-[A-Z][A-Z0-9_-]*|FLN-\d+|FLE-\d+):\*\*\s+/;
+
 export function buildIdIndex(phases: Phase[]): Map<string, IdPreview> {
   const out = new Map<string, IdPreview>();
   for (const phase of phases) {
@@ -60,6 +65,32 @@ export function buildIdIndex(phases: Phase[]): Map<string, IdPreview> {
         phase: phase.number,
         line: i + 1,
         preview: collectAttrsPreview(lines, i, id),
+        kind: classifyKindLocal(id),
+      });
+    }
+
+    // Pass 3: bullet-style definitions — `- **AC-R1-1:** GIVEN ...` (common for ACs).
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i] ?? '';
+      const m = line.match(BULLET_DEF_RE);
+      if (!m) continue;
+      const id = m[1];
+      if (!id || out.has(id)) continue;
+      // Strip the leading `- **<ID>:**` prefix from the seed for a cleaner preview.
+      const seed = line.replace(/^-\s+\*\*[^*]+:\*\*\s*/, '').trim();
+      let preview = `${id}: ${seed}`;
+      for (let j = i + 1; j < Math.min(i + 4, lines.length); j++) {
+        const next = (lines[j] ?? '').trim();
+        if (!next) break;
+        if (next.startsWith('-') || next.startsWith('#') || next.startsWith('<!--')) break;
+        preview += ' ' + next;
+        if (preview.length > 200) break;
+      }
+      out.set(id, {
+        id,
+        phase: phase.number,
+        line: i + 1,
+        preview: preview.length > 200 ? preview.slice(0, 197) + '…' : preview,
         kind: classifyKindLocal(id),
       });
     }

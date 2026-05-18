@@ -762,6 +762,36 @@ depends-on: [T9.1, T9.2, T9.3, T9.4]
 **T9.5 Spec sync — apply deltas**
 - Files: `packages/dashboard/docs/spec/{03,09,13}-*.md` (this commit). Deltas remain in `packages/dashboard/changes/2026-05-17-typed-graph-relationships/` for traceability.
 
+<!-- specrail:attrs id=T9.6 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "Visual smoke at 1280/1100/900/600px — markdown column stays centered (max-w 760px); Connections + Chat both open render as vertically stacked floating right panels"
+commit-msg-stub: "refactor(web): Connections + Chat as floating right side panels (AC-R2-7)"
+depends-on: [T9.3]
+linked-ac: [AC-R2-7]
+linked-features: [F2.4, F4.2]
+```
+<!-- /specrail:attrs -->
+
+**T9.6 Floating side panels refactor**
+- Files: `packages/dashboard/web/src/shell/usePanelState.ts` (NEW — useSyncExternalStore + LS persistence), `shell/AppShell.tsx` (mount ConnectionsPanel + ChatDrawer globally), `features/connections/ConnectionsPanel.tsx` (use store, drop inline LS), `features/phases/PhaseRoute.tsx` (toggle buttons via store; remove panel mounts), `styles/layout.css` (markdown column max-w 760px centered; panels position:fixed right; stacked when both open).
+
+<!-- specrail:attrs id=T9.7 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "Hover `.conn-neighbor-id` for 200ms → IdPopover renders with id-index preview (AC-R2-8). Verified live: AC-R1-1 tooltip shows 'GIVEN dashboard 실행 + project 등록됨, WHEN 사용자가 phase N 클릭, THEN phase view 가 ≤ 2초(p95) 내 렌더되고…'"
+commit-msg-stub: "feat(web): hover tooltip on Connections neighbors (F2.7)"
+depends-on: [T9.6]
+linked-ac: [AC-R2-8]
+linked-features: [F2.7]
+```
+<!-- /specrail:attrs -->
+
+**T9.7 Connections hover tooltip**
+- Files: `packages/dashboard/web/src/shell/AppShell.tsx` (selector `.id-chip, .conn-neighbor-id`), `features/phases/idIndex.ts` (BULLET_DEF_RE + Pass-3 to index `- **AC-R1-1:**` style bullet definitions).
+
 ### M8: Distribution + slash command
 
 <!-- specrail:attrs id=T8.1 -->
@@ -908,9 +938,10 @@ P0 Spec (43) → Task mapping:
 - [ ] README + 기본 docs 작성
 
 ### v0.2.0 ship gate (post-M9)
-- [ ] M9 의 모든 task complete + AC-R2-5/6 + NFR-PERF-6/COMPAT-1 PASS
+- [ ] M9 의 모든 task complete + AC-R2-5/6/7/8 + NFR-PERF-6/7 + NFR-COMPAT-1 PASS
 - [ ] Connections panel dogfood — maintainer 본인 1주 이상 daily use 검증
 - [ ] Backward-compat — 0.1.0-alpha.1 client 가 새 /api/graph payload 처리 가능 (optional field 만 추가)
+- [ ] Markdown reading column 760px 안정 (any panel state, 모든 breakpoint)
 
 ## 15. 다음 단계 (post-spec phase)
 

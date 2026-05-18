@@ -103,6 +103,19 @@ linked-features: [F2.5]
 ```
 <!-- /specrail:attrs -->
 
+<!-- specrail:attrs id=NFR-PERF-7 -->
+```yaml
+status: Approved
+target: "≤200"
+unit: millisecond
+measure-method: "performance.now() between toggle click and panel transitionend"
+violates-action: "warn (block at 400)"
+linked-arch: [ARCH-1]
+linked-r: [R2]
+linked-features: [F2.4, F4.2]
+```
+<!-- /specrail:attrs -->
+
 | ID | 지표 | 단위 | 목표 | 측정 방법 | 위반 시 |
 |---|---|---|---|---|---|
 | NFR-PERF-1 | Phase view cold load p95 | second | ≤ 2 (KPI-5) | Playwright trace localhost | release block |
@@ -111,6 +124,7 @@ linked-features: [F2.5]
 | NFR-PERF-4 | External edit → SSE 반영 e2e | ms | ≤ 500 | Playwright timer | release block |
 | NFR-PERF-5 | cmd+k 첫 결과 paint | ms | ≤ 50 | client perf API | warn (block 100) |
 | NFR-PERF-6 | Connections panel refresh on focus change | ms | ≤ 16 | client perf API | warn (block 50) |
+| NFR-PERF-7 | side-panel toggle animation duration | ms | ≤ 200 | client perf API | warn (block 400) |
 | NFR-COMPAT-1 | attrs typed-ref extraction completeness | % | 100 | Vitest fixture | release block |
 
 ## 2. Scalability (Scal)

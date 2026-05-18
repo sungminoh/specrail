@@ -206,6 +206,8 @@ solves-pains: [PAIN-2, PAIN-4]
 - **AC-R2-4:** GIVEN graph 200 노드 초과, WHEN graph view open, THEN phase-level collapsed view 로 자동 fallback (phase 노드 click 시 expand).
 - **AC-R2-5:** GIVEN graph view, WHEN 노드 / edge 표시, THEN edge 가 `kind` 별로 visually distinguishable (stroke weight / dasharray / opacity — DESIGN.md gold-accent 유지) 하고 legend overlay 가 항상 노출.
 - **AC-R2-6:** GIVEN phase view + ID hover/click, WHEN Connections panel 활성, THEN ≤ 16ms 안에 그 ID 의 typed neighbors 가 edge kind 별 그룹으로 표시 (in/out 구분 + status pill 포함).
+- **AC-R2-7:** GIVEN phase view, WHEN Connections panel 또는 ChatDrawer 가 open, THEN markdown 본문의 가운데 정렬과 reading column 너비 (≤ 760px) 가 변하지 않는다 (floating right side panel pattern).
+- **AC-R2-8:** GIVEN Connections panel open + neighbor row mouse hover, WHEN 200ms 정지, THEN tooltip (`IdPopover`) 표시 — id / kind / preview (200자 이내).
 
 ### F2.1: Refs tab (in/out)
 <!-- specrail:attrs id=F2.1 -->
@@ -281,17 +283,17 @@ parent-f: F2.3
 ```
 <!-- /specrail:attrs -->
 
-### F2.4: Connections panel (inline in phase view)
+### F2.4: Connections panel (floating right side panel)
 <!-- specrail:attrs id=F2.4 -->
 ```yaml
 status: Approved
 parent-r: R2
 solves-pains: [PAIN-2]
-linked-ac: [AC-R2-6]
+linked-ac: [AC-R2-6, AC-R2-7]
 ```
 <!-- /specrail:attrs -->
 
-**Description:** Phase markdown 우측에 always-visible right-rail. 현재 focus 중인 ID 의 typed neighbors 를 edge kind 별 grouped list 로 표시. Focus 변경 trigger: chip click / panel 내 neighbor click. Collapsible (sticky in localStorage; default open; 좁은 화면 ≤ 900px auto-hide).
+**Description:** Phase markdown 우측에 floating right side panel (`position: fixed; right: 0`). Markdown 본문에 영향 없이 떠 있음 — reading column 은 max-width 760px 가운데 정렬 유지 (AC-R2-7). 현재 focus 중인 ID 의 typed neighbors 를 edge kind 별 grouped list 로 표시. Focus 변경 trigger: chip click / panel 내 neighbor click. Toggle 가능 (sticky in localStorage). ChatDrawer 와 동시 open 시 vertically stacked (Connections 상반·Chat 하반).
 **Out:** "Open in graph ↗" deep-link `?focus=<id>&hop=2`.
 
 #### S2.4.1: ConnectionsPanel UI + useGraphConnections 훅 (cached graph query 재활용 — no new API)
@@ -362,6 +364,34 @@ parent-f: F2.6
 ```yaml
 status: Approved
 parent-f: F2.6
+```
+<!-- /specrail:attrs -->
+
+### F2.7: Connections neighbor hover tooltip
+<!-- specrail:attrs id=F2.7 -->
+```yaml
+status: Approved
+parent-r: R2
+linked-features: [F1.2, F2.4]
+linked-ac: [AC-R2-8]
+```
+<!-- /specrail:attrs -->
+
+**Description:** Connections panel 의 neighbor row 위 mouse hover → 200ms 후 IdPopover 와 동일한 tooltip 표시 (id / kind / phase·line / preview). 구현: 기존 `IdPopover` 의 selector 를 `.id-chip, .conn-neighbor-id` 로 확장 + `buildIdIndex` Pass-3 가 `- **AC-R*-*:**` bullet definition 도 index 에 포함. Latency: ≤ 16ms (hover) — idIndex cached.
+
+#### S2.7.1: IdPopover selector 확장 (`.id-chip, .conn-neighbor-id`)
+<!-- specrail:attrs id=S2.7.1 -->
+```yaml
+status: Approved
+parent-f: F2.7
+```
+<!-- /specrail:attrs -->
+
+#### S2.7.2: buildIdIndex Pass-3 — bullet definition recognition
+<!-- specrail:attrs id=S2.7.2 -->
+```yaml
+status: Approved
+parent-f: F2.7
 ```
 <!-- /specrail:attrs -->
 

@@ -1,5 +1,22 @@
 # @specrail/dashboard CHANGELOG
 
+## Unreleased — M9 typed-graph-relationships + side-panels refactor
+
+DELTA-2: `packages/dashboard/changes/2026-05-18-side-panels-and-hover/` (proposal + 4 per-phase deltas, Approved). Spec sync applied to phases 3 / 9 / 13.
+
+### Added (DELTA-2)
+- **F2.7 Connections hover tooltip** — neighbor row in Connections panel now shows `IdPopover` on hover with id + kind + preview. `buildIdIndex` Pass-3 picks up `- **AC-R*-*:**` bullet-style definitions so AC entries (common in dashboard spec) get full previews. AC-R2-8.
+- **AC-R2-7** — Reading column stability: markdown body stays centered at max-w 760px regardless of which right panel is open.
+- **AC-R2-8** — Connections hover tooltip.
+- **NFR-PERF-7** — side-panel toggle animation ≤ 200ms.
+
+### Changed (DELTA-2)
+- **F2.4 Connections panel — layout: floating right side panel**. Previously a 3rd column in `phase-body` CSS grid which ate markdown width. Now `position: fixed; right: 0` — markdown reading column unaffected. Open/close is sticky in localStorage.
+- **F4.2 ChatDrawer — same layout pattern**. Both panels stack vertically when both open (Connections top half / Chat bottom half).
+- Both panels mounted globally in `AppShell` (not `PhaseRoute`) — focus state survives phase navigation.
+- New `usePanelState` store (useSyncExternalStore + LS) drives both panels; `CONNECTIONS` and `AI CHAT` buttons in phase header are togglers.
+- `phase-body` reverted from CSS grid to plain block; `.phase-body-main` gets `max-width: 760px; margin: 0 auto`. Reading Room identity preserved.
+
 ## Unreleased — M9 typed-graph-relationships
 
 DELTA: `packages/dashboard/changes/2026-05-17-typed-graph-relationships/` (proposal + 7 per-phase deltas, all Approved). Spec sync applied to phases 3 / 9 / 13.
