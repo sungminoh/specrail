@@ -792,6 +792,36 @@ linked-features: [F2.7]
 **T9.7 Connections hover tooltip**
 - Files: `packages/dashboard/web/src/shell/AppShell.tsx` (selector `.id-chip, .conn-neighbor-id`), `features/phases/idIndex.ts` (BULLET_DEF_RE + Pass-3 to index `- **AC-R1-1:**` style bullet definitions).
 
+<!-- specrail:attrs id=T9.8 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "Browser smoke: 4 mode tabs render ≤200ms; Overview shows 13 large phase nodes with aggregate weighted edges; URL ?mode=overview sync"
+commit-msg-stub: "feat(web): graph view modes — mode tabs + Overview (F2.8)"
+depends-on: [T9.4]
+linked-ac: [AC-R2-9, AC-R2-10]
+linked-features: [F2.8]
+```
+<!-- /specrail:attrs -->
+
+**T9.8 GraphView mode tabs + Overview mode**
+- Files: `packages/dashboard/web/src/features/graph/GraphView.tsx` (full rewrite — ViewMode state, top tabs, URL sync, mode-specific filter functions: computeOverview / computePhaseFocus / computeIdFocus / computeQuality; mode-aware node styling incl. larger phase nodes), `styles/layout.css` (.graph-mode-tabs/.graph-mode-tab/.no-sidebar/.graph-empty-clean).
+
+<!-- specrail:attrs id=T9.9 -->
+```yaml
+milestone: M9
+status: Approved
+red-test: "Browser smoke: Phase Focus shows single phase + dimmed boundary; Quality surfaces orphans+dangling; AC-R2-11"
+commit-msg-stub: "feat(web): Phase Focus + Quality modes + mode-aware sidebar (F2.8)"
+depends-on: [T9.8]
+linked-ac: [AC-R2-9, AC-R2-11]
+linked-features: [F2.8]
+```
+<!-- /specrail:attrs -->
+
+**T9.9 Phase Focus + Quality + sidebar refactor**
+- Files: same GraphView.tsx rewrite as T9.8 (Phase + Quality branches included). Sidebar conditional render = only `mode === 'phase'`; legend default closed; ModeBanner per mode.
+
 ### M8: Distribution + slash command
 
 <!-- specrail:attrs id=T8.1 -->
@@ -938,10 +968,11 @@ P0 Spec (43) → Task mapping:
 - [ ] README + 기본 docs 작성
 
 ### v0.2.0 ship gate (post-M9)
-- [ ] M9 의 모든 task complete + AC-R2-5/6/7/8 + NFR-PERF-6/7 + NFR-COMPAT-1 PASS
+- [ ] M9 의 모든 task complete + AC-R2-5/6/7/8/9/10/11 + NFR-PERF-6/7 + NFR-COMPAT-1 PASS
 - [ ] Connections panel dogfood — maintainer 본인 1주 이상 daily use 검증
 - [ ] Backward-compat — 0.1.0-alpha.1 client 가 새 /api/graph payload 처리 가능 (optional field 만 추가)
 - [ ] Markdown reading column 760px 안정 (any panel state, 모든 breakpoint)
+- [ ] Graph 4-mode 명시적 진입점 동작 (`?mode=` 양방향 sync)
 
 ## 15. 다음 단계 (post-spec phase)
 

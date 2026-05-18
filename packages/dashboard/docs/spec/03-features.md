@@ -208,6 +208,9 @@ solves-pains: [PAIN-2, PAIN-4]
 - **AC-R2-6:** GIVEN phase view + ID hover/click, WHEN Connections panel 활성, THEN ≤ 16ms 안에 그 ID 의 typed neighbors 가 edge kind 별 그룹으로 표시 (in/out 구분 + status pill 포함).
 - **AC-R2-7:** GIVEN phase view, WHEN Connections panel 또는 ChatDrawer 가 open, THEN markdown 본문의 가운데 정렬과 reading column 너비 (≤ 760px) 가 변하지 않는다 (floating right side panel pattern).
 - **AC-R2-8:** GIVEN Connections panel open + neighbor row mouse hover, WHEN 200ms 정지, THEN tooltip (`IdPopover`) 표시 — id / kind / preview (200자 이내).
+- **AC-R2-9:** GIVEN graph page open, WHEN user clicks one of 4 mode tabs (Overview / Phase Focus / ID Focus / Quality), THEN view re-renders within ≤ 200ms with mode-specific layout + filter state.
+- **AC-R2-10:** GIVEN Overview mode + 400+ node spec, WHEN initial render, THEN 13 large phase nodes (≥ 60% canvas coverage) with aggregate inter-phase edges (stroke weight = log₂(ref count)).
+- **AC-R2-11:** GIVEN Quality mode + clean spec, WHEN no orphans/dangling, THEN "All clean — no orphans or dangling refs." friendly empty state.
 
 ### F2.1: Refs tab (in/out)
 <!-- specrail:attrs id=F2.1 -->
@@ -392,6 +395,64 @@ parent-f: F2.7
 ```yaml
 status: Approved
 parent-f: F2.7
+```
+<!-- /specrail:attrs -->
+
+### F2.8: Graph view modes (4 명시적 modes)
+<!-- specrail:attrs id=F2.8 -->
+```yaml
+status: Approved
+parent-r: R2
+solves-pains: [PAIN-4]
+linked-ac: [AC-R2-9, AC-R2-10, AC-R2-11]
+```
+<!-- /specrail:attrs -->
+
+**Description:** Graph page 가 4개 모드 중 하나만 렌더 — 사용자가 명시적 tab 으로 전환:
+- **Overview** (default): 13개 phase 노드만 크게, inter-phase aggregate weighted edges (stroke = log₂(count)). 클릭 → Phase Focus.
+- **Phase Focus**: 선택 phase 의 IDs + 1-hop boundary (dimmed opacity 0.45). 노드 클릭 → ID Focus.
+- **ID Focus**: focus input + n-hop slider + ego graph (기존 F2.2/F2.3/F2.6 동작 흡수).
+- **Quality**: orphans (in=0, out=0) + dangling refs (target 미정의) 만. 깨끗한 spec 에선 "All clean." friendly state.
+
+Mode 는 URL `?mode=overview|phase|id|quality` 와 양방향 sync. ?focus=<id> 가 있으면 자동 ID Focus 진입 (backward-compat). Sidebar / focus input / n-hop slider / legend 모두 mode-aware (필요할 때만 노출, legend default 닫힘).
+
+#### S2.8.1: Mode state + URL search param sync
+<!-- specrail:attrs id=S2.8.1 -->
+```yaml
+status: Approved
+parent-f: F2.8
+```
+<!-- /specrail:attrs -->
+
+#### S2.8.2: Overview mode — 13 large phase nodes, aggregate weighted edges
+<!-- specrail:attrs id=S2.8.2 -->
+```yaml
+status: Approved
+parent-f: F2.8
+```
+<!-- /specrail:attrs -->
+
+#### S2.8.3: Phase Focus — single phase + 1-hop boundary (dimmed)
+<!-- specrail:attrs id=S2.8.3 -->
+```yaml
+status: Approved
+parent-f: F2.8
+```
+<!-- /specrail:attrs -->
+
+#### S2.8.4: Quality mode — orphans + dangling refs only + clean empty state
+<!-- specrail:attrs id=S2.8.4 -->
+```yaml
+status: Approved
+parent-f: F2.8
+```
+<!-- /specrail:attrs -->
+
+#### S2.8.5: Mode-aware toolbar/sidebar/legend visibility
+<!-- specrail:attrs id=S2.8.5 -->
+```yaml
+status: Approved
+parent-f: F2.8
 ```
 <!-- /specrail:attrs -->
 

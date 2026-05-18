@@ -1,5 +1,30 @@
 # @specrail/dashboard CHANGELOG
 
+## Unreleased — M9 typed-graph-relationships + side-panels refactor + graph view modes
+
+DELTA-3: `packages/dashboard/changes/2026-05-18-graph-view-modes/` (proposal + 3 per-phase deltas, Approved). Spec sync applied to phases 3 / 13.
+
+### Added (DELTA-3)
+- **F2.8 Graph view modes** — graph page now has 4 explicit tabs: Overview (default), Phase Focus, ID Focus, Quality.
+  - **Overview:** 13 large phase nodes only (Phase 01 · PRD, etc.), inter-phase edges with `weight = aggregate ref count`, stroke scales `log₂(weight)`. Click a phase → switch to Phase Focus.
+  - **Phase Focus:** Single phase's IDs + 1-hop boundary nodes from other phases (dimmed opacity 0.45). Click a node → switch to ID Focus.
+  - **ID Focus:** Existing ego-graph behavior (focus input + n-hop slider). URL `?focus=<id>` auto-enters this mode for back-compat.
+  - **Quality:** Orphans (no in/out edges) + dangling refs (referenced IDs not defined) only. Friendly "All clean." state when nothing to report.
+- **AC-R2-9** — mode switch re-renders ≤ 200ms.
+- **AC-R2-10** — Overview readability with 400+ node specs.
+- **AC-R2-11** — Quality mode clean-state UX.
+- URL state: `?mode=overview|phase|id|quality`, `?phase=N`, `?focus=<id>&hop=N` — bidirectional sync, shareable.
+
+### Changed (DELTA-3)
+- **F2.2 Graph view** rewritten as mode-driven (was free-form filter sidebar with phase chips + kind + orphans + dangling toggles all visible at once).
+- **F2.3 N-hop slider** scoped to ID Focus mode only.
+- **F2.6 Focus input** scoped to ID Focus mode only.
+- **Legend overlay** default **closed** (was open by default — took ~30% of canvas).
+- Sidebar shown only in Phase Focus mode (phase chips + optional kind filter). Hidden in Overview / ID Focus / Quality.
+- Phase nodes (Overview) ~3× larger (200×60) with full labels ("Phase 09 · NFR"). Were tiny rectangles clustered at canvas bottom.
+- ChatDrawer onChange: resets state when `currentPhase` changes (no longer shows stale buffer with new-phase context).
+- ConnectionsPanel uses `useLocation()` to re-evaluate focus on react-router navigation. Empty state shows "Open a phase to see typed connections." on non-phase routes.
+
 ## Unreleased — M9 typed-graph-relationships + side-panels refactor
 
 DELTA-2: `packages/dashboard/changes/2026-05-18-side-panels-and-hover/` (proposal + 4 per-phase deltas, Approved). Spec sync applied to phases 3 / 9 / 13.
